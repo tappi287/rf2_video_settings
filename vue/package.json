@@ -8,8 +8,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@popperjs/core": "^2.5.4",
     "bootstrap-vue": "^2.19.0",
     "core-js": "^3.6.5",
+    "fontsource-ubuntu": "^3.0.9",
     "vue": "^2.6.11"
   },
   "devDependencies": {

@@ -12,3 +12,8 @@ Vue.config.productionTip = false
 new Vue({
   render: h => h(App),
 }).$mount('#app')
+
+export async function getEelJsonObject (promise) {
+  const value = await promise
+  return JSON.parse(value)
+}
