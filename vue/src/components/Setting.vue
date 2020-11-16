@@ -1,8 +1,13 @@
 <template>
-  <div class="setting mr-3 mt-3" v-if="setting !== undefined">
+  <div class="setting" v-if="!settingHidden">
     <b-input-group size="sm">
       <b-input-group-prepend>
-        <b-input-group-text>{{ setting.name }}</b-input-group-text>
+        <div v-if="fixWidth" class="fixed-width">
+          <b-input-group-text>{{ setting.name }}</b-input-group-text>
+        </div>
+        <template v-else>
+          <b-input-group-text>{{ setting.name }}</b-input-group-text>
+        </template>
       </b-input-group-prepend>
       <b-input-group-append>
         <b-dropdown :text="currentSettingName" :variant="variant" class="setting-item">
@@ -43,7 +48,7 @@ export default {
     }
   },
   props: {
-    setting: Object, variant: String
+    setting: Object, variant: String, fixWidth: Boolean
   },
   mounted() {
     if (this.variant === undefined) { this.variant = 'secondary'}
@@ -59,6 +64,10 @@ export default {
         }
       })
       return name
+    },
+    settingHidden: function () {
+      if (this.setting === undefined) { return true }
+      return this.setting['hidden'] || false
     }
   }
 }
@@ -68,4 +77,5 @@ export default {
 <style scoped>
 .setting { display: inline-block }
 .setting-item {min-width: 7.0rem;}
+.fixed-width { width: 10rem; }
 </style>

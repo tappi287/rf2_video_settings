@@ -5,7 +5,10 @@ import logging
 
 import eel
 
-from modules.settings_model import Preset
+from .app_settings import AppSettings
+from .globals import get_presets_dir
+from .rfactor import RfactorPlayer
+from .settings_model import Preset, load_preset
 
 # -- Log to Stdout keeping it short
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
@@ -19,13 +22,55 @@ def message():
 
 @eel.expose
 def get_presets():
-    p = Preset()
-    presets = [p.to_js()]
-    return json.dumps(presets)
+    current_preset = Preset()
+
+    # - Read the actual, current rFactor Settings
+    rf = RfactorPlayer()
+    if rf.is_valid:
+        current_preset.update(rf)
+
+    if not AppSettings.create_backup(rf):
+        logging.fatal('Could not find or create backup files!')
+
+    # - Load saved Presets
+    presets = [current_preset]
+    for preset_file in get_presets_dir().glob('*.json'):
+        preset = load_preset(preset_file)
+        if preset and preset.name != current_preset.name:
+            presets.append(preset)
+
+    current_preset.save()
+
+    return json.dumps({'presets': [p.to_js() for p in presets], 'selected_preset': AppSettings.selected_preset})
+
+
+@eel.expose
+def select_preset(idx):
+    AppSettings.selected_preset = idx
+    AppSettings.save()
 
 
 @eel.expose
 def save_preset(preset_js_dict):
+    # -- Save the preset
     p = Preset()
     p.from_js_dict(preset_js_dict)
+    if not p.save():
+        logging.error('Error saving Preset: %s', p.name)
+        return json.dumps({'result': False, 'msg': f'Error saving Preset: {p.name}'})
+
     logging.debug('Saved Preset: %s', p.name)
+
+    rf = RfactorPlayer()
+    if rf.is_valid:
+        if not rf.write_settings(p):
+            return json.dumps({'result': False, 'msg': rf.error})
+    return json.dumps({'result': True, 'msg': 'Preset saved and rFactor 2 Settings successfully written.'})
+
+
+@eel.expose
+def delete_preset(preset_name):
+    for preset_file in get_presets_dir().glob('*.json'):
+        if preset_file.stem == preset_name:
+            preset_file.unlink()
+            logging.debug('Deleted Preset: %s', preset_name)

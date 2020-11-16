@@ -8,6 +8,8 @@ verify_ssl = true
 [packages]
 eel = "*"
 pyinstaller = "*"
+appdirs = "*"
+jsonpickle = "*"
 
 [requires]
 python_version = "3.8"

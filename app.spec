@@ -1,12 +1,17 @@
 # -*- mode: python ; coding: utf-8 -*-
+from PyInstaller.utils.hooks import get_package_paths
 
 block_cipher = None
 
+# define app name
+APP_NAME = 'rF2-Settings-Widget'
+# locate eel.js
+eel_js = get_package_paths('eel')[-1] + '\\eel.js'
 
 a = Analysis(['app.py'],
              pathex=['D:\\Docs\\py\\rfvideosettings'],
              binaries=[],
-             datas=[('C:\\Users\\tappe\\.virtualenvs\\rfvideosettings-Bd2eWFPV\\lib\\site-packages\\eel\\eel.js', 'eel'), ('web', 'web')],
+             datas=[(eel_js, 'eel'), ('web', 'web')],
              hiddenimports=['bottle_websocket'],
              hookspath=[],
              runtime_hooks=[],
@@ -21,7 +26,7 @@ exe = EXE(pyz,
           a.scripts,
           [],
           exclude_binaries=True,
-          name='app',
+          name=APP_NAME,
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
@@ -34,4 +39,4 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='app')
+               name=APP_NAME)
