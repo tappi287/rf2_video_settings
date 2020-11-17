@@ -1,15 +1,11 @@
 import logging
 import sys
-from pathlib import Path
-from typing import Union, List, Optional
+from typing import Union, List
 
-import jsonpickle
-
-from modules.globals import get_presets_dir
+from .utils import JsonRepr
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
-jsonpickle.set_preferred_backend('json')
 
 _allowed_value_types = (bool, str, int, float)
 
@@ -126,26 +122,33 @@ adjustable_video_settings = {
         }
 
 
-class Option:
+class Option(JsonRepr):
     def __init__(self):
         self.key = 'Player JSON key'
         self.name = 'Friendly Setting Name'
 
         # Current value
         self.value: Union[_allowed_value_types] = None
-        self.hidden: bool = False
 
+        # Extra Attributes
+        self.hidden: bool = False
         self.ini_type = None
 
         # Possible settings
         self.settings: tuple = tuple()
 
-    def to_js_object(self):
-        return {'key': self.key, 'name': self.name, 'value': self.value, 'hidden': self.hidden,
-                'settings': list(self.settings)}
+    def __eq__(self, other):
+        """ Report difference between options
+
+        :param modules.settings_model.Option other:
+        :return: True if self.value if differs
+        """
+        if other.value != self.value or other.key != self.key:
+            return False
+        return True
 
 
-class BaseOptions:
+class BaseOptions(JsonRepr):
     key = 'Base Options'
     title = 'Base Settings'
 
@@ -170,18 +173,34 @@ class BaseOptions:
     def to_js(self):
         return {'key': self.key, 'title': self.title, 'options': [option.to_js_object() for option in self.options]}
 
-    def from_js_dict(self, js_dict):
-        self.options = list()
-        self.key = js_dict.get('key', 'Unknown_Key')
-        self.title = js_dict.get('title', 'Unknown_Title')
+    def from_js_dict(self, json_dict):
+        for k, v in json_dict.items():
+            if k == 'options':
+                options = list()
+                for opt in v:
+                    o = Option()
+                    for _k, _v in opt.items():
+                        setattr(o, _k, _v)
+                    options.append(o)
+                setattr(self, k, options)
+                continue
+            else:
+                setattr(self, k, v)
 
-        for option_dict in js_dict.get('options', list()):
-            option = Option()
-            option.key = option_dict.get('key')
-            option.name = option_dict.get('name', 'Unknown')
-            option.settings = option_dict.get('settings', tuple())
-            option.value = option_dict.get('value')
-            self.options.append(option)
+    def __eq__(self, other):
+        """ Report difference between options
+
+        :param modules.settings_model.BaseOptions other:
+        :return: True if other options differ
+        """
+        if other.key != self.key:
+            return False
+
+        # -- Compare every Option
+        #    sort both by their keys
+        options = sorted(self.options, key=lambda k: k.key)
+        other_options = sorted(other.options, key=lambda k: k.key)
+        return all([a == b for a, b in zip(options, other_options)])
 
 
 class GraphicOptions(BaseOptions):
@@ -215,67 +234,3 @@ class AdvancedGraphicSettings(BaseOptions):
 
         # -- Read Default options
         self.read_from_python_dict(advanced_settings)
-
-
-class Preset:
-    def __init__(self, name: str = None):
-        if name is None:
-            name = 'Default'
-
-        self.name = name
-        self.graphic_options = GraphicOptions()
-        self.advanced_graphic_options = AdvancedGraphicSettings()
-        self.video_settings = VideoSettings()
-
-    def update(self, rf):
-        """ Update current preset from the actual rFactor 2 player.JSON
-
-        :param modules.rfactor.RfactorPlayer rf:
-        :return:
-        """
-        self.graphic_options = rf.graphic_options
-        self.advanced_graphic_options = rf.advanced_graphic_options
-        self.video_settings = rf.video_settings
-
-        json = rf.get_player_json_dict()
-        if json.get('DRIVER'):
-            self.name = f'Current Settings [{json["DRIVER"].get("Player Nick")}]'
-
-    def save(self) -> bool:
-        file = get_presets_dir() / f'{self.name}.json'
-
-        try:
-            with open(file.as_posix(), 'w') as f:
-                f.write(jsonpickle.encode(self))
-        except Exception as e:
-            logging.fatal('Could not save Preset! %s', e)
-            return False
-        return True
-
-    def to_js(self):
-        return {'name': self.name, 'graphic_options': self.graphic_options.to_js(),
-                'advanced_graphic_options': self.advanced_graphic_options.to_js(),
-                'video_settings': self.video_settings.to_js()}
-
-    def from_js_dict(self, js_dict):
-        self.name = js_dict.get('name')
-        self.graphic_options.from_js_dict(js_dict.get('graphic_options'))
-        self.advanced_graphic_options.from_js_dict(js_dict.get('advanced_graphic_options'))
-        self.video_settings.from_js_dict(js_dict.get('video_settings'))
-
-
-def load_preset(file: Path) -> Optional[Preset]:
-    default_preset = Preset()
-    try:
-        with open(file.as_posix(), 'r') as f:
-            new_preset = jsonpickle.decode(f.read())
-
-        # - Make sure older Preset Versions contain all fields
-        for k, v in default_preset.__dict__.items():
-            if k[:2] != '__' and not callable(v):
-                if k not in new_preset.__dict__:
-                    setattr(new_preset, k, v)
-
-        return new_preset
-    except Exception as e:
-        logging.fatal('Could not load application settings! %s', e)

@@ -3,10 +3,12 @@ from PyInstaller.utils.hooks import get_package_paths
 
 block_cipher = None
 
-# define app name
+# ----- define app name
 APP_NAME = 'rF2-Settings-Widget'
-# locate eel.js
+# ----- locate eel.js
 eel_js = get_package_paths('eel')[-1] + '\\eel.js'
+# -----
+icon_file = './vue/src/assets/app_icon.ico'
 
 a = Analysis(['app.py'],
              pathex=['D:\\Docs\\py\\rfvideosettings'],
@@ -27,6 +29,7 @@ exe = EXE(pyz,
           [],
           exclude_binaries=True,
           name=APP_NAME,
+          icon=icon_file,
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,

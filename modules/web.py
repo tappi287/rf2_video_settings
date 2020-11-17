@@ -8,7 +8,7 @@ import eel
 from .app_settings import AppSettings
 from .globals import get_presets_dir
 from .rfactor import RfactorPlayer
-from .settings_model import Preset, load_preset
+from .preset import Preset, load_preset
 
 # -- Log to Stdout keeping it short
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
@@ -31,22 +31,44 @@ def get_presets():
 
     if not AppSettings.create_backup(rf):
         logging.fatal('Could not find or create backup files!')
+        return
 
     # - Load saved Presets
     presets = [current_preset]
+    selected_preset = None
+    preset_changed = None
+
     for preset_file in get_presets_dir().glob('*.json'):
         preset = load_preset(preset_file)
+        if not preset:
+            continue
+        if preset.name == AppSettings.selected_preset:
+            selected_preset = preset
         if preset and preset.name != current_preset.name:
             presets.append(preset)
 
+    # - Check if the currently selected preset differs
+    #   from the actual rFactor 2 settings on disk.
+    #   If they deviate, point the user to the current settings.
+    if selected_preset and selected_preset != current_preset:
+        preset_changed = selected_preset.name
+        logging.debug('Resetting selected Preset to "Current Preset" from %s because settings differ '
+                      'from actual rFactor 2 settings.', preset_changed)
+        AppSettings.selected_preset = current_preset.name
+        AppSettings.save()
+
+    presets = sorted(presets, key=lambda k: k.name)
     current_preset.save()
 
-    return json.dumps({'presets': [p.to_js() for p in presets], 'selected_preset': AppSettings.selected_preset})
+    return json.dumps({'presets': [p.to_js() for p in presets],
+                       'selected_preset': AppSettings.selected_preset,
+                       'preset_changed': preset_changed})
 
 
 @eel.expose
-def select_preset(idx):
-    AppSettings.selected_preset = idx
+def select_preset(preset_name):
+    logging.debug('Updating AppSettings: selected_preset = %s', preset_name)
+    AppSettings.selected_preset = preset_name
     AppSettings.save()
 
 

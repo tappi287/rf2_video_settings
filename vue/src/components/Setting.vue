@@ -1,12 +1,12 @@
 <template>
   <div class="setting" v-if="!settingHidden">
-    <b-input-group size="sm">
+    <b-input-group size="sm" class="setting-field">
       <b-input-group-prepend>
         <div v-if="fixWidth" class="fixed-width">
-          <b-input-group-text>{{ setting.name }}</b-input-group-text>
+          <b-input-group-text class="info-field">{{ setting.name }}</b-input-group-text>
         </div>
         <template v-else>
-          <b-input-group-text>{{ setting.name }}</b-input-group-text>
+          <b-input-group-text class="info-field">{{ setting.name }}</b-input-group-text>
         </template>
       </b-input-group-prepend>
       <b-input-group-append>
@@ -76,6 +76,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .setting { display: inline-block }
-.setting-item {min-width: 7.0rem;}
-.fixed-width { width: 10rem; }
+.setting-item { min-width: 7.0rem; font-weight: lighter; }
+.fixed-width { min-width: 10rem; }
 </style>

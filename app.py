@@ -10,8 +10,10 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
 
 # TODO: -Proper- logging setup
 # TODO: Video Settings Windowed/Borderless/Fullscreen switch
-# TODO: file safe name for preset files (usernames with special chrs)
 # TODO: Edge launcher
+# TODO: License Footer
+# TODO: Preset drag drop import
+# TODO: save Presets in user myDocs dir, differentiate between app defaults and user saved presets
 
 
 def start_eel():

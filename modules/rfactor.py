@@ -7,7 +7,8 @@ from configparser import ConfigParser
 from typing import Optional
 
 from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG
-from .settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions, Preset
+from .settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions
+from .preset import Preset
 from .steam_utils import SteamApps, KNOWN_APPS
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',

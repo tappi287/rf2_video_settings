@@ -14,7 +14,7 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
 
 class AppSettings:
     backup_created = False
-    selected_preset = 0
+    selected_preset = str()
 
     def __init__(self):
         self.backup_created = AppSettings.backup_created

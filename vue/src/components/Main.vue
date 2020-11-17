@@ -1,118 +1,130 @@
 <template>
-  <div id="main">
-    <div>
-      <b-button class="float-left mt-4" @click="viewMode = !viewMode ? 1 : 0">
-        <b-icon :icon="viewMode ? 'grid-fill' : 'list'"></b-icon>
-      </b-button>
-    </div>
-    <div class="title">
-      <b-img src="@/assets/app_icon.webp" width="128" alt="rFactor 2 logo" class="m-3"></b-img>
-      <h4><i>rFactor 2 Graphic Settings Widget</i></h4>
+  <div id="main" v-cloak>
+    <div class="text-left mt-2">
+      <h4>
+        <b-img src="@/assets/app_icon.webp" width="64" alt="rFactor 2 logo" class="mr-3 logo-style"></b-img>
+        <span class="title"><i>rFactor 2 Settings Widget</i></span>
+      </h4>
     </div>
     <p></p>
     <template v-if="presets.length > 0">
       <b-overlay :show="isBusy" variant="light">
-      <!-- Preset Selection-->
-      <b-input-group>
-        <b-input-group-prepend>
-          <b-input-group-text>Presets</b-input-group-text>
-        </b-input-group-prepend>
+        <!-- Preset Selection-->
+        <b-input-group>
+          <b-input-group-prepend>
+            <b-button @click="viewMode = !viewMode ? 1 : 0">
+              <b-icon :icon="viewMode ? 'grid-fill' : 'list'"></b-icon>
+            </b-button>
+            <b-input-group-text class="info-field">Presets</b-input-group-text>
+          </b-input-group-prepend>
 
-        <b-dropdown :text="currentPresetName" variant="rf-blue">
-          <b-dropdown-item v-for="preset in presets" :key="preset.name"
-                           @click="selectPreset(preset)">
-            {{ preset.name }}
-          </b-dropdown-item>
-        </b-dropdown>
-        <b-form-input v-model="newPresetName" :state="presetFileNameState"
-                      type="text" placeholder="[New Preset Name]" id="preset-name-input"
-                      v-b-popover.hover.top="'Enter a name for a new Preset and click the + button'">
-        </b-form-input>
+          <b-dropdown :text="currentPresetName" variant="rf-blue">
+            <b-dropdown-item v-for="preset in presets" :key="preset.name"
+                             @click="selectPreset(preset)">
+              {{ preset.name }}
+            </b-dropdown-item>
+          </b-dropdown>
+          <b-form-input v-model="newPresetName" :state="presetFileNameState"
+                        type="text" placeholder="[New Preset Name]" id="preset-name-input"
+                        v-b-popover.hover.top="'Enter a name for a new Preset and click the + button'">
+          </b-form-input>
 
-        <b-input-group-append>
-          <!-- Add/Del Preset Buttons -->
-          <b-button :disabled="!addButtonState" variant="success" @click="createPreset">
-            <b-icon icon="plus"></b-icon>
-          </b-button>
-          <b-button variant="rf-blue" @click="getPresets"
-                    v-b-popover.hover.top="'Refresh Presets if you updated a setting in-game'">
-            <b-icon icon="arrow-repeat"></b-icon>
-          </b-button>
-          <b-button :disabled="!deleteButtonState" variant="danger" id="delete-preset-btn">
-            <b-icon icon="x-circle-fill"></b-icon>
-          </b-button>
+          <b-input-group-append>
+            <!-- Add/Del Preset Buttons -->
+            <b-button :disabled="!addButtonState" variant="success" @click="createPreset">
+              <b-icon icon="plus"></b-icon>
+            </b-button>
+            <b-button variant="rf-blue" @click="getPresets"
+                      v-b-popover.hover.top="'Refresh Presets if you updated a setting in-game'">
+              <b-icon icon="arrow-repeat"></b-icon>
+            </b-button>
+            <b-button :disabled="!deleteButtonState" variant="rf-red" id="delete-preset-btn">
+              <b-icon icon="x-circle-fill"></b-icon>
+            </b-button>
 
-          <!-- Delete Popover -->
-          <b-popover target="delete-preset-btn" triggers="click">
-            <p>Do you really want to delete the Preset: {{ currentPresetName }}?</p>
-            <div class="text-right">
-              <b-button @click="deletePreset" size="sm" variant="danger"
-                        aria-label="Delete">
-                Delete
-              </b-button>
-              <b-button @click="$root.$emit('bv::hide::popover', 'delete-preset-btn')"
-                        size="sm" aria-label="Close">
-                Close
-              </b-button>
-            </div>
-          </b-popover>
+            <!-- Delete Popover -->
+            <b-popover target="delete-preset-btn" triggers="click">
+              <p>Do you really want to delete the Preset: {{ currentPresetName }}?</p>
+              <div class="text-right">
+                <b-button @click="deletePreset" size="sm" variant="danger"
+                          aria-label="Delete">
+                  Delete
+                </b-button>
+                <b-button @click="$root.$emit('bv::hide::popover', 'delete-preset-btn')"
+                          size="sm" aria-label="Close">
+                  Close
+                </b-button>
+              </div>
+            </b-popover>
+          </b-input-group-append>
+          <b-form-invalid-feedback id="preset-name-input-feedback">
+            Enter a valid Windows file name
+          </b-form-invalid-feedback>
+        </b-input-group>
+        <b-form-textarea id="preset-textarea" v-model="presetDesc" class="mt-3"
+                         placeholder="Enter a description for your preset ..."
+                         rows="2" spellcheck="false">
+        </b-form-textarea>
+        <b-alert show dismissible variant="warning" class="mt-3" v-if="previousPresetName !== ''">
+          The previously selected Preset <i>{{ previousPresetName }}</i> has different settings than the actual
+          rFactor 2 settings on disk.
+        </b-alert>
 
-        </b-input-group-append>
-        <b-form-invalid-feedback id="preset-name-input-feedback">
-          Enter a valid Windows file name
-        </b-form-invalid-feedback>
-      </b-input-group>
-
-      <div v-for="(preset, idx) in presets" :key="preset.name">
-        <!-- Video Settings -->
-        <b-card v-if="selectedPresetIdx === idx" class="mt-3"
-                bg-variant="secondary" text-variant="white">
-          <template #header>
-            <h6 class="mb-0">{{ preset.video_settings.title }}</h6>
-          </template>
-          <!-- View Mode Grid-->
-          <Setting v-for="setting in preset.video_settings.options" :key="setting.key"
-                   :setting="setting" variant="rf-orange" class="mr-3"
-                   v-on:setting-changed="updateSetting">
-          </Setting>
-          <!-- Footer -->
-          <template #footer>Use the in-game menu to change resolutions and window mode.</template>
-        </b-card>
-        <!-- Display Settings -->
-        <b-card v-if="selectedPresetIdx === idx" class="mt-3"
-                bg-variant="secondary" text-variant="white">
-          <template #header>
-            <h6 class="mb-0">{{ preset.graphic_options.title }}</h6>
-          </template>
-          <template v-if="!viewMode">
-            <Setting v-for="setting in preset.graphic_options.options" :key="setting.key"
-                     :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixWidth="true"
+        <div v-for="(preset, idx) in presets" :key="preset.name">
+          <!-- Video Settings -->
+          <b-card v-if="selectedPresetIdx === idx" class="mt-3"
+                  bg-variant="dark" text-variant="white">
+            <template #header>
+              <h6 class="mb-0"><span class="title">{{ preset.video_settings.title }}</span></h6>
+            </template>
+            <!-- View Mode Grid-->
+            <Setting v-for="setting in preset.video_settings.options" :key="setting.key"
+                     :setting="setting" variant="rf-orange" class="mr-3"
                      v-on:setting-changed="updateSetting">
             </Setting>
-          </template>
-          <template v-else>
-            <b-list-group class="text-left">
-              <b-list-group-item class="bg-transparent" v-for="setting in preset.graphic_options.options" :key="setting.key">
-                <Setting :setting="setting" variant="rf-orange" :fixWidth="true"
-                         v-on:setting-changed="updateSetting">
-                </Setting>
-              </b-list-group-item>
-            </b-list-group>
-          </template>
-        </b-card>
-        <!-- Advanced Display Settings -->
-        <b-card v-if="selectedPresetIdx === idx" class="mt-3"
-                bg-variant="secondary" text-variant="white">
-          <template #header>
-            <h6 class="mb-0">{{ preset.advanced_graphic_options.title }}</h6>
-          </template>
-          <Setting v-for="setting in preset.advanced_graphic_options.options" :key="setting.key"
-                   :setting="setting" variant="rf-orange"
-                   v-on:setting-changed="updateSetting">
-          </Setting>
-          <template #footer>More settings available soon.</template>
-        </b-card>
-      </div>
+            <!-- Footer -->
+            <template #footer>
+            <span class="small font-weight-lighter">
+              Use the in-game menu to change screen resolution and window mode for now
+            </span>
+            </template>
+          </b-card>
+          <!-- Display Settings -->
+          <b-card v-if="selectedPresetIdx === idx" class="mt-3"
+                  bg-variant="dark" text-variant="white">
+            <template #header>
+              <h6 class="mb-0"><span class="title">{{ preset.graphic_options.title }}</span></h6>
+            </template>
+            <template v-if="!viewMode">
+              <Setting v-for="setting in preset.graphic_options.options" :key="setting.key"
+                       :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixWidth="true"
+                       v-on:setting-changed="updateSetting">
+              </Setting>
+            </template>
+            <template v-else>
+              <b-list-group class="text-left">
+                <b-list-group-item class="bg-transparent" v-for="setting in preset.graphic_options.options"
+                                   :key="setting.key">
+                  <Setting :setting="setting" variant="rf-orange" :fixWidth="true"
+                           v-on:setting-changed="updateSetting">
+                  </Setting>
+                </b-list-group-item>
+              </b-list-group>
+            </template>
+          </b-card>
+          <!-- Advanced Display Settings -->
+          <b-card v-if="selectedPresetIdx === idx" class="mt-3"
+                  bg-variant="dark" text-variant="white">
+            <template #header>
+              <h6 class="mb-0"><span class="title">{{ preset.advanced_graphic_options.title }}</span></h6>
+            </template>
+            <Setting v-for="setting in preset.advanced_graphic_options.options" :key="setting.key"
+                     :setting="setting" variant="rf-orange"
+                     v-on:setting-changed="updateSetting">
+            </Setting>
+            <template #footer><span class="small font-weight-lighter">More settings available soon</span></template>
+          </b-card>
+        </div>
       </b-overlay>
     </template>
   </div>
@@ -120,9 +132,7 @@
 
 <script>
 import Setting from "./Setting.vue";
-import {getEelJsonObject} from '@/main'
-import {isValid} from "@/main";
-import {sleep} from "@/main";
+import {getEelJsonObject, isValid, sleep} from '@/main'
 
 export default {
   name: 'Main',
@@ -131,18 +141,21 @@ export default {
       presets: [],
       selectedPresetIdx: 0,
       newPresetName: '',
+      presetDesc: '',
       isBusy: false,
       viewMode: 0,
+      previousPresetName: ''
     }
   },
   methods: {
-    makeToast(message, category = 'secondary', title = 'Update', append = true) {
+    makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$bvToast.toast(message, {
         title: title,
-        autoHideDelay: 5000,
+        autoHideDelay: delay,
         appendToast: append,
         variant: category,
-        isBusy: false,
+        solid: true,
+        isBusy: false
       })
     },
     getPresets: async function () {
@@ -150,16 +163,30 @@ export default {
       this.presets = []
       const preset_data = await getEelJsonObject(window.eel.get_presets()())
       this.presets = preset_data.presets
+      let appSelectedPresetIdx = -1
+      let changeMsg = ''
+      let msgDelay = 3000
+      if (preset_data.preset_changed !== null) {
+        this.previousPresetName = preset_data.preset_changed
+        changeMsg = 'Detected settings deviations to previously selected Preset ' + this.previousPresetName +
+            ' on disk. Pointing you to the "Current Preset" reflecting the actual settings on disk.'
+        msgDelay = 15000
+      }
 
       for (let i = 0; i <= this.presets.length; i++) {
         let preset = this.presets[i]
-        if (preset === undefined) { continue }
+        if (preset === undefined) {
+          continue
+        }
+        if (preset.name === preset_data.selected_preset) {
+          appSelectedPresetIdx = i
+        }
         console.log('Refreshed Settings for', preset.name)
       }
-      if (this.presets[preset_data.selected_preset] !== undefined) {
-        await this.selectPreset(this.presets[preset_data.selected_preset], false)
+      if (this.presets[appSelectedPresetIdx] !== undefined) {
+        await this.selectPreset(this.presets[appSelectedPresetIdx], false)
       }
-      this.makeToast('Presets loaded.', 'success')
+      this.makeToast('Presets loaded. ' + changeMsg, 'secondary', 'Start Up', true, msgDelay)
       await sleep(100)
       this.isBusy = false
     },
@@ -168,13 +195,14 @@ export default {
     },
     _savePreset: async function (preset) {
       const r = await getEelJsonObject(window.eel.save_preset(preset)())
+      this.previousPresetName = ''
       if (!r.result) {
         this.makeToast(r.msg, 'danger')
         console.error('Error writing preset to rFactor 2!', r.msg)
       }
       return r
     },
-    updateSetting: async function(setting, value) {
+    updateSetting: async function (setting, value) {
       this.isBusy = true
       setting.value = value
       console.log('Updated', setting.name, 'to', setting.value)
@@ -184,11 +212,12 @@ export default {
     selectPreset: async function (preset, save = true) {
       this.isBusy = true
       this.selectedPresetIdx = this.presets.indexOf(preset)
-      await window.eel.select_preset(this.selectedPresetIdx)
+      await window.eel.select_preset(this.getSelectedPreset().name)
       if (save) {
         await this._savePreset(this.getSelectedPreset())
         await sleep(150)
       }
+      this.presetDesc = this.getSelectedPreset().desc
       this.isBusy = false
     },
     createPreset: async function () {
@@ -231,13 +260,20 @@ export default {
   components: {
     Setting
   },
+  watch: {
+    presetDesc: function (value) { this.getSelectedPreset().desc = value }
+  },
   computed: {
     currentPresetName: function () {
-      if (this.presets.length === 0) { return 'Unknown'}
+      if (this.presets.length === 0) {
+        return 'Unknown'
+      }
       return this.getSelectedPreset().name
     },
     presetFileNameState: function () {
-      if (this.newPresetName === '') { return null }
+      if (this.newPresetName === '') {
+        return null
+      }
       return isValid(this.newPresetName)
     },
     addButtonState: function () {
@@ -247,7 +283,7 @@ export default {
       return this.getSelectedPreset() !== this.presets[0]
     },
   },
-  created: function() {
+  created: function () {
     this.getPresets()
   }
 }
@@ -255,15 +291,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #main {
-    width: 90%;
-    margin: 0 auto 0 auto;
-  }
-  .title {
-    font-family: "Ubuntu", sans-serif;
-    font-weight: bold;
-  }
-  .fix-width {
-    width: 18rem;
-  }
+#main {
+  width: 90%;
+  margin: 0 auto 0 auto;
+}
+
+.fix-width {
+  width: 18rem;
+}
 </style>
