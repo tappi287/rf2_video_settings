@@ -10,7 +10,7 @@ an eye-candy favoured Replay setup.
 </p>
 
 #### Usage
-- Download the <a href="https://github.com/tappi287/rf2-settings-wizard/releases">latest installer</a> and start the app
+- Download the <a href="/releases">latest installer</a> and start the app
 - Enter a name for a new Preset and hit the [ + ] button
 - adjust the settings to your liking, they will be automatically saved and applied to your rFactor installation whenever
 you change a setting
