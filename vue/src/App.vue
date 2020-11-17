@@ -1,6 +1,10 @@
 <template>
   <div id="app">
     <Main></Main>
+    <div class="mt-3 main-footer small font-weight-lighter">
+      <span>Published under MIT license &#169; 2020 Stefan Tapper </span>
+      <a href="https://www.github.com/tappi287/" target="_blank">Source @ Github</a>
+    </div>
   </div>
 </template>
 
@@ -44,8 +48,12 @@ body {
   background: none !important;
 }
 
-html {;
+html {
   background-image: linear-gradient(60deg, #172122 0%, #0c1013 100%);
+}
+
+.main-footer {
+  margin-bottom: 3rem;
 }
 
 .info-field {
