@@ -4,7 +4,8 @@ from pathlib import Path
 from shutil import copyfile
 import jsonpickle
 
-from .globals import get_settings_dir, SETTINGS_FILE_NAME
+from .globals import get_settings_dir, SETTINGS_FILE_NAME, get_current_modules_dir, get_default_presets_dir, \
+    get_presets_dir
 from .rfactor import RfactorPlayer
 
 jsonpickle.set_preferred_backend('json')
@@ -41,6 +42,24 @@ class AppSettings:
 
         AppSettings.backup_created = result
         AppSettings.save()
+        return result
+
+    @staticmethod
+    def copy_default_presets() -> bool:
+        result = False
+
+        for file in get_default_presets_dir().glob('*.json'):
+            dst = get_presets_dir() / file.name
+            if dst.exists():
+                continue
+
+            try:
+                copyfile(file, dst.with_name(file.name))
+                result = True
+            except Exception as e:
+                logging.error('Could not copy default preset: %s', e)
+                result = False
+
         return result
 
     @staticmethod

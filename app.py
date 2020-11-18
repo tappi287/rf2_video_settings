@@ -17,6 +17,7 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
 
 def start_eel():
     AppSettings.load()
+    AppSettings.copy_default_presets()
 
     # register exposed methods
     from modules.web import message, get_presets, select_preset, save_preset, delete_preset

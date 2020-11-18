@@ -3,7 +3,7 @@
     <Main></Main>
     <div class="mt-3 main-footer small font-weight-lighter">
       <span>Published under MIT license &#169; 2020 Stefan Tapper </span>
-      <a href="https://www.github.com/tappi287/" target="_blank">Source @ Github</a>
+      <a href="https://www.github.com/tappi287/rf2_video_settings" target="_blank">Source @ Github</a>
     </div>
   </div>
 </template>

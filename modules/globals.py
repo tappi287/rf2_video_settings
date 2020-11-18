@@ -1,6 +1,7 @@
 import os
 import logging
 import sys
+import json
 from pathlib import Path
 from typing import Union
 
@@ -14,10 +15,14 @@ APP_NAME = 'rf2_settings_widget'
 SETTINGS_DIR_NAME = 'rf2_settings_widget'
 SETTINGS_FILE_NAME = 'settings.json'
 PRESETS_DIR = 'presets'
+DEFAULT_PRESETS_DIR = 'default_presets'
 APP_FRIENDLY_NAME = 'rF2 Settings Widget'
 BASE_PATH = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__ + '/..')))
 RFACTOR_PLAYER = 'UserData/player/player.JSON'
 RFACTOR_DXCONFIG = 'UserData/Config_DX11.ini'
+
+UPDATE_VERSION_FILE = 'version.txt'
+UPDATE_INSTALL_FILE = 'rF2_Settings_Wizard_{version}_win64.exe'
 
 DEFAULT_LOG_LEVEL = 'DEBUG'
 
@@ -56,6 +61,10 @@ def get_presets_dir() -> Path:
     return Path(check_and_create_dir(settings_dir / PRESETS_DIR))
 
 
+def get_default_presets_dir() -> Path:
+    return Path(get_current_modules_dir()) / DEFAULT_PRESETS_DIR
+
+
 def get_log_dir() -> str:
     log_dir = user_log_dir(SETTINGS_DIR_NAME, '')
     setting_dir = os.path.abspath(os.path.join(log_dir, '../'))
@@ -63,3 +72,14 @@ def get_log_dir() -> str:
     check_and_create_dir(setting_dir)
     # Create <app-name>/log
     return check_and_create_dir(log_dir)
+
+
+def get_version() -> str:
+    f = Path('.') / 'vue' / 'package.json'
+    try:
+        with open(f.as_posix(), 'r') as f:
+            pkg = json.load(f)
+            return pkg.get('version')
+    except Exception as e:
+        print('Duh!', e)
+        return 'n.n'
