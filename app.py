@@ -12,8 +12,6 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
 
 # TODO: -Proper- logging setup
 # TODO: Video Settings Windowed/Borderless/Fullscreen switch
-# TODO: Edge launcher
-# TODO: save Presets in user myDocs dir, differentiate between app defaults and user saved presets
 # TODO: detect need for Admin rights during backup
 # TODO: JS close method
 

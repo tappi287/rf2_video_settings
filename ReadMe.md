@@ -14,11 +14,14 @@ an eye-candy favoured Replay setup.
 - Enter a name for a new Preset and hit the [ + ] button
 - adjust the settings to your liking, they will be automatically saved and applied to your rFactor installation whenever
 you change a setting
+
+##### Preset import/export
+Presets will be saved to your MyDocuments dir and can be shared. Drop preset files onto
+the app window to import those presets.
     
-The app is using one of your installed web browsers to display it's user interface. You need either M$ Edge or 
-G$$gle Chrome installed.
+The app will start in a browser window.
 
 #### Requirements
- - M$ Windows >= 10 (only Google Chrome will work prior to Win 10)
+ - M$ Windows >= 7 (only tested on 10)
+ - modern Web Browser
  - rFactor 2 Steam installation
- 
