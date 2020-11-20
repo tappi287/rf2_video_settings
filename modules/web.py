@@ -17,9 +17,9 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
                     datefmt='%H:%M', level=logging.DEBUG)
 
 
-@eel.expose
-def message():
-    return f'A random message from Python: {random.random()}'
+def expose_methods():
+    """ empty method we import to have the exposed methods registered """
+    pass
 
 
 @eel.expose

@@ -1,5 +1,7 @@
 import sys
+import platform
 import logging
+import webbrowser
 
 import eel
 
@@ -20,14 +22,22 @@ def start_eel():
     AppSettings.load()
     AppSettings.copy_default_presets()
 
-    # register exposed methods
-    from modules.web import message, get_presets, select_preset, save_preset, delete_preset, export_preset, \
-        import_preset
+    host = 'localhost'
+    port = 8123
     eel.init('web')
-    eel.start('index.html', size=(960, 600), mode='edge')
 
-    if 'fake_use_imports' == '':
-        print(message, get_presets, select_preset, save_preset, delete_preset, export_preset, import_preset)
+    try:
+        eel.start('index.html', size=(960, 600), host=host, port=port)
+    except EnvironmentError:
+        # If Chrome isn't found, fallback to Microsoft Edge on Win10 or greater
+        if sys.platform in ['win32', 'win64'] and int(platform.release()) >= 10:
+            eel.start('index.html', size=(960, 600), mode='edge', host=host, port=port)
+        # Fallback to opening a regular browser window
+        else:
+            eel.start('index.html', size=(960, 600), mode=None, app_mode=False, host=host, port=port, block=False)
+            webbrowser.open_new(f'http://{host}:{port}')
+            while True:
+                eel.sleep(10.0)
 
 
 if __name__ == '__main__':
