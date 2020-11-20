@@ -38,6 +38,10 @@
                       v-b-popover.hover.top="'Refresh Presets if you updated a setting in-game'">
               <b-icon icon="arrow-repeat"></b-icon>
             </b-button>
+            <b-button variants="secondary" @click="exportCurrentPreset"
+                      v-b-popover.hover.top="'Export current Preset to your documents dir to be able to share it!'">
+              <b-icon icon="file-earmark-arrow-up-fill"></b-icon>
+            </b-button>
             <b-button :disabled="!deleteButtonState" variant="rf-red" id="delete-preset-btn">
               <b-icon icon="x-circle-fill"></b-icon>
             </b-button>
@@ -72,14 +76,14 @@
 
         <div v-for="(preset, idx) in presets" :key="preset.name">
           <!-- Video Settings -->
-          <b-card v-if="selectedPresetIdx === idx" class="mt-3"
+          <b-card v-if="selectedPresetIdx === idx" class="mt-3" id="video"
                   bg-variant="dark" text-variant="white">
             <template #header>
               <h6 class="mb-0"><span class="title">{{ preset.video_settings.title }}</span></h6>
             </template>
             <!-- View Mode Grid-->
             <Setting v-for="setting in preset.video_settings.options" :key="setting.key"
-                     :setting="setting" variant="rf-orange" class="mr-3"
+                     :setting="setting" variant="rf-orange" class="mr-3" group_id="video"
                      v-on:setting-changed="updateSetting">
             </Setting>
             <!-- Footer -->
@@ -90,7 +94,7 @@
             </template>
           </b-card>
           <!-- Display Settings -->
-          <b-card v-if="selectedPresetIdx === idx" class="mt-3"
+          <b-card v-if="selectedPresetIdx === idx" class="mt-3" id="graphic"
                   bg-variant="dark" text-variant="white">
             <template #header>
               <h6 class="mb-0"><span class="title">{{ preset.graphic_options.title }}</span></h6>
@@ -98,6 +102,7 @@
             <template v-if="!viewMode">
               <Setting v-for="setting in preset.graphic_options.options" :key="setting.key"
                        :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixWidth="true"
+                       group_id="graphic"
                        v-on:setting-changed="updateSetting">
               </Setting>
             </template>
@@ -105,7 +110,7 @@
               <b-list-group class="text-left">
                 <b-list-group-item class="bg-transparent" v-for="setting in preset.graphic_options.options"
                                    :key="setting.key">
-                  <Setting :setting="setting" variant="rf-orange" :fixWidth="true"
+                  <Setting :setting="setting" variant="rf-orange" :fixWidth="true" group_id="graphic"
                            v-on:setting-changed="updateSetting">
                   </Setting>
                 </b-list-group-item>
@@ -113,13 +118,13 @@
             </template>
           </b-card>
           <!-- Advanced Display Settings -->
-          <b-card v-if="selectedPresetIdx === idx" class="mt-3"
+          <b-card v-if="selectedPresetIdx === idx" class="mt-3" id="advanced"
                   bg-variant="dark" text-variant="white">
             <template #header>
               <h6 class="mb-0"><span class="title">{{ preset.advanced_graphic_options.title }}</span></h6>
             </template>
             <Setting v-for="setting in preset.advanced_graphic_options.options" :key="setting.key"
-                     :setting="setting" variant="rf-orange"
+                     :setting="setting" variant="rf-orange" group_id="advanced"
                      v-on:setting-changed="updateSetting">
             </Setting>
             <template #footer><span class="small font-weight-lighter">More settings available soon</span></template>
@@ -175,9 +180,7 @@ export default {
 
       for (let i = 0; i <= this.presets.length; i++) {
         let preset = this.presets[i]
-        if (preset === undefined) {
-          continue
-        }
+        if (preset === undefined) { continue }
         if (preset.name === preset_data.selected_preset) {
           appSelectedPresetIdx = i
         }
@@ -201,6 +204,43 @@ export default {
         console.error('Error writing preset to rFactor 2!', r.msg)
       }
       return r
+    },
+    _exportPreset: async function (preset) {
+      const r = await getEelJsonObject(window.eel.export_preset(preset)())
+      this.previousPresetName = ''
+      if (!r.result) {
+        this.makeToast(r.msg, 'danger')
+        console.error('Error writing preset to rFactor 2!', r.msg)
+      }
+      return r
+    },
+    exportCurrentPreset: async function () {
+      this.isBusy = true
+      await this._exportPreset(this.getSelectedPreset())
+      this.isBusy = false
+    },
+    importPreset: async function(importPreset) {
+      if (importPreset === undefined) { return }
+      this.isBusy = true
+      // Avoid doubled preset names
+      for (let i = 0; i <= this.presets.length; i++) {
+        let preset = this.presets[i]
+        if (preset === undefined) { continue }
+        if (preset.name === importPreset.name) {
+          importPreset.name = importPreset.name + '_imp'
+        }
+      }
+
+      let r = await getEelJsonObject(window.eel.import_preset(importPreset)())
+      if (r !== undefined && r.result) {
+        this.presets.push(r.preset)
+        this.makeToast('Preset ' + importPreset.name + ' imported.')
+      } else {
+        this.makeToast('Preset ' + importPreset.name + ' could not be imported.',
+            'danger', 'Error')
+      }
+
+      this.isBusy = false
     },
     updateSetting: async function (setting, value) {
       this.isBusy = true

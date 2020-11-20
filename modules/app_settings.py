@@ -1,21 +1,22 @@
+import json
 import logging
 import sys
 from pathlib import Path
 from shutil import copyfile
-import jsonpickle
+from typing import Iterator
 
-from .globals import get_settings_dir, SETTINGS_FILE_NAME, get_current_modules_dir, get_default_presets_dir, \
-    get_presets_dir
+from .utils import JsonRepr
+from .globals import get_settings_dir, SETTINGS_FILE_NAME, get_default_presets_dir, get_user_presets_dir
 from .rfactor import RfactorPlayer
 
-jsonpickle.set_preferred_backend('json')
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
 
 
-class AppSettings:
+class AppSettings(JsonRepr):
     backup_created = False
     selected_preset = str()
+    deleted_defaults = list()  # Default Presets the user deleted
 
     def __init__(self):
         self.backup_created = AppSettings.backup_created
@@ -45,12 +46,17 @@ class AppSettings:
         return result
 
     @staticmethod
-    def copy_default_presets() -> bool:
+    def iterate_default_presets() -> Iterator[Path]:
+        for file in get_default_presets_dir().glob('*.json'):
+            yield file
+
+    @classmethod
+    def copy_default_presets(cls) -> bool:
         result = False
 
-        for file in get_default_presets_dir().glob('*.json'):
-            dst = get_presets_dir() / file.name
-            if dst.exists():
+        for file in cls.iterate_default_presets():
+            dst = get_user_presets_dir() / file.name
+            if dst.exists() or file.stem in cls.deleted_defaults:
                 continue
 
             try:
@@ -70,7 +76,11 @@ class AppSettings:
     def save(cls):
         try:
             with open(cls._get_settings_file().as_posix(), 'w') as f:
-                f.write(jsonpickle.encode(AppSettings()))
+                js_dict = dict()
+                for k, v in cls.__dict__.items():
+                    if k[:2] != '__' and isinstance(v, (bool, str, list, dict)):
+                        js_dict[k] = v
+                f.write(json.dumps(js_dict))
         except Exception as e:
             logging.fatal('Could not save application settings! %s', e)
             return False
@@ -80,13 +90,12 @@ class AppSettings:
     def load(cls) -> bool:
         try:
             with open(cls._get_settings_file().as_posix(), 'r') as f:
-                settings = jsonpickle.decode(f.read())
+                settings = json.loads(f.read())
 
                 # - Restore class fields
-                for k, v in settings.__dict__.items():
-                    if k[:2] != '__':
-                        if not callable(v):
-                            setattr(AppSettings, k, v)
+                for k, v in settings.items():
+                    if k[:2] != '__' and not callable(v):
+                        setattr(AppSettings, k, v)
         except Exception as e:
             logging.fatal('Could not load application settings! %s', e)
             return False

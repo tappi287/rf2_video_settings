@@ -1,14 +1,16 @@
-import sys
 import json
-import random
 import logging
+import random
+import sys
+from pathlib import WindowsPath
+from subprocess import Popen
 
 import eel
 
 from .app_settings import AppSettings
-from .globals import get_presets_dir
+from .globals import get_user_presets_dir
+from .preset import Preset, load_presets_from_dir
 from .rfactor import RfactorPlayer
-from .preset import Preset, load_preset
 
 # -- Log to Stdout keeping it short
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
@@ -34,18 +36,10 @@ def get_presets():
         return
 
     # - Load saved Presets
-    presets = [current_preset]
-    selected_preset = None
     preset_changed = None
 
-    for preset_file in get_presets_dir().glob('*.json'):
-        preset = load_preset(preset_file)
-        if not preset:
-            continue
-        if preset.name == AppSettings.selected_preset:
-            selected_preset = preset
-        if preset and preset.name != current_preset.name:
-            presets.append(preset)
+    presets, selected_preset = load_presets_from_dir(get_user_presets_dir(), current_preset, AppSettings.selected_preset)
+    presets = [current_preset] + presets
 
     # - Check if the currently selected preset differs
     #   from the actual rFactor 2 settings on disk.
@@ -58,7 +52,7 @@ def get_presets():
         AppSettings.save()
 
     presets = sorted(presets, key=lambda k: k.name)
-    current_preset.save()
+    current_preset.export()
 
     return json.dumps({'presets': [p.to_js() for p in presets],
                        'selected_preset': AppSettings.selected_preset,
@@ -77,10 +71,8 @@ def save_preset(preset_js_dict):
     # -- Save the preset
     p = Preset()
     p.from_js_dict(preset_js_dict)
-    if not p.save():
-        logging.error('Error saving Preset: %s', p.name)
+    if not p.export():
         return json.dumps({'result': False, 'msg': f'Error saving Preset: {p.name}'})
-
     logging.debug('Saved Preset: %s', p.name)
 
     rf = RfactorPlayer()
@@ -91,8 +83,34 @@ def save_preset(preset_js_dict):
 
 
 @eel.expose
+def export_preset(preset_js_dict):
+    # -- Export the preset
+    p = Preset()
+    p.from_js_dict(preset_js_dict)
+    if not p.save_unique_file():
+        return json.dumps({'result': False, 'msg': f'Error exporting Preset: {p.name}'})
+
+    # -- Open Explorer Window
+    presets_path = str(WindowsPath(get_user_presets_dir()))
+    Popen(['explorer', f'/n,{presets_path}'])
+
+    return json.dumps({'result': True, 'msg': f'Preset {p.name} exported.'})
+
+
+@eel.expose
+def import_preset(preset_js_dict):
+    p = Preset()
+    p.from_js_dict(preset_js_dict)
+    return json.dumps({'result': True, 'preset': p.to_js()})
+
+
+@eel.expose
 def delete_preset(preset_name):
-    for preset_file in get_presets_dir().glob('*.json'):
+    default_presets = [f.stem for f in AppSettings.iterate_default_presets()]
+
+    for preset_file in get_user_presets_dir().glob('*.json'):
         if preset_file.stem == preset_name:
+            if preset_name in default_presets:
+                AppSettings.deleted_defaults.append(preset_name)
             preset_file.unlink()
             logging.debug('Deleted Preset: %s', preset_name)

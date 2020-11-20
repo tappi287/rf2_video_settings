@@ -1,11 +1,10 @@
-import sys
+import json
 import logging
+import sys
 from pathlib import Path
 from typing import Iterable, Tuple, Optional
 
-import jsonpickle
-
-from modules.globals import get_presets_dir
+from modules.globals import get_user_presets_dir
 from modules.settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions
 from modules.utils import create_file_safe_name
 
@@ -44,27 +43,23 @@ class Preset:
         base_name = create_file_safe_name(self.name)
         file_name = base_name
         name_idx = 0
-        preset_dir = get_presets_dir()
+        preset_dir = get_user_presets_dir()
 
         while [_ for _ in preset_dir.glob(f'{file_name}*.json')]:
             name_idx += 1
             file_name = f'{base_name}_{name_idx}'
 
-        self.save(file_name)
+        self.export(file_name)
 
-    def save(self, unique_name: str = None) -> bool:
-        """ Save the preset to the application settings dir
-            as jsonpickled python object.
-        """
+    def export(self, unique_name: str = None):
         file_name = create_file_safe_name(unique_name or self.name)
-        preset_dir = get_presets_dir()
-        file = preset_dir / f'{file_name}.json'
+        file = get_user_presets_dir() / f'{file_name}.json'
 
         try:
             with open(file.as_posix(), 'w') as f:
-                f.write(jsonpickle.encode(self))
+                json.dump(self.to_js(export=True), f, indent=2, sort_keys=True)
         except Exception as e:
-            logging.fatal('Could not save Preset! %s', e)
+            logging.fatal('Could not write Preset export! %s', e)
             return False
         return True
 
@@ -73,9 +68,9 @@ class Preset:
         for key in self._option_base_classes.keys():
             yield key, getattr(self, key)
 
-    def to_js(self):
+    def to_js(self, export: bool = False):
         """ Convert to json serializable dictionary """
-        preset_dict = {k: v.to_js() for k, v in self._iterate_options()}
+        preset_dict = {k: v.to_js(export) for k, v in self._iterate_options()}
         preset_dict['name'] = self.name
         preset_dict['desc'] = self.desc
         return preset_dict
@@ -85,16 +80,16 @@ class Preset:
         self.name = js_dict.get('name')
         self.desc = js_dict.get('desc')
         for key, _ in self._iterate_options():
-            base_class = self._option_base_classes.get(key)
-            options_obj = base_class()
-            options_obj.from_js_dict(js_dict.get(key))
-            setattr(self, key, options_obj)
+            options_class = self._option_base_classes.get(key)
+            options_instance = options_class()
+            options_instance.from_js_dict(js_dict.get(key))
+            setattr(self, key, options_instance)
 
     def __eq__(self, other):
         """ Report difference between presets
 
         :param modules.preset.Preset other:
-        :return: False if other options differ
+        :return: True if other options differ
         """
         for key, options in self._iterate_options():
             if getattr(other, key) != options:
@@ -104,17 +99,29 @@ class Preset:
         return True
 
 
+def load_presets_from_dir(preset_dir: Path, current_preset: Preset = None, selected_preset_name: str = None):
+    presets, selected_preset = list(), None
+
+    for preset_file in preset_dir.glob('*.json'):
+        preset = load_preset(preset_file)
+        if not preset:
+            continue
+        if preset.name == selected_preset_name:
+            selected_preset = preset
+        if current_preset and preset and preset.name != current_preset.name:
+            presets.append(preset)
+
+    return presets, selected_preset
+
+
 def load_preset(file: Path) -> Optional[Preset]:
     default_preset = Preset()
     try:
         with open(file.as_posix(), 'r') as f:
-            new_preset = jsonpickle.decode(f.read())
+            new_preset_dict = json.loads(f.read())
 
-        # Migrate if changes to Preset class happened
-        if type(new_preset) is dict:
-            new_preset_obj = Preset()
-            new_preset_obj.from_js_dict(new_preset)
-            new_preset = new_preset_obj
+            new_preset = Preset()
+            new_preset.from_js_dict(new_preset_dict)
 
         # - Make sure older Preset Versions contain all fields
         for k, v in default_preset.__dict__.items():

@@ -1,6 +1,6 @@
 import logging
 import sys
-from typing import Union, List
+from typing import Union, List, Optional
 
 from .utils import JsonRepr
 
@@ -123,6 +123,8 @@ adjustable_video_settings = {
 
 
 class Option(JsonRepr):
+    export_skip_keys = ['settings', 'hidden', 'ini_type']
+
     def __init__(self):
         self.key = 'Player JSON key'
         self.name = 'Friendly Setting Name'
@@ -170,20 +172,26 @@ class BaseOptions(JsonRepr):
             option.ini_type = detail_dict.get('_type')
             self.options.append(option)
 
-    def to_js(self):
-        return {'key': self.key, 'title': self.title, 'options': [option.to_js_object() for option in self.options]}
+    def to_js(self, export: bool = False) -> dict:
+        return {'key': self.key, 'title': self.title,
+                'options': [option.to_js_object(export) for option in self.options]}
+
+    def _get_option(self, key) -> Optional[Option]:
+        o = [o for o in self.options if o.key == key]
+        if o:
+            return o[0]
 
     def from_js_dict(self, json_dict):
         for k, v in json_dict.items():
             if k == 'options':
-                options = list()
-                for opt in v:
-                    o = Option()
-                    for _k, _v in opt.items():
-                        setattr(o, _k, _v)
-                    options.append(o)
-                setattr(self, k, options)
-                continue
+                # -- Read only values for Option objects that already exist
+                #    We assume the BaseOptions object has been initialized in it's
+                #    sub-classes with valid default settings.
+                for js_opt in v:
+                    _k, _v = js_opt.get('key'), js_opt.get('value')
+                    opt = self._get_option(_k)
+                    if opt and _v is not None:
+                        opt.value = _v
             else:
                 setattr(self, k, v)
 

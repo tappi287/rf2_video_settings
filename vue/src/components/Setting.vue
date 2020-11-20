@@ -2,15 +2,13 @@
   <div class="setting" v-if="!settingHidden">
     <b-input-group size="sm" class="setting-field">
       <b-input-group-prepend>
-        <div v-if="fixWidth" class="fixed-width">
-          <b-input-group-text class="info-field">{{ setting.name }}</b-input-group-text>
-        </div>
-        <template v-else>
-          <b-input-group-text class="info-field">{{ setting.name }}</b-input-group-text>
-        </template>
+        <b-input-group-text class="info-field fixed-width-name" :id="nameId">
+          {{ setting.name }}
+        </b-input-group-text>
       </b-input-group-prepend>
       <b-input-group-append>
-        <b-dropdown :text="currentSettingName" :variant="variant" class="setting-item">
+        <b-dropdown :text="currentSettingName" :variant="variant" :id="elemId"
+                    class="setting-item fixed-width-setting">
           <b-dropdown-item v-for="s in setting.settings" :key="s.value"
                            @click="selectSetting(s)">
             {{ s.name }}
@@ -29,7 +27,10 @@ export default {
   name: 'Setting',
   data: function () {
     return {
-      currentSettingValue: {}
+      currentSettingValue: {},
+      uniqueGroupId: 'settings' + this._uid,  // Id of parent element holding a group of Setting Components
+      elemId: 'setting' + this._uid,
+      nameId: 'name' + this._uid,
     }
   },
   methods: {
@@ -45,14 +46,42 @@ export default {
         if (setting === undefined) { continue }
         func(this, setting)
       }
-    }
+    },
+    getMaxWidth: function (elements) {
+      let maxWidth = 0
+      for (let i in elements) {
+        if (elements[i].clientWidth !== undefined) {
+          maxWidth = Math.max(maxWidth, parseInt(elements[i].clientWidth))
+        }
+      }
+      return maxWidth
+    },
+    setFixedWidth: function () {
+      // Iterate all elements of this setting group_id and set width to widest element found
+      const nameElem = document.querySelectorAll('#' + this.group_id + ' .fixed-width-name')
+      const settElem = document.querySelectorAll('#' + this.group_id + ' .fixed-width-setting')
+
+      let nameMaxWidth = this.getMaxWidth(nameElem); let settMaxWidth = this.getMaxWidth(settElem)
+
+      let e = document.getElementById(this.nameId)
+      if (e !== null) { e.style.width = String(nameMaxWidth) + 'px' }
+      let s = document.getElementById(this.elemId)
+      if (s !== null) { s.style.width = String(settMaxWidth) + 'px' }
+    },
   },
   props: {
-    setting: Object, variant: String, fixWidth: Boolean
+    setting: Object, variant: String, fixWidth: Boolean, group_id: String
   },
   mounted() {
+    if (this.group_id !== undefined) { this.uniqueGroupId = this.group_id }
     if (this.variant === undefined) { this.variant = 'secondary'}
     this.currentSettingValue = this.setting.value
+    if (this.fixWidth) {
+      // Access after rendering finished
+      setTimeout(() => {
+        this.setFixedWidth()
+      }, 0)
+    }
   },
   computed: {
     currentSettingName: function () {
@@ -77,5 +106,4 @@ export default {
 <style scoped>
 .setting { display: inline-block }
 .setting-item { min-width: 7.0rem; font-weight: lighter; }
-.fixed-width { min-width: 10rem; }
 </style>

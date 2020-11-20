@@ -3,13 +3,17 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
+[[source]]
+name = "piwigo"
+url = "https://piwigo.ilikeviecher.com/ftp-upload/packages/"
+verify_ssl = true
+
 [dev-packages]
 
 [packages]
-eel = "*"
+eel = {version = "==0.14.1", index = "piwigo"}
 pyinstaller = "*"
 appdirs = "*"
-jsonpickle = "*"
 
 [requires]
 python_version = "3.8"

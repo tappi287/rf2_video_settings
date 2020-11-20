@@ -61,6 +61,11 @@ def get_presets_dir() -> Path:
     return Path(check_and_create_dir(settings_dir / PRESETS_DIR))
 
 
+def get_user_presets_dir() -> Path:
+    docs_dir = Path(os.path.expanduser('~\\Documents\\' + SETTINGS_DIR_NAME))
+    return Path(check_and_create_dir(docs_dir))
+
+
 def get_default_presets_dir() -> Path:
     return Path(get_current_modules_dir()) / DEFAULT_PRESETS_DIR
 

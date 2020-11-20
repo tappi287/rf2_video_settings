@@ -1,8 +1,20 @@
 <template>
   <div id="app">
-    <Main></Main>
+    <div id="dropzone">
+      <b-overlay :show="dragActive" variant="white" :no-center="true" opacity="0.9" :fixed="true">
+        <Main ref="main"></Main>
+        <!-- Drag Overlay Content-->
+        <template #overlay>
+          <div id="drop-animation" class="text-center">
+            <b-icon icon="file-arrow-down-fill" font-scale="3" animation="cylon-vertical"
+                    variant="dark"></b-icon>
+            <p class="text-dark mt-4">Drop a Preset JSON file to import...</p>
+          </div>
+        </template>
+      </b-overlay>
+    </div>
     <div class="mt-3 main-footer small font-weight-lighter">
-      <span>Published under MIT license &#169; 2020 Stefan Tapper </span>
+      <span>rf2 Settings Widget v{{ ver }} published under MIT license &#169; 2020 Stefan Tapper </span>
       <a href="https://www.github.com/tappi287/rf2_video_settings" target="_blank">Source @ Github</a>
     </div>
   </div>
@@ -10,16 +22,56 @@
 
 <script>
 import "fontsource-ubuntu"
+import {version} from '../package.json';
 import Main from "./components/Main.vue";
 import {createPopperLite as createPopper, flip, preventOverflow} from "@popperjs/core";
 
 export default {
   name: 'App',
   data: function () {
-    return {}
+    return {
+      dragActive: false,
+      ver: version
+    }
+  },
+  methods: {
+    handleDragOver: function (event) {
+      event.stopPropagation()
+      event.preventDefault()
+      event.dataTransfer.dropEffect = 'copy'
+      this.dragActive = true
+    },
+    handleDragLeave () {
+      this.dragActive = false
+    },
+    handleFileSelect: async function (evt) {
+      evt.stopPropagation()
+      evt.preventDefault()
+      this.dragActive = false
+
+      let files = evt.dataTransfer.files
+
+      for (let i = 0; i < files.length; i++) {
+        let f = files[i]
+        if (f.type !== 'application/json') {
+          this.Main.methods.makeToast(
+              'The dropped file is of the wrong type.', 'danger', 'File Import')
+          break
+        }
+        let importPreset = JSON.parse(await f.text())
+        await this.$refs.main.importPreset(importPreset)
+      }
+    },
   },
   components: {
     Main
+  },
+  mounted() {
+    // Setup the dnd listeners.
+    let dropZone = document.getElementById('dropzone')
+    dropZone.addEventListener('dragover', this.handleDragOver, false)
+    dropZone.addEventListener('dragleave', this.handleDragLeave, false)
+    dropZone.addEventListener('drop', this.handleFileSelect, false)
   }
 }
 
@@ -43,7 +95,10 @@ if (!pass) {
   text-align: center;
   color: #efefef;
 }
-
+#drop-animation {
+  position: relative;
+  top: 30%; margin: auto;
+}
 body {
   background: none !important;
 }
