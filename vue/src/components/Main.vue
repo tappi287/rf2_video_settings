@@ -141,7 +141,11 @@
           <h6 class="mb-0"><span class="title">Error</span></h6>
         </template>
         <p>Could not detect a rFactor 2 Steam installation with a player.JSON and/or Config_DX11.ini</p>
-        <pre>{{ error }}</pre>
+        <pre class="text-white">{{ error }}</pre>
+        <!-- <p>
+          Try to re-run the application with right-click: Run as Administrator if your rFactor 2 installation is
+          located in your C:\Program Files directory.
+        </p> -->
         <p>
           Click here to try to re-run this application with administrative privileges:
           <b-button @click="reRunAsAdmin" size="sm">Re-Run</b-button>

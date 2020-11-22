@@ -39,6 +39,8 @@ class SteamApps:
             return
 
         m = self.steam_apps.get(app_id)
+        if not m:
+            return
 
         for lib_folder in self.steam_apps.get(STEAM_LIBRARY_FOLDERS, list()):
             app_folder = lib_folder / STEAM_APPS_INSTALL_FOLDER / m.get('installdir')

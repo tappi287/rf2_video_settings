@@ -63,9 +63,13 @@ export default {
     // None yet
   },
   mounted() {
+    /*
+    Remove Auto-update for now
+
     setTimeout(() => {
       this.checkUpdate()
     }, 2500)
+     */
   }
 }
 </script>

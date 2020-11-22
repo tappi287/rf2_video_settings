@@ -1,6 +1,5 @@
 import json
 import logging
-import random
 import sys
 from pathlib import WindowsPath
 from subprocess import Popen
@@ -10,11 +9,8 @@ import eel
 from .app_settings import AppSettings
 from .globals import get_user_presets_dir
 from .preset import Preset, load_presets_from_dir
-from .rfactor import RfactorPlayer
-
-# -- Log to Stdout keeping it short
 from .runasadmin import run_as_admin
-from .updater import GitHubUpdater
+from .rfactor import RfactorPlayer
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
@@ -48,9 +44,11 @@ def re_run_admin():
         request_close()
 
 
+"""
+Remove auto-updates for now
 @eel.expose
 def check_for_updates():
-    """ Report to FrontEnd if a new version is available """
+    # Report to FrontEnd if a new version is available
     up = GitHubUpdater()
     if up.is_current_version():
         return json.dumps({'result': False, 'version': up.version})
@@ -60,7 +58,7 @@ def check_for_updates():
 
 @eel.expose
 def download_update():
-    """ Download the updated setup """
+    # Download the updated setup
     up = GitHubUpdater()
     if not up.is_current_version():
         return json.dumps({'result': up.download_update()})
@@ -69,12 +67,12 @@ def download_update():
 
 @eel.expose
 def run_update():
-    """ Close the App and run the updated setup """
+    # Close the App and run the updated setup
     if GitHubUpdater.execute_update_setup():
         request_close()
         return json.dumps({'result': True})
     return json.dumps({'result': False})
-
+"""
 
 
 @eel.expose
