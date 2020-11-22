@@ -136,6 +136,15 @@ def upload_release() -> bool:
     return False
 
 
+def run_npm_build():
+    # -- Run npm and build web package
+    cd = Path('.') / 'vue'
+    cmd = ['npm', 'run', 'build']
+
+    p = Popen(args=cmd, shell=True, cwd=cd.as_posix())
+    p.wait()
+
+
 def run_pyinstaller(spec_file: str):
     args = ['pyinstaller', '--noconfirm', spec_file]
     p = Popen(args=args)
@@ -158,14 +167,13 @@ def main(process: int = 0):
     if build_dir.exists():
         shutil.rmtree(build_dir)
 
-    # Create distribution directory
-    out_dir = Path(DIST_DIR)
-    if not out_dir.exists():
-        out_dir.mkdir()
+    build_dir.mkdir()
 
-    update_version_info(out_dir)
+    update_version_info(build_dir)
 
     if process in (0, 1, 2):
+        run_npm_build()
+
         # Build with PyInstaller
         result = run_pyinstaller(SPEC_FILE)
 

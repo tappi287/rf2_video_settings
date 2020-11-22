@@ -1,6 +1,9 @@
 <template>
   <div id="main" v-cloak>
     <div class="text-left mt-2">
+      <div class="float-right" v-if="error !== ''">
+        <b-button @click="requestClose" size="sm">Close</b-button>
+      </div>
       <h4>
         <b-img src="@/assets/app_icon.webp" width="64" alt="rFactor 2 logo" class="mr-3 logo-style"></b-img>
         <span class="title"><i>rFactor 2 Settings Widget</i></span>
@@ -132,6 +135,25 @@
         </div>
       </b-overlay>
     </template>
+    <template v-if="error !== ''">
+      <b-card class="mt-3" bg-variant="dark" text-variant="white">
+        <template #header>
+          <h6 class="mb-0"><span class="title">Error</span></h6>
+        </template>
+        <p>Could not detect a rFactor 2 Steam installation with a player.JSON and/or Config_DX11.ini</p>
+        <pre>{{ error }}</pre>
+        <p>
+          Click here to try to re-run this application with administrative privileges:
+          <b-button @click="reRunAsAdmin" size="sm">Re-Run</b-button>
+        </p>
+        <template #footer>
+          <span class="small font-weight-lighter">
+            Please make sure that a rFactor 2 Steam installation is present on your machine and that you have at least
+            once started the game.
+          </span>
+        </template>
+      </b-card>
+    </template>
   </div>
 </template>
 
@@ -149,7 +171,8 @@ export default {
       presetDesc: '',
       isBusy: false,
       viewMode: 0,
-      previousPresetName: ''
+      previousPresetName: '',
+      error: ''
     }
   },
   methods: {
@@ -163,10 +186,17 @@ export default {
         isBusy: false
       })
     },
+    requestClose: async function () {
+      await window.eel.close_request()
+    },
+    reRunAsAdmin: async function () {
+      await window.eel.re_run_admin()
+    },
     getPresets: async function () {
       this.isBusy = true
       this.presets = []
       const preset_data = await getEelJsonObject(window.eel.get_presets()())
+      if (preset_data === undefined || preset_data === null) { this.error = 'Error obtaining presets.'; return }
       this.presets = preset_data.presets
       let appSelectedPresetIdx = -1
       let changeMsg = ''

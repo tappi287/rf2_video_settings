@@ -21,6 +21,8 @@ BASE_PATH = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__ + 
 RFACTOR_PLAYER = 'UserData/player/player.JSON'
 RFACTOR_DXCONFIG = 'UserData/Config_DX11.ini'
 
+GIT_RELEASE_URL = 'https://api.github.com/repos/tappi287/rf2_video_settings/releases/latest'
+
 UPDATE_VERSION_FILE = 'version.txt'
 UPDATE_INSTALL_FILE = 'rF2_Settings_Wizard_{version}_win64.exe'
 
@@ -81,10 +83,20 @@ def get_log_dir() -> str:
 
 def get_version() -> str:
     f = Path('.') / 'vue' / 'package.json'
+    if f.is_file():
+        try:
+            with open(f.as_posix(), 'r') as f:
+                pkg = json.load(f)
+                return pkg.get('version')
+        except Exception as e:
+            print('Duh!', e)
+
+    f = Path('.') / 'version.txt'
     try:
         with open(f.as_posix(), 'r') as f:
-            pkg = json.load(f)
-            return pkg.get('version')
+            version = f.read()
+            return version
     except Exception as e:
         print('Duh!', e)
-        return 'n.n'
+
+    return '0.0.0'

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "rF2-Settings-Widget"
-#define MyAppVersion "0.5.2"
+#define MyAppVersion "0.6.4"
 #define MyAppPublisher "Stefan Tapper"
 #define MyAppURL "https://ilikeviecher.com"
 #define MyAppExeName "rF2-Settings-Widget.exe"
@@ -22,7 +22,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile="dist\license.txt"
+LicenseFile="license.txt"
 OutputDir="dist"
 OutputBaseFilename=rF2_Settings_Wizard_{#MyAppVersion}_win64
 SetupIconFile="vue\src\assets\app_icon.ico"

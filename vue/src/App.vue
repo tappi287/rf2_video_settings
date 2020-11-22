@@ -16,6 +16,7 @@
     <div class="mt-3 main-footer small font-weight-lighter">
       <span>rf2 Settings Widget v{{ ver }} published under MIT license &#169; 2020 Stefan Tapper </span>
       <a href="https://www.github.com/tappi287/rf2_video_settings" target="_blank">Source @ Github</a>
+      <Updater></Updater>
     </div>
   </div>
 </template>
@@ -24,6 +25,7 @@
 import "fontsource-ubuntu"
 import {version} from '../package.json';
 import Main from "./components/Main.vue";
+import Updater from "@/components/Updater";
 import {createPopperLite as createPopper, flip, preventOverflow} from "@popperjs/core";
 
 export default {
@@ -64,6 +66,7 @@ export default {
     },
   },
   components: {
+    Updater,
     Main
   },
   mounted() {

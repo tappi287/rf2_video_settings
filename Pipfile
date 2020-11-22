@@ -14,6 +14,7 @@ verify_ssl = true
 eel = {version = "==0.14.1", index = "piwigo"}
 pyinstaller = "*"
 appdirs = "*"
+requests = "*"
 
 [requires]
 python_version = "3.8"

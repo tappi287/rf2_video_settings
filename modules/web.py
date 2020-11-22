@@ -13,6 +13,9 @@ from .preset import Preset, load_presets_from_dir
 from .rfactor import RfactorPlayer
 
 # -- Log to Stdout keeping it short
+from .runasadmin import run_as_admin
+from .updater import GitHubUpdater
+
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
 
@@ -20,6 +23,58 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
 def expose_methods():
     """ empty method we import to have the exposed methods registered """
     pass
+
+
+def request_close():
+    logging.info('Received close request.')
+    eel.closeApp()(close_js_result)
+
+
+def close_js_result(result):
+    logging.info('JS close app result: %s', result)
+
+
+@eel.expose
+def close_request():
+    request_close()
+
+
+@eel.expose
+def re_run_admin():
+    AppSettings.needs_admin = True
+    AppSettings.save()
+
+    if not run_as_admin():
+        request_close()
+
+
+@eel.expose
+def check_for_updates():
+    """ Report to FrontEnd if a new version is available """
+    up = GitHubUpdater()
+    if up.is_current_version():
+        return json.dumps({'result': False, 'version': up.version})
+
+    return json.dumps({'result': True, 'version': up.git_version})
+
+
+@eel.expose
+def download_update():
+    """ Download the updated setup """
+    up = GitHubUpdater()
+    if not up.is_current_version():
+        return json.dumps({'result': up.download_update()})
+    return json.dumps({'result': False})
+
+
+@eel.expose
+def run_update():
+    """ Close the App and run the updated setup """
+    if GitHubUpdater.execute_update_setup():
+        request_close()
+        return json.dumps({'result': True})
+    return json.dumps({'result': False})
+
 
 
 @eel.expose

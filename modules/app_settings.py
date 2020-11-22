@@ -15,6 +15,7 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
 
 class AppSettings(JsonRepr):
     backup_created = False
+    needs_admin = False
     selected_preset = str()
     deleted_defaults = list()  # Default Presets the user deleted
 
@@ -26,8 +27,12 @@ class AppSettings(JsonRepr):
     def create_backup(rf: RfactorPlayer):
         result = False
         files = (rf.player_file, rf.ini_file)
+        has_permission_error = False
 
         for org in files:
+            if not org.is_file():
+                continue
+
             bak = org.with_suffix('.original')
 
             if AppSettings.backup_created and bak.exists():
@@ -38,8 +43,15 @@ class AppSettings(JsonRepr):
                 copyfile(org, bak)
                 result = True
             except Exception as e:
+                if type(e) is PermissionError:
+                    has_permission_error = True
+
                 logging.fatal('Could not back-up file: %s %s', org.as_posix(), e)
                 result = False
+
+        if has_permission_error:
+            logging.error('Accessing rf2 files requires Admin rights!')
+            AppSettings.needs_admin = True
 
         AppSettings.backup_created = result
         AppSettings.save()
