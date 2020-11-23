@@ -1,6 +1,6 @@
-import sys
-import platform
 import logging
+import platform
+import sys
 import webbrowser
 
 import eel
