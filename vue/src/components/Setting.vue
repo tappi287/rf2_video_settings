@@ -16,9 +16,9 @@
                       class="setting-item fixed-width-setting">
             <b-dropdown-item v-for="s in setting.settings" :key="s.value"
                              @click="selectSetting(s)">
-              {{ s.name }}
+              {{ s.name }}<template v-if="showPerformance && s.perf !== undefined"> {{ s.perf }}</template>
               <b-icon v-if="s.desc !== undefined" icon="info-square"
-                      v-b-popover.hover.left="s.desc">
+                      class="ml-2" v-b-popover.hover.left="s.desc">
               </b-icon>
             </b-dropdown-item>
           </b-dropdown>
@@ -97,7 +97,7 @@ export default {
     },
   },
   props: {
-    setting: Object, variant: String, fixWidth: Boolean, group_id: String
+    setting: Object, variant: String, fixWidth: Boolean, group_id: String, show_performance: Boolean
   },
   created: function () {
     // Check Setting Type
@@ -133,6 +133,10 @@ export default {
         }
       })
       return name
+    },
+    showPerformance: function () {
+      if (this.show_performance !== undefined) { return this.show_performance }
+      return false
     },
     settingHidden: function () {
       if (this.setting === undefined) { return true }

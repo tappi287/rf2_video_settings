@@ -85,9 +85,9 @@
               <template #header>
                 <h6 class="mb-0"><span class="title">{{ preset.video_settings.title }}</span></h6>
               </template>
-              <!-- View Mode Grid-->
               <Setting v-for="setting in preset.video_settings.options" :key="setting.key"
                        :setting="setting" variant="rf-orange" class="mr-3" group_id="video"
+                       :show_performance="showPerformance"
                        v-on:setting-changed="updateSetting">
               </Setting>
               <!-- Footer -->
@@ -101,20 +101,33 @@
             <b-card v-if="selectedPresetIdx === idx" class="mt-3" id="graphic"
                     bg-variant="dark" text-variant="white">
               <template #header>
-                <h6 class="mb-0"><span class="title">{{ preset.graphic_options.title }}</span></h6>
+                <h6 class="mb-0">
+                  <span class="title">{{ preset.graphic_options.title }}</span>
+                  <div class="float-right">
+                    <b-button size="sm" @click="showPerformance = !showPerformance"
+                              v-b-popover.lefttop.hover="'Show performance data next to supported settings in ' +
+                               'the dropdown menu. ' +
+                               'G=relative GPU performance impact | C=relative CPU performance impact'">
+                      <b-icon :icon="showPerformance ? 'graph-up' : 'graph-down'"></b-icon>
+                    </b-button>
+                  </div>
+                </h6>
               </template>
               <template v-if="!viewMode">
+                <!-- View Mode Grid -->
                 <Setting v-for="setting in preset.graphic_options.options" :key="setting.key"
                          :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixWidth="true"
-                         group_id="graphic"
+                         group_id="graphic" :show_performance="showPerformance"
                          v-on:setting-changed="updateSetting">
                 </Setting>
               </template>
               <template v-else>
+                <!-- View Mode List -->
                 <b-list-group class="text-left">
                   <b-list-group-item class="bg-transparent" v-for="setting in preset.graphic_options.options"
                                      :key="setting.key">
                     <Setting :setting="setting" variant="rf-orange" :fixWidth="true" group_id="graphic"
+                             :show_performance="showPerformance"
                              v-on:setting-changed="updateSetting">
                     </Setting>
                   </b-list-group-item>
@@ -129,6 +142,7 @@
               </template>
               <Setting v-for="setting in preset.advanced_graphic_options.options" :key="setting.key"
                        :setting="setting" variant="rf-orange" group_id="advanced" class="mr-3 mb-3" :fixWidth="true"
+                       :show_performance="showPerformance"
                        v-on:setting-changed="updateSetting">
               </Setting>
               <template #footer><span class="small font-weight-lighter">More settings available soon</span></template>
@@ -179,7 +193,8 @@ export default {
       viewMode: 0,
       previousPresetName: '',
       error: '',
-      settingsAreaId: settingsAreaId
+      settingsAreaId: settingsAreaId,
+      showPerformance: false,
     }
   },
   methods: {

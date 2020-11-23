@@ -38,8 +38,10 @@ player_adjustable_settings = {
                        },
     'Special FX': {'name': 'Special Effects', 'value': 4,
                    'settings':
-                       ({'value': 0, 'name': 'Off'}, {'value': 1, 'name': 'Low'},
-                        {'value': 2, 'name': 'Medium'}, {'value': 3, 'name': 'High'}, {'value': 4, 'name': 'Ultra'}),
+                       ({'value': 0, 'name': 'Off'},
+                        {'value': 1, 'name': 'Low', 'perf': 'G+0,18% C+0,00%'},
+                        {'value': 2, 'name': 'Medium'}, {'value': 3, 'name': 'High'},
+                        {'value': 4, 'name': 'Ultra', 'perf': 'G+0,90% C+2,20%'}),
                    },
     'Shadows': {'name': 'Shadows', 'value': 3,
                 'settings':
@@ -54,30 +56,43 @@ player_adjustable_settings = {
     'Soft Particles': {'name': 'Soft Particles', 'value': 1,
                        'settings':
                             ({'value': 0, 'name': 'Off'}, {'value': 1, 'name': 'Low', 'desc': 'Cheap soft edges'},
-                             {'value': 2, 'name': 'High', 'desc': 'Depth buffered soft edges'}),
+                             {'value': 2, 'name': 'High', 'desc': 'Depth buffered soft edges',
+                              'perf': 'G+0,57% C+2,57%'}),
                        },
     'Rain FX Quality': {'name': 'Rain Drops', 'value': 3,
                         'settings':
-                            ({'value': 1, 'name': 'Off'}, {'value': 2, 'name': 'Low'},
+                            ({'value': 1, 'name': 'Off', 'desc': 'Anything else than off will have a massive '
+                                                                 'performance impact!'},
+                             {'value': 2, 'name': 'Low', 'perf': 'G+4,10% C+6,30%'},
                              {'value': 3, 'name': 'Medium'}, {'value': 4, 'name': 'High'},
-                             {'value': 5, 'name': 'Ultra'}),
+                             {'value': 5, 'name': 'Ultra', 'perf': 'G+17,2% C+6,70%'}),
                         },
     'Road Reflections': {'name': 'Road Reflection', 'value': 2,
                          'settings':
-                            ({'value': 0, 'name': 'Off'},
+                            ({'value': 0, 'name': 'Off',
+                              'desc': 'It will be hard to spot wet track areas! '
+                                      'The Low setting is free on GPU but CPU heavy'},
                              {'value': 1, 'name': 'Low',
-                              'desc': 'Reflected objects are generated for wet road and heat mirage'},
+                              'desc': 'Reflected objects are generated '
+                                      'for wet road and heat mirage',
+                              'perf': 'G+0,33% C+5,39%'},
                              {'value': 2, 'name': 'High',
                               'desc': 'Reflected objects are generated for wet road and heat mirage'},
-                             {'value': 3, 'name': 'Ultra', 'desc': 'Adds reflection blurring'}),
+                             {'value': 3, 'name': 'Ultra',
+                              'desc': 'Adds reflection blurring',
+                              'perf': 'G+6,40% C+9,40%'}),
                          },
     'Environment Reflections': {'name': 'Environment Reflection', 'value': 2,
                                 'settings':
                                     ({'value': 0, 'name': 'Off'},
                                      {'value': 1, 'name': 'Low',
-                                      'desc': 'Live cubic mapping is used (if track and car are setup properly)'},
+                                      'desc': 'Live cubic mapping is used '
+                                              '(if track and car are setup properly)',
+                                      'perf': 'G+0,00% C+0,00%'},
                                      {'value': 2, 'name': 'High',
-                                      'desc': 'Live cubic mapping is used (if track and car are setup properly)'}),
+                                      'desc': 'Live cubic mapping is used '
+                                              '(if track and car are setup properly)',
+                                      'perf': 'G+3,39% C+4,45%'}),
                                 },
 }
 
@@ -100,7 +115,7 @@ advanced_settings = {
                                            'desc': 'rFactor 2 default setting: 12'}, )},
     'Rearview Particles': {'name': 'Rearview Particles', 'value': True,
                            'settings': ({'value': False, 'name': 'Disabled'},
-                                        {'value': True, 'name': 'Enabled [Default]',
+                                        {'value': True, 'name': 'Enabled [Default]', 'perf': 'G+3,30% C+1,44%',
                                          'desc': 'Show particles like rain spray in the rear view mirror'})
                            },
     'Rearview_Back_Clip': {'name': 'Rearview Back Clip', 'value': 0,
