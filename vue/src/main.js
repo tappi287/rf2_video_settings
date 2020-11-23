@@ -5,11 +5,12 @@ import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import Axios from "axios"
-import fileDownload from "js-file-download"
 
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.config.productionTip = false
+
+export const settingsAreaId = 'settings-area'
 
 new Vue({
   render: h => h(App),
@@ -43,12 +44,4 @@ export async function getRequest(url) {
   } catch (error) {
     return { result: false, data: error.response.data }
   }
-}
-
-export function download(url, filename) {
-  Axios.get(url, {
-    responseType: 'blob',
-  }).then(res => {
-    fileDownload(res.data, filename)
-  })
 }

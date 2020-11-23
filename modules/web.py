@@ -124,7 +124,7 @@ def save_preset(preset_js_dict):
     # -- Save the preset
     p = Preset()
     p.from_js_dict(preset_js_dict)
-    if not p.export():
+    if not p.save():
         return json.dumps({'result': False, 'msg': f'Error saving Preset: {p.name}'})
     logging.debug('Saved Preset: %s', p.name)
 

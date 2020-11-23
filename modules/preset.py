@@ -39,7 +39,7 @@ class Preset:
         if json.get('DRIVER'):
             self.name = f'Current Settings [{json["DRIVER"].get("Player Nick")}]'
 
-    def save_unique_file(self):
+    def save_unique_file(self) -> bool:
         base_name = create_file_safe_name(self.name)
         file_name = base_name
         name_idx = 0
@@ -49,12 +49,22 @@ class Preset:
             name_idx += 1
             file_name = f'{base_name}_{name_idx}'
 
-        self.export(file_name)
+        return self.export(file_name)
 
-    def export(self, unique_name: str = None):
+    def export(self, unique_name: str = None) -> bool:
         file_name = create_file_safe_name(unique_name or self.name)
         file = get_user_presets_dir() / f'{file_name}.json'
+        self.name = unique_name or self.name
 
+        return self._save_to_file(file)
+
+    def save(self) -> bool:
+        file_name = create_file_safe_name(self.name)
+        file = get_user_presets_dir() / f'{file_name}.json'
+
+        return self._save_to_file(file)
+
+    def _save_to_file(self, file) -> bool:
         try:
             with open(file.as_posix(), 'w') as f:
                 json.dump(self.to_js(export=True), f, indent=2, sort_keys=True)

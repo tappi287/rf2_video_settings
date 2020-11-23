@@ -10,22 +10,22 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
 _allowed_value_types = (bool, str, int, float)
 
 player_adjustable_settings = {
-    'Track Detail': {'name': 'Circuit Detail', 'value': 1,
+    'Track Detail': {'name': 'Circuit Detail', 'value': 2,
                      'settings':
                          ({'value': 0, 'name': 'Low'}, {'value': 1, 'name': 'Medium'},
                           {'value': 2, 'name': 'High'}, {'value': 3, 'name': 'Full'}),
                      },
-    'Player Detail': {'name': 'Player Detail', 'value': 1,
+    'Player Detail': {'name': 'Player Detail', 'value': 3,
                       'settings':
                           ({'value': 0, 'name': 'Low'}, {'value': 1, 'name': 'Medium'},
                            {'value': 2, 'name': 'High'}, {'value': 3, 'name': 'Full'}),
                       },
-    'Opponent Detail': {'name': 'Opponent Detail', 'value': 1,
+    'Opponent Detail': {'name': 'Opponent Detail', 'value': 2,
                         'settings':
                             ({'value': 0, 'name': 'Low'}, {'value': 1, 'name': 'Medium'},
                              {'value': 2, 'name': 'High'}, {'value': 3, 'name': 'Full'}),
                         },
-    'Texture Detail': {'name': 'Texture Detail', 'value': 1,
+    'Texture Detail': {'name': 'Texture Detail', 'value': 3,
                        'settings':
                            ({'value': 0, 'name': 'Low'}, {'value': 1, 'name': 'Medium'},
                             {'value': 2, 'name': 'High'}, {'value': 3, 'name': 'Full'}),
@@ -36,17 +36,17 @@ player_adjustable_settings = {
                             {'value': 2, 'name': 'x2 Anisotropic'}, {'value': 3, 'name': 'x4 Anisotropic'},
                             {'value': 4, 'name': 'x8 Anisotropic'}, {'value': 5, 'name': 'x16 Anisotropic'}),
                        },
-    'Special FX': {'name': 'Special Effects', 'value': 1,
+    'Special FX': {'name': 'Special Effects', 'value': 4,
                    'settings':
                        ({'value': 0, 'name': 'Off'}, {'value': 1, 'name': 'Low'},
                         {'value': 2, 'name': 'Medium'}, {'value': 3, 'name': 'High'}, {'value': 4, 'name': 'Ultra'}),
                    },
-    'Shadows': {'name': 'Shadows', 'value': 1,
+    'Shadows': {'name': 'Shadows', 'value': 3,
                 'settings':
                     ({'value': 0, 'name': 'Off'}, {'value': 1, 'name': 'Low'},
                      {'value': 2, 'name': 'Medium'}, {'value': 3, 'name': 'High'}, {'value': 4, 'name': 'Ultra'}),
                 },
-    'Shadow Blur': {'name': 'Shadow Blur', 'value': 1,
+    'Shadow Blur': {'name': 'Shadow Blur', 'value': 2,
                     'settings':
                         ({'value': 0, 'name': 'Off'}, {'value': 1, 'name': 'Fast'},
                          {'value': 2, 'name': 'Optimal'}, {'value': 3, 'name': 'Quality'}),
@@ -56,13 +56,13 @@ player_adjustable_settings = {
                             ({'value': 0, 'name': 'Off'}, {'value': 1, 'name': 'Low', 'desc': 'Cheap soft edges'},
                              {'value': 2, 'name': 'High', 'desc': 'Depth buffered soft edges'}),
                        },
-    'Rain FX Quality': {'name': 'Rain Drops', 'value': 1,
+    'Rain FX Quality': {'name': 'Rain Drops', 'value': 3,
                         'settings':
                             ({'value': 1, 'name': 'Off'}, {'value': 2, 'name': 'Low'},
                              {'value': 3, 'name': 'Medium'}, {'value': 4, 'name': 'High'},
                              {'value': 5, 'name': 'Ultra'}),
                         },
-    'Road Reflections': {'name': 'Road Reflection', 'value': 1,
+    'Road Reflections': {'name': 'Road Reflection', 'value': 2,
                          'settings':
                             ({'value': 0, 'name': 'Off'},
                              {'value': 1, 'name': 'Low',
@@ -71,7 +71,7 @@ player_adjustable_settings = {
                               'desc': 'Reflected objects are generated for wet road and heat mirage'},
                              {'value': 3, 'name': 'Ultra', 'desc': 'Adds reflection blurring'}),
                          },
-    'Environment Reflections': {'name': 'Environment Reflection', 'value': 1,
+    'Environment Reflections': {'name': 'Environment Reflection', 'value': 2,
                                 'settings':
                                     ({'value': 0, 'name': 'Off'},
                                      {'value': 1, 'name': 'Low',
@@ -86,7 +86,26 @@ advanced_settings = {
                         'settings': ({'value': False, 'name': 'Disabled'},
                                      {'value': True, 'name': 'Enabled [Default]',
                                       'desc': 'Soften edges around alpha test objects'})
-                        }
+                        },
+    'Heat FX Fade Speed': {'name': 'Heat FX Fade Speed', 'value': 30,
+                           'settings': ({'value': 30, 'name': '30 [Default]',
+                                         'desc': 'Speed at which exhaust heat effects reduce '
+                                                 'by half (0 to completely disable)'},
+                                        {'value': 0, 'name': '0',
+                                         'desc': 'Fixes visual artefact bubble behind certain cars in VR.'},
+                                        )
+                           },
+    'Max Visible Vehicles': {'name': 'Visible Vehicles', 'value': 12,
+                             'settings': ({'settingType': 'range', 'min': 5, 'max': 50,
+                                           'desc': 'rFactor 2 default setting: 12'}, )},
+    'Rearview Particles': {'name': 'Rearview Particles', 'value': True,
+                           'settings': ({'value': False, 'name': 'Disabled'},
+                                        {'value': True, 'name': 'Enabled [Default]',
+                                         'desc': 'Show particles like rain spray in the rear view mirror'})
+                           },
+    'Rearview_Back_Clip': {'name': 'Rearview Back Clip', 'value': 0,
+                           'settings': ({'settingType': 'range', 'min': 0, 'max': 250,
+                                         'desc': 'Back plane distance for mirror (0.0 = use default for scene)'}, )},
 }
 
 adjustable_video_settings = {

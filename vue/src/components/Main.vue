@@ -77,61 +77,63 @@
           rFactor 2 settings on disk.
         </b-alert>
 
-        <div v-for="(preset, idx) in presets" :key="preset.name">
-          <!-- Video Settings -->
-          <b-card v-if="selectedPresetIdx === idx" class="mt-3" id="video"
-                  bg-variant="dark" text-variant="white">
-            <template #header>
-              <h6 class="mb-0"><span class="title">{{ preset.video_settings.title }}</span></h6>
-            </template>
-            <!-- View Mode Grid-->
-            <Setting v-for="setting in preset.video_settings.options" :key="setting.key"
-                     :setting="setting" variant="rf-orange" class="mr-3" group_id="video"
-                     v-on:setting-changed="updateSetting">
-            </Setting>
-            <!-- Footer -->
-            <template #footer>
-            <span class="small font-weight-lighter">
-              Use the in-game menu to change screen resolution and window mode for now
-            </span>
-            </template>
-          </b-card>
-          <!-- Display Settings -->
-          <b-card v-if="selectedPresetIdx === idx" class="mt-3" id="graphic"
-                  bg-variant="dark" text-variant="white">
-            <template #header>
-              <h6 class="mb-0"><span class="title">{{ preset.graphic_options.title }}</span></h6>
-            </template>
-            <template v-if="!viewMode">
-              <Setting v-for="setting in preset.graphic_options.options" :key="setting.key"
-                       :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixWidth="true"
-                       group_id="graphic"
+        <div :id="settingsAreaId">
+          <div v-for="(preset, idx) in presets" :key="preset.name">
+            <!-- Video Settings -->
+            <b-card v-if="selectedPresetIdx === idx" class="mt-3" id="video"
+                    bg-variant="dark" text-variant="white">
+              <template #header>
+                <h6 class="mb-0"><span class="title">{{ preset.video_settings.title }}</span></h6>
+              </template>
+              <!-- View Mode Grid-->
+              <Setting v-for="setting in preset.video_settings.options" :key="setting.key"
+                       :setting="setting" variant="rf-orange" class="mr-3" group_id="video"
                        v-on:setting-changed="updateSetting">
               </Setting>
-            </template>
-            <template v-else>
-              <b-list-group class="text-left">
-                <b-list-group-item class="bg-transparent" v-for="setting in preset.graphic_options.options"
-                                   :key="setting.key">
-                  <Setting :setting="setting" variant="rf-orange" :fixWidth="true" group_id="graphic"
-                           v-on:setting-changed="updateSetting">
-                  </Setting>
-                </b-list-group-item>
-              </b-list-group>
-            </template>
-          </b-card>
-          <!-- Advanced Display Settings -->
-          <b-card v-if="selectedPresetIdx === idx" class="mt-3" id="advanced"
-                  bg-variant="dark" text-variant="white">
-            <template #header>
-              <h6 class="mb-0"><span class="title">{{ preset.advanced_graphic_options.title }}</span></h6>
-            </template>
-            <Setting v-for="setting in preset.advanced_graphic_options.options" :key="setting.key"
-                     :setting="setting" variant="rf-orange" group_id="advanced"
-                     v-on:setting-changed="updateSetting">
-            </Setting>
-            <template #footer><span class="small font-weight-lighter">More settings available soon</span></template>
-          </b-card>
+              <!-- Footer -->
+              <template #footer>
+              <span class="small font-weight-lighter">
+                Use the in-game menu to change screen resolution and window mode for now
+              </span>
+              </template>
+            </b-card>
+            <!-- Display Settings -->
+            <b-card v-if="selectedPresetIdx === idx" class="mt-3" id="graphic"
+                    bg-variant="dark" text-variant="white">
+              <template #header>
+                <h6 class="mb-0"><span class="title">{{ preset.graphic_options.title }}</span></h6>
+              </template>
+              <template v-if="!viewMode">
+                <Setting v-for="setting in preset.graphic_options.options" :key="setting.key"
+                         :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixWidth="true"
+                         group_id="graphic"
+                         v-on:setting-changed="updateSetting">
+                </Setting>
+              </template>
+              <template v-else>
+                <b-list-group class="text-left">
+                  <b-list-group-item class="bg-transparent" v-for="setting in preset.graphic_options.options"
+                                     :key="setting.key">
+                    <Setting :setting="setting" variant="rf-orange" :fixWidth="true" group_id="graphic"
+                             v-on:setting-changed="updateSetting">
+                    </Setting>
+                  </b-list-group-item>
+                </b-list-group>
+              </template>
+            </b-card>
+            <!-- Advanced Display Settings -->
+            <b-card v-if="selectedPresetIdx === idx" class="mt-3" id="advanced"
+                    bg-variant="dark" text-variant="white">
+              <template #header>
+                <h6 class="mb-0"><span class="title">{{ preset.advanced_graphic_options.title }}</span></h6>
+              </template>
+              <Setting v-for="setting in preset.advanced_graphic_options.options" :key="setting.key"
+                       :setting="setting" variant="rf-orange" group_id="advanced" class="mr-3 mb-3" :fixWidth="true"
+                       v-on:setting-changed="updateSetting">
+              </Setting>
+              <template #footer><span class="small font-weight-lighter">More settings available soon</span></template>
+            </b-card>
+          </div>
         </div>
       </b-overlay>
     </template>
@@ -163,7 +165,7 @@
 
 <script>
 import Setting from "./Setting.vue";
-import {getEelJsonObject, isValid, sleep} from '@/main'
+import {getEelJsonObject, isValid, sleep, settingsAreaId} from '@/main'
 
 export default {
   name: 'Main',
@@ -176,7 +178,8 @@ export default {
       isBusy: false,
       viewMode: 0,
       previousPresetName: '',
-      error: ''
+      error: '',
+      settingsAreaId: settingsAreaId
     }
   },
   methods: {
@@ -242,6 +245,8 @@ export default {
     _exportPreset: async function (preset) {
       const r = await getEelJsonObject(window.eel.export_preset(preset)())
       this.previousPresetName = ''
+      console.log(r)
+      console.log(r.result)
       if (!r.result) {
         this.makeToast(r.msg, 'danger')
         console.error('Error writing preset to rFactor 2!', r.msg)

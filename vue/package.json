@@ -1,6 +1,6 @@
 {
   "name": "rF2-Settings-Widget",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -13,7 +13,6 @@
     "bootstrap-vue": "^2.19.0",
     "core-js": "^3.6.5",
     "fontsource-ubuntu": "^3.0.9",
-    "js-file-download": "^0.4.12",
     "vue": "^2.6.11"
   },
   "devDependencies": {
