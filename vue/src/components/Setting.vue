@@ -5,7 +5,7 @@
         <b-input-group-text class="info-field fixed-width-name" :id="nameId">
           {{ setting.name }}
           <b-icon v-if="settingDesc !== ''" icon="info-square" class="ml-2 mr-1"
-                      v-b-popover.hover.left="settingDesc">
+                      v-b-popover.hover.topright="settingDesc">
           </b-icon>
         </b-input-group-text>
       </b-input-group-prepend>
@@ -18,7 +18,7 @@
                              @click="selectSetting(s)">
               {{ s.name }}<template v-if="showPerformance && s.perf !== undefined"> {{ s.perf }}</template>
               <b-icon v-if="s.desc !== undefined" icon="info-square"
-                      class="ml-2" v-b-popover.hover.left="s.desc">
+                      class="ml-2" v-b-popover.hover.topright="s.desc">
               </b-icon>
             </b-dropdown-item>
           </b-dropdown>

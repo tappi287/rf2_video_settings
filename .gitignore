@@ -1,6 +1,7 @@
 .DS_Store
 vue/node_modules
 /build
+/private
 /dist
 /web/
 

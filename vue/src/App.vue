@@ -1,8 +1,12 @@
 <template>
   <div id="app">
+    <!-- Handle Preset file drops -->
     <div id="dropzone">
       <b-overlay :show="dragActive" variant="white" :no-center="true" opacity="0.9" :fixed="true">
-        <Main ref="main"></Main>
+
+        <!-- Main component -->
+        <Main v-on:error="setError" ref="main"></Main>
+
         <!-- Drag Overlay Content-->
         <template #overlay>
           <div id="drop-animation" class="text-center">
@@ -13,6 +17,36 @@
         </template>
       </b-overlay>
     </div>
+
+    <!-- Report missing rF2 installation or missing privileges -->
+    <template v-if="error !== ''">
+      <b-card class="mt-3" bg-variant="dark" text-variant="white">
+        <template #header>
+          <h6 class="mb-0"><span class="title">Error</span></h6>
+        </template>
+        <p>Could not detect a rFactor 2 Steam installation with a player.JSON and/or Config_DX11.ini</p>
+        <pre class="text-white">{{ error }}</pre>
+        <!-- <p>
+          Try to re-run the application with right-click: Run as Administrator if your rFactor 2 installation is
+          located in your C:\Program Files directory.
+        </p> -->
+        <p>
+          Try to re-run this application with administrative privileges:
+          <b-button @click="reRunAsAdmin" size="sm">Re-Run-as-Admin</b-button>
+        </p>
+        <template #footer>
+          <span class="small font-weight-lighter">
+            Please make sure that a rFactor 2 Steam installation is present on your machine and that you have at least
+            once started the game.
+          </span>
+        </template>
+      </b-card>
+      <div class="mt-3">
+        <b-button @click="requestClose" size="sm">Close</b-button>
+      </div>
+    </template>
+
+    <!-- Footer -->
     <div class="mt-3 main-footer small font-weight-lighter">
       <span>rf2 Settings Widget v{{ ver }} published under MIT license &#169; 2020 Stefan Tapper </span>
       <a href="https://www.github.com/tappi287/rf2_video_settings" target="_blank">Source @ Github</a>
@@ -33,7 +67,8 @@ export default {
   data: function () {
     return {
       dragActive: false,
-      ver: version
+      ver: version,
+      error: '',
     }
   },
   methods: {
@@ -63,6 +98,13 @@ export default {
         let importPreset = JSON.parse(await f.text())
         await this.$refs.main.importPreset(importPreset)
       }
+    },
+    setError: function (error) { this.error = error },
+    requestClose: async function () {
+      await window.eel.close_request()
+    },
+    reRunAsAdmin: async function () {
+      await window.eel.re_run_admin()
     },
   },
   components: {

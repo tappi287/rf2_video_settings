@@ -1,9 +1,6 @@
 <template>
   <div id="main" v-cloak>
     <div class="text-left mt-2">
-      <div class="float-right" v-if="error !== ''">
-        <b-button @click="requestClose" size="sm">Close</b-button>
-      </div>
       <h4>
         <b-img src="@/assets/app_icon.webp" width="64" alt="rFactor 2 logo" class="mr-3 logo-style"></b-img>
         <span class="title"><i>rFactor 2 Settings Widget</i></span>
@@ -12,8 +9,8 @@
     <p></p>
     <template v-if="presets.length > 0">
       <b-overlay :show="isBusy" variant="light">
-        <!-- Preset Selection-->
         <b-input-group>
+          <!-- Switch View Mode -->
           <b-input-group-prepend>
             <b-button @click="viewMode = !viewMode ? 1 : 0">
               <b-icon :icon="viewMode ? 'grid-fill' : 'list'"></b-icon>
@@ -21,19 +18,22 @@
             <b-input-group-text class="info-field">Presets</b-input-group-text>
           </b-input-group-prepend>
 
+          <!-- Preset Selection-->
           <b-dropdown :text="currentPresetName" variant="rf-blue">
             <b-dropdown-item v-for="preset in presets" :key="preset.name"
                              @click="selectPreset(preset)">
               {{ preset.name }}
             </b-dropdown-item>
           </b-dropdown>
+
+          <!-- New Preset Name -->
           <b-form-input v-model="newPresetName" :state="presetFileNameState"
                         type="text" placeholder="[New Preset Name]" id="preset-name-input"
                         v-b-popover.hover.top="'Enter a name for a new Preset and click the + button'">
           </b-form-input>
 
           <b-input-group-append>
-            <!-- Add/Del Preset Buttons -->
+            <!-- Add/Export/Del Preset Buttons -->
             <b-button :disabled="!addButtonState" variant="success" @click="createPreset">
               <b-icon icon="plus"></b-icon>
             </b-button>
@@ -64,121 +64,39 @@
               </div>
             </b-popover>
           </b-input-group-append>
+
+          <!-- New Preset Name invalid feedback -->
           <b-form-invalid-feedback id="preset-name-input-feedback">
             Enter a valid Windows file name
           </b-form-invalid-feedback>
         </b-input-group>
+        <!-- editable Preset Description -->
         <b-form-textarea id="preset-textarea" v-model="presetDesc" class="mt-3"
                          placeholder="Enter a description for your preset ..."
                          rows="2" spellcheck="false">
         </b-form-textarea>
-        <b-alert show dismissible variant="warning" class="mt-3" v-if="previousPresetName !== ''">
+
+        <!-- Preset deviates from current rF2 settings message -->
+        <b-alert :show="previousPresetName !== ''" dismissible variant="warning" class="mt-3">
           The previously selected Preset <i>{{ previousPresetName }}</i> has different settings than the actual
           rFactor 2 settings on disk.
         </b-alert>
 
+        <!-- Settings area -->
         <div :id="settingsAreaId">
           <div v-for="(preset, idx) in presets" :key="preset.name">
-            <!-- Video Settings -->
-            <b-card v-if="selectedPresetIdx === idx" class="mt-3" id="video"
-                    bg-variant="dark" text-variant="white">
-              <template #header>
-                <h6 class="mb-0"><span class="title">{{ preset.video_settings.title }}</span></h6>
-              </template>
-              <Setting v-for="setting in preset.video_settings.options" :key="setting.key"
-                       :setting="setting" variant="rf-orange" class="mr-3" group_id="video"
-                       :show_performance="showPerformance"
-                       v-on:setting-changed="updateSetting">
-              </Setting>
-              <!-- Footer -->
-              <template #footer>
-              <span class="small font-weight-lighter">
-                Use the in-game menu to change screen resolution and window mode for now
-              </span>
-              </template>
-            </b-card>
-            <!-- Display Settings -->
-            <b-card v-if="selectedPresetIdx === idx" class="mt-3" id="graphic"
-                    bg-variant="dark" text-variant="white">
-              <template #header>
-                <h6 class="mb-0">
-                  <span class="title">{{ preset.graphic_options.title }}</span>
-                  <div class="float-right">
-                    <b-button size="sm" @click="showPerformance = !showPerformance"
-                              v-b-popover.lefttop.hover="'Show performance data next to supported settings in ' +
-                               'the dropdown menu. ' +
-                               'G=relative GPU performance impact | C=relative CPU performance impact'">
-                      <b-icon :icon="showPerformance ? 'graph-up' : 'graph-down'"></b-icon>
-                    </b-button>
-                  </div>
-                </h6>
-              </template>
-              <template v-if="!viewMode">
-                <!-- View Mode Grid -->
-                <Setting v-for="setting in preset.graphic_options.options" :key="setting.key"
-                         :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixWidth="true"
-                         group_id="graphic" :show_performance="showPerformance"
-                         v-on:setting-changed="updateSetting">
-                </Setting>
-              </template>
-              <template v-else>
-                <!-- View Mode List -->
-                <b-list-group class="text-left">
-                  <b-list-group-item class="bg-transparent" v-for="setting in preset.graphic_options.options"
-                                     :key="setting.key">
-                    <Setting :setting="setting" variant="rf-orange" :fixWidth="true" group_id="graphic"
-                             :show_performance="showPerformance"
-                             v-on:setting-changed="updateSetting">
-                    </Setting>
-                  </b-list-group-item>
-                </b-list-group>
-              </template>
-            </b-card>
-            <!-- Advanced Display Settings -->
-            <b-card v-if="selectedPresetIdx === idx" class="mt-3" id="advanced"
-                    bg-variant="dark" text-variant="white">
-              <template #header>
-                <h6 class="mb-0"><span class="title">{{ preset.advanced_graphic_options.title }}</span></h6>
-              </template>
-              <Setting v-for="setting in preset.advanced_graphic_options.options" :key="setting.key"
-                       :setting="setting" variant="rf-orange" group_id="advanced" class="mr-3 mb-3" :fixWidth="true"
-                       :show_performance="showPerformance"
-                       v-on:setting-changed="updateSetting">
-              </Setting>
-              <template #footer><span class="small font-weight-lighter">More settings available soon</span></template>
-            </b-card>
+            <SettingsArea :preset="preset" :idx="idx" :current_preset_idx="selectedPresetIdx"
+                          :view_mode="viewMode" v-on:setting-updated="updateSetting">
+            </SettingsArea>
           </div>
         </div>
       </b-overlay>
-    </template>
-    <template v-if="error !== ''">
-      <b-card class="mt-3" bg-variant="dark" text-variant="white">
-        <template #header>
-          <h6 class="mb-0"><span class="title">Error</span></h6>
-        </template>
-        <p>Could not detect a rFactor 2 Steam installation with a player.JSON and/or Config_DX11.ini</p>
-        <pre class="text-white">{{ error }}</pre>
-        <!-- <p>
-          Try to re-run the application with right-click: Run as Administrator if your rFactor 2 installation is
-          located in your C:\Program Files directory.
-        </p> -->
-        <p>
-          Click here to try to re-run this application with administrative privileges:
-          <b-button @click="reRunAsAdmin" size="sm">Re-Run</b-button>
-        </p>
-        <template #footer>
-          <span class="small font-weight-lighter">
-            Please make sure that a rFactor 2 Steam installation is present on your machine and that you have at least
-            once started the game.
-          </span>
-        </template>
-      </b-card>
     </template>
   </div>
 </template>
 
 <script>
-import Setting from "./Setting.vue";
+import SettingsArea from "@/components/SettingsArea";
 import {getEelJsonObject, isValid, sleep, settingsAreaId} from '@/main'
 
 export default {
@@ -194,7 +112,6 @@ export default {
       previousPresetName: '',
       error: '',
       settingsAreaId: settingsAreaId,
-      showPerformance: false,
     }
   },
   methods: {
@@ -208,17 +125,16 @@ export default {
         isBusy: false
       })
     },
-    requestClose: async function () {
-      await window.eel.close_request()
-    },
-    reRunAsAdmin: async function () {
-      await window.eel.re_run_admin()
-    },
     getPresets: async function () {
       this.isBusy = true
       this.presets = []
       const preset_data = await getEelJsonObject(window.eel.get_presets()())
-      if (preset_data === undefined || preset_data === null) { this.error = 'Error obtaining presets.'; return }
+
+      if (preset_data === undefined || preset_data === null) {
+        this.$emit('error', 'Error obtaining presets.')
+        return
+      }
+
       this.presets = preset_data.presets
       let appSelectedPresetIdx = -1
       let changeMsg = ''
@@ -296,22 +212,16 @@ export default {
 
       this.isBusy = false
     },
-    updateSetting: async function (setting, value) {
-      this.isBusy = true
-      setting.value = value
-      console.log('Updated', setting.name, 'to', setting.value)
-      await this._savePreset(this.getSelectedPreset())
-      this.isBusy = false
-    },
     selectPreset: async function (preset, save = true) {
       this.isBusy = true
       this.selectedPresetIdx = this.presets.indexOf(preset)
-      await window.eel.select_preset(this.getSelectedPreset().name)
+      let p = this.getSelectedPreset()
+      await window.eel.select_preset(p.name)
       if (save) {
-        await this._savePreset(this.getSelectedPreset())
+        await this._savePreset(p)
         await sleep(150)
       }
-      this.presetDesc = this.getSelectedPreset().desc
+      this.presetDesc = p.desc
       this.isBusy = false
     },
     createPreset: async function () {
@@ -349,19 +259,24 @@ export default {
       }
       this.$root.$emit('bv::hide::popover', 'delete-preset-btn')
       this.isBusy = false
-    }
+    },
+    updateSetting: async function (setting, value) {
+      this.isBusy = true
+      setting.value = value
+      console.log('Updated', setting.name, 'to', setting.value)
+      await this._savePreset(this.getSelectedPreset())
+      this.isBusy = false
+    },
   },
   components: {
-    Setting
+    SettingsArea
   },
   watch: {
     presetDesc: function (value) { this.getSelectedPreset().desc = value }
   },
   computed: {
     currentPresetName: function () {
-      if (this.presets.length === 0) {
-        return 'Unknown'
-      }
+      if (this.presets.length === 0) { return 'Unknown' }
       return this.getSelectedPreset().name
     },
     presetFileNameState: function () {
@@ -386,11 +301,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #main {
-  width: 90%;
+  width: 92%;
   margin: 0 auto 0 auto;
-}
-
-.fix-width {
-  width: 18rem;
 }
 </style>
