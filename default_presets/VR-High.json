@@ -1,1 +1,122 @@
-{"py/object": "modules.preset.Preset", "name": "VR-High", "desc": "Virtual Reality preset for top tier machines and high-resolution HMD's. Consider lowering your vendor specific Super-Sampling settings as the 4x MSAA will do an excellent job at smoothing your image at a reasonable performance cost.", "graphic_options": {"py/object": "modules.settings_model.GraphicOptions", "options": [{"py/object": "modules.settings_model.Option", "key": "Track Detail", "name": "Circuit Detail", "value": 1, "hidden": null, "ini_type": null, "settings": [{"value": 0, "name": "Low"}, {"value": 1, "name": "Medium"}, {"value": 2, "name": "High"}, {"value": 3, "name": "Full"}]}, {"py/object": "modules.settings_model.Option", "key": "Player Detail", "name": "Player Detail", "value": 2, "hidden": null, "ini_type": null, "settings": [{"value": 0, "name": "Low"}, {"value": 1, "name": "Medium"}, {"value": 2, "name": "High"}, {"value": 3, "name": "Full"}]}, {"py/object": "modules.settings_model.Option", "key": "Opponent Detail", "name": "Opponent Detail", "value": 1, "hidden": null, "ini_type": null, "settings": [{"value": 0, "name": "Low"}, {"value": 1, "name": "Medium"}, {"value": 2, "name": "High"}, {"value": 3, "name": "Full"}]}, {"py/object": "modules.settings_model.Option", "key": "Texture Detail", "name": "Texture Detail", "value": 3, "hidden": null, "ini_type": null, "settings": [{"value": 0, "name": "Low"}, {"value": 1, "name": "Medium"}, {"value": 2, "name": "High"}, {"value": 3, "name": "Full"}]}, {"py/object": "modules.settings_model.Option", "key": "Texture Filter", "name": "Texture Filter", "value": 4, "hidden": null, "ini_type": null, "settings": [{"value": 0, "name": "Bilinear"}, {"value": 1, "name": "Trilinear"}, {"value": 2, "name": "x2 Anisotropic"}, {"value": 3, "name": "x4 Anisotropic"}, {"value": 4, "name": "x8 Anisotropic"}, {"value": 5, "name": "x16 Anisotropic"}]}, {"py/object": "modules.settings_model.Option", "key": "Special FX", "name": "Special Effects", "value": 3, "hidden": null, "ini_type": null, "settings": [{"value": 0, "name": "Off"}, {"value": 1, "name": "Low"}, {"value": 2, "name": "Medium"}, {"value": 3, "name": "High"}, {"value": 4, "name": "Ultra"}]}, {"py/object": "modules.settings_model.Option", "key": "Shadows", "name": "Shadows", "value": 1, "hidden": null, "ini_type": null, "settings": [{"value": 0, "name": "Off"}, {"value": 1, "name": "Low"}, {"value": 2, "name": "Medium"}, {"value": 3, "name": "High"}, {"value": 4, "name": "Ultra"}]}, {"py/object": "modules.settings_model.Option", "key": "Shadow Blur", "name": "Shadow Blur", "value": 0, "hidden": null, "ini_type": null, "settings": [{"value": 0, "name": "Off"}, {"value": 1, "name": "Fast"}, {"value": 2, "name": "Optimal"}, {"value": 3, "name": "Quality"}]}, {"py/object": "modules.settings_model.Option", "key": "Soft Particles", "name": "Soft Particles", "value": 0, "hidden": null, "ini_type": null, "settings": [{"value": 0, "name": "Off"}, {"value": 1, "name": "Low", "desc": "Cheap soft edges"}, {"value": 2, "name": "High", "desc": "Depth buffered soft edges"}]}, {"py/object": "modules.settings_model.Option", "key": "Rain FX Quality", "name": "Rain Drops", "value": 5, "hidden": null, "ini_type": null, "settings": [{"value": 1, "name": "Off"}, {"value": 2, "name": "Low"}, {"value": 3, "name": "Medium"}, {"value": 4, "name": "High"}, {"value": 5, "name": "Ultra"}]}, {"py/object": "modules.settings_model.Option", "key": "Road Reflections", "name": "Road Reflection", "value": 1, "hidden": null, "ini_type": null, "settings": [{"value": 0, "name": "Off"}, {"value": 1, "name": "Low", "desc": "Reflected objects are generated for wet road and heat mirage"}, {"value": 2, "name": "High", "desc": "Reflected objects are generated for wet road and heat mirage"}, {"value": 3, "name": "Ultra", "desc": "Adds reflection blurring"}]}, {"py/object": "modules.settings_model.Option", "key": "Environment Reflections", "name": "Environment Reflection", "value": 1, "hidden": null, "ini_type": null, "settings": [{"value": 0, "name": "Off"}, {"value": 1, "name": "Low", "desc": "Live cubic mapping is used (if track and car are setup properly)"}, {"value": 2, "name": "High", "desc": "Live cubic mapping is used (if track and car are setup properly)"}]}], "key": "Graphic Options", "title": "Display Settings"}, "advanced_graphic_options": {"py/object": "modules.settings_model.AdvancedGraphicSettings", "options": [{"py/object": "modules.settings_model.Option", "key": "Transparency AA", "name": "Transparency AA", "value": true, "hidden": null, "ini_type": null, "settings": [{"value": false, "name": "Disabled"}, {"value": true, "name": "Enabled [Default]", "desc": "Soften edges around alpha test objects"}]}], "key": "Graphic Options", "title": "Advanced Display Settings"}, "video_settings": {"py/object": "modules.settings_model.VideoSettings", "options": [{"py/object": "modules.settings_model.Option", "key": "VrSettings", "name": "VR", "value": 2, "hidden": null, "ini_type": null, "settings": [{"value": 0, "name": "Disabled"}, {"value": 1, "name": "HMD only"}, {"value": 2, "name": "HMD + Mirror"}]}, {"py/object": "modules.settings_model.Option", "key": "FSAA", "name": "Anti Aliasing", "value": 34, "hidden": null, "ini_type": null, "settings": [{"value": 0, "name": "Off"}, {"value": 32, "name": "Level 1", "desc": "2x [2x Multisampling]"}, {"value": 33, "name": "Level 2", "desc": "2xQ [2x Quincunx (blurred)]"}, {"value": 34, "name": "Level 3", "desc": "4x [4x Multisampling]"}, {"value": 35, "name": "Level 4", "desc": "8x [8x CSAA (4 color + 4 cv samples)]"}, {"value": 36, "name": "Level 5", "desc": "16x [16x CSAA (4 color + 12 cv samples)]"}]}, {"py/object": "modules.settings_model.Option", "key": "EPostProcessingSettings", "name": "Post Effects", "value": 2, "hidden": null, "ini_type": null, "settings": [{"value": 1, "name": "Off"}, {"value": 2, "name": "Low", "desc": "Glare Effects"}, {"value": 3, "name": "Medium", "desc": "Glare Effects and Depth of Field"}, {"value": 4, "name": "High", "desc": "All Effects at High Quality"}, {"value": 5, "name": "Ultra", "desc": "All Effects at Ultra Quality"}]}], "key": "Video Settings", "title": "Video Settings"}}
+{
+  "advanced_graphic_options": {
+    "key": "Graphic Options",
+    "options": [
+      {
+        "key": "Transparency AA",
+        "name": "Transparency AA",
+        "value": true
+      },
+      {
+        "key": "Heat FX Fade Speed",
+        "name": "Heat FX Fade Speed",
+        "value": 0
+      },
+      {
+        "key": "Max Visible Vehicles",
+        "name": "Visible Vehicles",
+        "value": 12
+      },
+      {
+        "key": "Rearview Particles",
+        "name": "Rearview Particles",
+        "value": true
+      },
+      {
+        "key": "Rearview_Back_Clip",
+        "name": "Rearview Back Clip",
+        "value": 120
+      }
+    ],
+    "title": "Advanced Display Settings"
+  },
+  "desc": "Virtual Reality preset for top tier machines and high-resolution HMD's. Consider lowering your vendor specific Super-Sampling settings as the 4x MSAA will do an excellent job at smoothing your image at a reasonable performance cost.",
+  "graphic_options": {
+    "key": "Graphic Options",
+    "options": [
+      {
+        "key": "Track Detail",
+        "name": "Circuit Detail",
+        "value": 1
+      },
+      {
+        "key": "Player Detail",
+        "name": "Player Detail",
+        "value": 3
+      },
+      {
+        "key": "Opponent Detail",
+        "name": "Opponent Detail",
+        "value": 1
+      },
+      {
+        "key": "Texture Detail",
+        "name": "Texture Detail",
+        "value": 3
+      },
+      {
+        "key": "Texture Filter",
+        "name": "Texture Filter",
+        "value": 4
+      },
+      {
+        "key": "Special FX",
+        "name": "Special Effects",
+        "value": 4
+      },
+      {
+        "key": "Shadows",
+        "name": "Shadows",
+        "value": 1
+      },
+      {
+        "key": "Shadow Blur",
+        "name": "Shadow Blur",
+        "value": 0
+      },
+      {
+        "key": "Soft Particles",
+        "name": "Soft Particles",
+        "value": 2
+      },
+      {
+        "key": "Rain FX Quality",
+        "name": "Rain Drops",
+        "value": 1
+      },
+      {
+        "key": "Road Reflections",
+        "name": "Road Reflection",
+        "value": 1
+      },
+      {
+        "key": "Environment Reflections",
+        "name": "Environment Reflection",
+        "value": 1
+      }
+    ],
+    "title": "Display Settings"
+  },
+  "name": "VR-High",
+  "video_settings": {
+    "key": "Video Settings",
+    "options": [
+      {
+        "key": "VrSettings",
+        "name": "VR",
+        "value": 2
+      },
+      {
+        "key": "FSAA",
+        "name": "Anti Aliasing",
+        "value": 34
+      },
+      {
+        "key": "EPostProcessingSettings",
+        "name": "Post Effects",
+        "value": 2
+      }
+    ],
+    "title": "Video Settings"
+  }
+}
