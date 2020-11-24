@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 from typing import Iterable, Tuple, Optional
 
-from modules.globals import get_user_presets_dir
+from modules.globals import get_user_presets_dir, get_user_export_dir
 from modules.settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions
 from modules.utils import create_file_safe_name
 
@@ -53,7 +53,7 @@ class Preset:
 
     def export(self, unique_name: str = None) -> bool:
         file_name = create_file_safe_name(unique_name or self.name)
-        file = get_user_presets_dir() / f'{file_name}.json'
+        file = get_user_export_dir() / f'{file_name}.json'
         self.name = unique_name or self.name
 
         return self._save_to_file(file)

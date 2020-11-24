@@ -7,7 +7,7 @@ from subprocess import Popen
 import eel
 
 from .app_settings import AppSettings
-from .globals import get_user_presets_dir
+from .globals import get_user_presets_dir, get_user_export_dir
 from .preset import Preset, load_presets_from_dir
 from .runasadmin import run_as_admin
 from .rfactor import RfactorPlayer
@@ -144,8 +144,8 @@ def export_preset(preset_js_dict):
         return json.dumps({'result': False, 'msg': f'Error exporting Preset: {p.name}'})
 
     # -- Open Explorer Window
-    presets_path = str(WindowsPath(get_user_presets_dir()))
-    Popen(['explorer', f'/n,{presets_path}'])
+    export_path = str(WindowsPath(get_user_export_dir()))
+    Popen(['explorer', f'/n,{export_path}'])
 
     return json.dumps({'result': True, 'msg': f'Preset {p.name} exported.'})
 

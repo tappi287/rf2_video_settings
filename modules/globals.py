@@ -13,6 +13,7 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
 
 APP_NAME = 'rf2_settings_widget'
 SETTINGS_DIR_NAME = 'rf2_settings_widget'
+EXPORT_DIR_NAME = 'exported'
 SETTINGS_FILE_NAME = 'settings.json'
 PRESETS_DIR = 'presets'
 DEFAULT_PRESETS_DIR = 'default_presets'
@@ -66,6 +67,11 @@ def get_presets_dir() -> Path:
 def get_user_presets_dir() -> Path:
     docs_dir = Path(os.path.expanduser('~\\Documents\\' + SETTINGS_DIR_NAME))
     return Path(check_and_create_dir(docs_dir))
+
+
+def get_user_export_dir() -> Path:
+    exp_dir = Path(os.path.expanduser('~\\Documents\\' + SETTINGS_DIR_NAME)) / EXPORT_DIR_NAME
+    return Path(check_and_create_dir(exp_dir))
 
 
 def get_default_presets_dir() -> Path:
