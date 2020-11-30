@@ -7,20 +7,12 @@ from pathlib import Path, WindowsPath
 from typing import Iterable, List, Optional, Tuple
 
 from . import acf
-
+from .globals import KNOWN_APPS
 
 STEAM_LIBRARY_FOLDERS = 'LibraryFolders'
 STEAM_LIBRARY_FILE = 'libraryfolders.vdf'
 STEAM_APPS_FOLDER = 'steamapps'
 STEAM_APPS_INSTALL_FOLDER = 'common'
-
-KNOWN_APPS = {"365960": {
-    "name": "rFactor 2",
-    "installdir": "rFactor 2",
-    "executable": "rFactor2.exe",
-    "exe_sub_path": "Bin64/"
-  }
-}
 
 
 class SteamApps:

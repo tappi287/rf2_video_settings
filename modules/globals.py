@@ -29,6 +29,21 @@ UPDATE_INSTALL_FILE = 'rF2_Settings_Wizard_{version}_win64.exe'
 
 DEFAULT_LOG_LEVEL = 'DEBUG'
 
+KNOWN_APPS = {
+    "365960": {
+        "name": "rFactor 2",
+        "installdir": "rFactor 2",
+        "executable": "rFactor2.exe",
+        "exe_sub_path": "Bin64/"
+    },
+    "908520": {
+        "name": "fpsVR",
+        "installdir": "fpsVR",
+        "executable": "fpsVR.exe",
+        "exe_sub_path": ""
+    }
+}
+
 # Frozen or Debugger
 if getattr(sys, 'frozen', False):
     # -- Running in PyInstaller Bundle ---
@@ -72,6 +87,11 @@ def get_user_presets_dir() -> Path:
 def get_user_export_dir() -> Path:
     exp_dir = Path(os.path.expanduser('~\\Documents\\' + SETTINGS_DIR_NAME)) / EXPORT_DIR_NAME
     return Path(check_and_create_dir(exp_dir))
+
+
+def get_fpsvr_dir() -> Path:
+    fpsvr_dir = Path(os.path.expanduser('~\\Documents\\')) / 'fpsVR' / 'CSV'
+    return Path(check_and_create_dir(fpsvr_dir))
 
 
 def get_default_presets_dir() -> Path:

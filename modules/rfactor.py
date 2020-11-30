@@ -6,10 +6,10 @@ from pathlib import Path
 from configparser import ConfigParser
 from typing import Optional
 
-from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG
+from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, KNOWN_APPS
 from .settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions
 from .preset import Preset
-from .steam_utils import SteamApps, KNOWN_APPS
+from .steam_utils import SteamApps
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
@@ -23,7 +23,7 @@ class RfactorLocation:
     is_valid = False
 
     @classmethod
-    def get_location(cls):
+    def get_location(cls, dev: Optional[bool] = False):
         try:
             s = SteamApps()
         except Exception as e:
@@ -35,6 +35,10 @@ class RfactorLocation:
             player_json = path / RFACTOR_PLAYER
             dx_config = path / RFACTOR_DXCONFIG
 
+            if dev:
+                player_json = path / 'ModDev' / RFACTOR_PLAYER
+                dx_config = path / 'ModDev' / RFACTOR_DXCONFIG
+
             if player_json.exists() and dx_config.exists():
                 cls.is_valid = True
                 cls.path = path
@@ -45,11 +49,13 @@ class RfactorLocation:
 class RfactorPlayer:
     config_parser_args = {'inline_comment_prefixes': '//', 'default_section': 'COMPONENTS'}
 
-    def __init__(self):
+    def __init__(self, dev: Optional[bool] = None):
+        self.dev = dev or False
         self.player_file = Path()
         self.ini_file = Path()
         self.ini_first_line = str()
         self.ini_config = self._create_ini_config_parser()
+        self.location = Path('.')
 
         self.graphic_options = GraphicOptions()
         self.advanced_graphic_options = AdvancedGraphicSettings()
@@ -212,10 +218,11 @@ class RfactorPlayer:
 
     def _get_location(self):
         if not RfactorLocation.is_valid:
-            RfactorLocation.get_location()
+            RfactorLocation.get_location(self.dev)
         if not RfactorLocation.is_valid:
             self.error = 'Could not locate rFactor 2 installation'
             return
 
+        self.location = RfactorLocation.path
         self.player_file = RfactorLocation.player_json
         self.ini_file = RfactorLocation.dx_config
