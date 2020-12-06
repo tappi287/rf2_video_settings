@@ -5,8 +5,9 @@ import webbrowser
 
 import eel
 
-from modules.app_settings import AppSettings
-from modules.runasadmin import run_as_admin
+from web import expose_methods
+from rf2settings.app_settings import AppSettings
+from rf2settings.runasadmin import run_as_admin
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)

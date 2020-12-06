@@ -2,13 +2,12 @@ from pathlib import Path
 from typing import Union
 
 from subprocess import Popen
-from modules.globals import UPDATE_INSTALL_FILE, UPDATE_VERSION_FILE
+from rf2settings.globals import UPDATE_INSTALL_FILE, UPDATE_VERSION_FILE, get_version
 from distutils.dir_util import copy_tree
 
 import shutil
 import winreg
 
-from modules.globals import get_version
 
 VERSION = get_version()
 EXTERNAL_APP_DIRS = []

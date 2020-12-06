@@ -6,10 +6,10 @@ from pathlib import Path
 from subprocess import Popen
 from typing import Optional
 
-from modules.globals import KNOWN_APPS, get_fpsvr_dir
-from modules.process import RunProcess
-from modules.rfactor import RfactorPlayer
-from modules.steam_utils import SteamApps
+from .globals import KNOWN_APPS, get_fpsvr_dir
+from .process import RunProcess
+from .rfactor import RfactorPlayer
+from .steam_utils import SteamApps
 
 
 class RunRfactorBenchmark:

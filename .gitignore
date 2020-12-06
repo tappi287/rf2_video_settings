@@ -1,7 +1,8 @@
 .DS_Store
 vue/node_modules
 /build
-/private
+/private/*
+/rf2settings.egg-info
 /dist
 /web/
 

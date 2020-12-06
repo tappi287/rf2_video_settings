@@ -13,7 +13,7 @@ icon_file = './vue/src/assets/app_icon.ico'
 a = Analysis(['app.py'],
              pathex=['D:\\Docs\\py\\rfvideosettings'],
              binaries=[],
-             datas=[(eel_js, 'eel'), ('web', 'web'), ('default_presets', 'default_presets'),
+             datas=[(eel_js, 'eel'), ('web', 'web'), ('rf2settings/default_presets', 'default_presets'),
                     ('build/version.txt', '.'), ('license.txt', '.'), ],
              hiddenimports=['bottle_websocket'],
              hookspath=[],

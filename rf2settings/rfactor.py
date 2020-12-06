@@ -55,7 +55,7 @@ class RfactorPlayer:
         self.ini_file = Path()
         self.ini_first_line = str()
         self.ini_config = self._create_ini_config_parser()
-        self.location = Path('.')
+        self.location = Path('../modules')
 
         self.graphic_options = GraphicOptions()
         self.advanced_graphic_options = AdvancedGraphicSettings()

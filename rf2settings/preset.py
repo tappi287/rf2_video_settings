@@ -4,9 +4,9 @@ import sys
 from pathlib import Path
 from typing import Iterable, Tuple, Optional
 
-from modules.globals import get_user_presets_dir, get_user_export_dir
-from modules.settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions
-from modules.utils import create_file_safe_name
+from .globals import get_user_presets_dir, get_user_export_dir
+from .settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions
+from .utils import create_file_safe_name
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)

@@ -95,7 +95,10 @@ def get_fpsvr_dir() -> Path:
 
 
 def get_default_presets_dir() -> Path:
-    return Path(get_current_modules_dir()) / DEFAULT_PRESETS_DIR
+    if FROZEN:
+        return Path(get_current_modules_dir()) / DEFAULT_PRESETS_DIR
+    else:
+        return Path(get_current_modules_dir()) / 'rf2settings' / DEFAULT_PRESETS_DIR
 
 
 def get_log_dir() -> str:
@@ -117,7 +120,7 @@ def get_version() -> str:
         except Exception as e:
             print('Duh!', e)
 
-    f = Path('.') / 'version.txt'
+    f = Path('../modules') / 'version.txt'
     try:
         with open(f.as_posix(), 'r') as f:
             version = f.read()

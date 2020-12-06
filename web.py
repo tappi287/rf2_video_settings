@@ -6,11 +6,11 @@ from subprocess import Popen
 
 import eel
 
-from .app_settings import AppSettings
-from .globals import get_user_presets_dir, get_user_export_dir
-from .preset import Preset, load_presets_from_dir
-from .runasadmin import run_as_admin
-from .rfactor import RfactorPlayer
+from rf2settings.app_settings import AppSettings
+from rf2settings.globals import get_user_presets_dir, get_user_export_dir
+from rf2settings.preset import Preset, load_presets_from_dir
+from rf2settings.runasadmin import run_as_admin
+from rf2settings.rfactor import RfactorPlayer
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)

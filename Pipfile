@@ -9,6 +9,7 @@ url = "https://piwigo.ilikeviecher.com/ftp-upload/packages/"
 verify_ssl = true
 
 [dev-packages]
+paramiko = "*"
 
 [packages]
 eel = {version = "==0.14.1", index = "piwigo"}  # See fork https://github.com/tappi287/Eel
