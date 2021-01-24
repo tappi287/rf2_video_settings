@@ -7,7 +7,7 @@ from subprocess import Popen
 import eel
 
 from rf2settings.app_settings import AppSettings
-from rf2settings.globals import get_user_presets_dir, get_user_export_dir
+from rf2settings.presets_dir import get_user_presets_dir, get_user_export_dir
 from rf2settings.preset import Preset, load_presets_from_dir
 from rf2settings.runasadmin import run_as_admin
 from rf2settings.rfactor import RfactorPlayer
@@ -167,3 +167,15 @@ def delete_preset(preset_name):
                 AppSettings.deleted_defaults.append(preset_name)
             preset_file.unlink()
             logging.debug('Deleted Preset: %s', preset_name)
+
+
+@eel.expose
+def set_user_presets_dir(user_preset_dir):
+    return json.dumps({'result': AppSettings.update_user_presets_dir(user_preset_dir)})
+
+
+@eel.expose
+def get_user_presets_dir_web():
+    user_presets_dir = str(WindowsPath(get_user_presets_dir()))
+    logging.info('Providing User Presets Dir to FrontEnd: %s', user_presets_dir)
+    return user_presets_dir

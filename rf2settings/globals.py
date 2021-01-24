@@ -88,16 +88,6 @@ def _get_user_doc_dir() -> Path:
     return Path(docs_dir)
 
 
-def get_user_presets_dir() -> Path:
-    docs_dir = _get_user_doc_dir()
-    return Path(check_and_create_dir(docs_dir / SETTINGS_DIR_NAME))
-
-
-def get_user_export_dir() -> Path:
-    preset_dir = get_user_presets_dir()
-    return Path(check_and_create_dir(preset_dir / EXPORT_DIR_NAME))
-
-
 def get_fpsvr_dir() -> Path:
     docs_dir = _get_user_doc_dir()
     if not docs_dir:

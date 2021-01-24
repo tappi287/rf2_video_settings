@@ -1,12 +1,13 @@
 import json
 import logging
 import sys
-from pathlib import Path
+from pathlib import Path, WindowsPath
 from shutil import copyfile
-from typing import Iterator
+from typing import Iterator, Union
 
+from .presets_dir import PresetDir, get_user_presets_dir
 from .utils import JsonRepr
-from .globals import get_settings_dir, SETTINGS_FILE_NAME, get_default_presets_dir, get_user_presets_dir
+from .globals import get_settings_dir, SETTINGS_FILE_NAME, get_default_presets_dir
 from .rfactor import RfactorPlayer
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
@@ -17,11 +18,34 @@ class AppSettings(JsonRepr):
     backup_created = False
     needs_admin = False
     selected_preset = str()
+    user_presets_dir = str()
     deleted_defaults = list()  # Default Presets the user deleted
 
     def __init__(self):
         self.backup_created = AppSettings.backup_created
         self.selected_preset = AppSettings.selected_preset
+        self.user_presets_dir = AppSettings.user_presets_dir
+
+    @staticmethod
+    def update_user_presets_dir(user_presets_dir: Union[str, Path]) -> bool:
+        user_presets_dir = Path(user_presets_dir)
+        user_presets_dir_str = str(WindowsPath(user_presets_dir))
+
+        try:
+            if user_presets_dir.exists():
+                logging.info('Updating User Presets Dir: %s', user_presets_dir_str)
+                PresetDir.value = user_presets_dir_str
+                AppSettings.user_presets_dir = user_presets_dir_str
+                AppSettings.save()
+                AppSettings.copy_default_presets()
+            else:
+                logging.error('Selected Presets Directory does not exist: %s', user_presets_dir.as_posix())
+                return False
+        except Exception as e:
+            logging.error('Error accessing path: %s', e)
+            return False
+
+        return True
 
     @staticmethod
     def create_backup(rf: RfactorPlayer):
@@ -111,4 +135,7 @@ class AppSettings(JsonRepr):
         except Exception as e:
             logging.fatal('Could not load application settings! %s', e)
             return False
+
+        # -- Setup custom user preset dir if set --
+        PresetDir.value = AppSettings.user_presets_dir
         return True

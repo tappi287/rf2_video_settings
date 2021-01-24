@@ -16,6 +16,31 @@
               <b-icon :icon="viewMode ? 'grid-fill' : 'list'"></b-icon>
             </b-button>
             <b-input-group-text class="info-field">Presets</b-input-group-text>
+
+            <!-- Preset Folder Select -->
+            <b-button v-b-popover.hover.top="'Customize Presets save location'"
+                      squared variant="rf-yellow" id="preset-folder">
+              <b-icon icon="folder-fill"></b-icon>
+            </b-button>
+
+            <!-- Folder Select Popover -->
+            <b-popover target="preset-folder" triggers="click">
+              <h5>Preset Save Location</h5>
+              <p>Paste a path in the Format <i>C:\Dir\MyDir</i></p>
+              <b-form-input size="sm" v-model="userPresetsDir"
+                            placeholder="Paste a custom folder location">
+              </b-form-input>
+              <div class="text-right mt-1">
+                <b-button @click="setPresetsDir" size="sm" variant="primary"
+                          aria-label="Save">
+                  Save
+                </b-button>
+                <b-button @click="$root.$emit('bv::hide::popover', 'preset-folder')"
+                          size="sm" aria-label="Close">
+                  Close
+                </b-button>
+              </div>
+            </b-popover>
           </b-input-group-prepend>
 
           <!-- Preset Selection-->
@@ -107,6 +132,7 @@ export default {
       selectedPresetIdx: 0,
       newPresetName: '',
       presetDesc: '',
+      userPresetsDir: '',
       isBusy: false,
       viewMode: 0,
       previousPresetName: '',
@@ -124,6 +150,9 @@ export default {
         solid: true,
         isBusy: false
       })
+    },
+    getPresetsDirLocation: async function () {
+      this.userPresetsDir = await window.eel.get_user_presets_dir_web()()
     },
     getPresets: async function () {
       this.isBusy = true
@@ -260,6 +289,19 @@ export default {
       this.$root.$emit('bv::hide::popover', 'delete-preset-btn')
       this.isBusy = false
     },
+    setPresetsDir: async function () {
+      let r = await getEelJsonObject(window.eel.set_user_presets_dir(this.userPresetsDir)())
+      this.$root.$emit('bv::hide::popover', 'preset-folder')
+
+      if (r !== undefined && r.result) {
+        this.makeToast('Updated User Presets directory to: ' + this.userPresetsDir, 'success')
+        await this.getPresetsDirLocation()
+        await this.getPresets()
+      } else {
+        this.makeToast('Could not update User Preset Directory. Provided path does not exists or ' +
+            'is not accessible.', 'danger')
+      }
+    },
     updateSetting: async function (setting, value) {
       this.isBusy = true
       setting.value = value
@@ -294,6 +336,7 @@ export default {
   },
   created: function () {
     this.getPresets()
+    this.getPresetsDirLocation()
   }
 }
 </script>
