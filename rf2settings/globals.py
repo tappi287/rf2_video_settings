@@ -7,6 +7,8 @@ from typing import Union
 
 from appdirs import user_data_dir, user_log_dir
 
+from .knownpaths import get_current_user_documents_path
+
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
@@ -79,19 +81,28 @@ def get_presets_dir() -> Path:
     return Path(check_and_create_dir(settings_dir / PRESETS_DIR))
 
 
+def _get_user_doc_dir() -> Path:
+    docs_dir = get_current_user_documents_path()
+    if not docs_dir:
+        docs_dir = os.path.expanduser('~\\Documents\\')
+    return Path(docs_dir)
+
+
 def get_user_presets_dir() -> Path:
-    docs_dir = Path(os.path.expanduser('~\\Documents\\' + SETTINGS_DIR_NAME))
-    return Path(check_and_create_dir(docs_dir))
+    docs_dir = _get_user_doc_dir()
+    return Path(check_and_create_dir(docs_dir / SETTINGS_DIR_NAME))
 
 
 def get_user_export_dir() -> Path:
-    exp_dir = Path(os.path.expanduser('~\\Documents\\' + SETTINGS_DIR_NAME)) / EXPORT_DIR_NAME
-    return Path(check_and_create_dir(exp_dir))
+    preset_dir = get_user_presets_dir()
+    return Path(check_and_create_dir(preset_dir / EXPORT_DIR_NAME))
 
 
 def get_fpsvr_dir() -> Path:
-    fpsvr_dir = Path(os.path.expanduser('~\\Documents\\')) / 'fpsVR' / 'CSV'
-    return Path(check_and_create_dir(fpsvr_dir))
+    docs_dir = _get_user_doc_dir()
+    if not docs_dir:
+        docs_dir = os.path.expanduser('~\\Documents\\')
+    return Path(check_and_create_dir(Path(docs_dir) / 'fpsVR' / 'CSV'))
 
 
 def get_default_presets_dir() -> Path:
