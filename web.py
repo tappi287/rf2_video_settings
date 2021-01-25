@@ -179,3 +179,12 @@ def get_user_presets_dir_web():
     user_presets_dir = str(WindowsPath(get_user_presets_dir()))
     logging.info('Providing User Presets Dir to FrontEnd: %s', user_presets_dir)
     return user_presets_dir
+
+
+@eel.expose
+def run_rfactor():
+    rf, result = RfactorPlayer(), False
+    if rf.is_valid:
+        result = rf.run_rfactor()
+
+    return json.dumps({'result': result})

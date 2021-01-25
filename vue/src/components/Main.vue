@@ -115,6 +115,11 @@
             </SettingsArea>
           </div>
         </div>
+        <div class="mt-2">
+          <b-button size="sm" variant="primary" @click="launchRfactor">
+            <b-icon icon="play"></b-icon>Start rFactor 2
+          </b-button>
+        </div>
       </b-overlay>
     </template>
   </div>
@@ -308,6 +313,14 @@ export default {
       console.log('Updated', setting.name, 'to', setting.value)
       await this._savePreset(this.getSelectedPreset())
       this.isBusy = false
+    },
+    launchRfactor: async function () {
+      let r = await getEelJsonObject(window.eel.run_rfactor()())
+      if (r !== undefined && r.result) {
+        this.makeToast('rFactor2.exe launched. This will take some time.', 'success')
+      } else {
+        this.makeToast('Could not launch rFactor2.exe', 'danger')
+      }
     },
   },
   components: {

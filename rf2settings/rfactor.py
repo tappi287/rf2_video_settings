@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 from configparser import ConfigParser
+from subprocess import Popen
 from typing import Optional
 
 from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, KNOWN_APPS
@@ -226,3 +227,14 @@ class RfactorPlayer:
         self.location = RfactorLocation.path
         self.player_file = RfactorLocation.player_json
         self.ini_file = RfactorLocation.dx_config
+
+    def run_rfactor(self) -> bool:
+        if not self.location or not Path(self.location / 'Bin64').exists():
+            return False
+
+        cwd = self.location
+        args = [self.location / 'Bin64' / 'rFactor2.exe', ]
+
+        # -- Start without creating a handle to the process
+        Popen(args, cwd=cwd)
+        return True
