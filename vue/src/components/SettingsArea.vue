@@ -84,7 +84,8 @@ export default {
     }
   },
   methods: {
-    updateSetting: async function (setting, value) {
+    updateSetting: function (setting, value) {
+      console.log('Setting Area forwarding setting update:', setting.name, value)
       this.$emit('update-setting', setting, value)
     },
   },

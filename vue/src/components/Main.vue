@@ -111,7 +111,7 @@
         <div :id="settingsAreaId">
           <div v-for="(preset, idx) in presets" :key="preset.name">
             <SettingsArea :preset="preset" :idx="idx" :current_preset_idx="selectedPresetIdx"
-                          :view_mode="viewMode" v-on:setting-updated="updateSetting">
+                          :view_mode="viewMode" v-on:update-setting="updateSetting">
             </SettingsArea>
           </div>
         </div>
@@ -205,6 +205,7 @@ export default {
         this.makeToast(r.msg, 'danger')
         console.error('Error writing preset to rFactor 2!', r.msg)
       }
+      console.log('Saved Preset:', preset.name)
       return r
     },
     _exportPreset: async function (preset) {
