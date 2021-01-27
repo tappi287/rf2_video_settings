@@ -1,15 +1,14 @@
 import json
 import logging
 import sys
-from pathlib import Path
-
 from configparser import ConfigParser
+from pathlib import Path
 from subprocess import Popen
 from typing import Optional
 
 from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, KNOWN_APPS
-from .settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions
 from .preset import Preset
+from .settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions
 from .steam_utils import SteamApps
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
@@ -232,9 +231,11 @@ class RfactorPlayer:
         if not self.location or not Path(self.location / 'Bin64').exists():
             return False
 
-        cwd = self.location
-        args = [self.location / 'Bin64' / 'rFactor2.exe', ]
+        # Solution for non loading rF2 plugins in PyInstaller executable:
+        #    ctypes.windll.kernel32.SetDllDirectoryA(None)
+        # See https://github.com/pyinstaller/pyinstaller/wiki/Recipe-subprocess#windows-dll-loading-order
 
-        # -- Start without creating a handle to the process
-        Popen(args, cwd=cwd)
+        executable = self.location / "Bin64" / "rFactor2.exe"
+        Popen(executable, cwd=self.location)
+
         return True
