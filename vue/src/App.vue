@@ -58,6 +58,7 @@ import Main from "./components/Main.vue";
 import Updater from "@/components/Updater";
 import {createPopperLite as createPopper, flip, preventOverflow} from "@popperjs/core";
 
+
 export default {
   name: 'App',
   data: function () {
@@ -145,7 +146,8 @@ body {
 }
 
 html {
-  background-image: linear-gradient(60deg, #172122 0%, #0c1013 100%);
+  /*background-image: linear-gradient(60deg, #172122 0%, #0c1013 100%);*/
+  background: #16161a;
 }
 
 .main-footer {
@@ -159,6 +161,10 @@ html {
 
 .setting-field {
   box-shadow: 0 6px 15px rgba(36, 37, 38, 0.3);
+}
+/* Remove plastic bootstrap style */
+.setting-card .card-header, .card-body, .card-footer {
+  background: none; border: none;
 }
 
 .logo-style {
@@ -207,6 +213,10 @@ html {
   background-color: #E06119;
 }
 
+.text-rf-orange {
+  color: #E06119;
+}
+
 .btn-rf-blue, .btn-rf-blue:hover, .rf-blue {
   color: #efefef;
   border: none;
@@ -228,7 +238,32 @@ html {
   background: linear-gradient(to left, #fa523c, #fa7c56); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
+.btn:focus,.btn:active:focus,.btn.active:focus,
+.btn.focus,.btn:active.focus,.btn.active.focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .bg-dark {
   background-color: #172122;
 }
+
+.flex-grow { flex-grow: 1; }
+
+@keyframes backgroundColorPalette {
+  0% {
+    background: #ecaaa8;
+  }
+  100% {
+    background: white;
+  }
+}
+.filter-warn {
+  animation-name: backgroundColorPalette;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+#server-list * td { vertical-align: baseline !important; }
+
 </style>

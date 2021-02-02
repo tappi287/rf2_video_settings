@@ -7,7 +7,7 @@ from pathlib import Path, WindowsPath
 from typing import Iterable, List, Optional, Tuple
 
 from . import acf
-from .globals import KNOWN_APPS
+from ..globals import KNOWN_APPS
 
 STEAM_LIBRARY_FOLDERS = 'LibraryFolders'
 STEAM_LIBRARY_FILE = 'libraryfolders.vdf'

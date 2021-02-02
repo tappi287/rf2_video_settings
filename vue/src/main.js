@@ -9,6 +9,7 @@ import Axios from "axios"
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.config.productionTip = false
+// Vue.config.devtools = true
 
 export const settingsAreaId = 'settings-area'
 

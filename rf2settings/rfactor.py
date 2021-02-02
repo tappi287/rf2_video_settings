@@ -6,10 +6,10 @@ from pathlib import Path
 from subprocess import Popen
 from typing import Optional
 
-from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, KNOWN_APPS
+from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, RF2_APPID, RFACTOR_VERSION_TXT
 from .preset import Preset
 from .settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions
-from .steam_utils import SteamApps
+from .valve.steam_utils import SteamApps
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
@@ -19,7 +19,8 @@ class RfactorLocation:
     path: Path = None
     player_json = Path()
     dx_config = Path()
-    _app_id = [k for k in KNOWN_APPS.keys()][0]
+    version_txt = Path()
+    _app_id = RF2_APPID
     is_valid = False
 
     @classmethod
@@ -34,6 +35,7 @@ class RfactorLocation:
         if path and path.exists():
             player_json = path / RFACTOR_PLAYER
             dx_config = path / RFACTOR_DXCONFIG
+            version_txt = path / RFACTOR_VERSION_TXT
 
             if dev:
                 player_json = path / 'ModDev' / RFACTOR_PLAYER
@@ -44,18 +46,21 @@ class RfactorLocation:
                 cls.path = path
                 cls.player_json = player_json
                 cls.dx_config = dx_config
+                cls.version_txt = version_txt
 
 
 class RfactorPlayer:
     config_parser_args = {'inline_comment_prefixes': '//', 'default_section': 'COMPONENTS'}
 
-    def __init__(self, dev: Optional[bool] = None):
+    def __init__(self, dev: Optional[bool] = None, only_version: bool = False):
         self.dev = dev or False
         self.player_file = Path()
         self.ini_file = Path()
         self.ini_first_line = str()
         self.ini_config = self._create_ini_config_parser()
         self.location = Path('../modules')
+        self.version_file = Path()
+        self.version = ''
 
         self.graphic_options = GraphicOptions()
         self.advanced_graphic_options = AdvancedGraphicSettings()
@@ -64,16 +69,21 @@ class RfactorPlayer:
         self.is_valid = False
         self.error = ''
 
-        self.get_current_rfactor_settings()
+        self.get_current_rfactor_settings(only_version)
 
     def _create_ini_config_parser(self):
         config_parser = ConfigParser(**self.config_parser_args)
         config_parser.optionxform = str
         return config_parser
 
-    def get_current_rfactor_settings(self):
+    def get_current_rfactor_settings(self, only_version: bool = True):
         """ Read all settings from the current rFactor 2 installation """
         self._get_location()
+
+        if not self._update_version():
+            self.error += 'Could not read rFactor 2 version'
+        if only_version:
+            return
 
         for preset_options in (self.graphic_options, self.advanced_graphic_options):
             if not self._update_settings_from_player_json(preset_options):
@@ -216,6 +226,18 @@ class RfactorPlayer:
 
         return settings_updated
 
+    def _update_version(self) -> bool:
+        if not self.version_file.exists():
+            return False
+        try:
+            with open(self.version_file, 'r') as f:
+                self.version = f.readline()
+        except Exception as e:
+            logging.error('Error reading version file: %s', e)
+            return False
+
+        return True
+
     def _get_location(self):
         if not RfactorLocation.is_valid:
             RfactorLocation.get_location(self.dev)
@@ -226,9 +248,13 @@ class RfactorPlayer:
         self.location = RfactorLocation.path
         self.player_file = RfactorLocation.player_json
         self.ini_file = RfactorLocation.dx_config
+        self.version_file = RfactorLocation.version_txt
 
-    def run_rfactor(self) -> bool:
-        if not self.location or not Path(self.location / 'Bin64').exists():
+    def _check_bin_dir(self) -> bool:
+        return self.location and Path(self.location / 'Bin64').exists()
+
+    def run_rfactor(self, server_info: Optional[dict] = None) -> bool:
+        if not self._check_bin_dir():
             return False
 
         # Solution for non loading rF2 plugins in PyInstaller executable:
@@ -236,6 +262,22 @@ class RfactorPlayer:
         # See https://github.com/pyinstaller/pyinstaller/wiki/Recipe-subprocess#windows-dll-loading-order
 
         executable = self.location / "Bin64" / "rFactor2.exe"
-        Popen(executable, cwd=self.location)
+        cmd = [executable]
 
+        if server_info:
+            ip, port = server_info.get('address', ('localhost',))[0], server_info.get('port', '64297')
+            p = server_info.get('password')
+            cmd += ['+multiplayer', f'+connect={":" if p else ""}{p}{"@" if p else ""}{ip}:{port}']
+
+        logging.info('Launching %s', cmd)
+
+        Popen(cmd, cwd=self.location)
+
+        return True
+
+    def run_config(self) -> bool:
+        if not self._check_bin_dir():
+            return False
+        executable = self.location / "Bin64" / "rF Config.exe"
+        Popen(executable, cwd=self.location)
         return True

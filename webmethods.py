@@ -3,6 +3,7 @@ import logging
 import sys
 from pathlib import WindowsPath
 from subprocess import Popen
+from typing import Optional
 
 import eel
 
@@ -11,6 +12,7 @@ from rf2settings.presets_dir import get_user_presets_dir, get_user_export_dir
 from rf2settings.preset import Preset, load_presets_from_dir
 from rf2settings.runasadmin import run_as_admin
 from rf2settings.rfactor import RfactorPlayer
+from rf2settings.serverlist import ServerList
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
@@ -73,6 +75,12 @@ def run_update():
         return json.dumps({'result': True})
     return json.dumps({'result': False})
 """
+
+
+@eel.expose
+def get_rf_version():
+    rf = RfactorPlayer(only_version=True)
+    return json.dumps(rf.version)
 
 
 @eel.expose
@@ -182,9 +190,90 @@ def get_user_presets_dir_web():
 
 
 @eel.expose
-def run_rfactor():
+def get_server_list():
+    server_list = ServerList(update_players=True)
+    server_list.update(eel.add_server_list_chunk, eel.server_progress)
+    return json.dumps({'result': server_list.servers})
+
+
+@eel.expose
+def refresh_server(address: list):
+    server_list = ServerList()
+
+    if len(address) > 1:
+        address = (address[0], int(address[1]))
+        server_info = server_list.update_single(address)
+        if server_info:
+            return json.dumps({'result': server_info, 'msg': f'Server info updated for {address[0]}'})
+
+    return json.dumps({'result': False, 'msg': 'Could not obtain server info for this address'})
+
+
+@eel.expose
+def get_server_browser_settings():
+    return json.dumps(AppSettings.server_browser)
+
+
+@eel.expose
+def save_server_browser_settings(server_browser: dict):
+    AppSettings.server_browser.update(server_browser)
+    if AppSettings.save():
+        logging.debug('Updated Server Browser settings.')
+        return json.dumps({'result': True})
+    return json.dumps({'result': False})
+
+
+@eel.expose
+def get_server_favourites():
+    return json.dumps(AppSettings.server_favourites)
+
+
+@eel.expose
+def server_favourite(server_info, add: bool = True):
+    if not server_info.get('id'):
+        return json.dumps({'result': False})
+
+    # -- Add favourite
+    if add:
+        logging.debug('Adding Server favourite = %s %s', server_info.get('id'), add)
+        if server_info.get('id') not in AppSettings.server_favourites:
+            AppSettings.server_favourites.append(server_info.get('id'))
+        AppSettings.save()
+        return json.dumps({'result': True, 'data': AppSettings.server_favourites})
+
+    # -- Remove favourite
+    if server_info.get('id') in AppSettings.server_favourites:
+        logging.debug('Removing Server favourite = %s %s', server_info.get('id'), add)
+        AppSettings.server_favourites.remove(server_info.get('id'))
+        AppSettings.save()
+
+    return json.dumps({'result': True, 'data': AppSettings.server_favourites})
+
+
+@eel.expose
+def run_rfactor(server_info: Optional[dict] = None):
+    if server_info and server_info.get('password_remember'):
+        # -- Store password if remember option checked
+        logging.info('Storing password for Server %s', server_info.get('id'))
+        AppSettings.server_passwords[server_info.get('id')] = server_info.get('password')
+        AppSettings.save()
+    elif server_info and not server_info.get('password_remember'):
+        # -- Delete password if remember option unchecked
+        if server_info.get('id') in AppSettings.server_passwords:
+            AppSettings.server_passwords.pop(server_info.get('id'))
+            AppSettings.save()
+
     rf, result = RfactorPlayer(), False
     if rf.is_valid:
-        result = rf.run_rfactor()
+        result = rf.run_rfactor(server_info)
+
+    return json.dumps({'result': result})
+
+
+@eel.expose
+def run_rfactor_config():
+    rf, result = RfactorPlayer(), False
+    if rf.is_valid:
+        result = rf.run_config()
 
     return json.dumps({'result': result})

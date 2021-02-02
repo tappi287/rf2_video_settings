@@ -6,10 +6,10 @@ from pathlib import Path
 from subprocess import Popen
 from typing import Optional
 
-from .globals import KNOWN_APPS, get_fpsvr_dir
+from .globals import get_fpsvr_dir, FPSVR_APPID
 from .process import RunProcess
 from .rfactor import RfactorPlayer
-from .steam_utils import SteamApps
+from .valve.steam_utils import SteamApps
 
 
 class RunRfactorBenchmark:
@@ -106,7 +106,7 @@ class RunRfactorBenchmark:
 
     def _get_fpsvr_cmd(self):
         s = SteamApps()
-        path = s.find_game_location([k for k in KNOWN_APPS.keys()][1])
+        path = s.find_game_location(FPSVR_APPID)
 
         if path and path.exists():
             self.fps_vr_cmd = path / 'fpsVRcmd.exe'

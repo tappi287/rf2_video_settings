@@ -23,6 +23,7 @@ APP_FRIENDLY_NAME = 'rF2 Settings Widget'
 BASE_PATH = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__ + '/..')))
 RFACTOR_PLAYER = 'UserData/player/player.JSON'
 RFACTOR_DXCONFIG = 'UserData/Config_DX11.ini'
+RFACTOR_VERSION_TXT = 'Core/Version.txt'
 
 GIT_RELEASE_URL = 'https://api.github.com/repos/tappi287/rf2_video_settings/releases/latest'
 
@@ -45,6 +46,9 @@ KNOWN_APPS = {
         "exe_sub_path": ""
     }
 }
+
+RF2_APPID = [k for k in KNOWN_APPS.keys()][0]
+FPSVR_APPID = [k for k in KNOWN_APPS.keys()][1]
 
 # Frozen or Debugger
 if getattr(sys, 'frozen', False):

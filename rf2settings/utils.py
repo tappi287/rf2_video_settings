@@ -5,6 +5,19 @@ import re
 import subprocess as sp
 from pathlib import Path, WindowsPath
 from typing import Tuple, Union
+from pygame import joystick
+
+
+def print_controllers():
+    joystick.init()
+
+    if joystick.get_init():
+        for j_id in range(joystick.get_count()):
+            j = joystick.Joystick(j_id)
+            logging.info('Found Game Controller: %s', j.get_name())
+            j.quit()
+
+        joystick.quit()
 
 
 def create_file_safe_name(filename: str) -> str:

@@ -3,7 +3,7 @@ import logging
 import sys
 from pathlib import Path, WindowsPath
 from shutil import copyfile
-from typing import Iterator, Union
+from typing import Iterator, Union, List
 
 from .presets_dir import PresetDir, get_user_presets_dir
 from .utils import JsonRepr
@@ -20,6 +20,10 @@ class AppSettings(JsonRepr):
     selected_preset = str()
     user_presets_dir = str()
     deleted_defaults = list()  # Default Presets the user deleted
+    server_favourites: List[list] = list()
+    server_browser: dict = {'filter_fav': False, 'filter_empty': False, 'filter_pwd': False, 'filter_version': False,
+                            'filter_text': '', 'store_pwd': False}
+    server_passwords = dict()
 
     def __init__(self):
         self.backup_created = AppSettings.backup_created

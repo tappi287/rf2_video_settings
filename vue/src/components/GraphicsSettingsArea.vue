@@ -1,7 +1,7 @@
 <template>
 <div v-if="current_preset_idx === idx">
   <!-- Video Settings -->
-  <b-card class="mt-3" id="video" bg-variant="dark" text-variant="white">
+  <b-card class="mt-2 setting-card" id="video" bg-variant="dark" text-variant="white">
     <template #header>
       <h6 class="mb-0"><span class="title">{{ preset.video_settings.title }}</span></h6>
     </template>
@@ -10,16 +10,21 @@
              :show_performance="showPerformance"
              v-on:setting-changed="updateSetting">
     </Setting>
+
     <!-- Footer -->
     <template #footer>
-    <span class="small font-weight-lighter">
-      Use the in-game menu to change screen resolution and window mode for now
-    </span>
+      <div class="float-right">
+        <b-button @click="launchConfig" size="sm"
+                  v-b-popover.lefttop.hover="'Launch rf Config to change resolution, refresh rate ' +
+                   'and window mode.'">
+          <b-icon icon="display-fill" />
+        </b-button>
+      </div>
     </template>
   </b-card>
 
   <!-- Display Settings -->
-  <b-card class="mt-3" id="graphic"
+  <b-card class="mt-2 setting-card" id="graphic"
           bg-variant="dark" text-variant="white">
     <template #header>
       <h6 class="mb-0">
@@ -59,7 +64,7 @@
   </b-card>
 
   <!-- Advanced Display Settings -->
-  <b-card class="mt-3" id="advanced" bg-variant="dark" text-variant="white">
+  <b-card class="mt-2 setting-card" id="advanced" bg-variant="dark" text-variant="white">
     <template #header>
       <h6 class="mb-0"><span class="title">{{ preset.advanced_graphic_options.title }}</span></h6>
     </template>
@@ -68,16 +73,16 @@
              :show_performance="showPerformance"
              v-on:setting-changed="updateSetting">
     </Setting>
-    <template #footer><span class="small font-weight-lighter">More settings available soon</span></template>
   </b-card>
 </div>
 </template>
 
 <script>
 import Setting from "./Setting.vue"
+import {getEelJsonObject} from "@/main";
 
 export default {
-  name: "SettingsArea",
+  name: "GraphicsSettingsArea",
   data: function () {
     return {
       showPerformance: true,
@@ -88,6 +93,12 @@ export default {
       console.log('Setting Area forwarding setting update:', setting.name, value)
       this.$emit('update-setting', setting, value)
     },
+    launchConfig: async function() {
+      let r = await getEelJsonObject(window.eel.run_rfactor_config()())
+      if (r === undefined || !r.result) {
+        this.makeToast('Could not launch rF Config.exe', 'danger')
+      }
+    }
   },
   props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number},
   components: {

@@ -8,7 +8,7 @@ import eel
 from webmethods import expose_methods
 from rf2settings.app_settings import AppSettings
 from rf2settings.runasadmin import run_as_admin
-
+from rf2settings.utils import print_controllers
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
@@ -33,6 +33,7 @@ def start_eel():
     if sys.platform == "win32":
         import ctypes
         ctypes.windll.kernel32.SetDllDirectoryA(None)
+        print_controllers()
     """
         //
     """
@@ -40,16 +41,18 @@ def start_eel():
     host = 'localhost'
     port = 8123
     eel.init('web')
+    page = 'index.html'
+    window_size = (960, 600)
 
     try:
-        eel.start('index.html', size=(960, 600), host=host, port=port)
+        eel.start(page, size=window_size, host=host, port=port)
     except EnvironmentError:
         # If Chrome isn't found, fallback to Microsoft Edge on Win10 or greater
         if sys.platform in ['win32', 'win64'] and int(platform.release()) >= 10:
-            eel.start('index.html', size=(960, 600), mode='edge', host=host, port=port)
+            eel.start(page, size=window_size, mode='edge', host=host, port=port)
         # Fallback to opening a regular browser window
         else:
-            eel.start('index.html', size=(960, 600), mode=None, app_mode=False, host=host, port=port, block=False)
+            eel.start(page, size=window_size, mode=None, app_mode=False, host=host, port=port, block=False)
             # Open system default web browser
             webbrowser.open_new(f'http://{host}:{port}')
             # Run until window/tab closed
