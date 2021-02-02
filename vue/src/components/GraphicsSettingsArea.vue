@@ -6,7 +6,7 @@
       <h6 class="mb-0"><span class="title">{{ preset.video_settings.title }}</span></h6>
     </template>
     <Setting v-for="setting in preset.video_settings.options" :key="setting.key"
-             :setting="setting" variant="rf-orange" class="mr-3" group_id="video"
+             :setting="setting" variant="rf-orange" class="mr-3 mb-3" group_id="video"
              :show_performance="showPerformance"
              v-on:setting-changed="updateSetting">
     </Setting>

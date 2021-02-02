@@ -5,7 +5,6 @@ import webbrowser
 
 import eel
 
-from webmethods import expose_methods
 from rf2settings.app_settings import AppSettings
 from rf2settings.runasadmin import run_as_admin
 from rf2settings.utils import print_controllers
@@ -61,5 +60,4 @@ def start_eel():
 
 
 if __name__ == '__main__':
-    expose_methods()
     start_eel()
