@@ -20,7 +20,7 @@ class AppSettings(JsonRepr):
     selected_preset = str()
     user_presets_dir = str()
     deleted_defaults = list()  # Default Presets the user deleted
-    server_favourites: List[list] = list()
+    server_favourites = list()
     server_browser: dict = {'filter_fav': False, 'filter_empty': False, 'filter_pwd': False, 'filter_version': False,
                             'filter_text': '', 'store_pwd': False}
     server_passwords = dict()

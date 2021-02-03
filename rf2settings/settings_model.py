@@ -9,7 +9,12 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
 
 _allowed_value_types = (bool, str, int, float)
 
-player_adjustable_settings = {
+driver_settings = {
+    'Player Name': {'name': 'User Name', 'value': ''},
+    'Player Nick': {'name': 'Nickname', 'value': ''}
+}
+
+adjustable_graphics_settings = {
     'Track Detail': {'name': 'Circuit Detail', 'value': 2,
                      'settings':
                          ({'value': 0, 'name': 'Low'}, {'value': 1, 'name': 'Medium'},
@@ -245,6 +250,17 @@ class BaseOptions(JsonRepr):
         return all([a == b for a, b in zip(options, other_options)])
 
 
+class DriverOptions(BaseOptions):
+    key = 'DRIVER'
+    title = 'Driver Settings'
+
+    def __init__(self):
+        super(DriverOptions, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(driver_settings)
+
+
 class GraphicOptions(BaseOptions):
     key = 'Graphic Options'
     title = 'Display Settings'
@@ -253,7 +269,7 @@ class GraphicOptions(BaseOptions):
         super(GraphicOptions, self).__init__()
 
         # -- Read Default options
-        self.read_from_python_dict(player_adjustable_settings)
+        self.read_from_python_dict(adjustable_graphics_settings)
 
 
 class VideoSettings(BaseOptions):

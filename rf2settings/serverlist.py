@@ -24,9 +24,10 @@ class ServerList:
                   'platform', 'bot_count', 'player_count', 'protocol', 'server_name', 'server_type', 'steam_id',
                   'ip', 'port', 'players')
 
-    def __init__(self, update_players: bool = False):
+    def __init__(self, update_players: bool = False, only_favourites: bool = False):
         self.servers: List[dict] = list()
         self.update_players = update_players
+        self.only_favourites = only_favourites
 
         _a2s_logger = logging.getLogger('a2s')
         _a2s_logger.setLevel(logging.INFO)
@@ -35,12 +36,20 @@ class ServerList:
         """ Acquire a complete list of available rFactor 2 Servers
             This will block until all worker threads are finished.
         """
+        server_address_list = list()
+
         # -- Get a list of IP:Port addresses from the Steam Master Server
         #    that run rFactor 2 Servers
-        server_address_list = self.get_server_addresses()
-        if not server_address_list:
-            logging.error('Could not acquire server list from master server!')
-            return
+        if not self.only_favourites:
+            server_address_list = self.get_server_addresses()
+            if not server_address_list:
+                logging.error('Could not acquire server list from master server!')
+                return
+
+        if self.only_favourites:
+            for favourite_id in AppSettings.server_favourites:
+                fav_ip, fav_port = favourite_id.split(':')
+                server_address_list.append((fav_ip, int(fav_port)))
 
         # -- Initial progress report
         _num_server = len(server_address_list)

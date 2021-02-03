@@ -43,6 +43,7 @@ def start_eel():
     page = 'index.html'
     window_size = (960, 600)
 
+    # TODO: fetch OSError port in use
     try:
         eel.start(page, size=window_size, host=host, port=port)
     except EnvironmentError:

@@ -8,7 +8,7 @@ from typing import Optional
 
 from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, RF2_APPID, RFACTOR_VERSION_TXT
 from .preset import Preset
-from .settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions
+from .settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions, DriverOptions
 from .valve.steam_utils import SteamApps
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
@@ -62,6 +62,7 @@ class RfactorPlayer:
         self.version_file = Path()
         self.version = ''
 
+        self.driver_options = DriverOptions()
         self.graphic_options = GraphicOptions()
         self.advanced_graphic_options = AdvancedGraphicSettings()
         self.video_settings = VideoSettings()
@@ -85,7 +86,7 @@ class RfactorPlayer:
         if only_version:
             return
 
-        for preset_options in (self.graphic_options, self.advanced_graphic_options):
+        for preset_options in (self.driver_options, self.graphic_options, self.advanced_graphic_options):
             if not self._update_settings_from_player_json(preset_options):
                 self.error = 'Could not read rFactor2 player.JSON'
                 self.is_valid = False

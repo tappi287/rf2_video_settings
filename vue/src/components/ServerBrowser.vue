@@ -1,7 +1,7 @@
 <template>
   <div id="server-browser" v-cloak>
     <!-- Filter -->
-    <b-input-group size="md" v-if="!isBusy">
+    <b-input-group size="md" v-if="!isBusy && !onlyFav">
       <b-input-group-prepend>
         <b-input-group-text><b-icon icon="filter" aria-hidden="true"></b-icon></b-input-group-text>
       </b-input-group-prepend>
@@ -51,8 +51,10 @@
     </b-progress>
 
     <!-- Server List -->
-    <b-table small :items="computedServerList" :fields="serverFields" table-variant="dark" :busy="isBusy" show-empty
-             primary-key="id" id="server-list" thead-class="bg-dark text-white" striped class="server-list">
+    <b-table :items="computedServerList" :fields="serverFields" table-variant="dark" :busy="isBusy" show-empty
+             primary-key="id" id="server-list" class="server-list"
+             :thead-class="onlyFav ? 'hidden' : 'bg-dark text-white'"
+             small :striped="!onlyFav" borderless>
 
       <!-- Name -->
       <template v-slot:cell(server_name)="server">
@@ -86,7 +88,7 @@
       </template>
 
       <!-- Fav -->
-      <template v-slot:cell(actions)="server">
+      <template v-if="!onlyFav" v-slot:cell(actions)="server">
         <b-link @click="toggleServerFavourite(server.item)">
           <b-icon shift-v="1" variant="warning" :icon="isServerFav(server.item) ? 'star-fill' : 'star'"></b-icon>
         </b-link>
@@ -297,8 +299,10 @@ export default {
       selectedServer: {},
       storePwd: true,
       showPwdToggle: false,
+      onlyFav: false
     }
   },
+  props: { onlyFavourites: Boolean },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
@@ -348,7 +352,8 @@ export default {
           (!this.filterPwd && !this.filterEmpty && !this.filterFavs && !this.filterVer)) {
         return this.serverListData
       }
-      this.saveSettings()
+
+      if (!this.onlyFav) { this.saveSettings() }
 
       let filterText = ''
       let filteredList = []
@@ -381,7 +386,7 @@ export default {
       this.isBusy = true
 
       try {
-        const server_data = await getEelJsonObject(window.eel.get_server_list()())
+        const server_data = await getEelJsonObject(window.eel.get_server_list(this.onlyFav)())
         if (server_data === undefined || server_data === null) {
           this.$emit('error', 'Error acquiring server list.')
           this.makeToast('Error acquiring server list.', 'danger', 'Server Browser')
@@ -438,17 +443,25 @@ export default {
       }
     },
     loadSettings: async function () {
+      this.onlyFav = this.onlyFavourites
+
       try {
         const server_fav_data = await getEelJsonObject(window.eel.get_server_favourites()())
         const settings = await getEelJsonObject(window.eel.get_server_browser_settings()())
 
         if (server_fav_data !== undefined) { this.serverFavs = server_fav_data }
-        if (settings !== undefined) {
+
+        if ((settings !== undefined) && (!this.onlyFav)) {
+          // Full Server Browser with filtering
           this.filterFavs = settings.filter_fav || false
           this.filterEmpty = settings.filter_empty || false
           this.filterPwd = settings.filter_pwd || false
           this.filterVer = settings.filter_version || false
           this.serverTextFilter = settings.filter_text || ''
+          this.storePwd = settings.store_pwd || false
+        } else {
+          // Only Favourites fixed setting for Dashboard
+          this.filterFavs = true
           this.storePwd = settings.store_pwd || false
         }
       } catch (error) {
@@ -485,14 +498,16 @@ export default {
     },
   },
   created() {
+    this.isBusy = true
     this.getRfVersion()
     this.loadSettings()
     this.refreshServerList()
+    this.isBusy = false
     window.addEventListener('update-progress', this.updateProgress)
     window.addEventListener('add-server-list-chunk', this.updateServerListData)
   },
   destroyed() {
-    this.saveSettings()
+    if (!this.onlyFav) { this.saveSettings() }
     console.log('Removing Event listeners')
     window.removeEventListener('update-progress', this.updateProgress)
     window.removeEventListener('add-server-list-chunk', this.updateServerListData)

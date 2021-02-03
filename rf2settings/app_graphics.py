@@ -32,7 +32,8 @@ def get_presets():
     # - Load saved Presets
     preset_changed = None
 
-    presets, selected_preset = load_presets_from_dir(get_user_presets_dir(), current_preset, AppSettings.selected_preset)
+    presets, selected_preset = load_presets_from_dir(get_user_presets_dir(),
+                                                     current_preset, AppSettings.selected_preset)
     presets = [current_preset] + presets
 
     # - Check if the currently selected preset differs

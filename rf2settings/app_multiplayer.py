@@ -20,8 +20,8 @@ def get_rf_version():
 
 
 @eel.expose
-def get_server_list():
-    server_list = ServerList(update_players=True)
+def get_server_list(only_favourites: bool = False):
+    server_list = ServerList(update_players=True, only_favourites=only_favourites)
     server_list.update(eel.add_server_list_chunk, eel.server_progress)
     return json.dumps({'result': server_list.servers})
 

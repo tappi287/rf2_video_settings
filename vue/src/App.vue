@@ -150,6 +150,8 @@ html {
   background: #16161a;
 }
 
+.hidden { display: none; }
+
 .main-footer {
   margin-bottom: 3rem;
 }
