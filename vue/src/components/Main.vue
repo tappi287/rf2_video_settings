@@ -17,8 +17,21 @@
                @makeToast="makeToast" @error="setError"></Dashboard>
 
     <!-- Graphic Settings-->
+    <PresetHandler ref="gfx" @makeToast="makeToast" @error="setError" />
     <Graphics ref="graphics" v-if="navActive === 1"
-              @make-toast="makeToast" @error="setError"></Graphics>
+              :gfx-presets="this.$refs.gfx.presets"
+              :previous-gfx-preset-name="this.$refs.gfx.previousPresetName"
+              :selected-gfx-preset-idx="this.$refs.gfx.selectedPresetIdx"
+              :gfx-preset-dir="this.$refs.gfx.userPresetsDir"
+              :is-busy="this.$refs.gfx.isBusy"
+              @save-preset="this.$refs.gfx.savePreset"
+              @update-presets-dir="this.$refs.gfx.setPresetsDir"
+              @export-current="this.$refs.gfx.exportPreset"
+              @select-preset="this.$refs.gfx.selectPreset"
+              @create-preset="this.$refs.gfx.createPreset"
+              @delete-preset="this.$refs.gfx.deletePreset"
+              @update-setting="this.$refs.gfx.updateSetting"
+              @update-desc="this.$refs.gfx.updateDesc" />
 
     <!-- Server Browser -->
     <ServerBrowser ref="serverBrowser" v-if="navActive === 4"
@@ -38,6 +51,7 @@ import {getEelJsonObject} from '@/main'
 import Dashboard from "@/components/Dashboard";
 import Graphics from "@/components/Graphics";
 import ServerBrowser from "@/components/ServerBrowser";
+import PresetHandler from "@/components/PresetHandler";
 
 export default {
   name: 'Main',
@@ -59,7 +73,7 @@ export default {
       })
     },
     importPreset: async function (importPreset) {
-      await this.$refs.graphics.importPreset(importPreset)
+      await this.$refs.gfx.importPreset(importPreset)
     },
     setError: async function (error) { this.$emit('error', error) },
     toggleServerBrowser() {
@@ -82,7 +96,8 @@ export default {
   components: {
     Dashboard,
     ServerBrowser,
-    Graphics
+    Graphics,
+    PresetHandler
   },
 }
 </script>

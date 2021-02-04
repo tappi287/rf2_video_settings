@@ -1,5 +1,5 @@
 <template>
-
+  <div style="display: none"></div>
 </template>
 
 <script>
@@ -11,8 +11,6 @@ export default {
     return {
       presets: [],
       selectedPresetIdx: 0,
-      newPresetName: '',
-      presetDesc: '',
       userPresetsDir: '',
       isBusy: false,
       viewMode: 0,
@@ -64,9 +62,10 @@ export default {
       this.isBusy = false
     },
     getSelectedPreset: function () {
+      if (this.presets.length === 0) { return {} }
       return this.presets[this.selectedPresetIdx]
     },
-    _savePreset: async function (preset) {
+    savePreset: async function (preset) {
       const r = await getEelJsonObject(window.eel.save_preset(preset)())
       this.previousPresetName = ''
       if (!r.result) {
@@ -74,22 +73,16 @@ export default {
         console.error('Error writing preset to rFactor 2!', r.msg)
       }
       console.log('Saved Preset:', preset.name)
-      return r
     },
-    _exportPreset: async function (preset) {
-      const r = await getEelJsonObject(window.eel.export_preset(preset)())
+    exportPreset: async function () {
+      this.isBusy = true
+      const r = await getEelJsonObject(window.eel.export_preset(this.getSelectedPreset())())
       this.previousPresetName = ''
-      console.log(r)
-      console.log(r.result)
       if (!r.result) {
+        console.log(r, r.result)
         this.makeToast(r.msg, 'danger')
         console.error('Error writing preset to rFactor 2!', r.msg)
       }
-      return r
-    },
-    exportCurrentPreset: async function () {
-      this.isBusy = true
-      await this._exportPreset(this.getSelectedPreset())
       this.isBusy = false
     },
     importPreset: async function (importPreset) {
@@ -125,17 +118,15 @@ export default {
       let p = this.getSelectedPreset()
       await window.eel.select_preset(p.name)
       if (save) {
-        await this._savePreset(p)
+        await this.savePreset(p)
         await sleep(150)
       }
-      this.presetDesc = p.desc
       this.isBusy = false
     },
-    createPreset: async function () {
+    createPreset: async function (newPresetName = 'New Preset') {
       this.isBusy = true
 
       let preset = {}
-      preset['name'] = this.newPresetName
 
       // Clone properties of the currently selected preset
       const keys = Object.keys(this.getSelectedPreset())
@@ -144,13 +135,14 @@ export default {
         preset[key] = JSON.parse(options)
       })
 
+      preset['name'] = newPresetName
+
       this.presets.push(preset)
       console.log('Created preset:', preset)
 
       await this.selectPreset(preset, false)
-      this.newPresetName = ''
 
-      await this._savePreset(this.getSelectedPreset())
+      await this.savePreset(this.getSelectedPreset())
       await sleep(150)
       this.isBusy = false
     },
@@ -168,9 +160,8 @@ export default {
       this.$root.$emit('bv::hide::popover', 'delete-preset-btn')
       this.isBusy = false
     },
-    setPresetsDir: async function () {
-      let r = await getEelJsonObject(window.eel.set_user_presets_dir(this.userPresetsDir)())
-      this.$root.$emit('bv::hide::popover', 'preset-folder')
+    setPresetsDir: async function (newUserPresetsDir) {
+      let r = await getEelJsonObject(window.eel.set_user_presets_dir(newUserPresetsDir)())
 
       if (r !== undefined && r.result) {
         this.makeToast('Updated User Presets directory to: ' + this.userPresetsDir, 'success')
@@ -179,15 +170,25 @@ export default {
       } else {
         this.makeToast('Could not update User Preset Directory. Provided path does not exists or ' +
             'is not accessible.', 'danger')
+        await this.getPresetsDirLocation()
       }
+    },
+    updateDesc: function (newDesc) {
+      if (newDesc === undefined || newDesc === null) { return }
+      this.getSelectedPreset().desc = newDesc
+      this.savePreset(this.getSelectedPreset())
     },
     updateSetting: async function (setting, value) {
       this.isBusy = true
       setting.value = value
       console.log('Updated', setting.name, 'to', setting.value)
-      await this._savePreset(this.getSelectedPreset())
+      await this.savePreset(this.getSelectedPreset())
       this.isBusy = false
     }
+  },
+  created() {
+    this.getPresets()
+    this.getPresetsDirLocation()
   }
 }
 </script>
