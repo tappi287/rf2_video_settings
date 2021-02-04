@@ -246,15 +246,16 @@ export default {
     },
     createPreset: async function () {
       this.isBusy = true
-
       let preset = {}
+
+      // Clone properties of the currently selected preset
+      const keys = Object.keys(this.getSelectedPreset())
+      keys.forEach(key => {
+        const options = JSON.stringify(this.getSelectedPreset()[key])
+        preset[key] = JSON.parse(options)
+      })
+
       preset['name'] = this.newPresetName
-      let graphicOptions = JSON.stringify(this.getSelectedPreset().graphic_options)
-      let advancedGraphicOptions = JSON.stringify(this.getSelectedPreset().advanced_graphic_options)
-      let videoSettings = JSON.stringify(this.getSelectedPreset().video_settings)
-      preset['graphic_options'] = JSON.parse(graphicOptions)
-      preset['advanced_graphic_options'] = JSON.parse(advancedGraphicOptions)
-      preset['video_settings'] = JSON.parse(videoSettings)
 
       this.presets.push(preset)
       console.log('Created preset:', preset)
