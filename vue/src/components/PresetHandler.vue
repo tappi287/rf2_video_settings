@@ -51,6 +51,7 @@ export default {
           continue
         }
         if (preset.name === preset_data.selected_preset) {
+          console.log('Found selected Preset:', i, preset.name)
           appSelectedPresetIdx = i
         }
         console.log('Refreshed Settings for', preset.name)
@@ -58,8 +59,8 @@ export default {
       if (this.presets[appSelectedPresetIdx] !== undefined) {
         await this.selectPreset(this.presets[appSelectedPresetIdx], false)
       }
-
       this.isBusy = false
+      this.$nextTick(() => { this.$emit('presets-ready') })
     },
     getSelectedPreset: function () {
       if (this.presets.length === 0) { return {} }
@@ -112,7 +113,7 @@ export default {
 
       this.isBusy = false
     },
-    selectPreset: async function (preset, save = true) {
+    selectPreset: async function (preset, save = false) {
       this.isBusy = true
       this.selectedPresetIdx = this.presets.indexOf(preset)
       let p = this.getSelectedPreset()
@@ -176,13 +177,13 @@ export default {
     updateDesc: function (newDesc) {
       if (newDesc === undefined || newDesc === null) { return }
       this.getSelectedPreset().desc = newDesc
-      this.savePreset(this.getSelectedPreset())
+      // this.savePreset(this.getSelectedPreset())
     },
-    updateSetting: async function (setting, value) {
+    updateSetting: async function (setting, value, save = true) {
       this.isBusy = true
       setting.value = value
       console.log('Updated', setting.name, 'to', setting.value)
-      await this.savePreset(this.getSelectedPreset())
+      if (save) { await this.savePreset(this.getSelectedPreset()) }
       this.isBusy = false
     }
   },

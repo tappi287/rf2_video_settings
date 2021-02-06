@@ -13,7 +13,7 @@
         <!-- Dropdown Menu -->
         <template v-if="inputType === 'value'">
           <b-dropdown :text="currentSettingName" :variant="variant" :id="elemId"
-                      class="setting-item fixed-width-setting">
+                      class="setting-item fixed-width-setting" :disabled="disabled">
             <b-dropdown-item v-for="s in setting.settings" :key="s.value"
                              @click="selectSetting(s)">
               {{ s.name }}<template v-if="showPerformance && s.perf !== undefined"> {{ s.perf }}</template>
@@ -56,6 +56,10 @@ export default {
       rangeValue: 0,
     }
   },
+  props: {
+    setting: Object, variant: String, fixWidth: Boolean, group_id: String, show_performance: Boolean,
+    disabled: Boolean
+  },
   methods: {
     selectSetting: function (s) {
       this.currentSettingValue = s.value
@@ -95,9 +99,6 @@ export default {
       let s = document.getElementById(this.elemId)
       if (s !== null) { s.style.width = String(settMaxWidth) + 'px' }
     },
-  },
-  props: {
-    setting: Object, variant: String, fixWidth: Boolean, group_id: String, show_performance: Boolean
   },
   created: function () {
     // Check Setting Type

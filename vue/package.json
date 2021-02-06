@@ -1,6 +1,6 @@
 {
   "name": "rF2-Settings-Widget",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.5.4",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "bootstrap-vue": "^2.19.0",
     "core-js": "^3.6.5",
     "fontsource-ubuntu": "^3.0.9",

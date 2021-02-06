@@ -1,5 +1,5 @@
 <template>
-  <div id="server-browser" v-cloak>
+  <div id="server-browser" v-if="!onlyFav || browserReady">
     <!-- Filter -->
     <b-input-group size="md" v-if="!isBusy && !onlyFav">
       <b-input-group-prepend>
@@ -51,6 +51,7 @@
     </b-progress>
 
     <!-- Server List -->
+    <div v-if="onlyFav" class="text-center bg-dark text-muted rounded-top">Favourites</div>
     <b-table :items="computedServerList" :fields="serverFields" table-variant="dark" :busy="isBusy" show-empty
              primary-key="id" id="server-list" class="server-list"
              :thead-class="onlyFav ? 'hidden' : 'bg-dark text-white'"
@@ -199,16 +200,30 @@
         <template v-if="isBusy">
           <p>Acquiring server data...</p>
         </template>
-        <template v-if="!isBusy && serverListData.length === 0">
-          <h5>No server data</h5>
-          <p>You have no internet connection or the master server is not available.</p>
+        <template v-if="onlyFav">
+          <template v-if="serverFavs.length === 0">
+            <p>No favourite servers added yet. Use the Server Browser to add some favourites to the app.</p>
+          </template>
+          <template v-else-if="serverFavs.length !== 0 && serverListData.length === 0">
+            <p>No favourite servers online</p>
+          </template>
+          <template v-else>
+            <p>The master server is unavailable or could not access internet connection.</p>
+          </template>
         </template>
-        <template v-if="!isBusy && serverListData.length > 0">
-          <h6>No filtering results!</h6>
-          <p>Try to reduce filtering options to see some Servers.</p>
+        <template v-if="!onlyFav">
+          <template v-if="serverListData.length === 0">
+            <h5>No server data</h5>
+            <p>The master server is unavailable or could not access internet connection.</p>
+          </template>
+          <template v-else-if="serverListData.length > 0">
+            <h6>No filtering results!</h6>
+            <p>Try to reduce filtering options to see some Servers.</p>
+          </template>
         </template>
       </template>
     </b-table>
+    <div class="bg-dark rounded-bottom" style="height: 1.75rem;"></div>
 
     <!-- Join password protected Server -->
     <b-modal id="password-modal" centered>
@@ -277,6 +292,7 @@ export default {
   data: function () {
     return {
       isBusy: false,
+      browserReady: false,
       loadProgress: 0,
       maxLoadProgress: 1,
       serverTextFilter: null,
@@ -443,8 +459,6 @@ export default {
       }
     },
     loadSettings: async function () {
-      this.onlyFav = this.onlyFavourites
-
       try {
         const server_fav_data = await getEelJsonObject(window.eel.get_server_favourites()())
         const settings = await getEelJsonObject(window.eel.get_server_browser_settings()())
@@ -496,15 +510,21 @@ export default {
         this.makeToast('Could not launch rFactor2.exe', 'danger')
       }
     },
+    asyncCreate: async function () {
+      this.isBusy = true
+      await this.getRfVersion()
+      await this.loadSettings()
+      await this.refreshServerList()
+      this.$emit('server-browser-ready')
+      this.browserReady = true
+      this.isBusy = false
+    }
   },
   created() {
-    this.isBusy = true
-    this.getRfVersion()
-    this.loadSettings()
-    this.refreshServerList()
-    this.isBusy = false
+    this.onlyFav = this.onlyFavourites
     window.addEventListener('update-progress', this.updateProgress)
     window.addEventListener('add-server-list-chunk', this.updateServerListData)
+    this.asyncCreate()
   },
   destroyed() {
     if (!this.onlyFav) { this.saveSettings() }

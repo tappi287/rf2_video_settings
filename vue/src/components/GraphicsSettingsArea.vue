@@ -7,8 +7,8 @@
     </template>
     <Setting v-for="setting in preset.video_settings.options" :key="setting.key"
              :setting="setting" variant="rf-orange" class="mr-3 mb-3" group_id="video"
-             :show_performance="showPerformance"
-             v-on:setting-changed="updateSetting">
+             :show_performance="showPerformance" :disabled="settingDisabled(setting)"
+             v-on:setting-changed="updateSetting" ref="vfx">
     </Setting>
 
     <!-- Footer -->
@@ -86,12 +86,34 @@ export default {
   data: function () {
     return {
       showPerformance: true,
+      resolutionSettingsKeys: ['WindowedMode', 'Borderless', 'VideoMode', 'VideoRefresh', 'VSync'],
+      enableResolutionSettings: false,
     }
   },
   methods: {
     updateSetting: function (setting, value) {
-      console.log('Setting Area forwarding setting update:', setting.name, value)
+      if (this.resolutionSettingsKeys.indexOf(setting.key) !== -1) {
+        if (!this.enableResolutionSettings) { console.log('Skipping res setting', setting.key); return}
+      }
       this.$emit('update-setting', setting, value)
+    },
+    _getFsaaEnabled() {
+      let result = true
+      this.preset.video_settings.options.forEach(setting => {
+        if (setting.key === 'FSAA') {
+          if (setting.value === 0) { result = false }
+        }
+      })
+      return result
+    },
+    settingDisabled: function(setting) {
+      if (setting.key === 'UseFXAA' && this._getFsaaEnabled()) {
+        // Disable FXAA
+        this.$emit('update-setting', setting, 0, false)
+        return true
+      }
+      // Enabled
+      return false
     },
     launchConfig: async function() {
       let r = await getEelJsonObject(window.eel.run_rfactor_config()())
@@ -108,7 +130,7 @@ export default {
     viewMode: function () {
       if (this.view_mode !== undefined) { return this.view_mode }
       return 0
-    }
+    },
   }
 }
 </script>

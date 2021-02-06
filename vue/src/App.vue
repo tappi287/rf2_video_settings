@@ -132,6 +132,8 @@ if (!pass) {
 <style>
 #app {
   /*font-family: Avenir, Helvetica, Arial, sans-serif;*/
+  /* font-family: "Ubuntu", sans-serif;*/
+  font-family: "Segoe UI", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -267,5 +269,5 @@ html {
   animation-direction: alternate;
 }
 #server-list * td { vertical-align: baseline !important; }
-
+#server-list { margin-bottom: 0; font-family: "Segoe UI", system-ui, sans-serif; }
 </style>

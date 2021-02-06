@@ -140,7 +140,7 @@ export default {
       this.$emit('export-current')
     },
     selectPreset: async function (preset) {
-      this.$emit('select-preset', preset)
+      this.$emit('select-preset', preset, true)
       this.presetDesc = preset.desc
     },
     createPreset: async function () {
@@ -154,8 +154,8 @@ export default {
       this.$emit('update-presets-dir', this.userGfxPresetsDir)
       this.$root.$emit('bv::hide::popover', 'preset-folder')
     },
-    updateSetting: async function (setting, value) {
-      this.$emit('update-setting', setting, value)
+    updateSetting: async function (setting, value, save = true) {
+      this.$emit('update-setting', setting, value, save)
     }
   },
   components: {
