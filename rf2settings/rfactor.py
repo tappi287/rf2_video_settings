@@ -4,15 +4,22 @@ import sys
 from configparser import ConfigParser
 from pathlib import Path
 from subprocess import Popen
-from typing import Optional
+from typing import Optional, Iterator
 
 from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, RF2_APPID, RFACTOR_VERSION_TXT
-from .preset import Preset
-from .settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions, DriverOptions
+from .preset import BasePreset
+from .settings_model import BaseOptions, OptionsTarget, OPTION_CLASSES
 from .valve.steam_utils import SteamApps
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
+
+"""
+ModMgr.exe
+HKEY_CURRENT_USER\\SOFTWARE\\Image Space Incorporated\\rFactor2 Mod Manager\\--guid--\\Packages Dir
+File1
+- key must point to Packages directory
+"""
 
 
 class RfactorLocation:
@@ -50,7 +57,14 @@ class RfactorLocation:
 
 
 class RfactorPlayer:
+    resolution_key = 'resolution_settings'
     config_parser_args = {'inline_comment_prefixes': '//', 'default_section': 'COMPONENTS'}
+
+    class Options:
+        def __init__(self):
+            for field, base_cls in OPTION_CLASSES.items():
+                options_instance = base_cls()
+                setattr(self, field, options_instance)
 
     def __init__(self, dev: Optional[bool] = None, only_version: bool = False):
         self.dev = dev or False
@@ -62,57 +76,108 @@ class RfactorPlayer:
         self.version_file = Path()
         self.version = ''
 
-        self.driver_options = DriverOptions()
-        self.graphic_options = GraphicOptions()
-        self.advanced_graphic_options = AdvancedGraphicSettings()
-        self.video_settings = VideoSettings()
+        self.options = self.Options()
 
         self.is_valid = False
         self.error = ''
 
         self.get_current_rfactor_settings(only_version)
 
-    def _create_ini_config_parser(self):
-        config_parser = ConfigParser(**self.config_parser_args)
-        config_parser.optionxform = str
-        return config_parser
-
     def get_current_rfactor_settings(self, only_version: bool = True):
         """ Read all settings from the current rFactor 2 installation """
         self._get_location()
 
-        if not self._update_version():
+        if not self._read_version():
             self.error += 'Could not read rFactor 2 version'
         if only_version:
             return
 
-        for preset_options in (self.driver_options, self.graphic_options, self.advanced_graphic_options):
-            if not self._update_settings_from_player_json(preset_options):
-                self.error = 'Could not read rFactor2 player.JSON'
+        # -- Read Player JSON
+        player_json = self.read_player_json_dict()
+        # -- Get Options from Player JSON
+        for preset_options in self._get_target_options(OptionsTarget.player_json):
+            if not self._get_options_from_player_json(preset_options, player_json):
+                self.error = f'Could not read rFactor2 player.JSON for ' \
+                             f'{preset_options.__class__.__name__}'
                 self.is_valid = False
                 return
 
-        if not self._update_settings_from_dx_config():
-            self.error = 'Could not read rFactor2 CONFIG_DX11.ini'
+        # -- Read dx_config
+        config = self.read_dx_ini()
+        if not config:
             self.is_valid = False
             return
+        # -- Get Options from dx_config
+        for preset_options in self._get_target_options(OptionsTarget.dx_config):
+            if not self._get_options_from_dx_config(preset_options, config):
+                self.error = f'Could not read rFactor2 CONFIG_DX11.ini for ' \
+                             f'{preset_options.__class__.__name__}'
+                self.is_valid = False
+                return
 
         self.is_valid = True
 
-    def write_settings(self, preset: Preset) -> bool:
+    def _get_target_options(self, target: OptionsTarget, options=None) -> Iterator[BaseOptions]:
+        if options is None:
+            options = self.options
+
+        for k, v in options.__dict__.items():
+            if isinstance(v, BaseOptions):
+                if v.target == target:
+                    yield v
+
+    def write_settings(self, preset: BasePreset) -> bool:
         """ Writes all settings of a preset into the rFactor 2 installation
 
         :param preset:
         :return:
         """
-        # -- Write Video Config.ini
-        for option in preset.video_settings.options:
-            if option.key not in self.ini_config[self.ini_config.default_section]:
-                self.error = f'Could not locate settings key: {option.key} in CONFIG_DX11.ini'
-                logging.error(self.error)
-                continue
-            self.ini_config[self.ini_config.default_section][option.key] = str(option.value)
+        # -- Write video config to dx_config
+        self._write_video_config(preset)
 
+        # -- Update Player Json settings
+        update_result = True
+        player_json_dict = self.read_player_json_dict()
+
+        for preset_options in self._get_target_options(OptionsTarget.player_json, preset):
+            if not self._update_player_json(player_json_dict, preset_options):
+                update_result = False
+
+        if not update_result:
+            return False
+
+        # -- Write Player JSON
+        try:
+            with open(self.player_file, 'w') as f:
+                json.dump(player_json_dict, f, indent=4)
+        except Exception as e:
+            self.error = f'Error while writing player.JSON! {e}'
+            logging.fatal(self.error)
+            return False
+        return True
+
+    def _write_video_config(self, preset: BasePreset):
+        """ Update the Config_DX11.ini with supported Video Settings """
+        settings_updated = False
+
+        for preset_options in self._get_target_options(OptionsTarget.dx_config, preset):
+            if preset_options.app_key == self.resolution_key:
+                # Skip for now
+                continue
+
+            for option in preset_options.options:
+                if option.key not in self.ini_config[self.ini_config.default_section]:
+                    self.error = f'Could not locate settings key: {option.key} in CONFIG_DX11.ini'
+                    logging.error(self.error)
+                    continue
+                self.ini_config[self.ini_config.default_section][option.key] = str(option.value)
+                settings_updated = True
+
+        if not settings_updated:
+            logging.info('Found no updated Video Settings. Skipping update of dx_config!')
+            return
+
+        # -- Write Video Config.ini
         try:
             # - Write config
             with open(self.ini_file, 'w') as f:
@@ -141,26 +206,6 @@ class RfactorPlayer:
             logging.error(self.error)
             return False
 
-        # -- Update Player Json settings
-        update_result = True
-        player_json_dict = self.get_player_json_dict()
-        for preset_options in (preset.graphic_options, preset.advanced_graphic_options):
-            if not self._update_player_json(player_json_dict, preset_options):
-                update_result = False
-
-        if not update_result:
-            return False
-
-        # -- Write Player JSON
-        try:
-            with open(self.player_file, 'w') as f:
-                json.dump(player_json_dict, f, indent=4)
-        except Exception as e:
-            self.error = f'Error while writing player.JSON! {e}'
-            logging.fatal(self.error)
-            return False
-        return True
-
     def _update_player_json(self, player_json_dict, preset_options: BaseOptions):
         if preset_options.key not in player_json_dict:
             self.error = f'Could not locate settings key: {preset_options.key} in player.JSON.'
@@ -176,32 +221,14 @@ class RfactorPlayer:
 
         return True
 
-    def get_player_json_dict(self) -> Optional[dict]:
-        try:
-            with open(self.player_file, 'rb') as f:
-                return json.load(f)
-        except Exception as e:
-            logging.fatal('Could not read player.JSON file! %s %s', e, self.player_file)
-
-    def get_dx_ini(self) -> Optional[ConfigParser]:
-        try:
-            conf = self._create_ini_config_parser()
-            with open(self.ini_file, 'r') as f:
-                self.ini_first_line = f.readline()
-                conf.read_file(f)
-                return conf
-        except Exception as e:
-            logging.fatal('Could not read CONFIG_DX11.ini file! %s %s', e, self.ini_file)
-
-    def _update_settings_from_dx_config(self) -> bool:
-        config = self.get_dx_ini()
+    def _get_options_from_dx_config(self, video_settings: BaseOptions, config: ConfigParser) -> bool:
         if not config:
             return False
         self.ini_config = config
         config_dict = self.ini_config[self.ini_config.default_section]
 
         settings_updated = False
-        for option in self.video_settings.options:
+        for option in video_settings.options:
             if option.key not in config_dict:
                 continue
             value = config_dict.get(option.key)
@@ -212,8 +239,8 @@ class RfactorPlayer:
 
         return settings_updated
 
-    def _update_settings_from_player_json(self, preset_options: BaseOptions) -> bool:
-        player_json = self.get_player_json_dict()
+    @staticmethod
+    def _get_options_from_player_json(preset_options: BaseOptions, player_json: dict) -> bool:
         if not player_json:
             return False
 
@@ -227,7 +254,25 @@ class RfactorPlayer:
 
         return settings_updated
 
-    def _update_version(self) -> bool:
+    def read_player_json_dict(self) -> Optional[dict]:
+        try:
+            with open(self.player_file, 'rb') as f:
+                return json.load(f)
+        except Exception as e:
+            logging.fatal('Could not read player.JSON file! %s %s', e, self.player_file)
+
+    def read_dx_ini(self) -> Optional[ConfigParser]:
+        try:
+            conf = self._create_ini_config_parser()
+            with open(self.ini_file, 'r') as f:
+                self.ini_first_line = f.readline()
+                conf.read_file(f)
+                return conf
+        except Exception as e:
+            self.error = f'Could not read CONFIG_DX11.ini file! {e} {self.ini_file}'
+            logging.fatal(self.error)
+
+    def _read_version(self) -> bool:
         if not self.version_file.exists():
             return False
         try:
@@ -238,6 +283,11 @@ class RfactorPlayer:
             return False
 
         return True
+
+    def _create_ini_config_parser(self):
+        config_parser = ConfigParser(**self.config_parser_args)
+        config_parser.optionxform = str
+        return config_parser
 
     def _get_location(self):
         if not RfactorLocation.is_valid:

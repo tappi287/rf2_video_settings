@@ -1,6 +1,6 @@
 import logging
 import sys
-from typing import Union, List, Optional
+from typing import Union, List, Optional, Dict, Type
 
 from .utils import JsonRepr
 
@@ -129,36 +129,54 @@ advanced_settings = {
 }
 
 adjustable_video_settings = {
-        'VrSettings': {'name': 'VR', 'value': 0, '_type': int,
-                       'settings': ({'value': 0, 'name': 'Disabled'}, {'value': 1, 'name': 'HMD only'},
-                                  {'value': 2, 'name': 'HMD + Mirror'})
-                       },
-        # 'WindowedMode': {'name': 'Windowed Mode', 'value': 0, 'hidden': True,
-        #                  'settings': ({'value': 0, 'name': 'Fullscreen'}, {'value': 1, 'name': 'Windowed'})
-        #                  },
-        # 'Borderless': {'name': 'Borderless', 'value': 0, 'hidden': True,
-        #                'settings': ({'value': 0, 'name': 'Windowed'}, {'value': 1, 'name': 'Borderless'})
-        #                },
-        'FSAA': {'name': 'Anti Aliasing', 'value': 0, '_type': int,
-                 'settings': ({'value': 0, 'name': 'Off'},
-                              {'value': 32, 'name': 'Level 1', 'desc': '2x [2x Multisampling]'},
-                              {'value': 33, 'name': 'Level 2', 'desc': '2xQ [2x Quincunx (blurred)]'},
-                              {'value': 34, 'name': 'Level 3', 'desc': '4x [4x Multisampling]'},
-                              {'value': 35, 'name': 'Level 4', 'desc': '8x [8x CSAA (4 color + 4 cv samples)]'},
-                              {'value': 36, 'name': 'Level 5', 'desc': '16x [16x CSAA (4 color + 12 cv samples)]'},
-                              # {'value': 32, 'name': 'Level 6', 'desc': '8xQ [8x Multisampling]'},
-                              # {'value': 32, 'name': 'Level 7', 'desc': '16xQ [16x CSAA (8 color + 8 cv samples)]'},
-                              # {'value': 32, 'name': 'Level 8', 'desc': '32x [32x CSAA (8 color + 24 cv samples)]'},
-                              )
-                 },
-        'EPostProcessingSettings': {'name': 'Post Effects', 'value': 1, '_type': int,
-                                    'settings': ({'value': 1, 'name': 'Off'},
-                                                 {'value': 2, 'name': 'Low', 'desc': 'Glare Effects'},
-                                                 {'value': 3, 'name': 'Medium', 'desc': 'Glare Effects and Depth of Field'},
-                                                 {'value': 4, 'name': 'High', 'desc': 'All Effects at High Quality'},
-                                                 {'value': 5, 'name': 'Ultra', 'desc': 'All Effects at Ultra Quality'},
-                                    )}
-        }
+    'VrSettings': {'name': 'VR', 'value': 0, '_type': int,
+                   'settings': ({'value': 0, 'name': 'Disabled'}, {'value': 1, 'name': 'HMD only'},
+                                {'value': 2, 'name': 'HMD + Mirror'})
+                   },
+    'FSAA': {'name': 'Anti Aliasing', 'value': 0, '_type': int,
+             'settings': ({'value': 0, 'name': 'Off'},
+                          {'value': 32, 'name': 'Level 1', 'desc': '2x [2x Multisampling]'},
+                          {'value': 33, 'name': 'Level 2', 'desc': '2xQ [2x Quincunx (blurred)]'},
+                          {'value': 34, 'name': 'Level 3', 'desc': '4x [4x Multisampling]'},
+                          {'value': 35, 'name': 'Level 4', 'desc': '8x [8x CSAA (4 color + 4 cv samples)]'},
+                          {'value': 36, 'name': 'Level 5', 'desc': '16x [16x CSAA (4 color + 12 cv samples)]'},
+                          # {'value': 32, 'name': 'Level 6', 'desc': '8xQ [8x Multisampling]'},
+                          # {'value': 32, 'name': 'Level 7', 'desc': '16xQ [16x CSAA (8 color + 8 cv samples)]'},
+                          # {'value': 32, 'name': 'Level 8', 'desc': '32x [32x CSAA (8 color + 24 cv samples)]'},
+                          )
+             },
+    'EPostProcessingSettings': {'name': 'Post Effects', 'value': 1, '_type': int,
+                                'settings': ({'value': 1, 'name': 'Off'},
+                                             {'value': 2, 'name': 'Low', 'desc': 'Glare Effects'},
+                                             {'value': 3, 'name': 'Medium', 'desc': 'Glare Effects and Depth of Field'},
+                                             {'value': 4, 'name': 'High', 'desc': 'All Effects at High Quality'},
+                                             {'value': 5, 'name': 'Ultra', 'desc': 'All Effects at Ultra Quality'},
+                                )},
+    'UseFXAA': {'name': 'FXAA', 'value': 0, '_type': int,
+                'settings': ({'value': 0, 'name': 'Off'},
+                             {'value': 1, 'name': 'On', 'desc': 'Cheap post processing filter to smooth '
+                                                                'high contrast edges.'})},
+    }
+
+resolution_video_settings = {
+    'WindowedMode': {'name': 'Windowed Mode', 'value': 0, 'hidden': True,
+                     'settings': ({'value': 0, 'name': 'Fullscreen'}, {'value': 1, 'name': 'Windowed'})
+                     },
+    'Borderless': {'name': 'Borderless', 'value': 0, 'hidden': True,
+                   'settings': ({'value': 0, 'name': 'Windowed'}, {'value': 1, 'name': 'Borderless'})
+                   },
+    'VideoMode': {'name': 'Resolution', 'value': 125, 'hidden': True,
+                  'settings': ({'value': 125, 'name': 'FullHD'}, )
+                  },
+    'VideoRefresh': {'name': 'Refresh Rate', 'value': 1, 'hidden': True,
+                     'settings': ({'value': 1, 'name': '60Hz'}, )
+                     },
+    }
+
+
+class OptionsTarget:
+    player_json = 0
+    dx_config = 1
 
 
 class Option(JsonRepr):
@@ -190,8 +208,16 @@ class Option(JsonRepr):
 
 
 class BaseOptions(JsonRepr):
+    # Key representing the category key in player_json
     key = 'Base Options'
+    # Key representing the field name for Preset and RfactorPlayer classes
+    # must be unique per class!
+    app_key = 'base_options'
+    # Category Title to be displayed in front end
     title = 'Base Settings'
+    # Target to indicate RfactorPlayer where to write these options
+    # eg. OptionsTarget.player_json
+    target = None
 
     def __init__(self, options: List[Option] = None):
         if options is None:
@@ -252,7 +278,9 @@ class BaseOptions(JsonRepr):
 
 class DriverOptions(BaseOptions):
     key = 'DRIVER'
+    app_key = 'driver_options'
     title = 'Driver Settings'
+    target = OptionsTarget.player_json
 
     def __init__(self):
         super(DriverOptions, self).__init__()
@@ -263,7 +291,9 @@ class DriverOptions(BaseOptions):
 
 class GraphicOptions(BaseOptions):
     key = 'Graphic Options'
+    app_key = 'graphic_options'
     title = 'Display Settings'
+    target = OptionsTarget.player_json
 
     def __init__(self):
         super(GraphicOptions, self).__init__()
@@ -274,7 +304,9 @@ class GraphicOptions(BaseOptions):
 
 class VideoSettings(BaseOptions):
     key = 'Video Settings'
+    app_key = 'video_settings'
     title = 'Video Settings'
+    target = OptionsTarget.dx_config
 
     def __init__(self):
         super(VideoSettings, self).__init__()
@@ -283,12 +315,33 @@ class VideoSettings(BaseOptions):
         self.read_from_python_dict(adjustable_video_settings)
 
 
+class ResolutionSettings(BaseOptions):
+    key = 'Resolution Settings'
+    app_key = 'resolution_settings'
+    title = 'Resolution and Window Settings'
+    target = OptionsTarget.dx_config
+
+    def __init__(self):
+        super(ResolutionSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(resolution_video_settings)
+
+
 class AdvancedGraphicSettings(BaseOptions):
     key = 'Graphic Options'
+    app_key = 'advanced_graphic_options'
     title = 'Advanced Display Settings'
+    target = OptionsTarget.player_json
 
     def __init__(self):
         super(AdvancedGraphicSettings, self).__init__()
 
         # -- Read Default options
         self.read_from_python_dict(advanced_settings)
+
+
+OPTION_CLASSES: Dict[str, Type[BaseOptions]] = dict()
+for opt_class in [DriverOptions, GraphicOptions, VideoSettings,
+                  ResolutionSettings, AdvancedGraphicSettings]:
+    OPTION_CLASSES[opt_class.app_key] = opt_class

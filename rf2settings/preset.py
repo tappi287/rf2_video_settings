@@ -2,27 +2,35 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Iterable, Tuple, Optional
+from typing import Iterable, Tuple, Optional, Dict, Type
 
 from .presets_dir import get_user_presets_dir, get_user_export_dir
-from .settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions
+from .settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions, ResolutionSettings, \
+    OPTION_CLASSES
 from .utils import create_file_safe_name
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
 
 
-class Preset:
-    _option_base_classes = {'graphic_options': GraphicOptions,
-                            'advanced_graphic_options': AdvancedGraphicSettings,
-                            'video_settings': VideoSettings}
+class PresetType:
+    graphics = 0
+
+
+class BasePreset:
+    # Defines which type of options this Preset represents
+    preset_type: int = -1
+    option_class_keys = set()
 
     def __init__(self, name: str = None, desc: str = None):
         self.name = name or 'Default'
         self.desc = desc or 'The default preset represents the settings currently found in your rFactor 2 installation.'
-        self.graphic_options = GraphicOptions()
-        self.advanced_graphic_options = AdvancedGraphicSettings()
-        self.video_settings = VideoSettings()
+
+        # -- Set BaseOptions as Preset fields
+        #    eg. Preset.video_settings: VideoSettings
+        for key in self.option_class_keys:
+            options_instance = OPTION_CLASSES.get(key)()
+            setattr(self, key, options_instance)
 
     def update(self, rf):
         """ Update current preset from the actual rFactor 2 settings on disk
@@ -32,12 +40,12 @@ class Preset:
         """
         # Update Graphic Options, Video Settings etc. from rF object
         for key, _ in self._iterate_options():
-            setattr(self, key, getattr(rf, key))
+            setattr(self, key, getattr(rf.options, key))
 
         # Set Preset Name from Player Nick
-        json = rf.get_player_json_dict()
-        if json.get('DRIVER'):
-            self.name = f'Current Settings [{json["DRIVER"].get("Player Nick")}]'
+        player_json_dict = rf.read_player_json_dict()
+        if player_json_dict.get('DRIVER'):
+            self.name = f'Current Settings [{player_json_dict["DRIVER"].get("Player Nick")}]'
 
     def save_unique_file(self) -> bool:
         base_name = create_file_safe_name(self.name)
@@ -75,7 +83,7 @@ class Preset:
 
     def _iterate_options(self) -> Iterable[Tuple[str, BaseOptions]]:
         """ Helper to iterate thru all BaseOptions assigned to the preset. """
-        for key in self._option_base_classes.keys():
+        for key in self.option_class_keys:
             yield key, getattr(self, key)
 
     def to_js(self, export: bool = False):
@@ -83,16 +91,18 @@ class Preset:
         preset_dict = {k: v.to_js(export) for k, v in self._iterate_options()}
         preset_dict['name'] = self.name
         preset_dict['desc'] = self.desc
+        preset_dict['preset_type'] = self.preset_type
         return preset_dict
 
     def from_js_dict(self, js_dict):
         """ Update Preset object from a json dictionary """
         self.name = js_dict.get('name')
         self.desc = js_dict.get('desc')
+
         for key, _ in self._iterate_options():
-            options_class = self._option_base_classes.get(key)
+            options_class = OPTION_CLASSES.get(key)
             options_instance = options_class()
-            options_instance.from_js_dict(js_dict.get(key))
+            options_instance.from_js_dict(js_dict.get(key, dict()))
             setattr(self, key, options_instance)
 
     def __eq__(self, other):
@@ -109,8 +119,18 @@ class Preset:
         return True
 
 
-def load_presets_from_dir(preset_dir: Path, current_preset: Preset = None, selected_preset_name: str = None):
-    presets, selected_preset = list(), None
+class GraphicsPreset(BasePreset):
+    preset_type: int = PresetType.graphics
+    option_class_keys = {GraphicOptions.app_key, AdvancedGraphicSettings.app_key,
+                         VideoSettings.app_key, ResolutionSettings.app_key}
+
+    def __init__(self, name: str = None, desc: str = None):
+        super(GraphicsPreset, self).__init__(name, desc)
+
+
+def load_presets_from_dir(preset_dir: Path, current_preset: Optional[BasePreset] = None,
+                          selected_preset_name: str = None):
+    preset_ls, selected_preset = list(), None
 
     for preset_file in preset_dir.glob('*.json'):
         preset = load_preset(preset_file)
@@ -119,26 +139,37 @@ def load_presets_from_dir(preset_dir: Path, current_preset: Preset = None, selec
         if preset.name == selected_preset_name:
             selected_preset = preset
         if current_preset and preset and preset.name != current_preset.name:
-            presets.append(preset)
+            preset_ls.append(preset)
 
-    return presets, selected_preset
+    return preset_ls, selected_preset
 
 
-def load_preset(file: Path) -> Optional[Preset]:
-    default_preset = Preset()
+def load_preset(file: Path) -> Optional[BasePreset]:
     try:
         with open(file.as_posix(), 'r') as f:
             new_preset_dict = json.loads(f.read())
-
-            new_preset = Preset()
-            new_preset.from_js_dict(new_preset_dict)
-
-        # - Make sure older Preset Versions contain all fields
-        for k, v in default_preset.__dict__.items():
-            if k[:2] != '__' and not callable(v):
-                if k not in new_preset.__dict__:
-                    setattr(new_preset, k, v)
-
-        return new_preset
     except Exception as e:
         logging.fatal('Could not load Preset from file! %s', e)
+        return
+
+    # -- Get type, fallback to GraphicsPreset
+    preset_type = new_preset_dict.get('preset_type', PresetType.graphics)
+
+    # -- Create new preset instance based on type
+    new_preset = PRESET_TYPES.get(preset_type)()
+
+    # -- Load preset options from json
+    new_preset.from_js_dict(new_preset_dict)
+
+    # - Make sure older Preset Versions contain all fields
+    for k, v in PRESET_TYPES.get(preset_type)().__dict__.items():
+        if k[:2] != '__' and not callable(v):
+            if k not in new_preset.__dict__:
+                setattr(new_preset, k, v)
+
+    return new_preset
+
+
+PRESET_TYPES: Dict[int, Type[BasePreset]] = dict()
+for preset_cls in (GraphicsPreset, ):
+    PRESET_TYPES[preset_cls.preset_type] = preset_cls

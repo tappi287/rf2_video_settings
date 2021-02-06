@@ -4,9 +4,9 @@ from typing import Optional
 
 import eel
 
-from .app_settings import AppSettings
-from .rfactor import RfactorPlayer
-from .runasadmin import run_as_admin
+from rf2settings.app_settings import AppSettings
+from rf2settings.rfactor import RfactorPlayer
+from rf2settings.runasadmin import run_as_admin
 
 
 def request_close():

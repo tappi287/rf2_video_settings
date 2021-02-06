@@ -3,9 +3,9 @@ import logging
 
 import eel
 
-from .app_settings import AppSettings
-from .rfactor import RfactorPlayer
-from .serverlist import ServerList
+from rf2settings.app_settings import AppSettings
+from rf2settings.rfactor import RfactorPlayer
+from rf2settings.serverlist import ServerList
 
 
 def expose_multiplayer_methods():
