@@ -105,7 +105,8 @@
         <div :id="settingsAreaId">
           <div v-for="(preset, idx) in gfxPresets" :key="preset.name">
             <GraphicsSettingsArea :preset="preset" :idx="idx" :current_preset_idx="selectedGfxPresetIdx"
-                                  :view_mode="viewMode" v-on:update-setting="updateSetting">
+                                  :view_mode="viewMode" v-on:update-setting="updateSetting"
+                                  @set-busy="isBusy=$event">
             </GraphicsSettingsArea>
           </div>
         </div>

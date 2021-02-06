@@ -8,11 +8,14 @@
     <!-- Shortcuts Play with Preset -->
     <!--<PresetHandler ref="gf" @makeToast="makeToast" @error="setError"
                    @presets-ready="presetsReady = true"/>-->
-    <div v-if="gfxPresetsReady" class="text-center">
-      <template v-for="(preset, idx) in gfxHandler.presets.slice(2)">
-        <b-button :key="idx" class="mr-2 ml-2"
+    <div v-if="gfxPresetsReady" class="text-center mt-4 mb-4">
+      <h5 class="mb-3">Graphics Presets</h5>
+      <template v-for="(preset, idx) in gfxHandler.presets.slice(1)">
+        <b-button :key="idx"
+                  :class="gfxHandler.selectedPresetIdx === idx+1 ? 'active mr-2 ml-2' : 'inactive mr-2 ml-2'"
                   @click="gfxHandler.selectPreset(preset, true)"
-                  :variant="gfxHandler.selectedPresetIdx === idx+2 ? 'rf-orange' : 'rf-blue'">
+                  v-b-popover.bottom.hover="preset.desc"
+                  :variant="gfxHandler.selectedPresetIdx === idx+1 ? 'rf-orange' : 'rf-blue'">
           {{ preset.name }}
         </b-button>
       </template>
@@ -69,4 +72,6 @@ export default {
     opacity: 0; height: 0;
   }
   .no-pointer { pointer-events:none; }
+  .btn-rf-orange, .btn-rf-blue { font-weight: 300; }
+  .btn-rf-orange.active, .btn-rf-blue.active { font-weight: 400; }
 </style>

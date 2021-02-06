@@ -3,7 +3,7 @@ import logging
 import sys
 from configparser import ConfigParser
 from pathlib import Path
-from subprocess import Popen
+import subprocess
 from typing import Optional, Iterator
 
 from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, RF2_APPID, RFACTOR_VERSION_TXT
@@ -161,17 +161,15 @@ class RfactorPlayer:
         settings_updated = False
 
         for preset_options in self._get_target_options(OptionsTarget.dx_config, preset):
-            if preset_options.app_key == self.resolution_key:
-                # Skip for now
-                continue
-
             for option in preset_options.options:
                 if option.key not in self.ini_config[self.ini_config.default_section]:
                     self.error = f'Could not locate settings key: {option.key} in CONFIG_DX11.ini'
                     logging.error(self.error)
                     continue
-                self.ini_config[self.ini_config.default_section][option.key] = str(option.value)
-                settings_updated = True
+                if option.value is not None:
+                    self.ini_config[self.ini_config.default_section][option.key] = str(option.value)
+                    logging.info('Updated Dx Setting: %s: %s', option.key, option.value)
+                    settings_updated = True
 
         if not settings_updated:
             logging.info('Found no updated Video Settings. Skipping update of dx_config!')
@@ -322,13 +320,19 @@ class RfactorPlayer:
 
         logging.info('Launching %s', cmd)
 
-        Popen(cmd, cwd=self.location)
+        subprocess.Popen(cmd, cwd=self.location)
 
         return True
 
     def run_config(self) -> bool:
         if not self._check_bin_dir():
             return False
+
         executable = self.location / "Bin64" / "rF Config.exe"
-        Popen(executable, cwd=self.location)
+        p = subprocess.Popen(executable, cwd=self.location, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                             stdin=subprocess.PIPE)
+        out, errs = p.communicate()
+        if p.returncode != 0:
+            return False
+
         return True

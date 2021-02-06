@@ -59,10 +59,15 @@ class BasePreset:
 
         return self.export(file_name)
 
+    def additional_export_operations(self):
+        """ Should be overwritten in sub classes """
+        pass
+
     def export(self, unique_name: str = None) -> bool:
         file_name = create_file_safe_name(unique_name or self.name)
         file = get_user_export_dir() / f'{file_name}.json'
         self.name = unique_name or self.name
+        self.additional_export_operations()
 
         return self._save_to_file(file)
 
@@ -126,6 +131,11 @@ class GraphicsPreset(BasePreset):
 
     def __init__(self, name: str = None, desc: str = None):
         super(GraphicsPreset, self).__init__(name, desc)
+
+    def additional_export_operations(self):
+        # Reset Resolution Settings
+        default_res_settings = ResolutionSettings()
+        setattr(self, ResolutionSettings.app_key, default_res_settings)
 
 
 def load_presets_from_dir(preset_dir: Path, current_preset: Optional[BasePreset] = None,

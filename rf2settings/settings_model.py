@@ -159,16 +159,16 @@ adjustable_video_settings = {
     }
 
 resolution_video_settings = {
-    'WindowedMode': {'name': 'Windowed Mode', 'value': 0, 'hidden': True,
+    'WindowedMode': {'name': 'Windowed Mode', 'value': None, 'hidden': True,
                      'settings': ({'value': 0, 'name': 'Fullscreen'}, {'value': 1, 'name': 'Windowed'})
                      },
-    'Borderless': {'name': 'Borderless', 'value': 0, 'hidden': True,
+    'Borderless': {'name': 'Borderless', 'value': None, 'hidden': True,
                    'settings': ({'value': 0, 'name': 'Windowed'}, {'value': 1, 'name': 'Borderless'})
                    },
-    'VideoMode': {'name': 'Resolution', 'value': 125, 'hidden': True,
+    'VideoMode': {'name': 'Resolution', 'value': None, 'hidden': True,
                   'settings': ({'value': 125, 'name': 'FullHD'}, )
                   },
-    'VideoRefresh': {'name': 'Refresh Rate', 'value': 1, 'hidden': True,
+    'VideoRefresh': {'name': 'Refresh Rate', 'value': None, 'hidden': True,
                      'settings': ({'value': 1, 'name': '60Hz'}, )
                      },
     }

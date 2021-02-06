@@ -19,17 +19,6 @@
           Server Browser
         </b-nav-item>
       </b-nav>
-      <!--
-      <b-button-group class="w-100">
-        <b-button variant="dark" @click="navActive=0">
-          <b-img src="@/assets/app_icon.webp" width="24" alt="rFactor 2 logo"></b-img>
-        </b-button>
-        <b-button variant="dark" @click="navActive=1">Graphics</b-button>
-        <b-button disabled variant="dark" @click="navActive=2">Controls</b-button>
-        <b-button disabled variant="dark" @click="navActive=3">Advanced Settings</b-button>
-        <b-button variant="dark" @click="toggleServerBrowser">Server Browser</b-button>
-      </b-button-group>
-      -->
     </div>
 
     <!-- Graphics Preset Handler -->
