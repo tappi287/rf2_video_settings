@@ -1,12 +1,12 @@
 # rF2 Settings Wizard
 ### rFactor 2 Settings application
 
-M$ Windows application that will let you create presets/profiles of your rFactor 2 settings.
-Display and Video Settings for now. Quickly change between eg. a performance focused VR setup or
+M$ Windows application that will let you create presets/profiles of your rFactor 2 settings and directly connect to rFactor 2 multiplayer sessions.
+Quickly change between eg. a performance focused VR setup or
 an eye-candy favoured Replay setup.
 
 <p align="center">
-    <img src="vue/src/assets/screen.webp" alt="Screenshot" width="600">
+    <img src="vue/src/assets/ani.webp" alt="Screenshot" width="560">
 </p>
 
 #### Usage
