@@ -91,10 +91,10 @@
       <b-icon icon="display-fill" variant="primary"></b-icon><span class="ml-2">Video Setup</span>
     </template>
     <div class="d-block">
-      <p>rFactor Video Setup application launched. Check your task bar if the window does not appear
+      <p>rFactor Video Setup application launched. <b>Check your taskbar</b> if the window does not appear
       in front of you.</p>
       <p>Window, Resolution and Refresh Rate settings will be saved to
-        <i>{{ preset.name }}</i> once you finished or close rFactor's Video Setup dialog.
+        <i>{{ preset.name }}</i> once you finished rFactor's Video Setup dialog.
       </p>
     </div>
 
@@ -109,7 +109,7 @@
         </p>
       </div>
       <div class="d-block text-right">
-        <b-button variant="warning" @click="deleteConfig">Delete Settings</b-button>
+        <b-button variant="warning" @click="deleteConfig" class="mr-2">Delete Settings</b-button>
         <b-button variant="secondary" @click="abortConfig">Abort</b-button>
       </div>
     </template>
@@ -159,6 +159,8 @@ export default {
       const setting = this.preset.resolution_settings.options[0]
       this.$emit('update-setting', setting, setting.value, true)
       this.$emit('set-busy', false)
+      this.makeToast('Video Settings for Resolution, Refresh Rate and Window Mode successfully updated.',
+          'success', 'Video Setup')
     },
     _getFsaaEnabled() {
       let result = true
@@ -197,7 +199,8 @@ export default {
       this.$bvModal.show('video-modal')
       let r = await getEelJsonObject(window.eel.run_rfactor_config()())
       if (r === undefined || !r.result) {
-        this.makeToast('Could not launch rF Config.exe', 'danger')
+        this.makeToast('rFactor 2 Video Setup was aborted.', 'warning', 'Video Setup')
+        this.$bvModal.hide('video-modal')
         return
       }
       if (this.abortResolutionUpdate) { this.abortResolutionUpdate = false; return }

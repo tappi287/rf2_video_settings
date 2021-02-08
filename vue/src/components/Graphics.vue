@@ -5,14 +5,14 @@
         <b-input-group>
           <!-- Switch View Mode -->
           <b-input-group-prepend>
-            <b-button @click="viewMode = !viewMode ? 1 : 0">
+            <b-button @click="viewMode = !viewMode ? 1 : 0" class="rounded-left">
               <b-icon :icon="viewMode ? 'grid-fill' : 'list'"></b-icon>
             </b-button>
             <b-input-group-text class="info-field">Presets</b-input-group-text>
 
             <!-- Preset Folder Select -->
             <b-button v-b-popover.hover.bottom="'Customize Presets save location'"
-                      squared variant="rf-yellow" id="preset-folder">
+                      squared variant="secondary" id="preset-folder">
               <b-icon icon="folder-fill"></b-icon>
             </b-button>
 
@@ -37,7 +37,7 @@
           </b-input-group-prepend>
 
           <!-- Preset Selection-->
-          <b-dropdown :text="currentPresetName" variant="rf-blue">
+          <b-dropdown :text="currentPresetName" variant="rf-blue" toggle-class="rounded-0">
             <b-dropdown-item v-for="preset in gfxPresets" :key="preset.name"
                              @click="selectPreset(preset)">
               {{ preset.name }}
@@ -45,17 +45,17 @@
           </b-dropdown>
 
           <!-- New Preset Name -->
-          <b-form-input v-model="newPresetName" :state="presetFileNameState"
+          <b-form-input v-model="newPresetName" :state="presetFileNameState" class="no-border"
                         type="text" placeholder="[New Preset Name]" id="preset-name-input"
                         v-b-popover.hover.bottom="'Enter a name for a new Preset and click the + button'">
           </b-form-input>
 
           <b-input-group-append>
             <!-- Add/Export/Del Preset Buttons -->
-            <b-button :disabled="!addButtonState" variant="success" @click="createPreset">
+            <b-button :disabled="!addButtonState" variant="secondary" @click="createPreset">
               <b-icon icon="plus"></b-icon>
             </b-button>
-            <b-button variant="rf-blue" @click="getPresets"
+            <b-button variant="secondary" @click="$emit('refresh')"
                       v-b-popover.hover.bottom="'Refresh Presets if you updated a setting in-game'">
               <b-icon icon="arrow-repeat"></b-icon>
             </b-button>
@@ -63,7 +63,7 @@
                       v-b-popover.hover.bottom="'Export current Preset to your documents dir to be able to share it!'">
               <b-icon icon="file-earmark-arrow-up-fill"></b-icon>
             </b-button>
-            <b-button :disabled="!deleteButtonState" variant="rf-red" id="delete-preset-btn">
+            <b-button :disabled="!deleteButtonState" variant="secondary" id="delete-preset-btn" class="rounded-right">
               <b-icon icon="trash-fill"></b-icon>
             </b-button>
 
@@ -72,7 +72,7 @@
               <p>Do you really want to delete the Preset: {{ currentPresetName }}?</p>
               <div class="text-right">
                 <b-button @click="deletePreset" size="sm" variant="danger"
-                          aria-label="Delete">
+                          aria-label="Delete" class="mr-2">
                   Delete
                 </b-button>
                 <b-button @click="$root.$emit('bv::hide::popover', 'delete-preset-btn')"
@@ -106,7 +106,7 @@
           <div v-for="(preset, idx) in gfxPresets" :key="preset.name">
             <GraphicsSettingsArea :preset="preset" :idx="idx" :current_preset_idx="selectedGfxPresetIdx"
                                   :view_mode="viewMode" v-on:update-setting="updateSetting"
-                                  @set-busy="isBusy=$event">
+                                  @set-busy="isBusy=$event" @make-toast="makeToast">
             </GraphicsSettingsArea>
           </div>
         </div>
@@ -125,6 +125,7 @@ export default {
     return {
       newPresetName: '',
       presetDesc: '',
+      componentReady: false,
       userGfxPresetsDir: '',
       viewMode: 0,
       settingsAreaId: settingsAreaId,
@@ -133,6 +134,9 @@ export default {
   props: { gfxPresets: Object, previousGfxPresetName: String, selectedGfxPresetIdx: Number,
     gfxPresetDir: String, isBusy: Boolean},
   methods: {
+    makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
+      this.$emit('make-toast', message, category, title, append, delay)
+    },
     getSelectedPreset: function () {
       if (this.gfxPresets.length === 0) { return {} }
       return this.gfxPresets[this.selectedGfxPresetIdx]
@@ -141,6 +145,7 @@ export default {
       this.$emit('export-current')
     },
     selectPreset: async function (preset) {
+      this.getReady()
       this.$emit('select-preset', preset, true)
       this.presetDesc = preset.desc
     },
@@ -157,13 +162,18 @@ export default {
     },
     updateSetting: async function (setting, value, save = true) {
       this.$emit('update-setting', setting, value, save)
-    }
+    },
+    getReady() {
+      // Avoid Preset desc field spamming update events
+      this.componentReady = false; setTimeout( this.setReady , 500)
+    },
+    setReady() { this.componentReady = true; console.log('Comp ready') }
   },
   components: {
     GraphicsSettingsArea
   },
   watch: {
-    presetDesc: function (value) { this.$emit('update-desc', value) }
+    presetDesc: function (value) { if (this.componentReady) { this.$emit('update-desc', value) }}
   },
   computed: {
     currentPresetName: function () {
@@ -185,6 +195,7 @@ export default {
   },
   created: function () {
     this.userGfxPresetsDir = this.gfxPresetDir
+    this.getReady()
     this.presetDesc = this.getSelectedPreset().desc
   }
 }
