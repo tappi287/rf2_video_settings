@@ -41,18 +41,17 @@ def start_eel():
     port = 8123
     eel.init('web')
     page = 'index.html'
-    window_size = (960, 600)
 
     # TODO: fetch OSError port in use
     try:
-        eel.start(page, size=window_size, host=host, port=port)
+        eel.start(page, host=host, port=port)
     except EnvironmentError:
         # If Chrome isn't found, fallback to Microsoft Edge on Win10 or greater
         if sys.platform in ['win32', 'win64'] and int(platform.release()) >= 10:
-            eel.start(page, size=window_size, mode='edge', host=host, port=port)
+            eel.start(page, mode='edge', host=host, port=port)
         # Fallback to opening a regular browser window
         else:
-            eel.start(page, size=window_size, mode=None, app_mode=False, host=host, port=port, block=False)
+            eel.start(page, mode=None, app_mode=False, host=host, port=port, block=False)
             # Open system default web browser
             webbrowser.open_new(f'http://{host}:{port}')
             # Run until window/tab closed
