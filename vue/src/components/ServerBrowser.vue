@@ -8,7 +8,7 @@
 
       <b-form-input v-model="serverTextFilter" id="filter-server" type="search" debounce="1000"
                     placeholder="Search..." spellcheck="false"
-                    :class="serverTextFilter !== '' ? 'filter-warn' : ''">
+                    :class="serverTextFilter !== '' ? 'filter-warn no-border' : 'no-border'">
       </b-form-input>
 
       <b-input-group-append>
