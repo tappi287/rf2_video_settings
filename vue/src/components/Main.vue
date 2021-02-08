@@ -39,13 +39,15 @@
               :gfx-preset-dir="$refs.gfx.userPresetsDir"
               :is-busy="$refs.gfx.isBusy"
               @save-preset="$refs.gfx.savePreset"
+              @refresh="$refs.gfx.getPresets"
               @update-presets-dir="$refs.gfx.setPresetsDir"
               @export-current="$refs.gfx.exportPreset"
               @select-preset="$refs.gfx.selectPreset"
               @create-preset="$refs.gfx.createPreset"
               @delete-preset="$refs.gfx.deletePreset"
               @update-setting="$refs.gfx.updateSetting"
-              @update-desc="$refs.gfx.updateDesc" />
+              @update-desc="$refs.gfx.updateDesc"
+              @make-toast="makeToast" />
 
     <!-- Server Browser -->
     <ServerBrowser ref="serverBrowser" v-if="navActive === 4"
@@ -89,7 +91,9 @@ export default {
     },
     setDashGfxHandler: function () {
       this.gfxReady = true
-      this.$nextTick(() => { this.$refs.dash.gfxPresetsReady = true })
+      this.$nextTick(() => {
+        if (this.$refs.dash !== undefined) { this.$refs.dash.gfxPresetsReady = true }
+      })
     },
     importPreset: async function (importPreset) {
       await this.$refs.gfx.importPreset(importPreset)
