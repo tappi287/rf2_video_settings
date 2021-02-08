@@ -153,7 +153,7 @@ html {
 }
 
 .hidden { display: none; }
-
+.no-border { border: none; }
 .main-footer {
   margin-bottom: 3rem;
 }

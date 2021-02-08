@@ -177,7 +177,7 @@ export default {
     updateDesc: function (newDesc) {
       if (newDesc === undefined || newDesc === null) { return }
       this.getSelectedPreset().desc = newDesc
-      // this.savePreset(this.getSelectedPreset())
+      this.savePreset(this.getSelectedPreset())
     },
     updateSetting: async function (setting, value, save = true) {
       this.isBusy = true
