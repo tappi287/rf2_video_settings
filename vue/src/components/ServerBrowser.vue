@@ -197,30 +197,32 @@
 
       <!-- No Server Data -->
       <template #empty>
-        <template v-if="isBusy">
-          <p>Acquiring server data...</p>
-        </template>
-        <template v-if="onlyFav">
-          <template v-if="serverFavs.length === 0">
-            <p>No favourite servers added yet. Use the Server Browser to add some favourites to the app.</p>
+        <div class="text-center">
+          <template v-if="isBusy">
+            <p>Acquiring server data...</p>
           </template>
-          <template v-else-if="serverFavs.length !== 0 && serverListData.length === 0">
-            <p>No favourite servers online</p>
+          <template v-if="onlyFav">
+            <template v-if="serverFavs.length === 0">
+              <p>No favourite servers added yet. Use the Server Browser to add some favourites to the app.</p>
+            </template>
+            <template v-else-if="serverFavs.length !== 0 && serverListData.length === 0">
+              <p>No favourite servers online</p>
+            </template>
+            <template v-else>
+              <p>The master server is unavailable or could not access internet connection.</p>
+            </template>
           </template>
-          <template v-else>
-            <p>The master server is unavailable or could not access internet connection.</p>
+          <template v-if="!onlyFav">
+            <template v-if="serverListData.length === 0">
+              <h5>No server data</h5>
+              <p>The master server is unavailable or could not access internet connection.</p>
+            </template>
+            <template v-else-if="serverListData.length > 0">
+              <h6>No filtering results!</h6>
+              <p>Try to reduce filtering options to see some Servers.</p>
+            </template>
           </template>
-        </template>
-        <template v-if="!onlyFav">
-          <template v-if="serverListData.length === 0">
-            <h5>No server data</h5>
-            <p>The master server is unavailable or could not access internet connection.</p>
-          </template>
-          <template v-else-if="serverListData.length > 0">
-            <h6>No filtering results!</h6>
-            <p>Try to reduce filtering options to see some Servers.</p>
-          </template>
-        </template>
+        </div>
       </template>
     </b-table>
     <div class="bg-dark rounded-bottom" style="height: 1.75rem;"></div>

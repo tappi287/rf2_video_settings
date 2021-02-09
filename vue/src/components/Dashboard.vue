@@ -49,7 +49,7 @@
     <!-- Server Favourites -->
     <transition name="fade">
       <ServerBrowser ref="serverBrowser" only-favourites class="mt-3"
-                     @server-browser-ready="browserReady"
+                     @server-browser-ready="resize"
                      @error="setError" @make-toast="makeToast"/>
     </transition>
   </div>
@@ -85,7 +85,7 @@ export default {
       gfxPresetsReady: false,
       vfOptions: { autoplay: true, delay: 12000 },
       vfImages: [],
-      vfTransitions: [ 'fade', 'kenburn', 'swipe', 'fade' ],
+      vfTransitions: [ 'fade', 'slide', 'swipe', 'fade' ],
       vfCaptions: [],
     }
   },
@@ -108,20 +108,24 @@ export default {
     setError: async function (error) {
       this.$emit('error', error)
     },
-    browserReady() {
+    resize() {
       // Hack to trigger a resize event
-      window.resizeBy(1, 1)
+      window.resizeBy(-1, 0)
+      window.resizeBy(1, 0)
     },
     updateHeight() {
       this.$nextTick(() => {
         const imgDiv = document.getElementById('img')
         const topMenu = document.getElementById('top-menu')
-        if (imgDiv === undefined || topMenu === undefined) { return }
+        if (imgDiv === undefined || imgDiv === null || topMenu === null || topMenu === undefined) { return }
         const imgHeight = imgDiv.offsetHeight
         const menuHeight = topMenu.offsetHeight
         document.getElementById('spacer').style.height = String(imgHeight - menuHeight) + 'px'
       })
     },
+  },
+  activated() {
+    this.resize()
   },
   created() {
     const r = prepareScreenshots()
