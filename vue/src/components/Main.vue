@@ -51,7 +51,7 @@
 
     <!-- Server Browser -->
     <ServerBrowser ref="serverBrowser" v-if="navActive === 4"
-                   @make-toast="makeToast" @error="setError"></ServerBrowser>
+                   @make-toast="makeToast"></ServerBrowser>
 
     <!-- Launch rFactor -->
     <div class="mt-3">

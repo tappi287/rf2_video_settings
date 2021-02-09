@@ -28,18 +28,18 @@ export default {
     },
     getPresets: async function () {
       this.isBusy = true
-      this.presets = []
-      const preset_data = await getEelJsonObject(window.eel.get_presets()())
+      const r = await getEelJsonObject(window.eel.get_presets()())
 
-      if (preset_data === undefined || preset_data === null) {
-        this.$emit('error', 'Error obtaining presets.')
+      if (!r.result) {
+        this.$emit('error', r.msg)
         return
       }
+      this.presets = []
 
-      this.presets = preset_data.presets
+      this.presets = r.presets
       let appSelectedPresetIdx = -1
-      if (preset_data.preset_changed !== null) {
-        this.previousPresetName = preset_data.preset_changed
+      if (r.preset_changed !== null) {
+        this.previousPresetName = r.preset_changed
         this.makeToast('Detected settings deviations to previously selected Preset ' + this.previousPresetName +
             ' on disk. Pointing you to the "Current Preset" reflecting the actual settings on disk.',
             'secondary','Graphics Preset', true, 15000)
@@ -50,7 +50,7 @@ export default {
         if (preset === undefined) {
           continue
         }
-        if (preset.name === preset_data.selected_preset) {
+        if (preset.name === r.selected_preset) {
           console.log('Found selected Preset:', i, preset.name)
           appSelectedPresetIdx = i
         }

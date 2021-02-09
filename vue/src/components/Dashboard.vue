@@ -49,8 +49,7 @@
     <!-- Server Favourites -->
     <transition name="fade">
       <ServerBrowser ref="serverBrowser" only-favourites class="mt-3"
-                     @server-browser-ready="resize"
-                     @error="setError" @make-toast="makeToast"/>
+                     @server-browser-ready="resize" @make-toast="makeToast"/>
     </transition>
   </div>
 </template>
@@ -87,6 +86,8 @@ export default {
       vfImages: [],
       vfTransitions: [ 'fade', 'slide', 'swipe', 'fade' ],
       vfCaptions: [],
+      resizeTimeout: null,
+      resizeDebounceRate: 20,
     }
   },
   props: {gfxHandler: PresetHandler},
@@ -105,15 +106,18 @@ export default {
         }
       })
     },
-    setError: async function (error) {
-      this.$emit('error', error)
-    },
     resize() {
       // Hack to trigger a resize event
       window.resizeBy(-1, 0)
       window.resizeBy(1, 0)
     },
+    debounceResize() {
+      clearTimeout(this.resizeTimeout)
+      this.resizeTimeout = setTimeout(this.updateHeight, this.resizeDebounceRate)
+    },
     updateHeight() {
+      this.resizeTimeout = null
+
       this.$nextTick(() => {
         const imgDiv = document.getElementById('img')
         const topMenu = document.getElementById('top-menu')
@@ -121,6 +125,7 @@ export default {
         const imgHeight = imgDiv.offsetHeight
         const menuHeight = topMenu.offsetHeight
         document.getElementById('spacer').style.height = String(imgHeight - menuHeight) + 'px'
+        console.log('Calculated size:', imgHeight - menuHeight)
       })
     },
   },
@@ -131,7 +136,7 @@ export default {
     const r = prepareScreenshots()
     this.vfImages = r.images; this.vfCaptions = r.captions
     this.getDriver()
-    window.onresize = this.updateHeight
+    window.onresize = this.debounceResize
   },
   components: {
     ServerBrowser,

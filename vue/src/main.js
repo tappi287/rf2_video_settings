@@ -46,7 +46,11 @@ export const userScreenShots =
  ['https://forum.studio-397.com/index.php?attachments/20201221185422_1-jpg.35356/', 'svictor',
   'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-354#post-1050632'],
 ['https://forum.studio-397.com/index.php?attachments/2021-02-02-20-40-png.36838/', 'MiguelVallejo',
- 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-359#post-1059084']
+ 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-359#post-1059084'],
+['https://cdn.discordapp.com/attachments/541020496087482424/792889002901504080/20201227113904_1.jpg', 'boxwex',
+ 'https://discord.com/channels/253557076645773312/541020496087482424/792889005245988945'],
+['https://cdn.discordapp.com/attachments/541020496087482424/792889678721843250/20201224110117_1.jpg', 'boxwex',
+ 'https://discord.com/channels/253557076645773312/541020496087482424/792889680517267457']
     ]
 
 new Vue({

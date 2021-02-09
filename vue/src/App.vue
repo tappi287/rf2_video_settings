@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- Handle Preset file drops -->
-    <div id="dropzone">
+    <div id="dropzone" v-if="error === ''">
       <b-overlay :show="dragActive" variant="white" :no-center="true" opacity="0.9" :fixed="true">
 
         <!-- Main component -->
@@ -20,26 +20,27 @@
 
     <!-- Report missing rF2 installation or missing privileges -->
     <template v-if="error !== ''">
-      <b-card class="mt-3" bg-variant="dark" text-variant="white">
-        <template #header>
-          <h6 class="mb-0"><span class="title">Error</span></h6>
-        </template>
-        <p>Could not detect a rFactor 2 Steam installation with a player.JSON and/or Config_DX11.ini</p>
-        <pre class="text-white">{{ error }}</pre>
-        <p>
-          Try to re-run this application with administrative privileges:
-          <b-button @click="reRunAsAdmin" size="sm">Re-Run-as-Admin</b-button>
-        </p>
-        <template #footer>
-          <span class="small font-weight-lighter">
-            Please make sure that a rFactor 2 Steam installation is present on your machine and that you have at least
-            once started the game.
-          </span>
-        </template>
-      </b-card>
-      <div class="mt-3">
-        <b-button @click="requestClose" size="sm">Close</b-button>
-      </div>
+      <b-container fluid="sm">
+        <b-card class="mt-3" bg-variant="dark" text-variant="white">
+          <template #header>
+            <h6 class="mb-0"><span class="title">Error</span></h6>
+          </template>
+          <pre class="text-white">{{ error }}</pre>
+          <p>
+            Try to re-run this application with administrative privileges:
+            <b-button @click="reRunAsAdmin" size="sm">Re-Run-as-Admin</b-button>
+          </p>
+          <template #footer>
+            <span class="small">
+              Please make sure that a rFactor 2 Steam installation is present on your machine and that you have at least
+              <b>once started the game</b>.
+            </span>
+          </template>
+        </b-card>
+        <div class="mt-3">
+          <b-button @click="requestClose" size="sm">Close</b-button>
+        </div>
+      </b-container>
     </template>
 
     <!-- Footer -->

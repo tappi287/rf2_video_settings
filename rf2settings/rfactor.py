@@ -304,6 +304,7 @@ class RfactorPlayer:
 
     def run_rfactor(self, server_info: Optional[dict] = None) -> bool:
         if not self._check_bin_dir():
+            self.error += 'Could not locate rFactor 2 Bin directory.'
             return False
 
         # Solution for non loading rF2 plugins in PyInstaller executable:
@@ -333,6 +334,7 @@ class RfactorPlayer:
                              stdin=subprocess.PIPE)
         out, errs = p.communicate()
         if p.returncode != 0:
+            self.error += str(out, encoding='utf-8')
             return False
 
         return True

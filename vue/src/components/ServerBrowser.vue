@@ -406,7 +406,6 @@ export default {
       try {
         const server_data = await getEelJsonObject(window.eel.get_server_list(this.onlyFav)())
         if (server_data === undefined || server_data === null) {
-          this.$emit('error', 'Error acquiring server list.')
           this.makeToast('Error acquiring server list.', 'danger', 'Server Browser')
         }
       } catch (error) {
