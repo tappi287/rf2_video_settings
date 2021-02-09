@@ -15,4 +15,5 @@ def get_rf_driver():
     rf = RfactorPlayer()
     if rf.is_valid:
         return json.dumps({'result': rf.options.driver_options.to_js()})
-    return json.dumps({'result': False})
+
+    return json.dumps({'result': False, 'msg': rf.error})

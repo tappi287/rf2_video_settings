@@ -25,10 +25,16 @@ def get_presets(preset_type: Optional[int] = 0):
     rf = RfactorPlayer()
     if rf.is_valid:
         current_preset.update(rf)
+    else:
+        msg = 'Could not detect a rFactor 2 Steam installation with a player.JSON and/or Config_DX11.ini\n'
+        msg += rf.error
+        logging.fatal(msg)
+        return json.dumps({'result': False, 'msg': msg})
 
     if not AppSettings.create_backup(rf):
-        logging.fatal('Could not find or create backup files!')
-        return
+        msg = 'Could not find or create backup files!'
+        logging.fatal(msg)
+        return json.dumps({'result': False, 'msg': msg})
 
     # - Load saved Presets
     preset_changed = None
@@ -51,7 +57,7 @@ def get_presets(preset_type: Optional[int] = 0):
 
     presets = sorted(presets, key=lambda k: k.name)
 
-    return json.dumps({'presets': [p.to_js() for p in presets],
+    return json.dumps({'result': True, 'presets': [p.to_js() for p in presets],
                        'selected_preset': selected_preset_name,
                        'preset_changed': preset_changed})
 

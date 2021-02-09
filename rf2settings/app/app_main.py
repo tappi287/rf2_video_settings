@@ -49,7 +49,7 @@ def run_rfactor(server_info: Optional[dict] = None):
     if rf.is_valid:
         result = rf.run_rfactor(server_info)
 
-    return json.dumps({'result': result})
+    return json.dumps({'result': result, 'msg': rf.error})
 
 
 def expose_main_methods():

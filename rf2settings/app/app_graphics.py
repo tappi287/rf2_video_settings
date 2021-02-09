@@ -28,4 +28,4 @@ def run_rfactor_config():
     if rf.is_valid:
         result = rf.run_config()
 
-    return json.dumps({'result': result})
+    return json.dumps({'result': result, 'msg': rf.error})
