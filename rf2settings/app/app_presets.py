@@ -40,7 +40,7 @@ def get_presets(preset_type: Optional[int] = 0):
     preset_changed = None
     selected_preset_name = AppSettings.selected_preset or current_preset.name
 
-    presets, selected_preset = load_presets_from_dir(get_user_presets_dir(),
+    presets, selected_preset = load_presets_from_dir(get_user_presets_dir(), preset_type,
                                                      current_preset, selected_preset_name)
     presets = [current_preset] + presets
 

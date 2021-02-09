@@ -5,8 +5,7 @@ from pathlib import Path
 from typing import Iterable, Tuple, Optional, Dict, Type
 
 from .presets_dir import get_user_presets_dir, get_user_export_dir
-from .settings_model import GraphicOptions, AdvancedGraphicSettings, VideoSettings, BaseOptions, ResolutionSettings, \
-    OPTION_CLASSES
+import settings_model
 from .utils import create_file_safe_name
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
@@ -15,6 +14,7 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
 
 class PresetType:
     graphics = 0
+    advanced_settings = 1
 
 
 class BasePreset:
@@ -23,13 +23,16 @@ class BasePreset:
     option_class_keys = set()
 
     def __init__(self, name: str = None, desc: str = None):
+        """ Preset Base Type representing a set <option_class_keys> of BaseOptions
+            Presets handle the loading and saving of the settings provided in BaseOptions to a JSON file.
+        """
         self.name = name or 'Default'
         self.desc = desc or 'The default preset represents the settings currently found in your rFactor 2 installation.'
 
         # -- Set BaseOptions as Preset fields
         #    eg. Preset.video_settings: VideoSettings
         for key in self.option_class_keys:
-            options_instance = OPTION_CLASSES.get(key)()
+            options_instance = settings_model.OPTION_CLASSES.get(key)()
             setattr(self, key, options_instance)
 
     def update(self, rf):
@@ -86,7 +89,7 @@ class BasePreset:
             return False
         return True
 
-    def _iterate_options(self) -> Iterable[Tuple[str, BaseOptions]]:
+    def _iterate_options(self) -> Iterable[Tuple[str, settings_model.BaseOptions]]:
         """ Helper to iterate thru all BaseOptions assigned to the preset. """
         for key in self.option_class_keys:
             yield key, getattr(self, key)
@@ -105,7 +108,7 @@ class BasePreset:
         self.desc = js_dict.get('desc')
 
         for key, _ in self._iterate_options():
-            options_class = OPTION_CLASSES.get(key)
+            options_class = settings_model.OPTION_CLASSES.get(key)
             options_instance = options_class()
             options_instance.from_js_dict(js_dict.get(key, dict()))
             setattr(self, key, options_instance)
@@ -126,24 +129,33 @@ class BasePreset:
 
 class GraphicsPreset(BasePreset):
     preset_type: int = PresetType.graphics
-    option_class_keys = {GraphicOptions.app_key, AdvancedGraphicSettings.app_key,
-                         VideoSettings.app_key, ResolutionSettings.app_key}
+    option_class_keys = {settings_model.GraphicOptions.app_key, settings_model.AdvancedGraphicSettings.app_key,
+                         settings_model.VideoSettings.app_key, settings_model.ResolutionSettings.app_key}
 
     def __init__(self, name: str = None, desc: str = None):
+        """ Presets for graphical preferences """
         super(GraphicsPreset, self).__init__(name, desc)
 
     def additional_export_operations(self):
         # Reset Resolution Settings
-        default_res_settings = ResolutionSettings()
-        setattr(self, ResolutionSettings.app_key, default_res_settings)
+        default_res_settings = settings_model.ResolutionSettings()
+        setattr(self, settings_model.ResolutionSettings.app_key, default_res_settings)
 
 
-def load_presets_from_dir(preset_dir: Path, current_preset: Optional[BasePreset] = None,
+class AdvancedSettingsPreset(BasePreset):
+    preset_type: int = PresetType.advanced_settings
+    option_class_keys = {settings_model.DriverOptions.app_key, settings_model.GameOptions}
+
+    def __init__(self, name: str = None, desc: str = None):
+        super(AdvancedSettingsPreset, self).__init__(name, desc)
+
+
+def load_presets_from_dir(preset_dir: Path, preset_type: int = 0, current_preset: Optional[BasePreset] = None,
                           selected_preset_name: str = None):
     preset_ls, selected_preset = list(), None
 
     for preset_file in preset_dir.glob('*.json'):
-        preset = load_preset(preset_file)
+        preset = load_preset(preset_file, preset_type)
         if not preset:
             continue
         if preset.name == selected_preset_name:
@@ -154,7 +166,7 @@ def load_presets_from_dir(preset_dir: Path, current_preset: Optional[BasePreset]
     return preset_ls, selected_preset
 
 
-def load_preset(file: Path) -> Optional[BasePreset]:
+def load_preset(file: Path, load_preset_type: int) -> Optional[BasePreset]:
     try:
         with open(file.as_posix(), 'r') as f:
             new_preset_dict = json.loads(f.read())
@@ -164,6 +176,9 @@ def load_preset(file: Path) -> Optional[BasePreset]:
 
     # -- Get type, fallback to GraphicsPreset
     preset_type = new_preset_dict.get('preset_type', PresetType.graphics)
+    # -- Skip Presets that are not of the desired type
+    if load_preset_type != preset_type:
+        return
 
     # -- Create new preset instance based on type
     new_preset = PRESET_TYPES.get(preset_type)()
@@ -181,5 +196,5 @@ def load_preset(file: Path) -> Optional[BasePreset]:
 
 
 PRESET_TYPES: Dict[int, Type[BasePreset]] = dict()
-for preset_cls in (GraphicsPreset, ):
+for preset_cls in (GraphicsPreset, AdvancedSettingsPreset):
     PRESET_TYPES[preset_cls.preset_type] = preset_cls
