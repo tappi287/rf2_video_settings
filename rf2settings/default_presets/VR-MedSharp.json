@@ -10,7 +10,7 @@
       {
         "key": "Texture Sharpening",
         "name": "Texture Sharpening",
-        "value": 5
+        "value": 3
       },
       {
         "key": "Heat FX Fade Speed",
@@ -20,12 +20,12 @@
       {
         "key": "Rearview Particles",
         "name": "Rearview Particles",
-        "value": false
+        "value": true
       },
       {
         "key": "Rearview_Back_Clip",
         "name": "Rearview Back Clip",
-        "value": 80
+        "value": 140
       },
       {
         "key": "Rearview Driving",
@@ -60,7 +60,7 @@
     ],
     "title": "Advanced Display Settings"
   },
-  "desc": "You can start your 40+ cars Le Mans race now.",
+  "desc": "Based on VR-Medium but with negative Mipmap LOD bias to increase sharpness quite a bit",
   "graphic_options": {
     "key": "Graphic Options",
     "options": [
@@ -72,27 +72,27 @@
       {
         "key": "Player Detail",
         "name": "Player Detail",
-        "value": 2
+        "value": 3
       },
       {
         "key": "Opponent Detail",
         "name": "Opponent Detail",
-        "value": 0
+        "value": 1
       },
       {
         "key": "Texture Detail",
         "name": "Texture Detail",
-        "value": 2
+        "value": 3
       },
       {
         "key": "Texture Filter",
         "name": "Texture Filter",
-        "value": 3
+        "value": 5
       },
       {
         "key": "Special FX",
         "name": "Special Effects",
-        "value": 0
+        "value": 1
       },
       {
         "key": "Shadows",
@@ -107,7 +107,7 @@
       {
         "key": "Soft Particles",
         "name": "Soft Particles",
-        "value": 0
+        "value": 2
       },
       {
         "key": "Rain FX Quality",
@@ -142,12 +142,12 @@
       {
         "key": "Max Visible Vehicles",
         "name": "Visible Vehicles",
-        "value": 8
+        "value": 10
       }
     ],
     "title": "Display Settings"
   },
-  "name": "VR-Low",
+  "name": "VR-MedSharp",
   "preset_type": 0,
   "resolution_settings": {
     "key": "Resolution Settings",
@@ -186,7 +186,7 @@
       {
         "key": "FSAA",
         "name": "Anti Aliasing",
-        "value": 32
+        "value": 34
       },
       {
         "key": "EPostProcessingSettings",

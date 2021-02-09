@@ -8,14 +8,14 @@
         "value": true
       },
       {
+        "key": "Texture Sharpening",
+        "name": "Texture Sharpening",
+        "value": 5
+      },
+      {
         "key": "Heat FX Fade Speed",
         "name": "Heat FX Fade Speed",
         "value": 0
-      },
-      {
-        "key": "Max Visible Vehicles",
-        "name": "Visible Vehicles",
-        "value": 12
       },
       {
         "key": "Rearview Particles",
@@ -26,6 +26,36 @@
         "key": "Rearview_Back_Clip",
         "name": "Rearview Back Clip",
         "value": 120
+      },
+      {
+        "key": "Rearview Driving",
+        "name": "Rearview Driving",
+        "value": 1
+      },
+      {
+        "key": "Rearview Onboard",
+        "name": "Rearview Onboard",
+        "value": 0
+      },
+      {
+        "key": "Rearview Swingman",
+        "name": "Rearview Swingman",
+        "value": 0
+      },
+      {
+        "key": "Screenshot Format",
+        "name": "Screenshot Format",
+        "value": 0
+      },
+      {
+        "key": "Sun Occlusion",
+        "name": "Sun Occlusion",
+        "value": false
+      },
+      {
+        "key": "Max Framerate",
+        "name": "Max Framerate",
+        "value": 0
       }
     ],
     "title": "Advanced Display Settings"
@@ -47,7 +77,7 @@
       {
         "key": "Opponent Detail",
         "name": "Opponent Detail",
-        "value": 1
+        "value": 2
       },
       {
         "key": "Texture Detail",
@@ -93,11 +123,58 @@
         "key": "Environment Reflections",
         "name": "Environment Reflection",
         "value": 1
+      },
+      {
+        "key": "LSI Top",
+        "name": "Low Speed Info",
+        "value": 0.15
+      },
+      {
+        "key": "Stabilize Horizon",
+        "name": "Stabilize Horizon",
+        "value": 1
+      },
+      {
+        "key": "Steering Wheel",
+        "name": "Steering Wheel",
+        "value": 0
+      },
+      {
+        "key": "Max Visible Vehicles",
+        "name": "Visible Vehicles",
+        "value": 12
       }
     ],
     "title": "Display Settings"
   },
   "name": "VR-High",
+  "preset_type": 0,
+  "resolution_settings": {
+    "key": "Resolution Settings",
+    "options": [
+      {
+        "key": "WindowedMode",
+        "name": "Windowed Mode",
+        "value": null
+      },
+      {
+        "key": "Borderless",
+        "name": "Borderless",
+        "value": null
+      },
+      {
+        "key": "VideoMode",
+        "name": "Resolution",
+        "value": null
+      },
+      {
+        "key": "VideoRefresh",
+        "name": "Refresh Rate",
+        "value": null
+      }
+    ],
+    "title": "Resolution and Window Settings"
+  },
   "video_settings": {
     "key": "Video Settings",
     "options": [
@@ -115,6 +192,11 @@
         "key": "EPostProcessingSettings",
         "name": "Post Effects",
         "value": 2
+      },
+      {
+        "key": "UseFXAA",
+        "name": "FXAA",
+        "value": 0
       }
     ],
     "title": "Video Settings"
