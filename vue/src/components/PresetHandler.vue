@@ -40,7 +40,7 @@ export default {
       let appSelectedPresetIdx = -1
       if (preset_data.preset_changed !== null) {
         this.previousPresetName = preset_data.preset_changed
-        this.makeToast('Presets loaded. Detected settings deviations to previously selected Preset ' + this.previousPresetName +
+        this.makeToast('Detected settings deviations to previously selected Preset ' + this.previousPresetName +
             ' on disk. Pointing you to the "Current Preset" reflecting the actual settings on disk.',
             'secondary','Graphics Preset', true, 15000)
       }

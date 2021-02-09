@@ -46,6 +46,7 @@ def get_presets(preset_type: Optional[int] = 0):
         logging.debug('Resetting selected Preset to "Current Preset" from %s because settings differ '
                       'from actual rFactor 2 settings.', preset_changed)
         AppSettings.selected_preset = current_preset.name
+        selected_preset_name = current_preset.name
         AppSettings.save()
 
     presets = sorted(presets, key=lambda k: k.name)

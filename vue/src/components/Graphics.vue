@@ -97,8 +97,9 @@
 
         <!-- Preset deviates from current rF2 settings message -->
         <b-alert :show="previousGfxPresetName !== ''" dismissible variant="warning" class="mt-3">
-          The previously selected Preset <i>{{ previousGfxPresetName }}</i> has different settings than the actual
-          rFactor 2 settings on disk.
+          The previously selected Preset <i>{{ previousGfxPresetName }}</i> has different settings than the current
+          rFactor 2 settings on disk. Select your previous Preset <i>{{ previousGfxPresetName }}</i> to restore it's
+          settings and overwrite the current settings.
         </b-alert>
 
         <!-- Settings area -->
