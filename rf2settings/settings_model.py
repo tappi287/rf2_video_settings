@@ -99,6 +99,27 @@ adjustable_graphics_settings = {
                                               '(if track and car are setup properly)',
                                       'perf': 'G+3,39% C+4,45%'}),
                                 },
+    'LSI Top': {'name': 'Low Speed Info', 'value': 0.15,
+                'settings': ({'settingType': 'range', 'min': 0.01, 'max': 1.0, 'step': 0.01, 'display': 'floatpercent',
+                              'desc': 'Vertical position of Low Speed Info message box as a fraction '
+                                      'of screen height (-1 to disable)'},)
+                },
+    'Stabilize Horizon': {'name': 'Stabilize Horizon', 'value': 1,
+                          'settings': (
+                              {'value': 0, 'name': 'Off'}, {'value': 1, 'name': 'Low'},
+                              {'value': 2, 'name': 'Medium'}, {'value': 3, 'name': 'High'}),
+                          },
+    'Steering Wheel': {'name': 'Steering Wheel', 'value': 0,
+                       'settings': (
+                           {'value': 0, 'name': 'On [Default]', 'desc': 'Moving steering wheel and arms'},
+                           {'value': 1, 'name': 'Fixed', 'desc': 'Non-moving steering wheel or arms'},
+                           {'value': 2, 'name': 'Off', 'desc': 'No steering wheel or arms (in cockpit only '
+                                                               'while player-controlled)'},
+                           {'value': 3, 'name': 'No arms', 'desc': 'Moving steering wheel but no arms'},
+                       )},
+    'Max Visible Vehicles': {'name': 'Visible Vehicles', 'value': 12,
+                             'settings': ({'settingType': 'range', 'min': 5, 'max': 105, 'step': 1,
+                                           'desc': 'rFactor 2 default setting: 12'},)},
 }
 
 advanced_settings = {
@@ -107,6 +128,15 @@ advanced_settings = {
                                      {'value': True, 'name': 'Enabled [Default]',
                                       'desc': 'Soften edges around alpha test objects'})
                         },
+    'Texture Sharpening': {'name': 'Texture Sharpening', 'value': 5,
+                           'settings': (
+                              {'value': 0, 'name': 'Off', },
+                              {'value': 1, 'name': '+2.0', 'desc': 'Sharpen textures using MIP LOD bias (very blurry)'},
+                              {'value': 2, 'name': '+1.0', 'desc': 'Sharpen textures using MIP LOD bias (blurry)'},
+                              {'value': 3, 'name': '-1.0', 'desc': 'Sharpen textures using MIP LOD bias (sharp)'},
+                              {'value': 4, 'name': '-2.0', 'desc': 'Sharpen textures using MIP LOD bias (very sharp)'},
+                              {'value': 5, 'name': 'Auto [Default]'},
+                           ), },
     'Heat FX Fade Speed': {'name': 'Heat FX Fade Speed', 'value': 30,
                            'settings': ({'value': 30, 'name': '30 [Default]',
                                          'desc': 'Speed at which exhaust heat effects reduce '
@@ -115,17 +145,49 @@ advanced_settings = {
                                          'desc': 'Fixes visual artefact bubble behind certain cars in VR.'},
                                         )
                            },
-    'Max Visible Vehicles': {'name': 'Visible Vehicles', 'value': 12,
-                             'settings': ({'settingType': 'range', 'min': 5, 'max': 50,
-                                           'desc': 'rFactor 2 default setting: 12'}, )},
     'Rearview Particles': {'name': 'Rearview Particles', 'value': True,
                            'settings': ({'value': False, 'name': 'Disabled'},
                                         {'value': True, 'name': 'Enabled [Default]', 'perf': 'G+3,30% C+1,44%',
                                          'desc': 'Show particles like rain spray in the rear view mirror'})
                            },
     'Rearview_Back_Clip': {'name': 'Rearview Back Clip', 'value': 0,
-                           'settings': ({'settingType': 'range', 'min': 0, 'max': 250,
-                                         'desc': 'Back plane distance for mirror (0.0 = use default for scene)'}, )},
+                           'settings': ({'settingType': 'range', 'min': 0, 'max': 250, 'step': 20,
+                                         'desc': 'Back plane distance(view distance) for mirror '
+                                                 '(0.0 = use default for scene)'}, )},
+    'Rearview Driving': {'name': 'Rearview Driving', 'value': 1,
+                         'settings': (
+                             {'value': 0, 'name': 'Off', 'desc': 'Applies to in-game nosecam, '
+                                                                 'cockpit, and TV cockpit'},
+                             {'value': 1, 'name': 'Center+Sides'}, {'value': 2, 'name': 'Center'},
+                             {'value': 3, 'name': 'Sides',
+                              'desc': '(virtual mirrors only, in-car mirrors are on/off)'},
+                         ), },
+    'Rearview Onboard': {'name': 'Rearview Onboard', 'value': 0,
+                         'settings': (
+                             {'value': 0, 'name': 'Off', 'desc': 'Applies to in-game onboard cams'},
+                             {'value': 1, 'name': 'Center+Sides'}, {'value': 2, 'name': 'Center'},
+                             {'value': 3, 'name': 'Sides', 'desc': '(virtual mirrors only, in-car mirrors are on/off)'},
+                         ), },
+    'Rearview Swingman': {'name': 'Rearview Swingman', 'value': 0,
+                          'settings': (
+                             {'value': 0, 'name': 'Off', 'desc': 'Applies to in-game Swingman Cam'},
+                             {'value': 1, 'name': 'Center+Sides'}, {'value': 2, 'name': 'Center'},
+                             {'value': 3, 'name': 'Sides', 'desc': '(virtual mirrors only, in-car mirrors are on/off)'},
+                         ), },
+    'Screenshot Format': {'name': 'Screenshot Format', 'value': 0,
+                          'settings': (
+                              {'value': 0, 'name': 'default (jpg)'}, {'value': 1, 'name': 'bmp'},
+                              {'value': 2, 'name': 'jpg'}, {'value': 3, 'name': 'png'}, {'value': 4, 'name': 'dds'},
+                              {'value': 5, 'name': 'clipboard'},
+                          ), },
+    'Sun Occlusion': {'name': 'Sun Occlusion', 'value': False,
+                      'settings': (
+                          {'value': False, 'name': 'Off [Default]'},
+                          {'value': True, 'name': 'On', 'desc': 'Sunlight is affected by cloud cover'},
+                      ), },
+    'Max Framerate': {'name': 'Max Framerate', 'value': 0,
+                      'settings': ({'settingType': 'range', 'min': 0, 'max': 288, 'step': 1,
+                                    'desc': '0 to disable, rFactor 2 default setting: 0'},)},
 }
 
 adjustable_video_settings = {

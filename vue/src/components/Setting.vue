@@ -26,9 +26,9 @@
         <!-- Spinner Menu -->
         <template v-if="inputType === 'range'">
           <div :id="elemId" class="fixed-width-setting">
-            <b-form-spinbutton v-model="rangeValue" :min="rangeMin" :max="rangeMax" inline
+            <b-form-spinbutton v-model="rangeValue" :min="rangeMin" :max="rangeMax" :step="rangeStep" inline
                                :class="'spinner-setting btn-' + variant"
-                               @change="spinnerSettingUpdated">
+                               @change="spinnerSettingUpdated" :formatter-fn="spinnerDisplay">
             </b-form-spinbutton>
           </div>
         </template>
@@ -53,7 +53,11 @@ export default {
       inputType: 'value',
       rangeMin: 0,
       rangeMax: 1,
+      rangeStep: 1,
+      rangeDisp: undefined,
       rangeValue: 0,
+      spinnerTimeout: null,
+      spinnerDebounceRate: 2000,
     }
   },
   props: {
@@ -67,8 +71,17 @@ export default {
       this.$emit('setting-changed', this.setting, s.value)
     },
     spinnerSettingUpdated: function () {
+      clearTimeout(this.spinnerTimeout)
+      this.spinnerTimeout = setTimeout(this.spinnerDebouncedUpdate, this.spinnerDebounceRate)
       this.currentSettingValue = this.rangeValue
+    },
+    spinnerDebouncedUpdate: function () {
+      this.spinnerTimeout = null
       this.$emit('setting-changed', this.setting, this.rangeValue)
+    },
+    spinnerDisplay: function (value) {
+      if (this.rangeDisp === 'floatpercent') { return String(Math.round(value * 100)) + '%' }
+      return value
     },
     iterateSettings: function (func) {
       if (this.setting === undefined) { return }
@@ -108,6 +121,8 @@ export default {
         this.inputType = 'range'
         this.rangeMin = this.setting.settings[0].min
         this.rangeMax = this.setting.settings[0].max
+        this.rangeStep = this.setting.settings[0].step
+        this.rangeDisp = this.setting.settings[0].display
         this.rangeValue = this.setting.value
         this.settingDesc = this.setting.settings[0].desc || ''
       }
