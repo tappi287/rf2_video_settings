@@ -134,3 +134,13 @@ def get_version() -> str:
         print('Duh!', e)
 
     return '0.0.0'
+
+
+def find_subclasses(module, clazz):
+    for name in dir(module):
+        o = getattr(module, name)
+        try:
+            if (o != clazz) and issubclass(o, clazz):
+                yield name, o
+        except TypeError:
+            pass
