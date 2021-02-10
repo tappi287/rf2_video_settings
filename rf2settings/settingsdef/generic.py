@@ -5,14 +5,14 @@ driver_settings = {
 }
 # JSON Category: Game Options
 game_settings = {
-    'Auto-change Opponent List': {'name': 'Auto-change Opponent List', 'value': True,
+    'Auto-change Opponent List': {'name': 'Auto Opponent List', 'value': True,
                                   'desc': 'Whether to change the single-player allowed vehicle '
                                           'filter when player changes vehicles',
                                   'settings': ({'value': True, 'name': 'On [Default]'}, {'value': False, 'name': 'Off'})
                                   },
     'Relative Fuel Strategy': {'name': 'Fuel Strategy', 'value': True,
                                'desc': 'Show how much fuel to ADD, rather than how much TOTAL fuel to fill the tank up '
-                                       'to (note: new default is true)',
+                                       'to (note: new default is ADD)',
                                'settings': ({'value': True, 'name': 'Add [Default]',
                                              'desc': 'Pit Crew will ADD the requested amount of fuel'},
                                             {'value': False, 'name': 'Fill up',

@@ -196,7 +196,8 @@ adjustable_video_settings = {
                                              {'value': 4, 'name': 'High', 'desc': 'All Effects at High Quality'},
                                              {'value': 5, 'name': 'Ultra', 'desc': 'All Effects at Ultra Quality'},
                                 )},
-    'UseFXAA': {'name': 'FXAA', 'value': 0, '_type': int,
+    'UseFXAA': {'name': 'FXAA', 'value': 0, '_type': int, 'desc': 'Can not be used with FSAA. You should prefer FSAA '
+                                                                  'whenever possible.',
                 'settings': ({'value': 0, 'name': 'Off'},
                              {'value': 1, 'name': 'On', 'desc': 'Cheap post processing filter to smooth '
                                                                 'high contrast edges.'})},
