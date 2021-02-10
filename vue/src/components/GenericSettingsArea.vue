@@ -5,12 +5,12 @@
           bg-variant="dark" text-variant="white">
     <template #header>
       <h6 class="mb-0">
-        <span class="title">{{ preset.game_options.title }}</span>
+        <span class="title">{{ preset[settingsKey].title }}</span>
       </h6>
     </template>
     <template v-if="!viewMode">
       <!-- View Mode Grid -->
-      <Setting v-for="setting in preset.game_options.options" :key="setting.key"
+      <Setting v-for="setting in preset[settingsKey].options" :key="setting.key"
                :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixWidth="true"
                group_id="graphic"
                v-on:setting-changed="updateSetting">
@@ -19,7 +19,7 @@
     <template v-else>
       <!-- View Mode List -->
       <b-list-group class="text-left">
-        <b-list-group-item class="bg-transparent" v-for="setting in preset.game_options.options"
+        <b-list-group-item class="bg-transparent" v-for="setting in preset[settingsKey].options"
                            :key="setting.key">
           <Setting :setting="setting" variant="rf-orange" :fixWidth="true" group_id="graphic"
                    v-on:setting-changed="updateSetting">
@@ -44,7 +44,7 @@ export default {
       data: false
     }
   },
-  props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number},
+  props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number, settingsKey: String},
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)

@@ -15,6 +15,7 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
 class PresetType:
     graphics = 0
     advanced_settings = 1
+    controls = 2
 
 
 class BasePreset:
@@ -28,7 +29,8 @@ class BasePreset:
             Presets handle the loading and saving of the settings provided in BaseOptions to a JSON file.
         """
         self.name = name or 'Default'
-        self.desc = desc or 'The default preset represents the settings currently found in your rFactor 2 installation.'
+        self.desc = desc or 'The [Current Settings] preset represents the settings ' \
+                            'currently found in your rFactor 2 installation.'
 
         # -- Set BaseOptions as Preset fields
         #    eg. Preset.video_settings: VideoSettings
@@ -162,3 +164,12 @@ class AdvancedSettingsPreset(BasePreset):
 
     def additional_save_operations(self):
         pass
+
+
+class ControlsSettingsPreset(BasePreset):
+    preset_type: int = PresetType.controls
+    option_class_keys = {settings_model.GamepadMouseOptions.app_key}
+    prefix = 'controls'
+
+    def __init__(self, name: str = None, desc: str = None):
+        super(ControlsSettingsPreset, self).__init__(name, desc)

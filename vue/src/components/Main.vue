@@ -9,7 +9,7 @@
         <b-nav-item :active="navActive === 1" @click="navActive=1">
           Graphics
         </b-nav-item>
-        <b-nav-item disabled :active="navActive === 2" @click="navActive=2">
+        <b-nav-item :active="navActive === 2" @click="navActive=2">
           Controls
         </b-nav-item>
         <b-nav-item :active="navActive === 3" @click="navActive=3">
@@ -24,6 +24,10 @@
     <!-- Graphics Preset Handler -->
     <PresetHandler ref="gfx" @makeToast="makeToast" @error="setError" id-ref="gfx"
                    :preset-type="0" @presets-ready="setDashGfxHandler" />
+
+    <!-- Controls Settings Handler -->
+    <PresetHandler ref="con" @makeToast="makeToast" @error="setError" id-ref="con"
+                   :preset-type="2" />
 
     <!-- Game Settings Handler -->
     <PresetHandler ref="gen" @makeToast="makeToast" @error="setError" id-ref="gen"
@@ -69,6 +73,41 @@
       </b-overlay>
     </template>
 
+    <!-- Control Settings-->
+    <template  v-if="navActive === 2">
+      <b-overlay :show="$refs.con.isBusy" variant="dark" rounded>
+        <PresetUi ref="genUi" id-ref="gen"
+                  :presets="$refs.con.presets"
+                  :previous-preset-name="$refs.con.previousPresetName"
+                  :selected-preset-idx="$refs.con.selectedPresetIdx"
+                  :preset-dir="$refs.con.userPresetsDir"
+                  :is-busy="$refs.con.isBusy"
+                  @save-preset="$refs.con.savePreset"
+                  @refresh="$refs.con.getPresets"
+                  @update-presets-dir="$refs.con.setPresetsDir"
+                  @export-current="$refs.con.exportPreset"
+                  @select-preset="$refs.con.selectPreset"
+                  @create-preset="$refs.con.createPreset"
+                  @delete-preset="$refs.con.deletePreset"
+                  @update-setting="$refs.con.updateSetting"
+                  @update-desc="$refs.con.updateDesc"
+                  @update-view-mode="$refs.con.viewMode = $event"
+                  @make-toast="makeToast" />
+
+        <div>
+          <div v-for="(conPreset, idx) in $refs.con.presets" :key="conPreset.name">
+            <GenericSettingsArea :preset="conPreset" :idx="idx"
+                                 settings-key="gamepad_mouse_settings"
+                                 :current_preset_idx="$refs.con.selectedPresetIdx"
+                                 :view_mode="$refs.con.viewMode"
+                                 @update-setting="$refs.con.updateSetting"
+                                 @set-busy="$refs.con.isBusy=$event"
+                                 @make-toast="makeToast"/>
+          </div>
+        </div>
+      </b-overlay>
+    </template>
+
     <!-- Generic Settings-->
     <template  v-if="navActive === 3">
       <b-overlay :show="$refs.gen.isBusy" variant="dark" rounded>
@@ -93,6 +132,7 @@
         <div>
           <div v-for="(genPreset, idx) in $refs.gen.presets" :key="genPreset.name">
             <GenericSettingsArea :preset="genPreset" :idx="idx"
+                                 settings-key="game_options"
                                  :current_preset_idx="$refs.gen.selectedPresetIdx"
                                  :view_mode="$refs.gen.viewMode"
                                  @update-setting="$refs.gen.updateSetting"

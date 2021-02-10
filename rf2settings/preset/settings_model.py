@@ -2,7 +2,7 @@ import logging
 import sys
 from typing import Union, List, Optional
 
-from ..settingsdef import graphics, generic
+from ..settingsdef import graphics, generic, controls
 from ..utils import JsonRepr
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
@@ -18,7 +18,7 @@ class OptionsTarget:
 
 class Option(JsonRepr):
     # Entries we don't want to export or save
-    export_skip_keys = ['settings', 'hidden', 'ini_type']
+    export_skip_keys = ['settings', 'hidden', 'ini_type', 'desc']
 
     def __init__(self):
         self.key = 'Player JSON key'
@@ -147,6 +147,19 @@ class GameOptions(BaseOptions):
 
         # -- Read Default options
         self.read_from_python_dict(generic.game_settings)
+
+
+class GamepadMouseOptions(BaseOptions):
+    key = 'Controls'
+    app_key = 'gamepad_mouse_settings'
+    title = 'UI Gamepad Mouse Settings'
+    target = OptionsTarget.player_json
+
+    def __init__(self):
+        super(GamepadMouseOptions, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(controls.ui_gamepad_mouse_settings)
 
 
 class GraphicOptions(BaseOptions):

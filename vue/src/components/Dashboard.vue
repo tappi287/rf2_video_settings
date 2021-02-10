@@ -132,6 +132,9 @@ export default {
   activated() {
     this.resize()
   },
+  updated() {
+    this.updateHeight()
+  },
   created() {
     const r = prepareScreenshots()
     this.vfImages = r.images; this.vfCaptions = r.captions
