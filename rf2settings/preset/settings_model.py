@@ -78,6 +78,7 @@ class BaseOptions(JsonRepr):
             option.name = detail_dict.get('name', 'Unknown')
             option.settings = tuple(detail_dict.get('settings', list()))
             option.value = detail_dict.get('value')
+            option.desc = detail_dict.get('desc')
             option.hidden = detail_dict.get('hidden')
             option.ini_type = detail_dict.get('_type')
             self.options.append(option)
