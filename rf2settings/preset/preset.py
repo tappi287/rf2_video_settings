@@ -1,12 +1,12 @@
 import json
 import logging
 import sys
-from pathlib import Path
-from typing import Iterable, Tuple, Optional, Dict, Type
+from typing import Iterable, Tuple
 
+from . import settings_model
 from .presets_dir import get_user_presets_dir, get_user_export_dir
-import settings_model
-from .utils import create_file_safe_name
+from .settings_model_base import OPTION_CLASSES
+from ..utils import create_file_safe_name
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
@@ -21,6 +21,7 @@ class BasePreset:
     # Defines which type of options this Preset represents
     preset_type: int = -1
     option_class_keys = set()
+    prefix = ''
 
     def __init__(self, name: str = None, desc: str = None):
         """ Preset Base Type representing a set <option_class_keys> of BaseOptions
@@ -32,7 +33,7 @@ class BasePreset:
         # -- Set BaseOptions as Preset fields
         #    eg. Preset.video_settings: VideoSettings
         for key in self.option_class_keys:
-            options_instance = settings_model.OPTION_CLASSES.get(key)()
+            options_instance = OPTION_CLASSES.get(key)()
             setattr(self, key, options_instance)
 
     def update(self, rf):
@@ -62,6 +63,10 @@ class BasePreset:
 
         return self.export(file_name)
 
+    def additional_save_operations(self):
+        """ Should be overwritten in sub classes """
+        pass
+
     def additional_export_operations(self):
         """ Should be overwritten in sub classes """
         pass
@@ -75,8 +80,9 @@ class BasePreset:
         return self._save_to_file(file)
 
     def save(self) -> bool:
-        file_name = create_file_safe_name(self.name)
+        file_name = create_file_safe_name(f'{self.prefix}_{self.name}')
         file = get_user_presets_dir() / f'{file_name}.json'
+        self.additional_save_operations()
 
         return self._save_to_file(file)
 
@@ -108,7 +114,7 @@ class BasePreset:
         self.desc = js_dict.get('desc')
 
         for key, _ in self._iterate_options():
-            options_class = settings_model.OPTION_CLASSES.get(key)
+            options_class = OPTION_CLASSES.get(key)
             options_instance = options_class()
             options_instance.from_js_dict(js_dict.get(key, dict()))
             setattr(self, key, options_instance)
@@ -131,6 +137,7 @@ class GraphicsPreset(BasePreset):
     preset_type: int = PresetType.graphics
     option_class_keys = {settings_model.GraphicOptions.app_key, settings_model.AdvancedGraphicSettings.app_key,
                          settings_model.VideoSettings.app_key, settings_model.ResolutionSettings.app_key}
+    prefix = 'gfx'
 
     def __init__(self, name: str = None, desc: str = None):
         """ Presets for graphical preferences """
@@ -144,57 +151,14 @@ class GraphicsPreset(BasePreset):
 
 class AdvancedSettingsPreset(BasePreset):
     preset_type: int = PresetType.advanced_settings
-    option_class_keys = {settings_model.DriverOptions.app_key, settings_model.GameOptions}
+    option_class_keys = {settings_model.DriverOptions.app_key, settings_model.GameOptions.app_key}
+    prefix = 'adv_settings'
 
     def __init__(self, name: str = None, desc: str = None):
         super(AdvancedSettingsPreset, self).__init__(name, desc)
 
+    def additional_export_operations(self):
+        pass
 
-def load_presets_from_dir(preset_dir: Path, preset_type: int = 0, current_preset: Optional[BasePreset] = None,
-                          selected_preset_name: str = None):
-    preset_ls, selected_preset = list(), None
-
-    for preset_file in preset_dir.glob('*.json'):
-        preset = load_preset(preset_file, preset_type)
-        if not preset:
-            continue
-        if preset.name == selected_preset_name:
-            selected_preset = preset
-        if current_preset and preset and preset.name != current_preset.name:
-            preset_ls.append(preset)
-
-    return preset_ls, selected_preset
-
-
-def load_preset(file: Path, load_preset_type: int) -> Optional[BasePreset]:
-    try:
-        with open(file.as_posix(), 'r') as f:
-            new_preset_dict = json.loads(f.read())
-    except Exception as e:
-        logging.fatal('Could not load Preset from file! %s', e)
-        return
-
-    # -- Get type, fallback to GraphicsPreset
-    preset_type = new_preset_dict.get('preset_type', PresetType.graphics)
-    # -- Skip Presets that are not of the desired type
-    if load_preset_type != preset_type:
-        return
-
-    # -- Create new preset instance based on type
-    new_preset = PRESET_TYPES.get(preset_type)()
-
-    # -- Load preset options from json
-    new_preset.from_js_dict(new_preset_dict)
-
-    # - Make sure older Preset Versions contain all fields
-    for k, v in PRESET_TYPES.get(preset_type)().__dict__.items():
-        if k[:2] != '__' and not callable(v):
-            if k not in new_preset.__dict__:
-                setattr(new_preset, k, v)
-
-    return new_preset
-
-
-PRESET_TYPES: Dict[int, Type[BasePreset]] = dict()
-for preset_cls in (GraphicsPreset, AdvancedSettingsPreset):
-    PRESET_TYPES[preset_cls.preset_type] = preset_cls
+    def additional_save_operations(self):
+        pass

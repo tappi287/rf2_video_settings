@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from .globals import _get_user_doc_dir, check_and_create_dir, SETTINGS_DIR_NAME, EXPORT_DIR_NAME
+from ..globals import _get_user_doc_dir, check_and_create_dir, SETTINGS_DIR_NAME, EXPORT_DIR_NAME
 
 
 class PresetDir:

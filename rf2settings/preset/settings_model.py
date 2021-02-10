@@ -1,9 +1,9 @@
 import logging
 import sys
-from typing import Union, List, Optional, Dict, Type
+from typing import Union, List, Optional
 
-from rf2settings.settingsdef import graphics, generic
-from .utils import JsonRepr
+from ..settingsdef import graphics, generic
+from ..utils import JsonRepr
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
@@ -17,6 +17,7 @@ class OptionsTarget:
 
 
 class Option(JsonRepr):
+    # Entries we don't want to export or save
     export_skip_keys = ['settings', 'hidden', 'ini_type']
 
     def __init__(self):
@@ -40,11 +41,15 @@ class Option(JsonRepr):
         :return: True if self.value if differs
         """
         if other.value != self.value or other.key != self.key:
+            logging.debug('Option %s %s differs from current setting %s %s',
+                          other.key, other.value, self.key, self.value)
             return False
         return True
 
 
 class BaseOptions(JsonRepr):
+    # Read only options we want to read but never write to rF/save or export eg. Driver Name
+    skip_keys = list()
     # Key representing the category key in player_json
     key = 'Base Options'
     # Key representing the field name for Preset and RfactorPlayer classes
@@ -110,10 +115,11 @@ class BaseOptions(JsonRepr):
         #    sort both by their keys
         options = sorted(self.options, key=lambda k: k.key)
         other_options = sorted(other.options, key=lambda k: k.key)
-        return all([a == b for a, b in zip(options, other_options)])
+        return all([a == b for a, b in zip(options, other_options) if a.key not in self.skip_keys])
 
 
 class DriverOptions(BaseOptions):
+    skip_keys = ['Player Name', 'Player Nick']
     key = 'DRIVER'
     app_key = 'driver_options'
     title = 'Driver Settings'
@@ -189,9 +195,3 @@ class AdvancedGraphicSettings(BaseOptions):
 
         # -- Read Default options
         self.read_from_python_dict(graphics.advanced_settings)
-
-
-OPTION_CLASSES: Dict[str, Type[BaseOptions]] = dict()
-for opt_class in [DriverOptions, GraphicOptions, VideoSettings,
-                  ResolutionSettings, AdvancedGraphicSettings]:
-    OPTION_CLASSES[opt_class.app_key] = opt_class
