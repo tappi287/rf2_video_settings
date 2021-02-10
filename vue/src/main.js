@@ -50,7 +50,15 @@ export const userScreenShots =
 ['https://cdn.discordapp.com/attachments/541020496087482424/792889002901504080/20201227113904_1.jpg', 'boxwex',
  'https://discord.com/channels/253557076645773312/541020496087482424/792889005245988945'],
 ['https://cdn.discordapp.com/attachments/541020496087482424/792889678721843250/20201224110117_1.jpg', 'boxwex',
- 'https://discord.com/channels/253557076645773312/541020496087482424/792889680517267457']
+ 'https://discord.com/channels/253557076645773312/541020496087482424/792889680517267457'],
+['https://forum.studio-397.com/index.php?attachments/4-rf2-cockpit-rain-mist-copy-jpg.18789/', 'M D Gourley',
+ 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-256#post-967468'],
+['https://forum.studio-397.com/index.php?attachments/2020-08-31-18-24_01-png.33144/', 'MiguelVallejo',
+ 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-344#post-1037906'],
+['https://i.imgur.com/hQV5bIx.jpg', 'TheNexpresso',
+ 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-258#post-968996'],
+['https://forum.studio-397.com/index.php?attachments/jsp3-jpg.19130/', 'sg333',
+ 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-258#post-969316']
     ]
 
 new Vue({
