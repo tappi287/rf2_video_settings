@@ -12,8 +12,8 @@
         <b-nav-item disabled :active="navActive === 2" @click="navActive=2">
           Controls
         </b-nav-item>
-        <b-nav-item disabled :active="navActive === 3" @click="navActive=3">
-          Advanced Options
+        <b-nav-item :active="navActive === 3" @click="navActive=3">
+          Settings
         </b-nav-item>
         <b-nav-item :active="navActive === 4" @click="toggleServerBrowser">
           Server Browser
@@ -22,8 +22,12 @@
     </div>
 
     <!-- Graphics Preset Handler -->
-    <PresetHandler ref="gfx" @makeToast="makeToast" @error="setError"
-                   @presets-ready="setDashGfxHandler" />
+    <PresetHandler ref="gfx" @makeToast="makeToast" @error="setError" id-ref="gfx"
+                   :preset-type="0" @presets-ready="setDashGfxHandler" />
+
+    <!-- Game Settings Handler -->
+    <PresetHandler ref="gen" @makeToast="makeToast" @error="setError" id-ref="gen"
+                   :preset-type="1" />
 
     <!-- Dashboard -->
     <keep-alive>
@@ -32,22 +36,72 @@
     </keep-alive>
 
     <!-- Graphic Settings-->
-    <Graphics ref="graphics" v-if="navActive === 1"
-              :gfx-presets="$refs.gfx.presets"
-              :previous-gfx-preset-name="$refs.gfx.previousPresetName"
-              :selected-gfx-preset-idx="$refs.gfx.selectedPresetIdx"
-              :gfx-preset-dir="$refs.gfx.userPresetsDir"
-              :is-busy="$refs.gfx.isBusy"
-              @save-preset="$refs.gfx.savePreset"
-              @refresh="$refs.gfx.getPresets"
-              @update-presets-dir="$refs.gfx.setPresetsDir"
-              @export-current="$refs.gfx.exportPreset"
-              @select-preset="$refs.gfx.selectPreset"
-              @create-preset="$refs.gfx.createPreset"
-              @delete-preset="$refs.gfx.deletePreset"
-              @update-setting="$refs.gfx.updateSetting"
-              @update-desc="$refs.gfx.updateDesc"
-              @make-toast="makeToast" />
+    <template  v-if="navActive === 1">
+      <b-overlay :show="$refs.gfx.isBusy" variant="dark" rounded>
+        <PresetUi ref="gfxUi" id-ref="gfx"
+                  :presets="$refs.gfx.presets"
+                  :previous-preset-name="$refs.gfx.previousPresetName"
+                  :selected-preset-idx="$refs.gfx.selectedPresetIdx"
+                  :preset-dir="$refs.gfx.userPresetsDir"
+                  :is-busy="$refs.gfx.isBusy"
+                  @save-preset="$refs.gfx.savePreset"
+                  @refresh="$refs.gfx.getPresets"
+                  @update-presets-dir="$refs.gfx.setPresetsDir"
+                  @export-current="$refs.gfx.exportPreset"
+                  @select-preset="$refs.gfx.selectPreset"
+                  @create-preset="$refs.gfx.createPreset"
+                  @delete-preset="$refs.gfx.deletePreset"
+                  @update-setting="$refs.gfx.updateSetting"
+                  @update-desc="$refs.gfx.updateDesc"
+                  @update-view-mode="$refs.gfx.viewMode = $event"
+                  @make-toast="makeToast" />
+
+        <div>
+          <div v-for="(gfxPreset, idx) in $refs.gfx.presets" :key="gfxPreset.name">
+            <GraphicsSettingsArea :preset="gfxPreset" :idx="idx"
+                                  :current_preset_idx="$refs.gfx.selectedPresetIdx"
+                                  :view_mode="$refs.gfx.viewMode"
+                                  @update-setting="$refs.gfx.updateSetting"
+                                  @set-busy="$refs.gfx.isBusy=$event"
+                                  @make-toast="makeToast" />
+          </div>
+        </div>
+      </b-overlay>
+    </template>
+
+    <!-- Generic Settings-->
+    <template  v-if="navActive === 3">
+      <b-overlay :show="$refs.gen.isBusy" variant="dark" rounded>
+        <PresetUi ref="genUi" id-ref="gen"
+                  :presets="$refs.gen.presets"
+                  :previous-preset-name="$refs.gen.previousPresetName"
+                  :selected-preset-idx="$refs.gen.selectedPresetIdx"
+                  :preset-dir="$refs.gen.userPresetsDir"
+                  :is-busy="$refs.gen.isBusy"
+                  @save-preset="$refs.gen.savePreset"
+                  @refresh="$refs.gen.getPresets"
+                  @update-presets-dir="$refs.gen.setPresetsDir"
+                  @export-current="$refs.gen.exportPreset"
+                  @select-preset="$refs.gen.selectPreset"
+                  @create-preset="$refs.gen.createPreset"
+                  @delete-preset="$refs.gen.deletePreset"
+                  @update-setting="$refs.gen.updateSetting"
+                  @update-desc="$refs.gen.updateDesc"
+                  @update-view-mode="$refs.gen.viewMode = $event"
+                  @make-toast="makeToast" />
+
+        <div>
+          <div v-for="(genPreset, idx) in $refs.gen.presets" :key="genPreset.name">
+            <GenericSettingsArea :preset="genPreset" :idx="idx"
+                                 :current_preset_idx="$refs.gen.selectedPresetIdx"
+                                 :view_mode="$refs.gen.viewMode"
+                                 @update-setting="$refs.gen.updateSetting"
+                                 @set-busy="$refs.gen.isBusy=$event"
+                                 @make-toast="makeToast"/>
+          </div>
+        </div>
+      </b-overlay>
+    </template>
 
     <!-- Server Browser -->
     <ServerBrowser ref="serverBrowser" v-if="navActive === 4"
@@ -65,9 +119,11 @@
 <script>
 import {getEelJsonObject} from '@/main'
 import Dashboard from "@/components/Dashboard";
-import Graphics from "@/components/Graphics";
+import PresetUi from "@/components/PresetUi";
+import GraphicsSettingsArea from "@/components/GraphicsSettingsArea";
 import ServerBrowser from "@/components/ServerBrowser";
 import PresetHandler from "@/components/PresetHandler";
+import GenericSettingsArea from "@/components/GenericSettingsArea";
 
 export default {
   name: 'Main',
@@ -75,7 +131,7 @@ export default {
     return {
       navActive: 0,
       firstServerBrowserVisit: true,
-      gfxReady: false
+      gfxReady: false,
     }
   },
   methods: {
@@ -86,7 +142,6 @@ export default {
         appendToast: append,
         variant: category,
         solid: true,
-        isBusy: false,
       })
     },
     setDashGfxHandler: function () {
@@ -117,10 +172,12 @@ export default {
     },
   },
   components: {
+    GenericSettingsArea,
     Dashboard,
     ServerBrowser,
-    Graphics,
-    PresetHandler
+    PresetHandler,
+    PresetUi,
+    GraphicsSettingsArea
   },
 }
 </script>

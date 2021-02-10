@@ -38,7 +38,6 @@
 </template>
 
 <script>
-import {settingsAreaId} from "@/main";
 
 export default {
   name: 'Setting',
@@ -46,9 +45,8 @@ export default {
     return {
       currentSettingValue: {},
       uniqueGroupId: 'settings' + this._uid,  // Id of parent element holding a group of Setting Components
-      elemId: 'setting' + this._uid,
+      elemId: 'setting' + this._uid,          // _uid is a unique identifier for each vue component
       nameId: 'name' + this._uid,
-      settingsAreaId: settingsAreaId,
       settingDesc: '',
       inputType: 'value',
       rangeMin: 0,
@@ -114,17 +112,20 @@ export default {
     },
   },
   created: function () {
+    // Set description
+    this.settingDesc = this.setting.desc || ''
+    console.log('Setting:', this.setting)
+
     // Check Setting Type
     if (this.setting.settings[0].settingType !== undefined) {
       if (this.setting.settings[0].settingType === 'range') {
-        console.log('Found range')
         this.inputType = 'range'
         this.rangeMin = this.setting.settings[0].min
         this.rangeMax = this.setting.settings[0].max
         this.rangeStep = this.setting.settings[0].step
         this.rangeDisp = this.setting.settings[0].display
         this.rangeValue = this.setting.value
-        this.settingDesc = this.setting.settings[0].desc || ''
+        this.settingDesc = this.setting.desc || this.setting.settings[0].desc || ''
       }
     }
   },

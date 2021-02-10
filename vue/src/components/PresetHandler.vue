@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import {getEelJsonObject, settingsAreaId, sleep} from "@/main";
+import {getEelJsonObject, sleep} from "@/main";
 
 export default {
   name: "PresetHandler",
@@ -16,9 +16,9 @@ export default {
       viewMode: 0,
       previousPresetName: '',
       error: '',
-      settingsAreaId: settingsAreaId,
     }
   },
+  props: { presetType: Number, idRef: String },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
@@ -28,7 +28,7 @@ export default {
     },
     getPresets: async function () {
       this.isBusy = true
-      const r = await getEelJsonObject(window.eel.get_presets()())
+      const r = await getEelJsonObject(window.eel.get_presets(this.presetType)())
 
       if (!r.result) {
         this.$emit('error', r.msg)
@@ -117,7 +117,7 @@ export default {
       this.isBusy = true
       this.selectedPresetIdx = this.presets.indexOf(preset)
       let p = this.getSelectedPreset()
-      await window.eel.select_preset(p.name)
+      await window.eel.select_preset(p.name, this.presetType)
       if (save) {
         await this.savePreset(p)
         await sleep(150)
@@ -154,15 +154,21 @@ export default {
 
       if (index > -1) {
         console.log('Deleting Preset -', index)
-        await window.eel.delete_preset(preset.name)
+        const r = await getEelJsonObject(window.eel.delete_preset(preset.name, this.presetType)())
+        if (!r.result) {
+          this.makeToast('Could not delete Preset', 'danger', 'Error')
+          this.$root.$emit('bv::hide::popover', 'delete-preset-btn' + this.idRef)
+          this.isBusy = false
+          return
+        }
         this.presets.splice(index, 1)
         this.selectedPresetIdx = 0
       }
-      this.$root.$emit('bv::hide::popover', 'delete-preset-btn')
+      this.$root.$emit('bv::hide::popover', 'delete-preset-btn' + this.idRef)
       this.isBusy = false
     },
     setPresetsDir: async function (newUserPresetsDir) {
-      let r = await getEelJsonObject(window.eel.set_user_presets_dir(newUserPresetsDir)())
+      const r = await getEelJsonObject(window.eel.set_user_presets_dir(newUserPresetsDir)())
 
       if (r !== undefined && r.result) {
         this.makeToast('Updated User Presets directory to: ' + this.userPresetsDir, 'success')
