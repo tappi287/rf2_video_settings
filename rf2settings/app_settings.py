@@ -3,12 +3,13 @@ import logging
 import sys
 from pathlib import Path, WindowsPath
 from shutil import copyfile
-from typing import Iterator, Union, List
+from typing import Iterator, Union, Dict
 
-from .presets_dir import PresetDir, get_user_presets_dir
-from .utils import JsonRepr
 from .globals import get_settings_dir, SETTINGS_FILE_NAME, get_default_presets_dir
+from .preset.preset_base import PRESET_TYPES
+from .preset.presets_dir import PresetDir, get_user_presets_dir
 from .rfactor import RfactorPlayer
+from .utils import JsonRepr
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
@@ -17,7 +18,7 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
 class AppSettings(JsonRepr):
     backup_created = False
     needs_admin = False
-    selected_preset = str()
+    selected_presets: Dict[str, str] = dict()
     user_presets_dir = str()
     deleted_defaults = list()  # Default Presets the user deleted
     server_favourites = list()
@@ -27,7 +28,7 @@ class AppSettings(JsonRepr):
 
     def __init__(self):
         self.backup_created = AppSettings.backup_created
-        self.selected_preset = AppSettings.selected_preset
+        self.selected_presets = AppSettings.selected_presets
         self.user_presets_dir = AppSettings.user_presets_dir
 
     @staticmethod
@@ -96,10 +97,15 @@ class AppSettings(JsonRepr):
 
         for file in cls.iterate_default_presets():
             dst = get_user_presets_dir() / file.name
+
+            # -- Remove existing legacy default presets
+            cls.delete_legacy_default_presets(dst)
+
             if dst.exists() or file.stem in cls.deleted_defaults:
                 continue
 
             try:
+                logging.info('Creating default preset: %s', file.name)
                 copyfile(file, dst.with_name(file.name))
                 result = True
             except Exception as e:
@@ -107,6 +113,18 @@ class AppSettings(JsonRepr):
                 result = False
 
         return result
+
+    @staticmethod
+    def delete_legacy_default_presets(dst: Path):
+        """ Wipe pre 0.7.8 default Presets without prefixes """
+        folder = dst.parent
+
+        for prefix in (p.prefix for p in PRESET_TYPES.values()):
+            legacy_preset_name = dst.name.removeprefix(f'{prefix}_')
+            legacy_file = folder / legacy_preset_name
+            if legacy_file.exists() and legacy_file != dst:
+                logging.info('Deleting legacy preset: %s', legacy_file)
+                legacy_file.unlink(missing_ok=True)
 
     @staticmethod
     def _get_settings_file() -> Path:
