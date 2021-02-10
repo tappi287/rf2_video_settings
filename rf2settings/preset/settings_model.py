@@ -40,6 +40,9 @@ class Option(JsonRepr):
         :param modules.settings_model.Option other:
         :return: True if self.value if differs
         """
+        # -- Ignore null values
+        if self.value is None or other.value is None:
+            return True
         if other.value != self.value or other.key != self.key:
             logging.debug('Option %s %s differs from current setting %s %s',
                           other.key, other.value, self.key, self.value)
