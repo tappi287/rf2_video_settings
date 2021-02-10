@@ -114,7 +114,6 @@ export default {
   created: function () {
     // Set description
     this.settingDesc = this.setting.desc || ''
-    console.log('Setting:', this.setting)
 
     // Check Setting Type
     if (this.setting.settings[0].settingType !== undefined) {
