@@ -2,13 +2,12 @@ import json
 import logging
 from pathlib import WindowsPath
 from subprocess import Popen
-from typing import Optional
 
 import eel
 
 from ..app_settings import AppSettings
-from ..preset import load_presets_from_dir, PRESET_TYPES
-from ..presets_dir import get_user_presets_dir, get_user_export_dir
+from rf2settings.preset.preset_base import PRESET_TYPES, load_presets_from_dir
+from rf2settings.preset.presets_dir import get_user_presets_dir, get_user_export_dir
 from ..rfactor import RfactorPlayer
 
 
@@ -18,7 +17,7 @@ def expose_preset_methods():
 
 
 @eel.expose
-def get_presets(preset_type: Optional[int] = 0):
+def get_presets(preset_type: int):
     current_preset = PRESET_TYPES.get(preset_type)()
 
     # - Read the actual, current rFactor Settings
@@ -38,10 +37,12 @@ def get_presets(preset_type: Optional[int] = 0):
 
     # - Load saved Presets
     preset_changed = None
-    selected_preset_name = AppSettings.selected_preset or current_preset.name
+    selected_preset_name = AppSettings.selected_presets.get(str(preset_type)) or current_preset.name
 
     presets, selected_preset = load_presets_from_dir(get_user_presets_dir(), preset_type,
                                                      current_preset, selected_preset_name)
+    if selected_preset:
+        logging.info('Selected Preset %s for type %s', selected_preset.name, selected_preset.__class__.__name__)
     presets = [current_preset] + presets
 
     # - Check if the currently selected preset differs
@@ -51,7 +52,7 @@ def get_presets(preset_type: Optional[int] = 0):
         preset_changed = selected_preset.name
         logging.debug('Resetting selected Preset to "Current Preset" from %s because settings differ '
                       'from actual rFactor 2 settings.', preset_changed)
-        AppSettings.selected_preset = current_preset.name
+        AppSettings.selected_presets[str(preset_type)] = current_preset.name
         selected_preset_name = current_preset.name
         AppSettings.save()
 
@@ -63,9 +64,10 @@ def get_presets(preset_type: Optional[int] = 0):
 
 
 @eel.expose
-def select_preset(preset_name):
-    logging.debug('Updating AppSettings: selected_preset = %s', preset_name)
-    AppSettings.selected_preset = preset_name
+def select_preset(preset_name: str, preset_type: int):
+    logging.debug('Updating AppSettings: selected_preset = %s %s', preset_name, type(preset_type))
+
+    AppSettings.selected_presets[str(preset_type)] = preset_name
     AppSettings.save()
 
 
@@ -107,7 +109,9 @@ def import_preset(preset_js_dict):
 
 
 @eel.expose
-def delete_preset(preset_name):
+def delete_preset(preset_name, preset_type):
+    type_prefix = PRESET_TYPES.get(int(preset_type))().prefix
+    preset_name = f'{type_prefix}_{preset_name}'
     default_presets = [f.stem for f in AppSettings.iterate_default_presets()]
 
     for preset_file in get_user_presets_dir().glob('*.json'):
@@ -116,6 +120,10 @@ def delete_preset(preset_name):
                 AppSettings.deleted_defaults.append(preset_name)
             preset_file.unlink()
             logging.debug('Deleted Preset: %s', preset_name)
+            return json.dumps({'result': True})
+
+    logging.error('Could not deleted Preset: %s', preset_name)
+    return json.dumps({'result': False})
 
 
 @eel.expose

@@ -2,7 +2,7 @@ import json
 
 import eel
 
-from rf2settings.preset import GraphicsPreset
+from rf2settings.preset.preset import GraphicsPreset
 from rf2settings.rfactor import RfactorPlayer
 
 
