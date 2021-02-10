@@ -1,11 +1,10 @@
 <template>
-  <div id="graphics" v-cloak>
-    <template v-if="gfxPresets.length > 0">
-      <b-overlay :show="isBusy" variant="light">
+  <div id="preset-ui" v-cloak>
+    <template v-if="presets.length > 0">
         <b-input-group>
           <!-- Switch View Mode -->
           <b-input-group-prepend>
-            <b-button @click="viewMode = !viewMode ? 1 : 0" class="rounded-left">
+            <b-button @click="toggleViewMode" class="rounded-left">
               <b-icon :icon="viewMode ? 'grid-fill' : 'list'"></b-icon>
             </b-button>
             <b-input-group-text class="info-field">Presets</b-input-group-text>
@@ -38,7 +37,7 @@
 
           <!-- Preset Selection-->
           <b-dropdown :text="currentPresetName" variant="rf-blue" toggle-class="rounded-0">
-            <b-dropdown-item v-for="preset in gfxPresets" :key="preset.name"
+            <b-dropdown-item v-for="preset in presets" :key="preset.name"
                              @click="selectPreset(preset)">
               {{ preset.name }}
             </b-dropdown-item>
@@ -63,19 +62,19 @@
                       v-b-popover.hover.bottom="'Export current Preset to your documents dir to be able to share it!'">
               <b-icon icon="file-earmark-arrow-up-fill"></b-icon>
             </b-button>
-            <b-button :disabled="!deleteButtonState" variant="secondary" id="delete-preset-btn" class="rounded-right">
+            <b-button :disabled="!deleteButtonState" variant="secondary" :id="'delete-preset-btn' + idRef" class="rounded-right">
               <b-icon icon="trash-fill"></b-icon>
             </b-button>
 
             <!-- Delete Popover -->
-            <b-popover target="delete-preset-btn" triggers="click">
+            <b-popover :target="'delete-preset-btn' + idRef" triggers="click">
               <p>Do you really want to delete the Preset: {{ currentPresetName }}?</p>
               <div class="text-right">
                 <b-button @click="deletePreset" size="sm" variant="danger"
                           aria-label="Delete" class="mr-2">
                   Delete
                 </b-button>
-                <b-button @click="$root.$emit('bv::hide::popover', 'delete-preset-btn')"
+                <b-button @click="$root.$emit('bv::hide::popover', 'delete-preset-btn' + idRef)"
                           size="sm" aria-label="Close">
                   Close
                 </b-button>
@@ -96,51 +95,39 @@
         </b-form-textarea>
 
         <!-- Preset deviates from current rF2 settings message -->
-        <b-alert :show="previousGfxPresetName !== ''" dismissible variant="warning" class="mt-3">
-          The previously selected Preset <i>{{ previousGfxPresetName }}</i> has different settings than the current
-          rFactor 2 settings on disk. Select your previous Preset <i>{{ previousGfxPresetName }}</i> to restore it's
+        <b-alert :show="previousPresetName !== ''" dismissible variant="warning" class="mt-3">
+          The previously selected Preset <i>{{ previousPresetName }}</i> has different settings than the current
+          rFactor 2 settings on disk. Select your previous Preset <i>{{ previousPresetName }}</i> to restore it's
           settings and overwrite the current settings.
         </b-alert>
-
-        <!-- Settings area -->
-        <div :id="settingsAreaId">
-          <div v-for="(preset, idx) in gfxPresets" :key="preset.name">
-            <GraphicsSettingsArea :preset="preset" :idx="idx" :current_preset_idx="selectedGfxPresetIdx"
-                                  :view_mode="viewMode" v-on:update-setting="updateSetting"
-                                  @set-busy="isBusy=$event" @make-toast="makeToast">
-            </GraphicsSettingsArea>
-          </div>
-        </div>
-      </b-overlay>
     </template>
   </div>
 </template>
 
 <script>
-import {isValid, settingsAreaId} from "@/main";
-import GraphicsSettingsArea from "@/components/GraphicsSettingsArea";
+import {isValid} from "@/main";
 
 export default {
-  name: "Graphics",
+  name: "PresetUi",
   data: function () {
     return {
       newPresetName: '',
       presetDesc: '',
+      ignoreDescUpdate: false,
       componentReady: false,
       userGfxPresetsDir: '',
       viewMode: 0,
-      settingsAreaId: settingsAreaId,
     }
   },
-  props: { gfxPresets: Object, previousGfxPresetName: String, selectedGfxPresetIdx: Number,
-    gfxPresetDir: String, isBusy: Boolean},
+  props: { presets: Object, previousPresetName: String, selectedPresetIdx: Number, idRef: Number,
+           presetDir: String },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
     },
     getSelectedPreset: function () {
-      if (this.gfxPresets.length === 0) { return {} }
-      return this.gfxPresets[this.selectedGfxPresetIdx]
+      if (this.presets.length === 0) { return {} }
+      return this.presets[this.selectedPresetIdx]
     },
     exportCurrentPreset: async function () {
       this.$emit('export-current')
@@ -168,17 +155,22 @@ export default {
       // Avoid Preset desc field spamming update events
       this.componentReady = false; setTimeout( this.setReady , 500)
     },
+    toggleViewMode() {
+      this.viewMode = !this.viewMode ? 1 : 0
+      this.$emit('update-view-mode', this.viewMode)
+    },
     setReady() { this.componentReady = true; console.log('Comp ready') }
   },
-  components: {
-    GraphicsSettingsArea
-  },
   watch: {
-    presetDesc: function (value) { if (this.componentReady) { this.$emit('update-desc', value) }}
+    presetDesc: function (value) { if (this.componentReady) {
+      if (this.ignoreDescUpdate) { return }
+      this.$emit('update-desc', value)
+      console.log('Updating desc:', value)
+    }}
   },
   computed: {
     currentPresetName: function () {
-      if (this.gfxPresets.length === 0) { return 'Unknown' }
+      if (this.presets.length === 0) { return 'Unknown' }
       return this.getSelectedPreset().name
     },
     presetFileNameState: function () {
@@ -191,13 +183,17 @@ export default {
       return !!(this.newPresetName !== '' && this.presetFileNameState)
     },
     deleteButtonState: function () {
-      return this.getSelectedPreset() !== this.gfxPresets[0]
+      return this.getSelectedPreset() !== this.presets[0]
     },
   },
   created: function () {
-    this.userGfxPresetsDir = this.gfxPresetDir
+    this.userGfxPresetsDir = this.presetDir
     this.getReady()
+  },
+  updated() {
+    this.ignoreDescUpdate = true
     this.presetDesc = this.getSelectedPreset().desc
+    this.$nextTick(() => {this.ignoreDescUpdate = false  })
   }
 }
 </script>
