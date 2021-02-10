@@ -7,8 +7,9 @@ import subprocess
 from typing import Optional, Iterator
 
 from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, RF2_APPID, RFACTOR_VERSION_TXT
-from .preset import BasePreset
-from .settings_model import BaseOptions, OptionsTarget, OPTION_CLASSES
+from .preset.preset import BasePreset
+from .preset.settings_model import BaseOptions, OptionsTarget
+from .preset.settings_model_base import OPTION_CLASSES
 from .valve.steam_utils import SteamApps
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
@@ -206,14 +207,20 @@ class RfactorPlayer:
 
     def _update_player_json(self, player_json_dict, preset_options: BaseOptions):
         if preset_options.key not in player_json_dict:
-            self.error = f'Could not locate settings key: {preset_options.key} in player.JSON.'
+            self.error = f'Could not locate CATEGORY settings key: {preset_options.key} in player.JSON.'
             logging.error(self.error)
             return False
 
         for option in preset_options.options:
+            if option.key in preset_options.skip_keys:
+                continue
             if option.key not in player_json_dict[preset_options.key]:
                 logging.warning('Skipping Setting: %s in player.JSON that could not be located!', option.key)
                 continue
+            if option.value is None:
+                logging.debug('Skipping write of %s because value is None.', option.key)
+                continue
+
             player_json_dict[preset_options.key][option.key] = option.value
             logging.info('Updated Setting: %s: %s', option.key, option.value)
 
