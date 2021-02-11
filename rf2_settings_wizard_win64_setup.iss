@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "rF2-Settings-Widget"
-#define MyAppVersion "0.7.8"
+#define MyAppVersion "0.8.0"
 #define MyAppPublisher "Stefan Tapper"
 #define MyAppURL "https://ilikeviecher.com"
 #define MyAppExeName "rF2-Settings-Widget.exe"
