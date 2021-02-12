@@ -97,7 +97,7 @@ def export_preset(preset_js_dict):
 
     # -- Open Explorer Window
     export_path = str(WindowsPath(get_user_export_dir()))
-    Popen(['explorer', f'/n,{export_path}'])
+    Popen(f'explorer /n,"{export_path}"')
 
     return json.dumps({'result': True, 'msg': f'Preset {p.name} exported.'})
 

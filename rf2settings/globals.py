@@ -25,6 +25,8 @@ RFACTOR_PLAYER = 'UserData/player/player.JSON'
 RFACTOR_CONTROLLER = 'UserData/player/Controller.JSON'
 RFACTOR_DXCONFIG = 'UserData/Config_DX11.ini'
 RFACTOR_VERSION_TXT = 'Core/Version.txt'
+RFACTOR_SETUPS = 'UserData/player/Settings'
+RFACTOR_MODMGR = 'Bin64/ModMgr.exe'
 
 GIT_RELEASE_URL = 'https://api.github.com/repos/tappi287/rf2_video_settings/releases/latest'
 

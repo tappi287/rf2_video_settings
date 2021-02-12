@@ -1,10 +1,13 @@
 import json
 import logging
+from pathlib import WindowsPath
+from subprocess import Popen
 from typing import Optional
 
 import eel
 
 from rf2settings.app_settings import AppSettings
+from rf2settings.globals import RFACTOR_SETUPS, RFACTOR_MODMGR
 from rf2settings.rfactor import RfactorPlayer
 from rf2settings.runasadmin import run_as_admin
 
@@ -50,6 +53,33 @@ def run_rfactor(server_info: Optional[dict] = None):
         result = rf.run_rfactor(server_info)
 
     return json.dumps({'result': result, 'msg': rf.error})
+
+
+def _get_rf_location(sub_path):
+    rf = RfactorPlayer(only_version=True)
+    rf_path = rf.location / sub_path
+    if not rf_path.exists():
+        logging.error('Could not locate rF2 Setups directory in %s', rf_path.as_posix())
+        return
+    return str(WindowsPath(rf_path))
+
+
+@eel.expose
+def open_setup_folder():
+    setup_path = _get_rf_location(RFACTOR_SETUPS)
+    if setup_path is None:
+        return
+    logging.info('Opening folder: %s', setup_path)
+    Popen(f'explorer /n,"{setup_path}"')
+
+
+@eel.expose
+def run_mod_mgr():
+    mod_mgr_path = _get_rf_location(RFACTOR_MODMGR)
+    if mod_mgr_path is None:
+        return
+    logging.info('Opening ModMgr: %s', mod_mgr_path)
+    Popen(mod_mgr_path, cwd=WindowsPath(mod_mgr_path).parent.parent)
 
 
 def expose_main_methods():
