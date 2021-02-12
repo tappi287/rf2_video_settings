@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 from typing import Optional, Iterator
 
-from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, RF2_APPID, RFACTOR_VERSION_TXT
+from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, RF2_APPID, RFACTOR_VERSION_TXT, RFACTOR_CONTROLLER
 from .preset.preset import BasePreset
 from .preset.settings_model import BaseOptions, OptionsTarget
 from .preset.settings_model_base import OPTION_CLASSES
@@ -26,6 +26,7 @@ File1
 class RfactorLocation:
     path: Path = None
     player_json = Path()
+    controller_json = Path()
     dx_config = Path()
     version_txt = Path()
     _app_id = RF2_APPID
@@ -42,17 +43,20 @@ class RfactorLocation:
         path = s.find_game_location(cls._app_id)
         if path and path.exists():
             player_json = path / RFACTOR_PLAYER
+            controller_json = path / RFACTOR_CONTROLLER
             dx_config = path / RFACTOR_DXCONFIG
             version_txt = path / RFACTOR_VERSION_TXT
 
             if dev:
                 player_json = path / 'ModDev' / RFACTOR_PLAYER
+                controller_json = path / 'ModDev' / RFACTOR_CONTROLLER
                 dx_config = path / 'ModDev' / RFACTOR_DXCONFIG
 
             if player_json.exists() and dx_config.exists():
                 cls.is_valid = True
                 cls.path = path
                 cls.player_json = player_json
+                cls.controller_json = controller_json
                 cls.dx_config = dx_config
                 cls.version_txt = version_txt
 
@@ -70,6 +74,7 @@ class RfactorPlayer:
     def __init__(self, dev: Optional[bool] = None, only_version: bool = False):
         self.dev = dev or False
         self.player_file = Path()
+        self.controller_file = Path()
         self.ini_file = Path()
         self.ini_first_line = str()
         self.ini_config = self._create_ini_config_parser()
@@ -89,19 +94,24 @@ class RfactorPlayer:
         self._get_location()
 
         if not self._read_version():
-            self.error += 'Could not read rFactor 2 version'
+            self.error += 'Could not read rFactor 2 version\n'
         if only_version:
             return
 
         # -- Read Player JSON
-        player_json = self.read_player_json_dict()
+        player_json = self.read_player_json_dict(self.player_file, encoding='utf-8')
         # -- Get Options from Player JSON
-        for preset_options in self._get_target_options(OptionsTarget.player_json):
-            if not self._get_options_from_player_json(preset_options, player_json):
-                self.error = f'Could not read rFactor2 player.JSON for ' \
-                             f'{preset_options.__class__.__name__}'
-                self.is_valid = False
-                return
+        r = self._read_options_from_target(OptionsTarget.player_json, player_json)
+        del player_json
+
+        # -- Read Controller JSON
+        controller_json = self.read_player_json_dict(self.controller_file, encoding='cp1252')
+        r = self._read_options_from_target(OptionsTarget.controller_json, controller_json) and r
+        del controller_json
+
+        if not r:
+            # -- Error reading either player or controller JSON
+            return
 
         # -- Read dx_config
         config = self.read_dx_ini()
@@ -111,8 +121,8 @@ class RfactorPlayer:
         # -- Get Options from dx_config
         for preset_options in self._get_target_options(OptionsTarget.dx_config):
             if not self._get_options_from_dx_config(preset_options, config):
-                self.error = f'Could not read rFactor2 CONFIG_DX11.ini for ' \
-                             f'{preset_options.__class__.__name__}'
+                self.error += f'Could not read rFactor2 CONFIG_DX11.ini for ' \
+                              f'{preset_options.__class__.__name__}\n'
                 self.is_valid = False
                 return
 
@@ -127,6 +137,15 @@ class RfactorPlayer:
                 if v.target == target:
                     yield v
 
+    def _read_options_from_target(self, target: OptionsTarget, json_dict) -> bool:
+        for preset_options in self._get_target_options(target):
+            if not self._get_options_from_player_json(preset_options, json_dict):
+                self.error += f'Could not read rFactor2 settings for ' \
+                              f'{preset_options.__class__.__name__}\n'
+                self.is_valid = False
+                return False
+        return True
+
     def write_settings(self, preset: BasePreset) -> bool:
         """ Writes all settings of a preset into the rFactor 2 installation
 
@@ -137,24 +156,35 @@ class RfactorPlayer:
         self._write_video_config(preset)
 
         # -- Update Player Json settings
-        update_result = True
-        player_json_dict = self.read_player_json_dict()
+        player_json_dict = self.read_player_json_dict(self.player_file, encoding='utf-8')
+        update_result = self._write_to_target(OptionsTarget.player_json, preset, player_json_dict)
 
-        for preset_options in self._get_target_options(OptionsTarget.player_json, preset):
-            if not self._update_player_json(player_json_dict, preset_options):
-                update_result = False
+        # -- Update Controller Json settings
+        controller_json_dict = self.read_player_json_dict(self.controller_file, encoding='cp1252')
+        update_result = self._write_to_target(
+            OptionsTarget.controller_json, preset, controller_json_dict) and update_result
 
         if not update_result:
             return False
 
-        # -- Write Player JSON
+        # -- Write JSON files
+        self.write_json(player_json_dict, self.player_file, encoding='utf-8')
+        self.write_json(controller_json_dict, self.controller_file, encoding='cp1252')
+
+    def write_json(self, json_dict: dict, file: Path, encoding: str = 'UTF-8'):
         try:
-            with open(self.player_file, 'w') as f:
-                json.dump(player_json_dict, f, indent=4)
+            with open(file, 'w', encoding=encoding) as f:
+                json.dump(json_dict, f, indent=4, ensure_ascii=False)
         except Exception as e:
-            self.error = f'Error while writing player.JSON! {e}'
+            self.error += f'Error while writing file! {e}\n'
             logging.fatal(self.error)
             return False
+        return True
+
+    def _write_to_target(self, target: OptionsTarget, preset: BasePreset, json_dict: dict) -> bool:
+        for preset_options in self._get_target_options(target, preset):
+            if not self._update_player_json(json_dict, preset_options):
+                return False
         return True
 
     def _write_video_config(self, preset: BasePreset):
@@ -164,7 +194,7 @@ class RfactorPlayer:
         for preset_options in self._get_target_options(OptionsTarget.dx_config, preset):
             for option in preset_options.options:
                 if option.key not in self.ini_config[self.ini_config.default_section]:
-                    self.error = f'Could not locate settings key: {option.key} in CONFIG_DX11.ini'
+                    self.error += f'Could not locate settings key: {option.key} in CONFIG_DX11.ini\n'
                     logging.error(self.error)
                     continue
                 if option.value is not None:
@@ -201,13 +231,13 @@ class RfactorPlayer:
             with open(self.ini_file, 'w') as f:
                 f.writelines(f_lines)
         except Exception as e:
-            self.error = f'Could not write CONFIG_DX11.ini file! {e}'
+            self.error += f'Could not write CONFIG_DX11.ini file! {e}\n'
             logging.error(self.error)
             return False
 
     def _update_player_json(self, player_json_dict, preset_options: BaseOptions):
         if preset_options.key not in player_json_dict:
-            self.error = f'Could not locate CATEGORY settings key: {preset_options.key} in player.JSON.'
+            self.error += f'Could not locate CATEGORY settings key: {preset_options.key} in player.JSON.\n'
             logging.error(self.error)
             return False
 
@@ -259,12 +289,14 @@ class RfactorPlayer:
 
         return settings_updated
 
-    def read_player_json_dict(self) -> Optional[dict]:
+    def read_player_json_dict(self, file: Path, encoding: Optional[str] = None) -> Optional[dict]:
         try:
-            with open(self.player_file, 'rb') as f:
+            with open(file, 'r', encoding=encoding) as f:
                 return json.load(f)
         except Exception as e:
-            logging.fatal('Could not read player.JSON file! %s %s', e, self.player_file)
+            msg = f'Could not read {file.name} file! {e}'
+            logging.fatal(msg)
+            self.error += f'{msg}\n'
 
     def read_dx_ini(self) -> Optional[ConfigParser]:
         try:
@@ -274,7 +306,7 @@ class RfactorPlayer:
                 conf.read_file(f)
                 return conf
         except Exception as e:
-            self.error = f'Could not read CONFIG_DX11.ini file! {e} {self.ini_file}'
+            self.error += f'Could not read CONFIG_DX11.ini file! {e} {self.ini_file}\n'
             logging.fatal(self.error)
 
     def _read_version(self) -> bool:
@@ -297,12 +329,14 @@ class RfactorPlayer:
     def _get_location(self):
         if not RfactorLocation.is_valid:
             RfactorLocation.get_location(self.dev)
+            self.error += f'rFactor 2 installation detected at {RfactorLocation.path}\n'
         if not RfactorLocation.is_valid:
-            self.error = 'Could not locate rFactor 2 installation'
+            self.error += 'Could not locate rFactor 2 installation\n'
             return
 
         self.location = RfactorLocation.path
         self.player_file = RfactorLocation.player_json
+        self.controller_file = RfactorLocation.controller_json
         self.ini_file = RfactorLocation.dx_config
         self.version_file = RfactorLocation.version_txt
 
@@ -311,7 +345,7 @@ class RfactorPlayer:
 
     def run_rfactor(self, server_info: Optional[dict] = None) -> bool:
         if not self._check_bin_dir():
-            self.error += 'Could not locate rFactor 2 Bin directory.'
+            self.error += 'Could not locate rFactor 2 Bin directory.\n'
             return False
 
         # Solution for non loading rF2 plugins in PyInstaller executable:

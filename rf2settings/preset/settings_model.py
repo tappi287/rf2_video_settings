@@ -13,7 +13,8 @@ _allowed_value_types = (bool, str, int, float)
 
 class OptionsTarget:
     player_json = 0
-    dx_config = 1
+    controller_json = 1
+    dx_config = 10
 
 
 class Option(JsonRepr):
@@ -160,6 +161,32 @@ class GamepadMouseOptions(BaseOptions):
 
         # -- Read Default options
         self.read_from_python_dict(controls.ui_gamepad_mouse_settings)
+
+
+class FreelookOptions(BaseOptions):
+    key = 'General Controls'
+    app_key = 'freelook_settings'
+    title = 'Freelook Settings'
+    target = OptionsTarget.controller_json
+
+    def __init__(self):
+        super(FreelookOptions, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(controls.freelook_controls)
+
+
+class GeneralSteeringOptions(BaseOptions):
+    key = 'General Controls'
+    app_key = 'general_steering_settings'
+    title = 'Steering Wheel Settings'
+    target = OptionsTarget.controller_json
+
+    def __init__(self):
+        super(GeneralSteeringOptions, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(controls.general_steering)
 
 
 class GraphicOptions(BaseOptions):

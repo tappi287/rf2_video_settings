@@ -25,7 +25,7 @@ def get_presets(preset_type: int):
     if rf.is_valid:
         current_preset.update(rf)
     else:
-        msg = 'Could not detect a rFactor 2 Steam installation with a player.JSON and/or Config_DX11.ini\n'
+        msg = 'An error occurred trying to read settings:\n'
         msg += rf.error
         logging.fatal(msg)
         return json.dumps({'result': False, 'msg': msg})

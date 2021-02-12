@@ -55,7 +55,7 @@ class AppSettings(JsonRepr):
     @staticmethod
     def create_backup(rf: RfactorPlayer):
         result = False
-        files = (rf.player_file, rf.ini_file)
+        files = (rf.player_file, rf.controller_file, rf.ini_file)
         has_permission_error = False
 
         for org in files:

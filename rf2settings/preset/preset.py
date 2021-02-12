@@ -49,9 +49,13 @@ class BasePreset:
             setattr(self, key, getattr(rf.options, key))
 
         # Set Preset Name from Player Nick
-        player_json_dict = rf.read_player_json_dict()
-        if player_json_dict.get('DRIVER'):
-            self.name = f'Current Settings [{player_json_dict["DRIVER"].get("Player Nick")}]'
+        try:
+            for o in getattr(rf.options, 'driver_options').options:
+                if o.key == 'Player Nick':
+                    self.name = f'Current Settings [{o.value}]'
+        except Exception as e:
+            logging.error('Could not locate driver name: %s', e)
+            self.name = f'Current Settings [NA]'
 
     def save_unique_file(self) -> bool:
         base_name = create_file_safe_name(self.name)

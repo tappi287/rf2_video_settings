@@ -22,6 +22,7 @@ DEFAULT_PRESETS_DIR = 'default_presets'
 APP_FRIENDLY_NAME = 'rF2 Settings Widget'
 BASE_PATH = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__ + '/..')))
 RFACTOR_PLAYER = 'UserData/player/player.JSON'
+RFACTOR_CONTROLLER = 'UserData/player/Controller.JSON'
 RFACTOR_DXCONFIG = 'UserData/Config_DX11.ini'
 RFACTOR_VERSION_TXT = 'Core/Version.txt'
 
