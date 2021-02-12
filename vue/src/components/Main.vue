@@ -97,7 +97,21 @@
         <div>
           <div v-for="(conPreset, idx) in $refs.con.presets" :key="conPreset.name">
             <GenericSettingsArea :preset="conPreset" :idx="idx"
+                                 settings-key="freelook_settings"
+                                 :current_preset_idx="$refs.con.selectedPresetIdx"
+                                 :view_mode="$refs.con.viewMode"
+                                 @update-setting="$refs.con.updateSetting"
+                                 @set-busy="$refs.con.isBusy=$event"
+                                 @make-toast="makeToast"/>
+            <GenericSettingsArea :preset="conPreset" :idx="idx"
                                  settings-key="gamepad_mouse_settings"
+                                 :current_preset_idx="$refs.con.selectedPresetIdx"
+                                 :view_mode="$refs.con.viewMode"
+                                 @update-setting="$refs.con.updateSetting"
+                                 @set-busy="$refs.con.isBusy=$event"
+                                 @make-toast="makeToast"/>
+            <GenericSettingsArea :preset="conPreset" :idx="idx"
+                                 settings-key="general_steering_settings"
                                  :current_preset_idx="$refs.con.selectedPresetIdx"
                                  :view_mode="$refs.con.viewMode"
                                  @update-setting="$refs.con.updateSetting"
