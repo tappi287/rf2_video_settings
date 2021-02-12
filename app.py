@@ -13,9 +13,6 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
                     datefmt='%H:%M', level=logging.DEBUG)
 
 # TODO: -Proper- logging setup
-# TODO: GraphicsSettingsArea -> Use GenericSettingsArea with footer slot
-# TODO: Preset DnD import for all types
-# TODO: Open Setup Folder
 
 
 def start_eel():

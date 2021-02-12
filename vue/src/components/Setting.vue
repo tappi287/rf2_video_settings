@@ -44,8 +44,7 @@ export default {
   data: function () {
     return {
       currentSettingValue: {},
-      uniqueGroupId: 'settings' + this._uid,  // Id of parent element holding a group of Setting Components
-      elemId: 'setting' + this._uid,          // _uid is a unique identifier for each vue component
+      elemId: 'setting' + this._uid, // _uid is a unique identifier for each vue component
       nameId: 'name' + this._uid,
       settingDesc: '',
       inputType: 'value',
@@ -59,8 +58,8 @@ export default {
     }
   },
   props: {
-    setting: Object, variant: String, fixWidth: Boolean, group_id: String, show_performance: Boolean,
-    disabled: Boolean
+    setting: Object, variant: String, fixWidth: Boolean, show_performance: Boolean,
+    disabled: Boolean, groupId: String
   },
   methods: {
     selectSetting: function (s) {
@@ -100,8 +99,8 @@ export default {
     },
     setFixedWidth: function () {
       // Iterate all elements of this setting group_id and set width to widest element found
-      const nameElem = document.querySelectorAll('#' + this.group_id + ' .fixed-width-name')
-      const settElem = document.querySelectorAll('#' + this.group_id + ' .fixed-width-setting')
+      const nameElem = document.querySelectorAll('#' + this.groupId + ' .fixed-width-name')
+      const settElem = document.querySelectorAll('#' + this.groupId + ' .fixed-width-setting')
 
       let nameMaxWidth = this.getMaxWidth(nameElem); let settMaxWidth = this.getMaxWidth(settElem)
 
@@ -129,7 +128,6 @@ export default {
     }
   },
   mounted () {
-    if (this.group_id !== undefined) { this.uniqueGroupId = this.group_id }
     if (this.variant === undefined) { this.variant = 'secondary'}
     this.currentSettingValue = this.setting.value
     if (this.fixWidth) {

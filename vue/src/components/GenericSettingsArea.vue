@@ -1,7 +1,7 @@
 <template>
 <div v-if="current_preset_idx === idx">
   <!-- Generic Settings -->
-  <b-card class="mt-2 setting-card" id="graphic"
+  <b-card class="mt-2 setting-card" :id="groupId"
           bg-variant="dark" text-variant="white">
     <template #header>
       <h6 class="mb-0">
@@ -12,8 +12,10 @@
       <!-- View Mode Grid -->
       <Setting v-for="setting in preset[settingsKey].options" :key="setting.key"
                :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixWidth="true"
-               group_id="graphic"
-               v-on:setting-changed="updateSetting">
+               :show_performance="showPerformance"
+               :disabled="settingDisabledLocal(setting)"
+               :group-id="groupId"
+               @setting-changed="updateSetting">
       </Setting>
     </template>
     <template v-else>
@@ -21,13 +23,17 @@
       <b-list-group class="text-left">
         <b-list-group-item class="bg-transparent" v-for="setting in preset[settingsKey].options"
                            :key="setting.key">
-          <Setting :setting="setting" variant="rf-orange" :fixWidth="true" group_id="graphic"
-                   v-on:setting-changed="updateSetting">
+          <Setting :setting="setting" variant="rf-orange" :fixWidth="true"
+                   :show_performance="showPerformance"
+                   :disabled="settingDisabledLocal(setting)"
+                   :group-id="groupId"
+                   @setting-changed="updateSetting">
           </Setting>
         </b-list-group-item>
       </b-list-group>
     </template>
     <template #footer>
+      <slot name="footer"></slot>
     </template>
   </b-card>
 </div>
@@ -39,12 +45,8 @@ import Setting from "./Setting.vue"
 
 export default {
   name: "GenericSettingsArea",
-  data: function () {
-    return {
-      data: false
-    }
-  },
-  props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number, settingsKey: String},
+  props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number, settingsKey: String,
+          settingDisabled: Function, showPerformance: Boolean },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
@@ -52,13 +54,10 @@ export default {
     updateSetting: function (setting, value) {
       this.$emit('update-setting', setting, value)
     },
-    settingDisabled: function(setting) {
-      if (setting.key === 'UseFXAA' && this._getFsaaEnabled()) {
-        // Disable FXAA and do not trigger a preset save
-        this.$emit('update-setting', setting, 0, false)
-        return true
+    settingDisabledLocal: function (setting) {
+      if (this.settingDisabled !== undefined) {
+        return this.settingDisabled(setting)
       }
-      // Enabled
       return false
     }
   },
@@ -70,7 +69,10 @@ export default {
       if (this.view_mode !== undefined) { return this.view_mode }
       return 0
     },
-  }
+    groupId: function () {
+      return 'setting-area-' + this._uid
+    }
+  },
 }
 </script>
 

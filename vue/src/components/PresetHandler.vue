@@ -13,8 +13,8 @@ export default {
       selectedPresetIdx: 0,
       userPresetsDir: '',
       isBusy: false,
-      viewMode: 0,
       previousPresetName: '',
+      viewMode: 0,
       error: '',
     }
   },
@@ -72,8 +72,10 @@ export default {
       if (!r.result) {
         this.makeToast(r.msg, 'danger')
         console.error('Error writing preset to rFactor 2!', r.msg)
+        console.log(r)
+      } else {
+        console.log('Saved Preset:', preset.name)
       }
-      console.log('Saved Preset:', preset.name)
     },
     exportPreset: async function () {
       this.isBusy = true

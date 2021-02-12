@@ -1,17 +1,12 @@
 <template>
 <div v-if="current_preset_idx === idx">
   <!-- Video Settings -->
-  <b-card class="mt-2 setting-card" id="video" bg-variant="dark" text-variant="white">
-    <template #header>
-      <h6 class="mb-0"><span class="title">{{ preset.video_settings.title }}</span></h6>
-    </template>
-    <Setting v-for="setting in preset.video_settings.options" :key="setting.key"
-             :setting="setting" variant="rf-orange" class="mr-3 mb-3" group_id="video"
-             :show_performance="showPerformance" :disabled="settingDisabled(setting)"
-             v-on:setting-changed="updateSetting" ref="vfx">
-    </Setting>
-
-    <!-- Footer -->
+  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="video_settings"
+                       :current_preset_idx="current_preset_idx"
+                       :setting-disabled="settingDisabled"
+                       @update-setting="updateSetting"
+                       @set-busy="setBusy"
+                       @make-toast="makeToast">
     <template #footer>
       <div class="float-left video-indicator">
         <template v-if="preset.resolution_settings.options[0].value !== null">
@@ -32,36 +27,16 @@
         </b-button>
       </div>
     </template>
-  </b-card>
+  </GenericSettingsArea>
 
   <!-- Display Settings -->
-  <b-card class="mt-2 setting-card" id="graphic"
-          bg-variant="dark" text-variant="white">
-    <template #header>
-      <h6 class="mb-0">
-        <span class="title">{{ preset.graphic_options.title }}</span>
-      </h6>
-    </template>
-    <template v-if="!viewMode">
-      <!-- View Mode Grid -->
-      <Setting v-for="setting in preset.graphic_options.options" :key="setting.key"
-               :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixWidth="true"
-               group_id="graphic" :show_performance="showPerformance"
-               v-on:setting-changed="updateSetting">
-      </Setting>
-    </template>
-    <template v-else>
-      <!-- View Mode List -->
-      <b-list-group class="text-left">
-        <b-list-group-item class="bg-transparent" v-for="setting in preset.graphic_options.options"
-                           :key="setting.key">
-          <Setting :setting="setting" variant="rf-orange" :fixWidth="true" group_id="graphic"
-                   :show_performance="showPerformance"
-                   v-on:setting-changed="updateSetting">
-          </Setting>
-        </b-list-group-item>
-      </b-list-group>
-    </template>
+  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="graphic_options"
+                       :current_preset_idx="current_preset_idx"
+                       :show-performance="showPerformance"
+                       :view_mode="viewMode"
+                       @update-setting="updateSetting"
+                       @set-busy="setBusy"
+                       @make-toast="makeToast">
     <template #footer>
       <div class="float-right">
         <b-button size="sm" @click="showPerformance = !showPerformance"
@@ -72,20 +47,19 @@
         </b-button>
       </div>
     </template>
-  </b-card>
+  </GenericSettingsArea>
 
   <!-- Advanced Display Settings -->
-  <b-card class="mt-2 setting-card" id="advanced" bg-variant="dark" text-variant="white">
-    <template #header>
-      <h6 class="mb-0"><span class="title">{{ preset.advanced_graphic_options.title }}</span></h6>
-    </template>
-    <Setting v-for="setting in preset.advanced_graphic_options.options" :key="setting.key"
-             :setting="setting" variant="rf-orange" group_id="advanced" class="mr-3 mb-3" :fixWidth="true"
-             :show_performance="showPerformance"
-             v-on:setting-changed="updateSetting">
-    </Setting>
-  </b-card>
+  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="advanced_graphic_options"
+                       :current_preset_idx="current_preset_idx"
+                       :show_performance="showPerformance"
+                       :view_mode="viewMode"
+                       @update-setting="updateSetting"
+                       @set-busy="setBusy"
+                       @make-toast="makeToast">
+  </GenericSettingsArea>
 
+  <!-- Video Setup Modal -->
   <b-modal id="video-modal" centered hide-header-close no-close-on-backdrop no-close-on-esc>
     <template #modal-title>
       <b-icon icon="display-fill" variant="primary"></b-icon><span class="ml-2">Video Setup</span>
@@ -118,11 +92,11 @@
 </template>
 
 <script>
-import Setting from "./Setting.vue"
+import GenericSettingsArea from "@/components/GenericSettingsArea";
 import {getEelJsonObject} from "@/main";
 
 export default {
-  name: "GraphicsSettingsArea",
+  name: "GraphicsArea",
   data: function () {
     return {
       showPerformance: true,
@@ -137,6 +111,7 @@ export default {
     updateSetting: function (setting, value) {
       this.$emit('update-setting', setting, value)
     },
+    setBusy: function (busy) { this.$emit('set-busy', busy) },
     updateResolutionSettings: async function () {
       this.$emit('set-busy', true)
       let r = await getEelJsonObject(window.eel.get_current_dx_config()())
@@ -209,7 +184,7 @@ export default {
     }
   },
   components: {
-      Setting
+      GenericSettingsArea
   },
   computed: {
     viewMode: function () {

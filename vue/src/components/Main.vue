@@ -22,15 +22,15 @@
     </div>
 
     <!-- Graphics Preset Handler -->
-    <PresetHandler ref="gfx" @makeToast="makeToast" @error="setError" id-ref="gfx"
+    <PresetHandler ref="gfx" @make-toast="makeToast" @error="setError" id-ref="gfx"
                    :preset-type="0" @presets-ready="setDashGfxHandler" />
 
     <!-- Controls Settings Handler -->
-    <PresetHandler ref="con" @makeToast="makeToast" @error="setError" id-ref="con"
+    <PresetHandler ref="con" @make-toast="makeToast" @error="setError" id-ref="con"
                    :preset-type="2" />
 
     <!-- Game Settings Handler -->
-    <PresetHandler ref="gen" @makeToast="makeToast" @error="setError" id-ref="gen"
+    <PresetHandler ref="gen" @make-toast="makeToast" @error="setError" id-ref="gen"
                    :preset-type="1" />
 
     <!-- Dashboard -->
@@ -42,7 +42,7 @@
     <!-- Graphic Settings-->
     <template  v-if="navActive === 1">
       <b-overlay :show="$refs.gfx.isBusy" variant="dark" rounded>
-        <PresetUi ref="gfxUi" id-ref="gfx"
+        <PresetUi ref="gfxUi" id-ref="gfx" display-name="Graphics"
                   :presets="$refs.gfx.presets"
                   :previous-preset-name="$refs.gfx.previousPresetName"
                   :selected-preset-idx="$refs.gfx.selectedPresetIdx"
@@ -57,17 +57,17 @@
                   @delete-preset="$refs.gfx.deletePreset"
                   @update-setting="$refs.gfx.updateSetting"
                   @update-desc="$refs.gfx.updateDesc"
-                  @update-view-mode="$refs.gfx.viewMode = $event"
+                  @update-view-mode="$refs.gfx.viewMode=$event"
                   @make-toast="makeToast" />
 
         <div>
           <div v-for="(gfxPreset, idx) in $refs.gfx.presets" :key="gfxPreset.name">
-            <GraphicsSettingsArea :preset="gfxPreset" :idx="idx"
-                                  :current_preset_idx="$refs.gfx.selectedPresetIdx"
-                                  :view_mode="$refs.gfx.viewMode"
-                                  @update-setting="$refs.gfx.updateSetting"
-                                  @set-busy="$refs.gfx.isBusy=$event"
-                                  @make-toast="makeToast" />
+            <GraphicsArea :preset="gfxPreset" :idx="idx"
+                          :current_preset_idx="$refs.gfx.selectedPresetIdx"
+                          :view_mode="$refs.gfx.viewMode"
+                          @update-setting="$refs.gfx.updateSetting"
+                          @set-busy="$refs.gfx.isBusy=$event"
+                          @make-toast="makeToast" />
           </div>
         </div>
       </b-overlay>
@@ -76,7 +76,7 @@
     <!-- Control Settings-->
     <template  v-if="navActive === 2">
       <b-overlay :show="$refs.con.isBusy" variant="dark" rounded>
-        <PresetUi ref="genUi" id-ref="gen"
+        <PresetUi ref="conUi" id-ref="con" display-name="Controls"
                   :presets="$refs.con.presets"
                   :previous-preset-name="$refs.con.previousPresetName"
                   :selected-preset-idx="$refs.con.selectedPresetIdx"
@@ -91,7 +91,7 @@
                   @delete-preset="$refs.con.deletePreset"
                   @update-setting="$refs.con.updateSetting"
                   @update-desc="$refs.con.updateDesc"
-                  @update-view-mode="$refs.con.viewMode = $event"
+                  @update-view-mode="$refs.con.viewMode=$event"
                   @make-toast="makeToast" />
 
         <div>
@@ -125,7 +125,7 @@
     <!-- Generic Settings-->
     <template  v-if="navActive === 3">
       <b-overlay :show="$refs.gen.isBusy" variant="dark" rounded>
-        <PresetUi ref="genUi" id-ref="gen"
+        <PresetUi ref="genUi" id-ref="gen" display-name="Settings"
                   :presets="$refs.gen.presets"
                   :previous-preset-name="$refs.gen.previousPresetName"
                   :selected-preset-idx="$refs.gen.selectedPresetIdx"
@@ -140,7 +140,7 @@
                   @delete-preset="$refs.gen.deletePreset"
                   @update-setting="$refs.gen.updateSetting"
                   @update-desc="$refs.gen.updateDesc"
-                  @update-view-mode="$refs.gen.viewMode = $event"
+                  @update-view-mode="$refs.gen.viewMode=$event"
                   @make-toast="makeToast" />
 
         <div>
@@ -161,10 +161,18 @@
     <ServerBrowser ref="serverBrowser" v-if="navActive === 4"
                    @make-toast="makeToast"></ServerBrowser>
 
-    <!-- Launch rFactor -->
+    <!-- rFactor Actions -->
     <div class="mt-3">
       <b-button size="sm" variant="primary" @click="launchRfactor">
         <b-icon icon="play"></b-icon>Start rFactor 2
+      </b-button>
+      <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Open rF2 Setup folder'"
+                @click="openSetupFolder">
+        <b-icon icon="folder"></b-icon>
+      </b-button>
+      <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Run rF2 ModMgr.exe'"
+                @click="runModMgr">
+        <b-icon icon="archive-fill"></b-icon>
       </b-button>
     </div>
   </div>
@@ -174,7 +182,7 @@
 import {getEelJsonObject} from '@/main'
 import Dashboard from "@/components/Dashboard";
 import PresetUi from "@/components/PresetUi";
-import GraphicsSettingsArea from "@/components/GraphicsSettingsArea";
+import GraphicsArea from "@/components/GraphicsArea";
 import ServerBrowser from "@/components/ServerBrowser";
 import PresetHandler from "@/components/PresetHandler";
 import GenericSettingsArea from "@/components/GenericSettingsArea";
@@ -205,7 +213,28 @@ export default {
       })
     },
     importPreset: async function (importPreset) {
-      await this.$refs.gfx.importPreset(importPreset)
+      if (importPreset.preset_type === undefined) {
+        this.makeToast('The file you dropped did not contain the expected data.', 'warning',
+            'Preset Import')
+      }
+      switch (importPreset.preset_type) {
+        case 0:
+          // Graphics
+          await this.$refs.gfx.importPreset(importPreset)
+          break
+        case 1:
+          // Settings
+          await this.$refs.gen.importPreset(importPreset)
+          break
+        case 2:
+          // Controls
+          await this.$refs.con.importPreset(importPreset)
+          break
+        default:
+          this.makeToast('The type of preset you dropped is not supported or from a newer version than' +
+              'your version of the app.', 'warning', 'Preset Import')
+      }
+      console.log(importPreset.preset_type)
     },
     setError: async function (error) { this.$emit('error', error) },
     toggleServerBrowser() {
@@ -224,6 +253,8 @@ export default {
         this.makeToast('Could not launch rFactor2.exe', 'danger')
       }
     },
+    openSetupFolder: async function () { await window.eel.open_setup_folder()() },
+    runModMgr: async function () { await window.eel.run_mod_mgr()() }
   },
   components: {
     GenericSettingsArea,
@@ -231,7 +262,7 @@ export default {
     ServerBrowser,
     PresetHandler,
     PresetUi,
-    GraphicsSettingsArea
+    GraphicsArea
   },
 }
 </script>
