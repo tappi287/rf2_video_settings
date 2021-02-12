@@ -168,10 +168,10 @@ class RfactorPlayer:
             return False
 
         # -- Write JSON files
-        self.write_json(player_json_dict, self.player_file, encoding='utf-8')
-        self.write_json(controller_json_dict, self.controller_file, encoding='cp1252')
+        r = self.write_json(player_json_dict, self.player_file, encoding='utf-8')
+        return r and self.write_json(controller_json_dict, self.controller_file, encoding='cp1252')
 
-    def write_json(self, json_dict: dict, file: Path, encoding: str = 'UTF-8'):
+    def write_json(self, json_dict: dict, file: Path, encoding: str = 'UTF-8') -> bool:
         try:
             with open(file, 'w', encoding=encoding) as f:
                 json.dump(json_dict, f, indent=4, ensure_ascii=False)
