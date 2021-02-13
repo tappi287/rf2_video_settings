@@ -1,10 +1,12 @@
 <template>
   <div id="main" v-cloak>
-    <div class="text-left mt-3 mb-3">
+    <b-navbar class="text-left pl-0 pr-0" type="dark">
+      <b-navbar-brand @click="navActive=0">
+        <b-img width="32px" src="@/assets/app_icon.webp"></b-img>
+      </b-navbar-brand>
       <b-nav>
         <b-nav-item :active="navActive === 0" @click="navActive=0">
           Dashboard
-          <!-- <b-img src="@/assets/app_icon.webp" width="24" alt="rFactor 2 logo"></b-img> -->
         </b-nav-item>
         <b-nav-item :active="navActive === 1" @click="navActive=1">
           Graphics
@@ -19,7 +21,12 @@
           Server Browser
         </b-nav-item>
       </b-nav>
-    </div>
+      <b-navbar-nav class="ml-auto">
+        <b-nav-item id="wiki-nav" right :active="navActive === 5" @click="navActive=5">
+          <b-icon icon="question-square-fill"></b-icon>
+        </b-nav-item>
+      </b-navbar-nav>
+    </b-navbar>
 
     <!-- Graphics Preset Handler -->
     <PresetHandler ref="gfx" @make-toast="makeToast" @error="setError" id-ref="gfx"
@@ -161,12 +168,17 @@
     <ServerBrowser ref="serverBrowser" v-if="navActive === 4"
                    @make-toast="makeToast"></ServerBrowser>
 
+    <!-- Wiki -->
+    <template  v-if="navActive === 5">
+      <Wiki></Wiki>
+    </template>
+
     <!-- rFactor Actions -->
     <div class="mt-3">
       <b-button size="sm" variant="primary" @click="launchRfactor">
         <b-icon icon="play"></b-icon>Start rFactor 2
       </b-button>
-      <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Open rF2 Setup folder'"
+      <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Open rF2 vehicle setups folder'"
                 @click="openSetupFolder">
         <b-icon icon="folder"></b-icon>
       </b-button>
@@ -186,6 +198,7 @@ import GraphicsArea from "@/components/GraphicsArea";
 import ServerBrowser from "@/components/ServerBrowser";
 import PresetHandler from "@/components/PresetHandler";
 import GenericSettingsArea from "@/components/GenericSettingsArea";
+import Wiki from "@/components/Wiki";
 
 export default {
   name: 'Main',
@@ -262,7 +275,8 @@ export default {
     ServerBrowser,
     PresetHandler,
     PresetUi,
-    GraphicsArea
+    GraphicsArea,
+    Wiki
   },
 }
 </script>
@@ -273,6 +287,7 @@ export default {
   width: 92%;
   margin: 0 auto 0 auto;
 }
+#wiki-nav a { padding-right: 0; }
 .nav-link.active {
   text-decoration: underline;
   text-decoration-skip-ink: auto;

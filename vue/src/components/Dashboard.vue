@@ -24,8 +24,7 @@
 
     <!-- Display over image slider -->
     <div class="p-3" id="top-menu">
-      <b-img alt="rFactor 2 logo" class="mr-1 float-left no-pointer"
-         src="@/assets/app_icon.webp" width="24"></b-img>
+      <b-icon icon="house-fill" class="mr-1 float-left no-pointer"></b-icon>
       <h6 class="title mb-0">Hello {{ userName }}</h6>
 
       <!-- Shortcuts Play with Preset -->
