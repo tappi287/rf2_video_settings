@@ -2,7 +2,7 @@ import json
 import logging
 import sys
 from configparser import ConfigParser
-from pathlib import Path
+from pathlib import Path, WindowsPath
 import subprocess
 from typing import Optional, Iterator
 
@@ -343,7 +343,7 @@ class RfactorPlayer:
     def _check_bin_dir(self) -> bool:
         return self.location and Path(self.location / 'Bin64').exists()
 
-    def run_rfactor(self, server_info: Optional[dict] = None) -> bool:
+    def run_rfactor(self, method: int = 0, server_info: Optional[dict] = None) -> bool:
         if not self._check_bin_dir():
             self.error += 'Could not locate rFactor 2 Bin directory.\n'
             return False
@@ -351,9 +351,14 @@ class RfactorPlayer:
         # Solution for non loading rF2 plugins in PyInstaller executable:
         #    ctypes.windll.kernel32.SetDllDirectoryA(None)
         # See https://github.com/pyinstaller/pyinstaller/wiki/Recipe-subprocess#windows-dll-loading-order
-
         executable = self.location / "Bin64" / "rFactor2.exe"
-        cmd = [executable]
+        cmd = [str(WindowsPath(executable))]
+
+        # -- Use Steam Launch as default
+        #    so Workshop items are updated upon start
+        if method == 0:
+            steam_path = Path(SteamApps.find_steam_location()) / 'steam.exe'
+            cmd = [str(WindowsPath(steam_path)), '-applaunch', RF2_APPID]
 
         if server_info:
             ip, port = server_info.get('address', ('localhost',))[0], server_info.get('port', '64297')

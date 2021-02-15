@@ -36,7 +36,8 @@ def re_run_admin():
 
 
 @eel.expose
-def run_rfactor(server_info: Optional[dict] = None):
+def run_rfactor(server_info: Optional[dict] = None, method: Optional[int] = 0):
+    logging.info('UI requested rF2 run with method: %s', method)
     if server_info and server_info.get('password_remember'):
         # -- Store password if remember option checked
         logging.info('Storing password for Server %s', server_info.get('id'))
@@ -50,7 +51,7 @@ def run_rfactor(server_info: Optional[dict] = None):
 
     rf, result = RfactorPlayer(), False
     if rf.is_valid:
-        result = rf.run_rfactor(server_info)
+        result = rf.run_rfactor(method, server_info)
 
     return json.dumps({'result': result, 'msg': rf.error})
 

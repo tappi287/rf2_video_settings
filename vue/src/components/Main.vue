@@ -175,9 +175,22 @@
 
     <!-- rFactor Actions -->
     <div class="mt-3">
-      <b-button size="sm" variant="primary" @click="launchRfactor">
-        <b-icon icon="play"></b-icon>Start rFactor 2
-      </b-button>
+      <b-button-group>
+        <b-dropdown variant="primary" size="sm" right split @click="launchRfactor">
+          <template #button-content>
+            <b-icon icon="play"></b-icon>Start rFactor 2
+          </template>
+          <b-dropdown-item @click="launchRfactor">
+            Launch via Steam
+          </b-dropdown-item>
+          <b-dropdown-item v-b-popover.auto.hover="'Updated Workshop item packages will not be installed or synced.' +
+           ' But if you have eg. a dedicated Server running. This is the method to launch rF2 anyway. Make sure you ' +
+           'have configured your WebUI ports correctly.'"
+                           @click="launchRfactor(1)">
+            Launch via Exe
+          </b-dropdown-item>
+        </b-dropdown>
+      </b-button-group>
       <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Open rF2 vehicle setups folder'"
                 @click="openSetupFolder">
         <b-icon icon="folder"></b-icon>
@@ -258,12 +271,14 @@ export default {
         this.firstServerBrowserVisit = false
       })
     },
-    launchRfactor: async function () {
-      let r = await getEelJsonObject(window.eel.run_rfactor()())
+    launchRfactor: async function (method) {
+      if (typeof (method) !== 'number') { method = 0 }
+      let r = await getEelJsonObject(window.eel.run_rfactor(undefined, method)())
       if (r !== undefined && r.result) {
-        this.makeToast('rFactor2.exe launched. This will take some time.', 'success')
+        this.makeToast('rFactor2.exe launched. Do not change settings here while the game is running. ' +
+            'The game would overwrite those settings anyway upon exit.', 'success', 'rFactor 2 Launch')
       } else {
-        this.makeToast('Could not launch rFactor2.exe', 'danger')
+        this.makeToast('Could not launch rFactor2.exe', 'danger', 'rFactor 2 Launch')
       }
     },
     openSetupFolder: async function () { await window.eel.open_setup_folder()() },
