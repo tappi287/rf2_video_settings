@@ -25,4 +25,21 @@ game_settings = {
                                       'desc': '0 (none) to 4 (highest); how much to compress VCR file (uses less disk '
                                               'space but takes more time to write when a session ends)'},)
                         },
+    'Auto Skip Garaged Vehicles': {'name': 'Auto Skip Garage', 'value': False,
+                                   'desc': 'If On, vehicles in garage stalls will be skipped when cycling cameras. '
+                                           'Set this value to 0 to see all vehicles; the left shift key can be held '
+                                           'while cycling to dynamically suspend auto skipping.',
+                                   'settings': ({'value': True, 'name': 'On'},
+                                                {'value': False, 'name': 'Off [Default]'})
+                                   },
+    'Damper Units': {'name': 'Damper Units', 'value': False,
+                     'desc': 'Display dampers (shocks) in garage as: number setting (e.g. 1-20), '
+                             'or rate (e.g. 1000-9000 Nm/s)',
+                     'settings': ({'value': True, 'name': 'Rate in Nm/s'},
+                                  {'value': False, 'name': 'Number [Default]'})
+                     },
+    'RealTimeLogging': {'name': 'RealTime Logging', 'value': 0,
+                        'settings': ({'value': 0, 'name': 'Off [Default]'},
+                                     {'value': 1, 'name': 'Accurate'})
+                        },
 }
