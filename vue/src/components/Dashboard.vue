@@ -130,6 +130,7 @@ export default {
   },
   activated() {
     this.resize()
+    this.$refs.slider.play()
   },
   updated() {
     this.updateHeight()

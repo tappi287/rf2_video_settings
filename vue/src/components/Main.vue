@@ -280,6 +280,8 @@ export default {
       } else {
         this.makeToast('Could not launch rFactor2.exe', 'danger', 'rFactor 2 Launch')
       }
+      // Stop image slider upon launch
+      if (this.$refs.dash !== undefined) { this.$refs.dash.$refs.slider.stop() }
     },
     openSetupFolder: async function () { await window.eel.open_setup_folder()() },
     runModMgr: async function () { await window.eel.run_mod_mgr()() }
