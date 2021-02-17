@@ -43,7 +43,7 @@
     <!-- Dashboard -->
     <keep-alive>
       <Dashboard ref="dash" v-if="navActive === 0 && gfxReady" :gfx-handler="$refs.gfx"
-                 @makeToast="makeToast" @error="setError"></Dashboard>
+                 @make-toast="makeToast" @error="setError"></Dashboard>
     </keep-alive>
 
     <!-- Graphic Settings-->
@@ -165,7 +165,7 @@
     </template>
 
     <!-- Server Browser -->
-    <ServerBrowser ref="serverBrowser" v-if="navActive === 4"
+    <ServerBrowser ref="serverBrowser" v-if="navActive === 4" @launch="stopSlideShow"
                    @make-toast="makeToast"></ServerBrowser>
 
     <!-- Wiki -->
@@ -175,22 +175,7 @@
 
     <!-- rFactor Actions -->
     <div class="mt-3">
-      <b-button-group>
-        <b-dropdown variant="primary" size="sm" right split @click="launchRfactor">
-          <template #button-content>
-            <b-icon icon="play"></b-icon>Start rFactor 2
-          </template>
-          <b-dropdown-item @click="launchRfactor">
-            Launch via Steam
-          </b-dropdown-item>
-          <b-dropdown-item v-b-popover.auto.hover="'Updated Workshop item packages will not be installed or synced.' +
-           ' But if you have eg. a dedicated Server running. This is the method to launch rF2 anyway. Make sure you ' +
-           'have configured your WebUI ports correctly.'"
-                           @click="launchRfactor(1)">
-            Launch via Exe
-          </b-dropdown-item>
-        </b-dropdown>
-      </b-button-group>
+      <LaunchRfactorBtn @make-toast="makeToast" @launch="stopSlideShow"></LaunchRfactorBtn>
       <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Open rF2 vehicle setups folder'"
                 @click="openSetupFolder">
         <b-icon icon="folder"></b-icon>
@@ -204,7 +189,6 @@
 </template>
 
 <script>
-import {getEelJsonObject} from '@/main'
 import Dashboard from "@/components/Dashboard";
 import PresetUi from "@/components/PresetUi";
 import GraphicsArea from "@/components/GraphicsArea";
@@ -212,6 +196,7 @@ import ServerBrowser from "@/components/ServerBrowser";
 import PresetHandler from "@/components/PresetHandler";
 import GenericSettingsArea from "@/components/GenericSettingsArea";
 import Wiki from "@/components/Wiki";
+import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 
 export default {
   name: 'Main',
@@ -271,22 +256,14 @@ export default {
         this.firstServerBrowserVisit = false
       })
     },
-    launchRfactor: async function (method) {
-      if (typeof (method) !== 'number') { method = 0 }
-      let r = await getEelJsonObject(window.eel.run_rfactor(undefined, method)())
-      if (r !== undefined && r.result) {
-        this.makeToast('rFactor2.exe launched. Do not change settings here while the game is running. ' +
-            'The game would overwrite those settings anyway upon exit.', 'success', 'rFactor 2 Launch')
-      } else {
-        this.makeToast('Could not launch rFactor2.exe', 'danger', 'rFactor 2 Launch')
-      }
-      // Stop image slider upon launch
+    stopSlideShow() {
       if (this.$refs.dash !== undefined) { this.$refs.dash.$refs.slider.stop() }
     },
     openSetupFolder: async function () { await window.eel.open_setup_folder()() },
     runModMgr: async function () { await window.eel.run_mod_mgr()() }
   },
   components: {
+    LaunchRfactorBtn,
     GenericSettingsArea,
     Dashboard,
     ServerBrowser,

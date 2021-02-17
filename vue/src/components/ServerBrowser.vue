@@ -186,11 +186,17 @@
               <b-icon shift-v="-1" icon="arrow-clockwise"></b-icon>
               <span class="ml-1 mr-1">Refresh Server Data</span>
             </b-button>
-            <b-button @click="server.item.password_protected ? joinPswdProtectedRfactor(server.item) : joinRfactor(server.item)"
-                      variant="primary" size="sm">
-              <b-icon variant="light" icon="play"></b-icon>
-              <span class="ml-1 mr-1">Join Server</span>
-            </b-button>
+            <template v-if="server.item.password_protected">
+              <b-button @click="joinPswdProtectedRfactor(server.item)"
+                        variant="primary" size="sm">
+                <b-icon variant="light" icon="play"></b-icon>
+                <span class="ml-1 mr-1">Join Server</span>
+              </b-button>
+            </template>
+            <template v-else>
+              <LaunchRfactorBtn
+                  @make-toast="makeToast" @launch="$emit($event)" :server="server.item" text="Join Server"/>
+            </template>
           </div>
         </b-card>
       </template>
@@ -228,7 +234,7 @@
     <div class="bg-dark rounded-bottom" style="height: 1.75rem;"></div>
 
     <!-- Join password protected Server -->
-    <b-modal id="password-modal" centered>
+    <b-modal :id="pwdModalId" centered>
       <template #modal-title>
         <b-icon icon="play-fill" variant="primary"></b-icon>Join {{ selectedServer.server_name }}
       </template>
@@ -243,7 +249,8 @@
       <b-input-group prepend="Password" class="mt-3">
         <b-form-input type="password" v-model="selectedServer.password"></b-form-input>
         <b-input-group-append>
-          <b-button variant="primary" @click="joinRfactor(selectedServer, selectedServer.password)">Join</b-button>
+          <LaunchRfactorBtn @make-toast="makeToast" @launch="joinPswdLaunched" text="Join Server"
+                            :server="selectedServer"/>
         </b-input-group-append>
       </b-input-group>
       <b-form-checkbox v-model="storePwd">Remember</b-form-checkbox>
@@ -269,6 +276,7 @@
                   'ip', 'port', 'players')
  */
 import {getEelJsonObject} from "@/main";
+import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 
 let progress = 0
 let maxProgress = 1
@@ -291,6 +299,7 @@ function addServerListChunk (newServerListChunk) {
 
 export default {
   name: "ServerBrowser",
+  components: {LaunchRfactorBtn},
   data: function () {
     return {
       isBusy: false,
@@ -315,14 +324,17 @@ export default {
         { key: 'actions', label: '', class: 'text-right'},
       ],
       selectedServer: {},
+      serverPassword: '',
       storePwd: true,
       showPwdToggle: false,
+      pwdModalId: 'password-modal' + this._uid,
       onlyFav: false
     }
   },
   props: { onlyFavourites: Boolean },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
+      console.log('Making toast', message, category, title, append, delay)
       this.$emit('make-toast', message, category, title, append, delay)
     },
     compareVersion: function (serverVersion) {
@@ -494,22 +506,12 @@ export default {
     },
     joinPswdProtectedRfactor: function (server) {
       this.selectedServer = server
-      this.$bvModal.show('password-modal')
+      this.selectedServer.password_remember = this.storePwd
+      this.$bvModal.show(this.pwdModalId)
     },
-    joinRfactor: async function (server, password = '') {
-      if (password !== '') {
-        console.log('Storing Pwd:', this.storePwd)
-        server.password = password
-        server.password_remember = this.storePwd
-      }
-
-      let r = await getEelJsonObject(window.eel.run_rfactor(server)())
-      if (r !== undefined && r.result) {
-        this.makeToast('rFactor2.exe launched. This will take a moment.', 'success')
-        this.$bvModal.hide('password-modal')
-      } else {
-        this.makeToast('Could not launch rFactor2.exe', 'danger')
-      }
+    joinPswdLaunched: function () {
+      this.$emit('launch')
+      this.$bvModal.hide(this.pwdModalId)
     },
     asyncCreate: async function () {
       this.isBusy = true
@@ -532,6 +534,12 @@ export default {
     console.log('Removing Event listeners')
     window.removeEventListener('update-progress', this.updateProgress)
     window.removeEventListener('add-server-list-chunk', this.updateServerListData)
+  },
+  watch: {
+    storePwd: function (value) {
+      console.log('Remb Pswd:', value)
+      this.selectedServer.password_remember = value
+    },
   },
   computed: {
     computedServerList() {
