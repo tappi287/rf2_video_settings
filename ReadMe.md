@@ -1,4 +1,4 @@
-# rF2 Settings Wizard
+# rF2 Settings Widget
 ### rFactor 2 Settings application
 
 M$ Windows application that will let you create presets/profiles of your rFactor 2 settings and directly connect to rFactor 2 multiplayer sessions.
