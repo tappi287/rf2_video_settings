@@ -58,11 +58,16 @@ import ServerBrowser from "@/components/ServerBrowser"
 import PresetHandler from "@/components/PresetHandler";
 import { VueFlux, FluxCaption, FluxPreloader } from 'vue-flux';
 import {getEelJsonObject, chooseIndex, userScreenShots} from "@/main"
+import rfWPoster from "@/assets/rfW_Poster.webp"
 
 function prepareScreenshots () {
   let imgList = userScreenShots.slice()
   let images = []
   let captions = []
+
+  // Add app poster entry
+  images.push(rfWPoster)
+  captions.push({text: 'SIM SITE', url: 'https://sim-site.netlify.app'})
 
   for (let i = 0; i < userScreenShots.length; i++) {
     const randomIdx = chooseIndex(imgList)
@@ -87,6 +92,7 @@ export default {
       vfCaptions: [],
       resizeTimeout: null,
       resizeDebounceRate: 20,
+      posterImg: rfWPoster
     }
   },
   props: {gfxHandler: PresetHandler},
@@ -140,6 +146,7 @@ export default {
     this.vfImages = r.images; this.vfCaptions = r.captions
     this.getDriver()
     window.onresize = this.debounceResize
+    console.log('Dash poster: ', this.posterImg)
   },
   components: {
     ServerBrowser,
