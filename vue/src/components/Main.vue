@@ -224,6 +224,13 @@ export default {
       })
     },
     importPreset: async function (importPreset) {
+      if (importPreset.CHAT !== undefined) {
+        // Import rF player.json to Graphics
+        await this.$refs.gfx.importPlayerJson(importPreset)
+        // Import rF player.json to Settings
+        await this.$refs.gen.importPlayerJson(importPreset)
+        return
+      }
       if (importPreset.preset_type === undefined) {
         this.makeToast('The file you dropped did not contain the expected data.', 'warning',
             'Preset Import')

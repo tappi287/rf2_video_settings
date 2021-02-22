@@ -88,6 +88,20 @@ export default {
       }
       this.isBusy = false
     },
+    importPlayerJson: async function (importData) {
+      if (importData === undefined) { return }
+      this.isBusy = true
+
+      let r = await getEelJsonObject(window.eel.import_player_json(importData, this.presetType)())
+      if (r !== undefined && r.result) {
+        this.presets.push(r.preset)
+        this.makeToast(r.msg, 'success', 'Player.JSON Import')
+      } else {
+        this.makeToast('Data could not be imported ' + r.msg, 'danger', 'Error')
+      }
+
+      this.isBusy = false
+    },
     importPreset: async function (importPreset) {
       if (importPreset === undefined) {
         return

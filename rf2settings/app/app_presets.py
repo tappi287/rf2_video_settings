@@ -6,9 +6,10 @@ from subprocess import Popen
 import eel
 
 from ..app_settings import AppSettings
-from rf2settings.preset.preset_base import PRESET_TYPES, load_presets_from_dir
-from rf2settings.preset.presets_dir import get_user_presets_dir, get_user_export_dir
+from ..preset.preset_base import PRESET_TYPES, load_presets_from_dir
+from ..preset.presets_dir import get_user_presets_dir, get_user_export_dir
 from ..rfactor import RfactorPlayer
+from ..utils import create_file_safe_name
 
 
 def expose_preset_methods():
@@ -105,13 +106,40 @@ def export_preset(preset_js_dict):
 @eel.expose
 def import_preset(preset_js_dict):
     p = _create_preset_instance_from_js_dict(preset_js_dict)
+
+    # -- Save imported preset
+    if not p.save():
+        return json.dumps({'result': False, 'msg': f'Error saving imported Preset: {p.name} to disk!'})
+    logging.debug('Saved imported Preset: %s', p.name)
+
     return json.dumps({'result': True, 'preset': p.to_js()})
+
+
+@eel.expose
+def import_player_json(player_json_dict, preset_type: int):
+    # -- Feed Rfactor Player instance with player.JSON dict
+    rf = RfactorPlayer(player_json_dict)
+    if not rf.is_valid:
+        return json.dumps({'result': False, 'msg': rf.error})
+
+    # -- Get preset type and create an instance of it, fallback to GraphicsPreset
+    p = PRESET_TYPES.get(preset_type or 0)(desc='Preset imported from a player.JSON file')
+    p.update(rf, preset_name='Import')
+    p.name = p.find_unique_preset_name()
+
+    # -- Save imported preset
+    if not p.save():
+        return json.dumps({'result': False, 'msg': f'Error saving imported Preset: {p.name} to disk!'})
+    logging.debug('Saved imported Preset: %s', p.name)
+
+    return json.dumps({'result': True, 'preset': p.to_js(),
+                       'msg': f'Imported {p.__class__.__name__} data from player.json to {p.name}'})
 
 
 @eel.expose
 def delete_preset(preset_name, preset_type):
     type_prefix = PRESET_TYPES.get(int(preset_type))().prefix
-    preset_name = f'{type_prefix}_{preset_name}'
+    preset_name = create_file_safe_name(f'{type_prefix}_{preset_name}')
     default_presets = [f.stem for f in AppSettings.iterate_default_presets()]
 
     for preset_file in get_user_presets_dir().glob('*.json'):
@@ -122,7 +150,7 @@ def delete_preset(preset_name, preset_type):
             logging.debug('Deleted Preset: %s', preset_name)
             return json.dumps({'result': True})
 
-    logging.error('Could not deleted Preset: %s', preset_name)
+    logging.error('Could not delete Preset: %s', preset_name)
     return json.dumps({'result': False})
 
 

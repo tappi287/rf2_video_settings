@@ -38,9 +38,10 @@ class BasePreset:
             options_instance = OPTION_CLASSES.get(key)()
             setattr(self, key, options_instance)
 
-    def update(self, rf):
+    def update(self, rf, preset_name: str = 'Current Settings'):
         """ Update current preset from the actual rFactor 2 settings on disk
 
+        :param preset_name: Create a preset name [preset_name] [PlayerJson Nickname]
         :param modules.rfactor.RfactorPlayer rf:
         :return:
         """
@@ -52,22 +53,25 @@ class BasePreset:
         try:
             for o in getattr(rf.options, 'driver_options').options:
                 if o.key == 'Player Nick':
-                    self.name = f'Current Settings [{o.value}]'
+                    self.name = f'{preset_name} [{o.value}]'
         except Exception as e:
             logging.error('Could not locate driver name: %s', e)
             self.name = f'Current Settings [NA]'
 
-    def save_unique_file(self) -> bool:
+    def find_unique_preset_name(self) -> str:
         base_name = create_file_safe_name(self.name)
-        file_name = base_name
+        name = base_name
         name_idx = 0
         preset_dir = get_user_presets_dir()
 
-        while [_ for _ in preset_dir.glob(f'{file_name}*.json')]:
+        while [_ for _ in preset_dir.glob(f'*{name}*.json')]:
             name_idx += 1
-            file_name = f'{base_name}_{name_idx}'
+            name = f'{base_name}_{name_idx}'
 
-        return self.export(file_name)
+        return name
+
+    def save_unique_file(self) -> bool:
+        return self.export(self.find_unique_preset_name())
 
     def additional_save_operations(self):
         """ Should be overwritten in sub classes """

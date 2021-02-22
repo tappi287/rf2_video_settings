@@ -71,8 +71,9 @@ class RfactorPlayer:
                 options_instance = base_cls()
                 setattr(self, field, options_instance)
 
-    def __init__(self, dev: Optional[bool] = None, only_version: bool = False):
+    def __init__(self, dev: Optional[bool] = None, only_version: bool = False, player_json_data: dict = None):
         self.dev = dev or False
+        self.player_json_import_data = player_json_data
         self.player_file = Path()
         self.controller_file = Path()
         self.ini_file = Path()
@@ -98,8 +99,13 @@ class RfactorPlayer:
         if only_version:
             return
 
-        # -- Read Player JSON
-        player_json = self.read_player_json_dict(self.player_file, encoding='utf-8')
+        if self.player_json_import_data is not None:
+            # -- Use player.json data provided on init
+            player_json = self.player_json_import_data
+        else:
+            # -- Read Player JSON
+            player_json = self.read_player_json_dict(self.player_file, encoding='utf-8')
+
         # -- Get Options from Player JSON
         r = self._read_options_from_target(OptionsTarget.player_json, player_json)
         del player_json
