@@ -6,7 +6,11 @@
       a shortcut to your web browser.</p>
 
     <h4 class="mt-4">Import</h4>
-    <p>You can import preset JSON files by simply dragging them into the application window!</p>
+    <p>You can import preset JSON files, exported from this app, by simply dragging them into the application window!
+    This also works works for rFactors player.JSON files. Simply drop it on the application and it will import all the
+    settings available in this widget(and only those!).</p>
+    <i>This is handy if you import someone else's player.JSON and want to make sure you are not overwriting all your
+    other settings like your Player Name and Nickname.</i>
 
     <h4 class="mt-4">Server Browser</h4>
     <p>The Server Browser uses Steam's API to query server information. The number of connected players and
