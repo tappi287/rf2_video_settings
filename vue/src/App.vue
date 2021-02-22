@@ -79,7 +79,7 @@ export default {
     handleDragLeave () {
       this.dragActive = false
     },
-    handleFileSelect: async function (evt) {
+    handleFileDrop: async function (evt) {
       evt.stopPropagation()
       evt.preventDefault()
       this.dragActive = false
@@ -114,7 +114,7 @@ export default {
     let dropZone = document.getElementById('dropzone')
     dropZone.addEventListener('dragover', this.handleDragOver, false)
     dropZone.addEventListener('dragleave', this.handleDragLeave, false)
-    dropZone.addEventListener('drop', this.handleFileSelect, false)
+    dropZone.addEventListener('drop', this.handleFileDrop, false)
   }
 }
 
