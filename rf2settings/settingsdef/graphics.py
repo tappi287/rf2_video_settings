@@ -39,8 +39,10 @@ adjustable_graphics_settings = {
                 },
     'Shadow Blur': {'name': 'Shadow Blur', 'value': 2,
                     'settings':
-                        ({'value': 0, 'name': 'Off'}, {'value': 1, 'name': 'Fast'},
-                         {'value': 2, 'name': 'Optimal'}, {'value': 3, 'name': 'Quality'}),
+                        ({'value': 0, 'name': 'Off'},
+                         {'value': 1, 'name': 'Fast', 'perf': 'G+1,50% C+0,00%'},
+                         {'value': 2, 'name': 'Optimal', 'perf': 'G+3,0% C+0,50%'},
+                         {'value': 3, 'name': 'Quality', 'perf': 'G+8,5% C+1,00%'}),
                     },
     'Soft Particles': {'name': 'Soft Particles', 'value': 1,
                        'settings':
@@ -190,11 +192,15 @@ adjustable_video_settings = {
                           )
              },
     'EPostProcessingSettings': {'name': 'Post Effects', 'value': 1, '_type': int,
-                                'settings': ({'value': 1, 'name': 'Off'},
-                                             {'value': 2, 'name': 'Low', 'desc': 'Glare Effects'},
-                                             {'value': 3, 'name': 'Medium', 'desc': 'Glare Effects and Depth of Field'},
-                                             {'value': 4, 'name': 'High', 'desc': 'All Effects at High Quality'},
-                                             {'value': 5, 'name': 'Ultra', 'desc': 'All Effects at Ultra Quality'},
+                                'settings': ({'value': 1, 'name': 'Off',},
+                                             {'value': 2, 'name': 'Low', 'desc': 'Glare Effects',
+                                              'perf': 'G+0,5% C+0,59%'},
+                                             {'value': 3, 'name': 'Medium', 'desc': 'Glare Effects and Depth of Field',
+                                              'perf': 'G+9,0% C+5,0%'},
+                                             {'value': 4, 'name': 'High', 'desc': 'All Effects at High Quality',
+                                              'perf': 'G+15,0% C+5,0%'},
+                                             {'value': 5, 'name': 'Ultra', 'desc': 'All Effects at Ultra Quality',
+                                              'perf': 'G+25,0% C+5,0%'},
                                 )},
     'UseFXAA': {'name': 'FXAA', 'value': 0, '_type': int, 'desc': 'Can not be used with FSAA. You should prefer FSAA '
                                                                   'whenever possible.',
