@@ -6,10 +6,17 @@ import subprocess as sp
 from pathlib import Path, WindowsPath
 from typing import Tuple, Union
 
-from pygame import joystick
+try:
+    from pygame import joystick
+    py_game_avail = 1
+except ImportError:
+    py_game_avail = 0
 
 
 def print_controllers():
+    if not py_game_avail:
+        return
+
     joystick.init()
 
     if joystick.get_init():

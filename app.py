@@ -9,6 +9,20 @@ from rf2settings.app_settings import AppSettings
 from rf2settings.runasadmin import run_as_admin
 from rf2settings.utils import print_controllers
 
+from rf2settings.app.app_dashboard import expose_dashboard_methods
+from rf2settings.app.app_main import expose_main_methods
+from rf2settings.app.app_graphics import expose_graphics_methods
+from rf2settings.app.app_multiplayer import expose_multiplayer_methods
+from rf2settings.app.app_presets import expose_preset_methods
+
+# -- Make sure eel methods are exposed at start-up
+expose_main_methods()
+expose_dashboard_methods()
+expose_graphics_methods()
+expose_multiplayer_methods()
+expose_preset_methods()
+
+
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
 

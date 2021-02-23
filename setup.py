@@ -1,11 +1,14 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from rf2settings.globals import get_version
 
 
 setup(
     name='rf2settings',
     version=get_version(),
-    packages=['rf2settings'],
+    packages=find_packages('.', exclude=['*app*',
+                                         '*default_presets*',
+                                         '*app_settings*',
+                                         '*app_updater*', ]),
     install_requires=[
         'appdirs',
     ],

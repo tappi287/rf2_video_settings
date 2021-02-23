@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 from subprocess import Popen
 from rf2settings.globals import get_version
@@ -25,7 +26,15 @@ def upload_release(pkg_file: Path) -> bool:
     return False
 
 
+def delete_egg_info():
+    egg_info = Path('./rf2settings.egg-info')
+    if egg_info.exists():
+        shutil.rmtree(egg_info, True)
+
+
 def main():
+    delete_egg_info()
+
     proc = Popen(['python', 'setup.py', 'sdist'], cwd=Path('.'))
     exitcode = proc.wait()
 
@@ -50,6 +59,7 @@ def main():
         print('Error uploading wheel!')
         return
 
+    delete_egg_info()
     print('Created and uploaded package wheel. The End.')
 
 
