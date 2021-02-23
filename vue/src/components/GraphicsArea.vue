@@ -4,6 +4,7 @@
   <GenericSettingsArea :preset="preset" :idx="idx" settings-key="video_settings"
                        :current_preset_idx="current_preset_idx"
                        :setting-disabled="settingDisabled"
+                       :show-performance="showPerformance"
                        @update-setting="updateSetting"
                        @set-busy="setBusy"
                        @make-toast="makeToast">
