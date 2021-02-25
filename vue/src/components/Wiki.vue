@@ -5,6 +5,11 @@
       rf2 Settings Widget app entry > Pin to taskbar. If you try to pin the running app, you'll pin
       a shortcut to your web browser.</p>
 
+    <h4>Report a bug</h4>
+    <p>Want to report a bug, request a feature or have a setting you're missing? Head over to GitHub and
+      <b-link target="_blank" href="https://github.com/tappi287/rf2_video_settings/issues">create an issue</b-link>.
+    </p>
+
     <h4 class="mt-4">Import</h4>
     <p>You can import preset JSON files, exported from this app, by simply dragging them into the application window!
     This also works works for rFactors player.JSON files. Simply drop it on the application and it will import all the
@@ -37,23 +42,23 @@
     <h4 class="mt-4">Credits</h4>
     <b-list-group>
       <b-list-group-item variant="dark">
-        <b-link href="https://studio397.com">Studio 397 Dev Guide</b-link>
+        <b-link target="_blank" href="https://studio397.com">Studio 397 Dev Guide</b-link>
         <span> - general resource about rFactor 2 development</span>
       </b-list-group-item>
       <b-list-group-item variant="dark">
-        <b-link href="https://github.com/ChrisKnott/Eel">Eel</b-link>
+        <b-link target="_blank" href="https://github.com/ChrisKnott/Eel">Eel</b-link>
         <span> - A little Python library for making simple Electron-like HTML/JS GUI apps</span>
       </b-list-group-item>
       <b-list-group-item variant="dark">
-        <b-link href="https://github.com/TonyWhitley/rF2_serverNotify">rF2_serverNotify</b-link>
+        <b-link target="_blank" href="https://github.com/TonyWhitley/rF2_serverNotify">rF2_serverNotify</b-link>
         <span> - starting point to read rF2 Server information</span>
       </b-list-group-item>
       <b-list-group-item variant="dark">
-        <b-link href="https://gitlab.com/grumbel/rfactortools">rfactortools</b-link>
+        <b-link target="_blank" href="https://gitlab.com/grumbel/rfactortools">rfactortools</b-link>
         <span> - interesting source of information to handle various rF specific file types.</span>
       </b-list-group-item>
       <b-list-group-item variant="dark">
-        <b-link href="https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/">
+        <b-link target="_blank" href="https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/">
           Studio 397 Screenshot Thread</b-link>
         <span> - most of the dashboard shots are taken from there, every author is credited and no images
         are distributed with this app.</span>
