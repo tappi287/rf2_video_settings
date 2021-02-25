@@ -109,6 +109,10 @@ def get_default_presets_dir() -> Path:
         return Path(get_current_modules_dir()) / 'rf2settings' / DEFAULT_PRESETS_DIR
 
 
+def get_present_mon_bin() -> Path:
+    return Path(get_current_modules_dir()) / 'bin' / 'PresentMon-1.6.0-x64.exe'
+
+
 def get_log_dir() -> str:
     log_dir = user_log_dir(SETTINGS_DIR_NAME, '')
     setting_dir = os.path.abspath(os.path.join(log_dir, '../'))
