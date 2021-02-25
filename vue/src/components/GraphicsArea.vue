@@ -44,7 +44,7 @@
                   v-b-popover.lefttop.hover="'Show performance data next to supported settings in ' +
                    'the dropdown menu. ' +
                    'G=relative GPU performance impact | C=relative CPU performance impact'">
-          <b-icon :icon="showPerformance ? 'graph-up' : 'graph-down'"></b-icon>
+          <b-icon :icon="showPerformance ? 'bar-chart-line-fill' : 'bar-chart-line'"></b-icon>
         </b-button>
       </div>
     </template>

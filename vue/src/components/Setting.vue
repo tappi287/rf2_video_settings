@@ -16,9 +16,13 @@
                       class="setting-item fixed-width-setting" :disabled="disabled">
             <b-dropdown-item v-for="s in setting.settings" :key="s.value"
                              @click="selectSetting(s)">
-              {{ s.name }}<template v-if="showPerformance && s.perf !== undefined"> {{ s.perf }}</template>
+              {{ s.name }}
               <b-icon v-if="s.desc !== undefined" icon="info-square"
                       class="ml-2" v-b-popover.hover.topright="s.desc">
+              </b-icon>
+              <b-icon v-if="showPerformance && s.perf !== undefined" icon="bar-chart"
+                      class="ml-2 text-muted"
+                      v-b-popover.hover.topright="s.perf.replace('G', 'GPU').replace('C', 'CPU')">
               </b-icon>
             </b-dropdown-item>
           </b-dropdown>
