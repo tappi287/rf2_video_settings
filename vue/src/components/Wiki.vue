@@ -12,7 +12,7 @@
 
     <h4 class="mt-4">Import</h4>
     <p>You can import preset JSON files, exported from this app, by simply dragging them into the application window!
-    This also works works for rFactors player.JSON files. Simply drop it on the application and it will import all the
+    This also works for rFactors player.JSON files. Simply drop it on the application and it will import all the
     settings available in this widget(and only those!).</p>
     <i>This is handy if you import someone else's player.JSON and want to make sure you are not overwriting all your
     other settings like your Player Name and Nickname.</i>
