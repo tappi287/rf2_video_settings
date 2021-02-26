@@ -177,6 +177,7 @@ export default {
       if (this.newPresetName === '') {
         return null
       }
+      if (this.newPresetName.startsWith('Current_Settings')) { return null }
       return isValid(this.newPresetName)
     },
     addButtonState: function () {

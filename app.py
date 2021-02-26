@@ -32,6 +32,7 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
 def start_eel():
     AppSettings.load()
     AppSettings.copy_default_presets()
+    AppSettings.delete_current_settings_presets()
 
     # This will ask for and re-run with admin rights
     # if setting needs_admin set.

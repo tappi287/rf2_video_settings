@@ -115,6 +115,18 @@ class AppSettings(JsonRepr):
         return result
 
     @staticmethod
+    def delete_current_settings_presets():
+        """ Delete 'Current_Settings__Nickname' Presets so we can handle changed Usernames """
+        for file in Path(AppSettings.user_presets_dir).glob('*.json'):
+            for prefix in (p.prefix for p in PRESET_TYPES.values()):
+                name = f'{prefix}_Current_Settings__'
+                if file.stem.startswith(name):
+                    try:
+                        file.unlink(missing_ok=True)
+                    except Exception as e:
+                        logging.error('Error deleting current settings preset: %s', e)
+
+    @staticmethod
     def delete_legacy_default_presets(dst: Path):
         """ Wipe pre 0.7.8 default Presets without prefixes """
         folder = dst.parent
