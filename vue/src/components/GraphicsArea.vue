@@ -5,6 +5,7 @@
                        :current_preset_idx="current_preset_idx"
                        :setting-disabled="settingDisabled"
                        :show-performance="showPerformance"
+                       :search="search"
                        @update-setting="updateSetting"
                        @set-busy="setBusy"
                        @make-toast="makeToast">
@@ -35,6 +36,7 @@
                        :current_preset_idx="current_preset_idx"
                        :show-performance="showPerformance"
                        :view_mode="viewMode"
+                       :search="search"
                        @update-setting="updateSetting"
                        @set-busy="setBusy"
                        @make-toast="makeToast">
@@ -55,6 +57,7 @@
                        :current_preset_idx="current_preset_idx"
                        :show_performance="showPerformance"
                        :view_mode="viewMode"
+                       :search="search"
                        @update-setting="updateSetting"
                        @set-busy="setBusy"
                        @make-toast="makeToast">
@@ -104,7 +107,7 @@ export default {
       abortResolutionUpdate: false,
     }
   },
-  props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number},
+  props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number, search: String },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)

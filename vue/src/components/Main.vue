@@ -21,7 +21,14 @@
           Server Browser
         </b-nav-item>
       </b-nav>
+
+      <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
+        <b-nav-form>
+          <b-form-input v-model="search" debounce="800" type="search" :disabled="navActive === 0"
+                        size="sm" placeholder="Search..."
+                        :class="navActive === 0 ? searchCls + 'text-muted' : searchCls + 'text-white'"/>
+        </b-nav-form>
         <b-nav-item id="wiki-nav" right :active="navActive === 5" @click="navActive=5">
           <b-icon icon="question-square-fill"></b-icon>
         </b-nav-item>
@@ -69,7 +76,7 @@
 
         <div>
           <div v-for="(gfxPreset, idx) in $refs.gfx.presets" :key="gfxPreset.name">
-            <GraphicsArea :preset="gfxPreset" :idx="idx"
+            <GraphicsArea :preset="gfxPreset" :idx="idx" :search="search"
                           :current_preset_idx="$refs.gfx.selectedPresetIdx"
                           :view_mode="$refs.gfx.viewMode"
                           @update-setting="$refs.gfx.updateSetting"
@@ -103,21 +110,21 @@
 
         <div>
           <div v-for="(conPreset, idx) in $refs.con.presets" :key="conPreset.name">
-            <GenericSettingsArea :preset="conPreset" :idx="idx"
+            <GenericSettingsArea :preset="conPreset" :idx="idx" :search="search"
                                  settings-key="freelook_settings"
                                  :current_preset_idx="$refs.con.selectedPresetIdx"
                                  :view_mode="$refs.con.viewMode"
                                  @update-setting="$refs.con.updateSetting"
                                  @set-busy="$refs.con.isBusy=$event"
                                  @make-toast="makeToast"/>
-            <GenericSettingsArea :preset="conPreset" :idx="idx"
+            <GenericSettingsArea :preset="conPreset" :idx="idx" :search="search"
                                  settings-key="gamepad_mouse_settings"
                                  :current_preset_idx="$refs.con.selectedPresetIdx"
                                  :view_mode="$refs.con.viewMode"
                                  @update-setting="$refs.con.updateSetting"
                                  @set-busy="$refs.con.isBusy=$event"
                                  @make-toast="makeToast"/>
-            <GenericSettingsArea :preset="conPreset" :idx="idx"
+            <GenericSettingsArea :preset="conPreset" :idx="idx" :search="search"
                                  settings-key="general_steering_settings"
                                  :current_preset_idx="$refs.con.selectedPresetIdx"
                                  :view_mode="$refs.con.viewMode"
@@ -152,7 +159,7 @@
 
         <div>
           <div v-for="(genPreset, idx) in $refs.gen.presets" :key="genPreset.name">
-            <GenericSettingsArea :preset="genPreset" :idx="idx"
+            <GenericSettingsArea :preset="genPreset" :idx="idx" :search="search"
                                  settings-key="game_options"
                                  :current_preset_idx="$refs.gen.selectedPresetIdx"
                                  :view_mode="$refs.gen.viewMode"
@@ -203,6 +210,8 @@ export default {
   data: function () {
     return {
       navActive: 0,
+      search: '',
+      searchCls: 'search-bar mr-sm-2 ',
       firstServerBrowserVisit: true,
       gfxReady: false,
     }
@@ -269,6 +278,19 @@ export default {
     openSetupFolder: async function () { await window.eel.open_setup_folder()() },
     runModMgr: async function () { await window.eel.run_mod_mgr()() }
   },
+  created() {
+    window.onkeydown = function(evt) {
+        let isEscape = false
+        if ("key" in evt) {
+            isEscape = (evt.key === "Escape" || evt.key === "Esc");
+        } else {
+            isEscape = (evt.keyCode === 27);
+        }
+        if (isEscape) {
+            this.search = ''
+        }
+    };
+  },
   components: {
     LaunchRfactorBtn,
     GenericSettingsArea,
@@ -292,5 +314,8 @@ export default {
 .nav-link.active {
   text-decoration: underline;
   text-decoration-skip-ink: auto;
+}
+.search-bar {
+  background: transparent; border: none;
 }
 </style>
