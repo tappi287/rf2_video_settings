@@ -56,7 +56,6 @@
 </template>
 
 <script>
-import "fontsource-ubuntu"
 import {version} from '../package.json';
 import Main from "./components/Main.vue";
 import Updater from "@/components/Updater";
