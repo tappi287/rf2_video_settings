@@ -1,28 +1,42 @@
 <template>
   <div v-cloak id="wiki" class="position-relative mb-5 text-left">
-    <h4>Pin to taskbar</h4>
+    <div class="spacer rounded text-center">
+      <h4 class="text-dark">About</h4>
+    </div>
+
+    <p class="mt-2">
+      <a href="https://www.github.com/tappi287/rf2_video_settings" target="_blank">rf2 Settings Widget v{{ ver }}</a>
+      published under MIT license &#169; 2020-2021
+      <a href="https://sim-site.netlify.app" target="_blank">Stefan Tapper</a>
+    </p>
+
+    <div class="mt-5 spacer rounded text-center">
+      <h4 class="text-dark">Wiki</h4>
+    </div>
+
+    <h4 class="mt-1">Pin to taskbar</h4>
     <p>If you want to pin this app to your taskbar: type rf2 into your Windows start menu and right click the
       rf2 Settings Widget app entry > Pin to taskbar. If you try to pin the running app, you'll pin
       a shortcut to your web browser.</p>
 
-    <h4>Report a bug</h4>
+    <h4 class="mt-5">Report a bug</h4>
     <p>Want to report a bug, request a feature or have a setting you're missing? Head over to GitHub and
       <b-link target="_blank" href="https://github.com/tappi287/rf2_video_settings/issues">create an issue</b-link>.
     </p>
 
-    <h4 class="mt-4">Import</h4>
+    <h4 class="mt-5">Import</h4>
     <p>You can import preset JSON files, exported from this app, by simply dragging them into the application window!
     This also works for rFactors player.JSON files. Simply drop it on the application and it will import all the
     settings available in this widget(and only those!).</p>
     <i>This is handy if you import someone else's player.JSON and want to make sure you are not overwriting all your
     other settings like your Player Name and Nickname.</i>
 
-    <h4 class="mt-4">Server Browser</h4>
+    <h4 class="mt-5">Server Browser</h4>
     <p>The Server Browser uses Steam's API to query server information. The number of connected players and
     names of the connected players does most likely not reflect the actual number of players.
     The information should be similar to what you see when launching Steam>View>Server</p>
 
-    <h4 class="mt-4">rF2 Notes</h4>
+    <h4 class="mt-5">rF2 Notes</h4>
     <p>Start rF2 while a dedicated server is running on the same machine: Change the WebUI Port in player.json
     to something different than the default value. Use this app to start rF2 or create a shortcut to rF2.exe
     and set the StartIn parameter to the rFactor 2 root directory.</p>
@@ -39,7 +53,7 @@
     is most likely out of date. Take a look at these Windows registry keys:</span>
     <pre class="text-muted">HKEY_CURRENT_USER\\SOFTWARE\\Image Space Incorporated\\rFactor2 Mod Manager\\--guid--\\Packages Dir</pre>
 
-    <h4 class="mt-4">Credits</h4>
+    <h4 class="mt-5">Credits</h4>
     <b-list-group>
       <b-list-group-item variant="dark">
         <b-link target="_blank" href="https://studio397.com">Studio 397 Dev Guide</b-link>
@@ -69,11 +83,13 @@
 
 <script>
 
+import {version} from "../../package.json";
+
 export default {
   name: "Wiki",
   data: function () {
     return {
-      data: null
+      ver: version,
     }
   },
   methods: {
@@ -87,7 +103,8 @@ export default {
 </script>
 
 <style scoped>
-
+h1, h2, h3, h4, h5 { font-family: Inter, "Segoe UI", system-ui, sans-serif; }
+.spacer { width: 100%; height: 1.75rem; background: #efefef; }
 </style>
 
 <style>

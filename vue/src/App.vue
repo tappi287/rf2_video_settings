@@ -44,18 +44,12 @@
     </template>
     <!-- Footer -->
     <div class="mt-3 main-footer small font-weight-lighter">
-      <span>
-        <a href="https://www.github.com/tappi287/rf2_video_settings" target="_blank">rf2 Settings Widget v{{ ver }}</a>
-        published under MIT license &#169; 2020-2021
-        <a href="https://sim-site.netlify.app" target="_blank">Stefan Tapper</a>
-      </span>
       <Updater></Updater>
     </div>
   </div>
 </template>
 
 <script>
-import {version} from '../package.json';
 import Main from "./components/Main.vue";
 import Updater from "@/components/Updater";
 import {createPopperLite as createPopper, flip, preventOverflow} from "@popperjs/core";
@@ -66,7 +60,6 @@ export default {
   data: function () {
     return {
       dragActive: false,
-      ver: version,
       error: '',
     }
   },
