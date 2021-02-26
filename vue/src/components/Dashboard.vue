@@ -84,7 +84,7 @@ export default {
   data: function () {
     return {
       userName: 'Driver',
-      cls: ' mr-2 ml-2 preset-button',
+      cls: ' mb-3 mr-2 ml-2 preset-button',
       serverBrowserReady: false,
       gfxPresetsReady: false,
       vfOptions: { autoplay: true, delay: 12000 },
