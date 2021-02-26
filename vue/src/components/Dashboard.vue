@@ -14,7 +14,7 @@
 
       <template v-slot:caption>
         <flux-caption v-slot="captionProps" class="img-caption">
-          <b-link :href="captionProps.caption.url" target="_blank" class="text-white">
+          <b-link :href="captionProps.caption.url" target="_blank" class="text-white int-font title">
             {{ captionProps.caption.text }}
           </b-link>
         </flux-caption>
@@ -25,11 +25,11 @@
     <!-- Display over image slider -->
     <div class="p-3" id="top-menu">
       <b-icon icon="house-fill" class="mr-1 float-left no-pointer"></b-icon>
-      <h6 class="title mb-0">Hello {{ userName }}</h6>
+      <h6 class="title int-font mb-0">Hello {{ userName }}</h6>
 
       <!-- Shortcuts Play with Preset -->
       <div v-if="gfxPresetsReady" class="text-center mb-5" style="position: relative; top: -.5rem;">
-        <h6 class="title">Graphics Presets</h6>
+        <h6 class="title int-font">Graphics Presets</h6>
         <template v-for="(preset, idx) in gfxHandler.presets.slice(1)">
           <b-button :key="idx"
                     v-b-popover.bottom.hover="preset.desc"
@@ -131,7 +131,6 @@ export default {
         const imgHeight = imgDiv.offsetHeight
         const menuHeight = topMenu.offsetHeight
         document.getElementById('spacer').style.height = String(imgHeight - menuHeight) + 'px'
-        console.log('Calculated size:', imgHeight - menuHeight)
       })
     },
     equalPresetButtonWidth() {
@@ -169,7 +168,11 @@ export default {
 </script>
 
 <style scoped>
-.title { font-weight: 300; text-shadow: 1px 1px 2px black; }
+.int-font { font-family: Inter, "Segoe UI", system-ui, sans-serif; }
+.title {
+  font-weight: 200;
+  text-shadow: 1px 1px 2px black;
+}
 
 .fade-enter-active, .fade-leave-active { transition: opacity 3s, height 3s; }
 
