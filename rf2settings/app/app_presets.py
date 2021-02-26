@@ -44,7 +44,6 @@ def get_presets(preset_type: int):
                                                      current_preset, selected_preset_name)
     if selected_preset:
         logging.info('Selected Preset %s for type %s', selected_preset.name, selected_preset.__class__.__name__)
-    presets = [current_preset] + presets
 
     # - Check if the currently selected preset differs
     #   from the actual rFactor 2 settings on disk.
@@ -58,6 +57,7 @@ def get_presets(preset_type: int):
         AppSettings.save()
 
     presets = sorted(presets, key=lambda k: k.name)
+    presets = [current_preset] + presets
 
     return json.dumps({'result': True, 'presets': [p.to_js() for p in presets],
                        'selected_preset': selected_preset_name,

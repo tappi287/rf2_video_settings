@@ -5,6 +5,24 @@
 <script>
 import {getEelJsonObject, sleep} from "@/main";
 
+function sortPresets (receivedPresets) {
+  // First received preset from API is "Current Preset"
+  // Sort the rest by name
+  let sortedPresets = receivedPresets.slice(1)
+  sortedPresets.sort((a, b) => {
+      let fa = a.name.toLowerCase(),
+          fb = b.name.toLowerCase()
+      if (fa < fb) { return -1 }
+      if (fa > fb) { return 1 }
+      return 0
+  })
+
+  // Insert "Current Preset" at index 0
+  sortedPresets.splice(0, 0, receivedPresets[0])
+
+  return sortedPresets
+}
+
 export default {
   name: "PresetHandler",
   data: function () {
@@ -26,6 +44,10 @@ export default {
     getPresetsDirLocation: async function () {
       this.userPresetsDir = await window.eel.get_user_presets_dir_web()()
     },
+    _addPreset: function (newPreset) {
+      this.presets.push(newPreset)
+      this.presets = sortPresets(this.presets)
+    },
     getPresets: async function () {
       this.isBusy = true
       const r = await getEelJsonObject(window.eel.get_presets(this.presetType)())
@@ -36,7 +58,7 @@ export default {
       }
       this.presets = []
 
-      this.presets = r.presets
+      this.presets = sortPresets(r.presets)
       let appSelectedPresetIdx = -1
       if (r.preset_changed !== null) {
         this.previousPresetName = r.preset_changed
@@ -94,7 +116,7 @@ export default {
 
       let r = await getEelJsonObject(window.eel.import_player_json(importData, this.presetType)())
       if (r !== undefined && r.result) {
-        this.presets.push(r.preset)
+        this._addPreset(r.preset)
         this.makeToast(r.msg, 'success', 'Player.JSON Import')
       } else {
         this.makeToast('Data could not be imported ' + r.msg, 'danger', 'Error')
@@ -120,7 +142,7 @@ export default {
 
       let r = await getEelJsonObject(window.eel.import_preset(importPreset)())
       if (r !== undefined && r.result) {
-        this.presets.push(r.preset)
+        this._addPreset(r.preset)
         this.makeToast('Preset ' + importPreset.name + ' imported.')
       } else {
         this.makeToast('Preset ' + importPreset.name + ' could not be imported.',
@@ -154,7 +176,7 @@ export default {
 
       preset['name'] = newPresetName
 
-      this.presets.push(preset)
+      this._addPreset(preset)
       console.log('Created preset:', preset)
 
       await this.selectPreset(preset, false)
