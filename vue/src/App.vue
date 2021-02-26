@@ -42,14 +42,13 @@
         </div>
       </b-container>
     </template>
-
     <!-- Footer -->
     <div class="mt-3 main-footer small font-weight-lighter">
-      <span>rf2 Settings Widget v{{ ver }} published under MIT license &#169; 2020-2021
+      <span>
+        <a href="https://www.github.com/tappi287/rf2_video_settings" target="_blank">rf2 Settings Widget v{{ ver }}</a>
+        published under MIT license &#169; 2020-2021
         <a href="https://sim-site.netlify.app" target="_blank">Stefan Tapper</a>
       </span>
-      <span> - </span>
-      <a href="https://www.github.com/tappi287/rf2_video_settings" target="_blank">Source @ Github</a>
       <Updater></Updater>
     </div>
   </div>

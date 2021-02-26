@@ -36,6 +36,21 @@ def re_run_admin():
 
 
 @eel.expose
+def restore_backup():
+    rf = RfactorPlayer()
+
+    if not rf.is_valid:
+        return json.dumps({'result': False, 'msg': rf.error})
+
+    if AppSettings.restore_backup(rf):
+        logging.info('Original settings restored!')
+        return json.dumps({'result': True, 'msg': 'BackUp files restored!'})
+
+    return json.dumps({'result': False, 'msg': 'Could not restore all back up files! Make sure you '
+                                               'did not deleted any *.original files!'})
+
+
+@eel.expose
 def run_rfactor(server_info: Optional[dict] = None, method: Optional[int] = 0):
     logging.info('UI requested rF2 run with method: %s', method)
     if server_info and server_info.get('password_remember'):

@@ -87,6 +87,41 @@ class AppSettings(JsonRepr):
         return result
 
     @staticmethod
+    def restore_backup(rf: RfactorPlayer):
+        result = False
+        files = (rf.player_file, rf.controller_file, rf.ini_file)
+        has_permission_error = False
+
+        for org in files:
+            if not org.is_file():
+                continue
+
+            bak = org.with_suffix('.original')
+
+            if not bak.exists():
+                logging.fatal('Could not locate BackUp file: %s', bak.as_posix())
+                continue
+
+            try:
+                # Delete current file
+                org.unlink()
+                # Create original file
+                copyfile(bak, org)
+                result = True
+            except Exception as e:
+                if type(e) is PermissionError:
+                    has_permission_error = True
+                logging.fatal('Could not restore file: %s %s', org.as_posix(), e)
+                result = False
+
+        if has_permission_error:
+            logging.error('Accessing rf2 files requires Admin rights!')
+            AppSettings.needs_admin = True
+
+        AppSettings.save()
+        return result
+
+    @staticmethod
     def iterate_default_presets() -> Iterator[Path]:
         for file in get_default_presets_dir().glob('*.json'):
             yield file

@@ -27,7 +27,7 @@
         <b-nav-form>
           <b-form-input v-model="search" debounce="800" type="search" :disabled="navActive === 0"
                         size="sm" placeholder="Search..."
-                        :class="navActive === 0 ? searchCls + 'text-muted' : searchCls + 'text-white'"/>
+                        :class="navActive === 0 ? searchCls + 'search-off' : searchCls + 'text-white'"/>
         </b-nav-form>
         <b-nav-item id="wiki-nav" right :active="navActive === 5" @click="navActive=5">
           <b-icon icon="question-square-fill"></b-icon>
@@ -181,17 +181,44 @@
     </template>
 
     <!-- rFactor Actions -->
-    <div class="mt-3">
-      <LaunchRfactorBtn @make-toast="makeToast" @launch="stopSlideShow"></LaunchRfactorBtn>
-      <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Open rF2 vehicle setups folder'"
-                @click="openSetupFolder">
-        <b-icon icon="folder"></b-icon>
-      </b-button>
-      <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Run rF2 ModMgr.exe'"
-                @click="runModMgr">
-        <b-icon icon="archive-fill"></b-icon>
-      </b-button>
-    </div>
+    <b-container fluid class="mt-3 p-0">
+      <b-row>
+        <b-col cols="8" class="text-left">
+          <LaunchRfactorBtn @make-toast="makeToast" @launch="stopSlideShow"></LaunchRfactorBtn>
+        </b-col>
+        <b-col cols="4" class="text-right">
+          <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Open rF2 vehicle setups folder'"
+                    @click="openSetupFolder">
+            <b-icon icon="folder"></b-icon>
+          </b-button>
+          <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Run rF2 ModMgr.exe'"
+                    @click="runModMgr">
+            <b-icon icon="archive-fill"></b-icon>
+          </b-button>
+          <b-button size="sm" class="ml-2" variant="secondary" id="restore-btn"
+                    v-b-popover.auto.hover="'Restore your original settings'">
+              <b-icon icon="arrow-counterclockwise" class="text-white"></b-icon>
+          </b-button>
+        </b-col>
+      </b-row>
+    </b-container>
+
+    <!-- Restore Popover -->
+    <b-popover target="restore-btn" triggers="click">
+      <p>Do you really want to restore all of your original settings?</p>
+      <span class="text-muted">This will restore your original files when you first launched this app.
+        player.JSON, Controller.JSON, Config_DX11.ini</span>
+      <div class="text-right mt-3">
+        <b-button @click="restoreSettings" size="sm" variant="warning"
+                  aria-label="Restore" class="mr-2">
+          Restore
+        </b-button>
+        <b-button @click="$root.$emit('bv::hide::popover', 'restore-btn')"
+                  size="sm" aria-label="Close">
+          Close
+        </b-button>
+      </div>
+    </b-popover>
   </div>
 </template>
 
@@ -204,6 +231,7 @@ import PresetHandler from "@/components/PresetHandler";
 import GenericSettingsArea from "@/components/GenericSettingsArea";
 import Wiki from "@/components/Wiki";
 import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
+import {getEelJsonObject} from "@/main";
 
 export default {
   name: 'Main',
@@ -276,20 +304,18 @@ export default {
       if (this.$refs.dash !== undefined) { this.$refs.dash.$refs.slider.stop() }
     },
     openSetupFolder: async function () { await window.eel.open_setup_folder()() },
-    runModMgr: async function () { await window.eel.run_mod_mgr()() }
-  },
-  created() {
-    window.onkeydown = function(evt) {
-        let isEscape = false
-        if ("key" in evt) {
-            isEscape = (evt.key === "Escape" || evt.key === "Esc");
-        } else {
-            isEscape = (evt.keyCode === 27);
-        }
-        if (isEscape) {
-            this.search = ''
-        }
-    };
+    runModMgr: async function () { await window.eel.run_mod_mgr()() },
+    restoreSettings: async function () {
+      const r = await getEelJsonObject(window.eel.restore_backup()())
+      if (r.result) {
+        this.makeToast(r.msg, 'warning', 'Re-Store')
+        await this.$refs.gfx.getPresets()
+        await this.$refs.con.getPresets()
+        await this.$refs.gen.getPresets()
+      }
+      if (!r.result) { this.makeToast(r.msg, 'danger', 'Re-Store Original Settings') }
+      this.$root.$emit('bv::hide::popover', 'restore-btn')
+    },
   },
   components: {
     LaunchRfactorBtn,
@@ -318,4 +344,5 @@ export default {
 .search-bar {
   background: transparent; border: none;
 }
+.search-off { opacity: 0.3; }
 </style>
