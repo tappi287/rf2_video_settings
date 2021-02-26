@@ -194,8 +194,7 @@
               </b-button>
             </template>
             <template v-else>
-              <LaunchRfactorBtn
-                  @make-toast="makeToast" @launch="$emit($event)" :server="server.item" text="Join Server"/>
+              <LaunchRfactorBtn @make-toast="makeToast" @launch="joinServerLaunched" :server="server.item" text="Join Server"/>
             </template>
           </div>
         </b-card>
@@ -332,6 +331,7 @@ export default {
     }
   },
   props: { onlyFavourites: Boolean },
+  emits: ['launch', 'make-toast', 'server-browser-ready'],
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       console.log('Making toast', message, category, title, append, delay)
@@ -504,6 +504,7 @@ export default {
         this.makeToast('Error saving Server Browser settings', 'warning')
       }
     },
+    joinServerLaunched: function () { this.$emit('launch') },
     joinPswdProtectedRfactor: function (server) {
       this.selectedServer = server
       this.selectedServer.password_remember = this.storePwd
