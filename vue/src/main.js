@@ -1,9 +1,12 @@
 import Vue from 'vue'
 import App from './App.vue'
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
-import "fontsource-ubuntu/500.css"
-import "fontsource-ubuntu/400.css"
-import "fontsource-ubuntu/300.css"
+import "@fontsource/ubuntu/500.css"
+import "@fontsource/ubuntu/400.css"
+import "@fontsource/ubuntu/300.css"
+import "@fontsource/inter/100.css"
+import "@fontsource/inter/200.css"
+import "@fontsource/inter/300.css"
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -58,7 +61,13 @@ export const userScreenShots =
 ['https://i.imgur.com/hQV5bIx.jpg', 'TheNexpresso',
  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-258#post-968996'],
 ['https://forum.studio-397.com/index.php?attachments/jsp3-jpg.19130/', 'sg333',
- 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-258#post-969316']
+ 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-258#post-969316'],
+['https://forum.studio-397.com/index.php?attachments/2021-02-18-17-18_01-png.37087/', 'MiguelVallejo',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-360#post-1060896'],
+['https://forum.studio-397.com/index.php?attachments/2021-01-29-19-44-png.36723/', 'MiguelVallejo',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-359#post-1058550'],
+['https://forum.studio-397.com/index.php?attachments/2021-02-07-17-56-png.36950/', 'MiguelVallejo',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-359#post-1059819']
     ]
 
 new Vue({
