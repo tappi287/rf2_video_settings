@@ -74,6 +74,16 @@ export function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+export function getMaxWidth (elements) {
+  let maxWidth = 0
+  for (let i in elements) {
+    if (elements[i].clientWidth !== undefined) {
+      maxWidth = Math.max(maxWidth, parseInt(elements[i].clientWidth))
+    }
+  }
+  return maxWidth
+}
+
 export function chooseIndex(choices) {
   return Math.floor(Math.random() * choices.length);
 }

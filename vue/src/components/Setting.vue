@@ -43,6 +43,8 @@
 
 <script>
 
+import {getMaxWidth} from "@/main";
+
 export default {
   name: 'Setting',
   data: function () {
@@ -92,21 +94,12 @@ export default {
         func(this, setting)
       }
     },
-    getMaxWidth: function (elements) {
-      let maxWidth = 0
-      for (let i in elements) {
-        if (elements[i].clientWidth !== undefined) {
-          maxWidth = Math.max(maxWidth, parseInt(elements[i].clientWidth))
-        }
-      }
-      return maxWidth
-    },
     setFixedWidth: function () {
       // Iterate all elements of this setting group_id and set width to widest element found
       const nameElem = document.querySelectorAll('#' + this.groupId + ' .fixed-width-name')
       const settElem = document.querySelectorAll('#' + this.groupId + ' .fixed-width-setting')
 
-      let nameMaxWidth = this.getMaxWidth(nameElem); let settMaxWidth = this.getMaxWidth(settElem)
+      let nameMaxWidth = getMaxWidth(nameElem); let settMaxWidth = getMaxWidth(settElem)
 
       let e = document.getElementById(this.nameId)
       if (e !== null) { e.style.width = String(nameMaxWidth) + 'px' }

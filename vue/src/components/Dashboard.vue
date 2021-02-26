@@ -33,7 +33,7 @@
         <template v-for="(preset, idx) in gfxHandler.presets.slice(1)">
           <b-button :key="idx"
                     v-b-popover.bottom.hover="preset.desc"
-                    :class="gfxHandler.selectedPresetIdx === idx+1 ? 'active mr-2 ml-2' : 'inactive mr-2 ml-2'"
+                    :class="gfxHandler.selectedPresetIdx === idx+1 ? 'active' + cls : 'inactive' + cls"
                     :variant="gfxHandler.selectedPresetIdx === idx+1 ? 'rf-orange' : 'rf-blue'"
                     @click="gfxHandler.selectPreset(preset, true)">
             {{ preset.name }}
@@ -57,7 +57,7 @@
 import ServerBrowser from "@/components/ServerBrowser"
 import PresetHandler from "@/components/PresetHandler";
 import { VueFlux, FluxCaption, FluxPreloader } from 'vue-flux';
-import {getEelJsonObject, chooseIndex, userScreenShots} from "@/main"
+import {getEelJsonObject, chooseIndex, userScreenShots, getMaxWidth} from "@/main"
 import rfWPoster from "@/assets/rfW_Poster.webp"
 
 function prepareScreenshots () {
@@ -84,6 +84,7 @@ export default {
   data: function () {
     return {
       userName: 'Driver',
+      cls: ' mr-2 ml-2 preset-button',
       serverBrowserReady: false,
       gfxPresetsReady: false,
       vfOptions: { autoplay: true, delay: 12000 },
@@ -133,6 +134,11 @@ export default {
         console.log('Calculated size:', imgHeight - menuHeight)
       })
     },
+    equalPresetButtonWidth() {
+      const elements = document.querySelectorAll('.preset-button')
+      const maxWidth = getMaxWidth(elements)
+      elements.forEach(e => { e.style.width = String(maxWidth) + 'px' })
+    },
   },
   activated() {
     this.resize()
@@ -141,12 +147,17 @@ export default {
   updated() {
     this.updateHeight()
   },
+  mounted() {
+    // Access after rendering finished
+    setTimeout(() => {
+      this.equalPresetButtonWidth()
+    }, 0)
+  },
   created() {
     const r = prepareScreenshots()
     this.vfImages = r.images; this.vfCaptions = r.captions
     this.getDriver()
     window.onresize = this.debounceResize
-    console.log('Dash poster: ', this.posterImg)
   },
   components: {
     ServerBrowser,
