@@ -89,10 +89,15 @@
       </b-input-group>
 
       <!-- editable Preset Description -->
-      <b-form-textarea id="preset-textarea" v-model="presetDesc" class="mt-2 bg-dark text-white"
-                       placeholder="Enter a description for your preset ..." debounce="6000"
-                       rows="2" spellcheck="false" style="border: none;">
-      </b-form-textarea>
+      <div class="desc-container">
+        <b-form-textarea v-model="presetDesc" class="mt-2 bg-dark text-white desc-textarea"
+                         placeholder="Enter a description or notes for your preset ..." debounce="6000"
+                         rows="2" spellcheck="false" style="border: none;">
+        </b-form-textarea>
+        <div class="desc-icon">
+          <b-icon class="text-muted" icon="pencil"></b-icon>
+        </div>
+      </div>
 
       <!-- Preset deviates from current rF2 settings message -->
       <b-alert :show="previousPresetName !== ''" dismissible variant="warning" class="mt-3">
@@ -200,5 +205,7 @@ export default {
 </script>
 
 <style scoped>
-
+.desc-container { position: relative; }
+.desc-textarea { position: relative; }
+.desc-icon { position: absolute; z-index: 99; right: .75rem; top: .5rem; font-size: .75rem }
 </style>

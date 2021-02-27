@@ -175,6 +175,7 @@ export default {
       })
 
       preset['name'] = newPresetName
+      preset['desc'] = ''
 
       this._addPreset(preset)
       console.log('Created preset:', preset)
