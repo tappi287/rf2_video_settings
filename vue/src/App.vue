@@ -109,6 +109,7 @@ export default {
     dropZone.addEventListener('dragover', this.handleDragOver, false)
     dropZone.addEventListener('dragleave', this.handleDragLeave, false)
     dropZone.addEventListener('drop', this.handleFileDrop, false)
+    window.addEventListener('beforeunload', this.requestClose)
   }
 }
 
