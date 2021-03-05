@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import os.path
@@ -7,25 +8,10 @@ from pathlib import Path, WindowsPath
 from typing import Tuple, Union
 
 try:
-    from pygame import joystick
-    py_game_avail = 1
+    import pygame
+    pygame_avail = 1
 except ImportError:
-    py_game_avail = 0
-
-
-def print_controllers():
-    if not py_game_avail:
-        return
-
-    joystick.init()
-
-    if joystick.get_init():
-        for j_id in range(joystick.get_count()):
-            j = joystick.Joystick(j_id)
-            logging.info('Found Game Controller: %s', j.get_name())
-            j.quit()
-
-        joystick.quit()
+    pygame_avail = 0
 
 
 def create_file_safe_name(filename: str) -> str:
@@ -154,3 +140,23 @@ def subprocess_args(include_stdout=True):
                 'startupinfo': si,
                 'env': env})
     return ret
+
+
+def _create_js_pygame_event_dict(joy_dict: dict, joy_event):
+    """ Create a JS friendly dictionary from a pygame joystick event """
+    name, guid = 'Keyboard', 'Keyboard'
+    button, hat, value = None, None, None
+    j = joy_dict.get(joy_event.instance_id)
+
+    if joy_event.type in (pygame.JOYBUTTONDOWN, pygame.JOYBUTTONUP, pygame.JOYHATMOTION, pygame.JOYAXISMOTION):
+        if j:
+            name, guid = j.get_name(), j.get_guid()
+        else:
+            name, guid = 'Unknown', '-1'
+    if joy_event.type in (pygame.JOYBUTTONUP, pygame.JOYBUTTONDOWN):
+        button = joy_event.button
+    if joy_event.type == pygame.JOYHATMOTION:
+        value, hat = joy_event.value, joy_event.hat
+
+    return json.dumps({'name': name, 'guid': guid, 'button': button,
+                       'hat': hat, 'value': value, 'type': joy_event.type}, ensure_ascii=False)

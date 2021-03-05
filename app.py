@@ -7,13 +7,13 @@ import eel
 
 from rf2settings.app_settings import AppSettings
 from rf2settings.runasadmin import run_as_admin
-from rf2settings.utils import print_controllers
 
 from rf2settings.app.app_dashboard import expose_dashboard_methods
-from rf2settings.app.app_main import expose_main_methods
+from rf2settings.app.app_main import expose_main_methods, CLOSE_EVENT
 from rf2settings.app.app_graphics import expose_graphics_methods
 from rf2settings.app.app_multiplayer import expose_multiplayer_methods
 from rf2settings.app.app_presets import expose_preset_methods
+from rf2settings.gamecontroller import controller_greenlet, controller_event_loop
 
 # -- Make sure eel methods are exposed at start-up
 expose_main_methods()
@@ -46,31 +46,34 @@ def start_eel():
     if sys.platform == "win32":
         import ctypes
         ctypes.windll.kernel32.SetDllDirectoryA(None)
-        print_controllers()
     """
         //
     """
-
+    page = 'index.html'
     host = 'localhost'
     port = 8123
     eel.init('web')
-    page = 'index.html'
 
     # TODO: fetch OSError port in use
     try:
-        eel.start(page, host=host, port=port)
+        eel.start(page, host=host, port=port, block=False)
     except EnvironmentError:
         # If Chrome isn't found, fallback to Microsoft Edge on Win10 or greater
         if sys.platform in ['win32', 'win64'] and int(platform.release()) >= 10:
-            eel.start(page, mode='edge', host=host, port=port)
+            eel.start(page, mode='edge', host=host, port=port, block=False)
         # Fallback to opening a regular browser window
         else:
             eel.start(page, mode=None, app_mode=False, host=host, port=port, block=False)
             # Open system default web browser
             webbrowser.open_new(f'http://{host}:{port}')
-            # Run until window/tab closed
-            while True:
-                eel.sleep(10.0)
+
+    # -- Game Controller Greenlet
+    eel.spawn(controller_greenlet)
+
+    # -- Run until window/tab closed
+    while not CLOSE_EVENT.is_set():
+        # Game controller event loop
+        controller_event_loop()
 
 
 if __name__ == '__main__':

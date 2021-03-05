@@ -5,6 +5,7 @@ from subprocess import Popen
 from typing import Optional
 
 import eel
+import gevent.event
 
 from rf2settings.app_settings import AppSettings
 from rf2settings.globals import RFACTOR_SETUPS, RFACTOR_MODMGR
@@ -12,8 +13,12 @@ from rf2settings.rfactor import RfactorPlayer
 from rf2settings.runasadmin import run_as_admin
 
 
+CLOSE_EVENT = gevent.event.Event()
+
+
 def request_close():
     logging.info('Received close request.')
+    CLOSE_EVENT.set()
     eel.closeApp()(close_js_result)
 
 

@@ -16,8 +16,11 @@ eel = {version = "==0.14.1", index = "piwigo"}  # See fork https://github.com/ta
 pyinstaller = "*"
 appdirs = "*"
 # requests = "*"
+gevent = ">=21.1.2"
 pygame = "==2.0.1"
 python-a2s = "*"
+# for rf2 shared mem
+psutil = "*"
 
 [requires]
 python_version = "3.9"

@@ -17,7 +17,10 @@
         <b-nav-item :active="navActive === 3" @click="navActive=3">
           Settings
         </b-nav-item>
-        <b-nav-item :active="navActive === 4" @click="toggleServerBrowser">
+        <b-nav-item :active="navActive === 4" @click="navActive=4">
+          Headlights
+        </b-nav-item>
+        <b-nav-item :active="navActive === 5" @click="toggleServerBrowser">
           Server Browser
         </b-nav-item>
       </b-nav>
@@ -29,7 +32,7 @@
                         size="sm" placeholder="Search..."
                         :class="navActive === 0 ? searchCls + 'search-off' : searchCls + 'text-white'"/>
         </b-nav-form>
-        <b-nav-item id="wiki-nav" right :active="navActive === 5" @click="navActive=5">
+        <b-nav-item id="wiki-nav" right :active="navActive === 6" @click="navActive=6">
           <b-icon icon="question-square-fill"></b-icon>
         </b-nav-item>
       </b-navbar-nav>
@@ -171,12 +174,15 @@
       </b-overlay>
     </template>
 
+    <!-- Headlights -->
+    <Headlights ref="headlights" v-if="navActive === 4"></Headlights>
+
     <!-- Server Browser -->
-    <ServerBrowser ref="serverBrowser" v-if="navActive === 4" @launch="stopSlideShow"
+    <ServerBrowser ref="serverBrowser" v-if="navActive === 5" @launch="stopSlideShow"
                    @make-toast="makeToast"></ServerBrowser>
 
     <!-- Wiki -->
-    <template  v-if="navActive === 5">
+    <template  v-if="navActive === 6">
       <Wiki></Wiki>
     </template>
 
@@ -232,6 +238,7 @@ import GenericSettingsArea from "@/components/GenericSettingsArea";
 import Wiki from "@/components/Wiki";
 import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 import {getEelJsonObject} from "@/main";
+import Headlights from "@/components/Headlights";
 
 export default {
   name: 'Main',
@@ -293,7 +300,7 @@ export default {
     },
     setError: async function (error) { this.$emit('error', error) },
     toggleServerBrowser() {
-      this.navActive = 4
+      this.navActive = 5
       // Refresh full server list on first visit
       this.$nextTick(() => {
         if (this.firstServerBrowserVisit) { this.$refs.serverBrowser.refreshServerList(true) }
@@ -318,6 +325,7 @@ export default {
     },
   },
   components: {
+    Headlights,
     LaunchRfactorBtn,
     GenericSettingsArea,
     Dashboard,
