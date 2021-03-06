@@ -274,7 +274,7 @@
                   'platform', 'bot_count', 'player_count', 'protocol', 'server_name', 'server_type', 'steam_id',
                   'ip', 'port', 'players')
  */
-import {getEelJsonObject} from "@/main";
+import {getEelJsonObject, sleep} from "@/main";
 import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 
 let progress = 0
@@ -330,7 +330,7 @@ export default {
       onlyFav: false
     }
   },
-  props: { onlyFavourites: Boolean },
+  props: { onlyFavourites: Boolean, delay: Number },
   emits: ['launch', 'make-toast', 'server-browser-ready'],
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
@@ -516,6 +516,7 @@ export default {
     },
     asyncCreate: async function () {
       this.isBusy = true
+      if (this.delay !== undefined) { await sleep(this.delay) }
       await this.getRfVersion()
       await this.loadSettings()
       await this.refreshServerList()

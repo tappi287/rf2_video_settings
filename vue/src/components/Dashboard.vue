@@ -47,7 +47,7 @@
 
     <!-- Server Favourites -->
     <transition name="fade">
-      <ServerBrowser ref="serverBrowser" only-favourites class="mt-3"
+      <ServerBrowser ref="serverBrowser" only-favourites class="mt-3" :delay="1500"
                      @server-browser-ready="resize" @make-toast="makeToast" @launch="$refs.slider.stop()"/>
     </transition>
   </div>
