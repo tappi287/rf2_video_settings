@@ -48,7 +48,8 @@
     <!-- Server Favourites -->
     <transition name="fade">
       <ServerBrowser ref="serverBrowser" only-favourites class="mt-3" :delay="1500"
-                     @server-browser-ready="resize" @make-toast="makeToast" @launch="$refs.slider.stop()"/>
+                     @server-browser-ready="resize" @make-toast="makeToast" @launch="$refs.slider.stop()"
+                     @set-busy="setBusy"/>
     </transition>
   </div>
 </template>
@@ -101,6 +102,7 @@ export default {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
     },
+    setBusy: function (busy) {this.$emit('set-busy', busy) },
     getDriver: async function () {
       let r = await getEelJsonObject(window.eel.get_rf_driver()())
       if (r === undefined || !r.result) {
@@ -153,9 +155,11 @@ export default {
     }, 0)
   },
   created() {
+    this.setBusy(true)
     const r = prepareScreenshots()
     this.vfImages = r.images; this.vfCaptions = r.captions
     this.getDriver()
+    this.setBusy(false)
     window.onresize = this.debounceResize
   },
   components: {

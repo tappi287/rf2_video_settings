@@ -1,5 +1,5 @@
 <template>
-  <div id="main" v-cloak>
+  <div id="main" class="position-relative" v-cloak>
     <b-navbar class="text-left pl-0 pr-0" type="dark">
       <b-navbar-brand @click="navActive=0">
         <b-img width="32px" src="@/assets/app_icon.webp"></b-img>
@@ -40,20 +40,20 @@
 
     <!-- Graphics Preset Handler -->
     <PresetHandler ref="gfx" @make-toast="makeToast" @error="setError" id-ref="gfx"
-                   :preset-type="0" @presets-ready="setDashGfxHandler" />
+                   :preset-type="0" @presets-ready="setDashGfxHandler" @set-busy="setBusy" />
 
     <!-- Controls Settings Handler -->
     <PresetHandler ref="con" @make-toast="makeToast" @error="setError" id-ref="con"
-                   :preset-type="2" />
+                   :preset-type="2" @set-busy="setBusy" />
 
     <!-- Game Settings Handler -->
     <PresetHandler ref="gen" @make-toast="makeToast" @error="setError" id-ref="gen"
-                   :preset-type="1" />
+                   :preset-type="1" @set-busy="setBusy" />
 
     <!-- Dashboard -->
     <keep-alive>
       <Dashboard ref="dash" v-if="navActive === 0 && gfxReady" :gfx-handler="$refs.gfx"
-                 @make-toast="makeToast" @error="setError"></Dashboard>
+                 @make-toast="makeToast" @error="setError" @set-busy="setBusy"></Dashboard>
     </keep-alive>
 
     <!-- Graphic Settings-->
@@ -64,7 +64,6 @@
                   :previous-preset-name="$refs.gfx.previousPresetName"
                   :selected-preset-idx="$refs.gfx.selectedPresetIdx"
                   :preset-dir="$refs.gfx.userPresetsDir"
-                  :is-busy="$refs.gfx.isBusy"
                   @save-preset="$refs.gfx.savePreset"
                   @refresh="$refs.gfx.getPresets"
                   @update-presets-dir="$refs.gfx.setPresetsDir"
@@ -83,7 +82,7 @@
                           :current_preset_idx="$refs.gfx.selectedPresetIdx"
                           :view_mode="$refs.gfx.viewMode"
                           @update-setting="$refs.gfx.updateSetting"
-                          @set-busy="$refs.gfx.isBusy=$event"
+                          @set-busy="setBusy"
                           @make-toast="makeToast" />
           </div>
         </div>
@@ -98,7 +97,6 @@
                   :previous-preset-name="$refs.con.previousPresetName"
                   :selected-preset-idx="$refs.con.selectedPresetIdx"
                   :preset-dir="$refs.con.userPresetsDir"
-                  :is-busy="$refs.con.isBusy"
                   @save-preset="$refs.con.savePreset"
                   @refresh="$refs.con.getPresets"
                   @update-presets-dir="$refs.con.setPresetsDir"
@@ -118,21 +116,21 @@
                                  :current_preset_idx="$refs.con.selectedPresetIdx"
                                  :view_mode="$refs.con.viewMode"
                                  @update-setting="$refs.con.updateSetting"
-                                 @set-busy="$refs.con.isBusy=$event"
+                                 @set-busy="setBusy"
                                  @make-toast="makeToast"/>
             <GenericSettingsArea :preset="conPreset" :idx="idx" :search="search"
                                  settings-key="gamepad_mouse_settings"
                                  :current_preset_idx="$refs.con.selectedPresetIdx"
                                  :view_mode="$refs.con.viewMode"
                                  @update-setting="$refs.con.updateSetting"
-                                 @set-busy="$refs.con.isBusy=$event"
+                                 @set-busy="setBusy"
                                  @make-toast="makeToast"/>
             <GenericSettingsArea :preset="conPreset" :idx="idx" :search="search"
                                  settings-key="general_steering_settings"
                                  :current_preset_idx="$refs.con.selectedPresetIdx"
                                  :view_mode="$refs.con.viewMode"
                                  @update-setting="$refs.con.updateSetting"
-                                 @set-busy="$refs.con.isBusy=$event"
+                                 @set-busy="setBusy"
                                  @make-toast="makeToast"/>
           </div>
         </div>
@@ -147,7 +145,6 @@
                   :previous-preset-name="$refs.gen.previousPresetName"
                   :selected-preset-idx="$refs.gen.selectedPresetIdx"
                   :preset-dir="$refs.gen.userPresetsDir"
-                  :is-busy="$refs.gen.isBusy"
                   @save-preset="$refs.gen.savePreset"
                   @refresh="$refs.gen.getPresets"
                   @update-presets-dir="$refs.gen.setPresetsDir"
@@ -167,7 +164,7 @@
                                  :current_preset_idx="$refs.gen.selectedPresetIdx"
                                  :view_mode="$refs.gen.viewMode"
                                  @update-setting="$refs.gen.updateSetting"
-                                 @set-busy="$refs.gen.isBusy=$event"
+                                 @set-busy="setBusy"
                                  @make-toast="makeToast"/>
           </div>
         </div>
@@ -179,7 +176,7 @@
 
     <!-- Server Browser -->
     <ServerBrowser ref="serverBrowser" v-if="navActive === 5" @launch="stopSlideShow"
-                   @make-toast="makeToast"></ServerBrowser>
+                   @make-toast="makeToast" @set-busy="setBusy"/>
 
     <!-- Wiki -->
     <template  v-if="navActive === 6">
@@ -225,6 +222,7 @@
         </b-button>
       </div>
     </b-popover>
+    <b-overlay no-wrap variant="transparent" :show="isBusy"></b-overlay>
   </div>
 </template>
 
@@ -249,6 +247,7 @@ export default {
       searchCls: 'search-bar mr-sm-2 ',
       firstServerBrowserVisit: true,
       gfxReady: false,
+      isBusy: false,
     }
   },
   methods: {
@@ -261,6 +260,7 @@ export default {
         solid: true,
       })
     },
+    setBusy: function (busy) { this.isBusy = busy},
     setDashGfxHandler: function () {
       this.gfxReady = true
       this.$nextTick(() => {

@@ -30,7 +30,6 @@ export default {
       presets: [],
       selectedPresetIdx: 0,
       userPresetsDir: '',
-      isBusy: false,
       previousPresetName: '',
       viewMode: 0,
       error: '',
@@ -41,6 +40,7 @@ export default {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
     },
+    setBusy: function (busy) {this.$emit('set-busy', busy) },
     getPresetsDirLocation: async function () {
       this.userPresetsDir = await window.eel.get_user_presets_dir_web()()
     },
@@ -49,7 +49,7 @@ export default {
       this.presets = sortPresets(this.presets)
     },
     getPresets: async function () {
-      this.isBusy = true
+      this.setBusy(true)
       const r = await getEelJsonObject(window.eel.get_presets(this.presetType)())
 
       if (!r.result) {
@@ -81,7 +81,7 @@ export default {
       if (this.presets[appSelectedPresetIdx] !== undefined) {
         await this.selectPreset(this.presets[appSelectedPresetIdx], false)
       }
-      this.isBusy = false
+      this.setBusy(false)
       this.$nextTick(() => { this.$emit('presets-ready') })
     },
     getSelectedPreset: function () {
@@ -89,6 +89,7 @@ export default {
       return this.presets[this.selectedPresetIdx]
     },
     savePreset: async function (preset) {
+      this.setBusy(true)
       const r = await getEelJsonObject(window.eel.save_preset(preset)())
       this.previousPresetName = ''
       if (!r.result) {
@@ -98,9 +99,10 @@ export default {
       } else {
         console.log('Saved Preset:', preset.name)
       }
+      this.setBusy(false)
     },
     exportPreset: async function () {
-      this.isBusy = true
+      this.setBusy(true)
       const r = await getEelJsonObject(window.eel.export_preset(this.getSelectedPreset())())
       this.previousPresetName = ''
       if (!r.result) {
@@ -108,11 +110,11 @@ export default {
         this.makeToast(r.msg, 'danger')
         console.error('Error writing preset to rFactor 2!', r.msg)
       }
-      this.isBusy = false
+      this.setBusy(false)
     },
     importPlayerJson: async function (importData) {
       if (importData === undefined) { return }
-      this.isBusy = true
+      this.setBusy(true)
 
       let r = await getEelJsonObject(window.eel.import_player_json(importData, this.presetType)())
       if (r !== undefined && r.result) {
@@ -122,13 +124,13 @@ export default {
         this.makeToast('Data could not be imported ' + r.msg, 'danger', 'Error')
       }
 
-      this.isBusy = false
+      this.setBusy(false)
     },
     importPreset: async function (importPreset) {
       if (importPreset === undefined) {
         return
       }
-      this.isBusy = true
+      this.setBusy(true)
       // Avoid doubled preset names
       for (let i = 0; i <= this.presets.length; i++) {
         let preset = this.presets[i]
@@ -149,10 +151,10 @@ export default {
             'danger', 'Error')
       }
 
-      this.isBusy = false
+      this.setBusy(false)
     },
     selectPreset: async function (preset, save = false) {
-      this.isBusy = true
+      this.setBusy(true)
       this.selectedPresetIdx = this.presets.indexOf(preset)
       let p = this.getSelectedPreset()
       await window.eel.select_preset(p.name, this.presetType)
@@ -160,10 +162,10 @@ export default {
         await this.savePreset(p)
         await sleep(150)
       }
-      this.isBusy = false
+      this.setBusy(false)
     },
     createPreset: async function (newPresetName = 'New Preset') {
-      this.isBusy = true
+      this.setBusy(true)
 
       let preset = {}
 
@@ -184,10 +186,10 @@ export default {
 
       await this.savePreset(this.getSelectedPreset())
       await sleep(150)
-      this.isBusy = false
+      this.setBusy(false)
     },
     deletePreset: async function () {
-      this.isBusy = true
+      this.setBusy(true)
       const preset = this.getSelectedPreset()
       const index = this.presets.indexOf(preset);
 
@@ -197,14 +199,14 @@ export default {
         if (!r.result) {
           this.makeToast('Could not delete Preset', 'danger', 'Error')
           this.$root.$emit('bv::hide::popover', 'delete-preset-btn' + this.idRef)
-          this.isBusy = false
+          this.setBusy(false)
           return
         }
         this.presets.splice(index, 1)
         this.selectedPresetIdx = 0
       }
       this.$root.$emit('bv::hide::popover', 'delete-preset-btn' + this.idRef)
-      this.isBusy = false
+      this.setBusy(false)
     },
     setPresetsDir: async function (newUserPresetsDir) {
       const r = await getEelJsonObject(window.eel.set_user_presets_dir(newUserPresetsDir)())
@@ -225,11 +227,11 @@ export default {
       this.savePreset(this.getSelectedPreset())
     },
     updateSetting: async function (setting, value, save = true) {
-      this.isBusy = true
+      this.setBusy(true)
       setting.value = value
       console.log('Updated', setting.name, 'to', setting.value)
       if (save) { await this.savePreset(this.getSelectedPreset()) }
-      this.isBusy = false
+      this.setBusy(false)
     }
   },
   created() {

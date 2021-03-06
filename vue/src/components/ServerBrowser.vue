@@ -337,6 +337,7 @@ export default {
       console.log('Making toast', message, category, title, append, delay)
       this.$emit('make-toast', message, category, title, append, delay)
     },
+    setBusy: function (busy) { this.isBusy = busy; this.$emit('set-busy', busy) },
     compareVersion: function (serverVersion) {
       if (this.rfactorVersion !== '' && this.rfactorVersion !== undefined) {
         if (this.rfactorVersion === serverVersion) {
@@ -413,7 +414,7 @@ export default {
         serverList = []
       }
 
-      this.isBusy = true
+      this.setBusy(true)
 
       try {
         const server_data = await getEelJsonObject(window.eel.get_server_list(this.onlyFav)())
@@ -424,7 +425,7 @@ export default {
         console.error(error)
       }
 
-      this.isBusy = false
+      this.setBusy(false)
     },
     refreshServer: async function (server) {
       let update_data = null
@@ -515,14 +516,14 @@ export default {
       this.$bvModal.hide(this.pwdModalId)
     },
     asyncCreate: async function () {
-      this.isBusy = true
+      this.setBusy(true)
       if (this.delay !== undefined) { await sleep(this.delay) }
       await this.getRfVersion()
       await this.loadSettings()
       await this.refreshServerList()
       this.$emit('server-browser-ready')
       this.browserReady = true
-      this.isBusy = false
+      this.setBusy(false)
     }
   },
   created() {
