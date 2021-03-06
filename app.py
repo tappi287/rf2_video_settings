@@ -13,6 +13,7 @@ from rf2settings.app.app_main import expose_main_methods, CLOSE_EVENT
 from rf2settings.app.app_graphics import expose_graphics_methods
 from rf2settings.app.app_multiplayer import expose_multiplayer_methods
 from rf2settings.app.app_presets import expose_preset_methods
+from rf2settings.app.app_headlights import expose_headlights_methods
 from rf2settings.gamecontroller import controller_greenlet, controller_event_loop
 
 # -- Make sure eel methods are exposed at start-up
@@ -21,6 +22,7 @@ expose_dashboard_methods()
 expose_graphics_methods()
 expose_multiplayer_methods()
 expose_preset_methods()
+expose_headlights_methods()
 
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',

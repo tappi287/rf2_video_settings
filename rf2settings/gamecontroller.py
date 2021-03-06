@@ -46,7 +46,7 @@ def _set_event_result(event):
 
 def controller_greenlet(event_callback: callable = _set_event_result):
     """ Controller greenlet/thread receiving pygame joystick events and sending
-        it to event_callback. Default callback will forward this to the main
+        it to event_callback. Default callback will forward this to the controller_event_loop
         eel greenlet able to call the front end.
     """
     if not py_game_avail:
@@ -88,11 +88,14 @@ def controller_greenlet(event_callback: callable = _set_event_result):
                     # ------------------------------------------------------------------------------------
             # --- Joystick removed ---
             elif event.type == pygame.JOYDEVICEREMOVED:
-                j_id = event.device_index or 0
-                j = pygame.joystick.Joystick(j_id)
-                if j.get_instance_id() in _ControllerEvents.joysticks:
-                    logging.debug('Removing Joystick: %s', j.get_name())
-                    _ControllerEvents.joysticks.pop(j.get_instance_id())
+                valid_ids = set()
+                for j_id in range(pygame.joystick.get_count()):
+                    j = pygame.joystick.Joystick(j_id)
+                    valid_ids.add(j.get_instance_id())
+                invalid_ids = set(_ControllerEvents.joysticks.keys()).difference(valid_ids)
+                for invalid_id in invalid_ids:
+                    _ControllerEvents.joysticks.pop(invalid_id)
+                    logging.debug('Removed Joystick device with instance id: %s', invalid_id)
             # --- Joystick Axis moved ---
             elif event.type == pygame.JOYAXISMOTION:
                 pass

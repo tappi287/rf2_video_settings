@@ -24,6 +24,8 @@ class AppSettings(JsonRepr):
     server_favourites = list()
     server_browser: dict = {'filter_fav': False, 'filter_empty': False, 'filter_pwd': False, 'filter_version': False,
                             'filter_text': '', 'store_pwd': False}
+    headlight_settings = dict()
+    headlight_controller_assignments = dict()
     server_passwords = dict()
 
     def __init__(self):

@@ -117,3 +117,33 @@ export async function getRequest(url) {
     return { result: false, data: error.response.data }
   }
 }
+
+export const controllerInputTypes = {768: 'Key', 1536: 'Axis', 1538: 'Dpad', 1539: 'Button' }
+
+// Get the Name of a Controller input Type
+export function getControllerDeviceTypeName(setting) {
+  if (setting === undefined) { return 'Unknown' }
+  return controllerInputTypes[Number(setting.type)]
+}
+
+// Get the Name of a Controller Button/Axis
+export function getControllerValueName({button, key, type, value}) {
+  if ([768, 1539].indexOf(type) !== -1) {
+      if (value !== undefined && value !== '' && value !== null) { return value }
+      if (key !== undefined && key !== '' && key !== null) { return key }
+      if (button !== undefined) { return button }
+  }
+  if (Number(type) === 1538) {
+    let result = '-'
+    switch (value[0]) {
+      case -1: result = 'Left'; break
+      case 1: result = 'Right'; break
+    }
+    switch (value[1]) {
+      case -1: result = 'Down'; break
+      case 1:result = 'Up'; break
+    }
+    return result
+  }
+  return 'Not Set'
+}

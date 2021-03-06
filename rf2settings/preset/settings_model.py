@@ -2,7 +2,7 @@ import logging
 import sys
 from typing import Union, List, Optional
 
-from ..settingsdef import graphics, generic, controls
+from ..settingsdef import graphics, generic, controls, headlights
 from ..utils import JsonRepr
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
@@ -15,6 +15,7 @@ class OptionsTarget:
     player_json = 0
     controller_json = 1
     dx_config = 10
+    app_settings = 100
 
 
 class Option(JsonRepr):
@@ -239,3 +240,25 @@ class AdvancedGraphicSettings(BaseOptions):
 
         # -- Read Default options
         self.read_from_python_dict(graphics.advanced_settings)
+
+
+class HeadlightSettings(BaseOptions):
+    key = 'headlight_settings'
+    app_key = 'headlight_settings'
+    title = 'Headlight Settings'
+    target = OptionsTarget.app_settings
+
+    def __init__(self):
+        super(HeadlightSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(headlights.headlight_settings)
+
+
+class HeadlightControllerAssignments(JsonRepr):
+    app_key = 'headlight_controller_assignments'
+    title = 'Headlight Controller Assignments'
+
+    def __init__(self):
+        super(HeadlightControllerAssignments, self).__init__()
+        self.options = headlights.controller_assignments
