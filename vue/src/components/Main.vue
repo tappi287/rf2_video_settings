@@ -222,7 +222,7 @@
         </b-button>
       </div>
     </b-popover>
-    <b-overlay no-wrap variant="transparent" :show="isBusy"></b-overlay>
+    <b-overlay no-wrap variant="transparent" :show="isBusy" blur="1px"></b-overlay>
   </div>
 </template>
 
