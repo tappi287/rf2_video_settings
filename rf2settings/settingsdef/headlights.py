@@ -1,10 +1,27 @@
 # AppSettings headlights
 headlight_settings = {
-    'enabled': {'name': 'Enable App Headlights', 'value': True,
+    'enabled': {'name': 'Enable App Headlights', 'value': False,
                 'desc': 'Enable the in-game control of the headlights thru this applications '
                         'rf2headlights functionality',
                 'settings': ({'value': True, 'name': 'On'}, {'value': False, 'name': 'Off'})
                 },
+    'on_automatically': {'name': 'Automatic Headlights', 'value': 0,
+                         'settings':
+                             ({'value': 0, 'name': 'Manual', 'desc': 'Driver turns headlights permanently on or off'},
+                              {'value': 1, 'name': 'One Driver',
+                               'desc': 'Enable headlights if at least one other driver has them on'},
+                              {'value': 2, 'name': 'Two Drivers',
+                               'desc': 'Enable headlights if more than one other driver has them on'},
+                              {'value': 3, 'name': 'Half Grid',
+                               'desc': 'Enable headlights if at least half of the other drivers have them on'},
+                              {'value': 4, 'name': 'All',
+                               'desc': 'Enable headlights if all the other drivers have them on'},
+                              ),
+                         },
+    'default_to_on': {'name': 'Headlights on at start', 'value': False,
+                      'desc': 'Automatically turn headlights on when a session started',
+                      'settings': ({'value': True, 'name': 'On'}, {'value': False, 'name': 'Off'})
+                      },
     'pit_limiter': {'name': 'Flash when pit limiter on', 'value': False,
                             'desc': 'Flash headlights whenever the pit limiter is on',
                             'settings': ({'value': True, 'name': 'On'}, {'value': False, 'name': 'Off'})
@@ -13,10 +30,11 @@ headlight_settings = {
                  'desc': 'Flash headlights whenever the vehicle is in the pit lane',
                  'settings': ({'value': True, 'name': 'On'}, {'value': False, 'name': 'Off'})
                  },
-    'default_to_on': {'name': 'Headlights on at start', 'value': False,
-                      'desc': 'Automatically turn headlights on when a session started',
-                      'settings': ({'value': True, 'name': 'On'}, {'value': False, 'name': 'Off'})
-                      },
+    'flash_count': {'name': 'Overtake Flash Count', 'value': 4,
+                    'desc': 'How many times to flash when triggering headlight flash.',
+                    'settings': ({'settingType': 'range', 'min': 2, 'max': 24, 'step': 1,
+                                  'desc': ''},)
+                    },
     'flash_on_time': {'name': 'Overtake Flash ON Time', 'value': 20,
                       'settings': ({'settingType': 'range', 'min': 10, 'max': 500, 'step': 10,
                                     'desc': ''},)
@@ -33,19 +51,6 @@ headlight_settings = {
                            'settings': ({'settingType': 'range', 'min': 10, 'max': 500, 'step': 10,
                                          'desc': ''},)
                            },
-    'on_automatically': {'name': 'Automatic Headlights', 'value': 0,
-                         'settings':
-                             ({'value': 0, 'name': 'Manual', 'desc': 'Driver turns headlights permanently on or off'},
-                              {'value': 1, 'name': 'One Driver',
-                               'desc': 'Enable headlights if at least one other driver has them on'},
-                              {'value': 2, 'name': 'Two Drivers',
-                               'desc': 'Enable headlights if more than one other driver has them on'},
-                              {'value': 3, 'name': 'Half Grid',
-                               'desc': 'Enable headlights if at least half of the other drivers have them on'},
-                              {'value': 4, 'name': 'All',
-                               'desc': 'Enable headlights if all the other drivers have them on'},
-                              ),
-                         },
 }
 
 controller_assignments = {
@@ -60,6 +65,12 @@ controller_assignments = {
                                                              'flashing Headlights.',
                          'device_name': 'Xbox One S Controller',
                          'guid': '', 'type': 1539, 'hat': None, 'value': 8, 'axis': None},
+    'headlights_on': {'name': 'Headlights On', 'desc': 'Controller button to turn Headlights on. (No toggle)',
+                      'device_name': 'Xbox One S Controller',
+                      'guid': '', 'type': 1539, 'hat': None, 'value': 8, 'axis': None},
+    'headlights_off': {'name': 'Headlights Off', 'desc': 'Controller button to turn Headlights off. (No toggle)',
+                       'device_name': 'Xbox One S Controller',
+                       'guid': '', 'type': 1539, 'hat': None, 'value': 8, 'axis': None},
 }
 
 headlight_rfactor = {
