@@ -261,7 +261,22 @@ class HeadlightControllerAssignments(JsonRepr):
 
     def __init__(self):
         super(HeadlightControllerAssignments, self).__init__()
+        self.after_load_callback = self.after_json_load
         self.options = headlights.controller_assignments
+
+    def after_json_load(self):
+        """ Call this after load from js dict to make sure all defined
+            default options are there.
+        """
+        # -- Set defaults that were not loaded
+        for k, opt in headlights.controller_assignments.items():
+            if k not in self.options:
+                self.options[k] = opt
+
+        # -- Remove options no longer available
+        for k, opt in self.options.items():
+            if k not in headlights.controller_assignments:
+                self.options.pop(k)
 
 
 class HeadlightControllerJsonSettings(BaseOptions):
