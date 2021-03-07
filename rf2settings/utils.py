@@ -5,7 +5,7 @@ import os.path
 import re
 import subprocess as sp
 from pathlib import Path, WindowsPath
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional
 
 try:
     import pygame
@@ -22,8 +22,13 @@ def create_file_safe_name(filename: str) -> str:
 class JsonRepr:
     skip_keys = list()
     export_skip_keys = list()
+    after_load_callback: Optional[callable] = None
+    before_load_callback: Optional[callable] = None
 
     def to_js_object(self, export: bool = False):
+        if self.before_load_callback:
+            self.before_load_callback()
+
         js_dict = dict()
         for k, v in self.__dict__.items():
             if (export and k in self.export_skip_keys) or k in self.skip_keys:
@@ -37,6 +42,9 @@ class JsonRepr:
     def from_js_dict(self, json_dict):
         for k, v in json_dict.items():
             setattr(self, k, v)
+
+        if self.after_load_callback:
+            self.after_load_callback()
 
 
 def execute_powershell_cmd(cmd: str) -> Tuple[int, Union[bytes, str], Union[bytes, str]]:
@@ -142,7 +150,7 @@ def subprocess_args(include_stdout=True):
     return ret
 
 
-def _create_js_pygame_event_dict(joy_dict: dict, joy_event):
+def create_js_pygame_event_dict(joy_dict: dict, joy_event) -> dict:
     """ Create a JS friendly dictionary from a pygame joystick event """
     name, guid = 'Keyboard', 'Keyboard'
     button, hat, value = None, None, None
@@ -158,5 +166,5 @@ def _create_js_pygame_event_dict(joy_dict: dict, joy_event):
     if joy_event.type == pygame.JOYHATMOTION:
         value, hat = joy_event.value, joy_event.hat
 
-    return json.dumps({'name': name, 'guid': guid, 'button': button,
-                       'hat': hat, 'value': value, 'type': joy_event.type}, ensure_ascii=False)
+    return {'name': name, 'guid': guid, 'button': button,
+            'hat': hat, 'value': value, 'type': joy_event.type}
