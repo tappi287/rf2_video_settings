@@ -14,34 +14,36 @@ except ImportError:
     py_game_avail = 0
 
 
-class _ControllerEvents:
-    """ Keep event and result objects in this modules private namespace """
+class ControllerEvents:
+    """ Keep event and result objects in this modules namespace """
     event = gevent.event.Event()
     result = gevent.event.AsyncResult()
+    settings_changed = gevent.event.Event()
     joysticks = dict()
 
 
 def controller_event_loop():
     """ Will be run in main eel greenlet to be able to post events to JS frontend """
     # -- Block for timeout until event is set
-    _ControllerEvents.event.wait(timeout=1.0)
-    _ControllerEvents.event.clear()
+    event_found = ControllerEvents.event.wait(timeout=1.0)
 
-    # -- Get result
-    try:
-        event = _ControllerEvents.result.get_nowait()
-    except gevent.timeout.Timeout:
-        event = None
+    if event_found:
+        ControllerEvents.event.clear()
 
-    # -- Forward result
-    if event is not None:
-        eel.controller_event(_create_js_pygame_event_dict(_ControllerEvents.joysticks, event))
-        _ControllerEvents.result.set(None)
+        # -- Get result
+        try:
+            event = ControllerEvents.result.get_nowait()
+        except gevent.timeout.Timeout:
+            event = None
+
+        # -- Forward result
+        if event is not None:
+            eel.controller_event(_create_js_pygame_event_dict(ControllerEvents.joysticks, event))
 
 
 def _set_event_result(event):
-    _ControllerEvents.result.set(event)
-    _ControllerEvents.event.set()
+    ControllerEvents.result.set(event)
+    ControllerEvents.event.set()
 
 
 def controller_greenlet(event_callback: callable = _set_event_result):
@@ -51,7 +53,7 @@ def controller_greenlet(event_callback: callable = _set_event_result):
     """
     if not py_game_avail:
         logging.info('Pygame module not available')
-        eel.sleep(10.0)
+        gevent.sleep(10.0)
         return
 
     pygame.init()
@@ -67,7 +69,7 @@ def controller_greenlet(event_callback: callable = _set_event_result):
             j = pygame.joystick.Joystick(j_id)
             j.init()
             logging.info('Found PyGame Joystick device %s: %s %s', j_id, j.get_name(), j.get_instance_id())
-            _ControllerEvents.joysticks[j.get_instance_id()] = j
+            ControllerEvents.joysticks[j.get_instance_id()] = j
 
     event_loop_active = True
     while event_loop_active:
@@ -84,7 +86,7 @@ def controller_greenlet(event_callback: callable = _set_event_result):
                     logging.debug('Initialized Joystick: %s', j.get_name())
                     # ------------------------------------------------------------------------------------
                     # We have to keep a reference to the Joystick objects or we will not receive events.
-                    _ControllerEvents.joysticks[j.get_instance_id()] = j
+                    ControllerEvents.joysticks[j.get_instance_id()] = j
                     # ------------------------------------------------------------------------------------
             # --- Joystick removed ---
             elif event.type == pygame.JOYDEVICEREMOVED:
@@ -92,9 +94,9 @@ def controller_greenlet(event_callback: callable = _set_event_result):
                 for j_id in range(pygame.joystick.get_count()):
                     j = pygame.joystick.Joystick(j_id)
                     valid_ids.add(j.get_instance_id())
-                invalid_ids = set(_ControllerEvents.joysticks.keys()).difference(valid_ids)
+                invalid_ids = set(ControllerEvents.joysticks.keys()).difference(valid_ids)
                 for invalid_id in invalid_ids:
-                    _ControllerEvents.joysticks.pop(invalid_id)
+                    ControllerEvents.joysticks.pop(invalid_id)
                     logging.debug('Removed Joystick device with instance id: %s', invalid_id)
             # --- Joystick Axis moved ---
             elif event.type == pygame.JOYAXISMOTION:
@@ -115,9 +117,11 @@ def controller_greenlet(event_callback: callable = _set_event_result):
         # --- QUIT ---
         if CLOSE_EVENT.is_set():
             logging.info('Controller greenlet received CLOSE event.')
+            # Wake up greenlets waiting for controller events
+            event_callback(None)
             event_loop_active = False
 
         # -- End of event loop, restart to get pygame events
-        eel.sleep(0.05)
+        gevent.sleep(0.02)
 
     logging.info('Controller greenlet exiting.')

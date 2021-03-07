@@ -11,7 +11,7 @@
       </b-input-group-prepend>
       <b-input-group-append>
         <div :class="variant + ' setting-item fixed-width-setting'">
-          <b-icon shift-v="-1" icon="controller" class="text-white" v-b-popover.hover.topright="setting.device_name"/>
+          <b-icon shift-v="-1" icon="controller" class="text-white" v-b-popover.hover.topright="settingDeviceName"/>
           <span class="ml-2">{{ typeName }} {{ settingValueName }}</span>
           <b-link @click="startListening" class="text-white ml-2">
             <b-icon icon="pencil"></b-icon>
@@ -21,7 +21,7 @@
     </b-input-group>
 
     <!-- Controller Assign Modal -->
-    <b-modal v-model="listening" centered hide-header-close no-close-on-backdrop no-close-on-esc>
+    <b-modal v-model="listening" centered hide-header-close no-close-on-backdrop no-close-on-esc :id="modalId">
       <template #modal-title>
         <b-icon icon="controller" variant="primary"></b-icon>
         <span class="ml-2">{{ setting.name }}</span>
@@ -49,7 +49,13 @@
 </template>
 
 <script>
-import {getControllerValueName, getMaxWidth, getControllerDeviceTypeName, getEelJsonObject} from "@/main";
+import {
+  getControllerValueName,
+  getMaxWidth,
+  getControllerDeviceTypeName,
+  getEelJsonObject,
+  getRfactorControllerDeviceTypeName
+} from "@/main";
 
 // --- </ Prepare receiving controller events
 let currentEvent = null
@@ -71,30 +77,73 @@ export default {
       nameId: 'name' + this._uid,
       settingDesc: '',
       listening: false,
-      listeningToSetting: {},
       eventCaptured: false,
       capturedEvent: null,
+      rfValueName: '',
+      modalId: 'assign' + this._uid,
     }
   },
   props: {
-    setting: Object, variant: String, fixWidth: Boolean, groupId: String
+    setting: Object, variant: String, fixWidth: Boolean, groupId: String, rfJson: Boolean
   },
   methods: {
+    makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
+      this.$emit('make-toast', message, category, title, append, delay)
+    },
     handleControllerEvent: function () {
       if (this.listening && !this.eventCaptured) {
         // Copy/Capture current event
         const eventData = JSON.stringify(currentEvent)
         this.capturedEvent = JSON.parse(eventData)
-
-        console.log('Captured Event:', this.capturedEvent)
         this.eventCaptured = true
       }
     },
-    startListening: function () { this.eventCaptured = false; this.capturedEvent = null; this.listening = true },
-    abortListeningController: function () { this.listening = false; this.eventCaptured = false },
-    confirmAssign: function () {
+    handleKeyDownEvent: async function (event) {
+      if (this.listening && !this.eventCaptured) {
+        this.eventCaptured = true
+        this.capturedEvent = {name: 'Keyboard', value: event.keyCode, key: event.key, type: 768}
+        if (this.rfJson) {
+          const rf_keycode = await getEelJsonObject(
+              window.eel.get_rfactor_keycode_from_js_keycode(event.keyCode)()
+          )
+          this.capturedEvent.value = [0, rf_keycode]
+        }
+      }
+    },
+    listenToKeyboard: function (remove = false) {
+      // We do not want to capture keyboard events for non-rfactor settings
+      if (!this.rfJson) { return }
+
+      // Add or Remove Keydown event listener
+      const m = document.getElementById(this.modalId)
+      if (m !== null && !remove) {
+        console.log('Listening for keyboard events')
+        m.addEventListener('keydown', this.handleKeyDownEvent)
+      } else if (m !== null && remove) {
+        console.log('Removing Keyboard listener')
+        m.removeEventListener('keydown', this.handleKeyDownEvent)
+      }
+    },
+    startListening: function () {
+      this.eventCaptured = false; this.capturedEvent = null; this.listening = true
+      this.$nextTick(() => { this.listenToKeyboard(false) })
+    },
+    abortListeningController: function () {
+      this.listenToKeyboard(true); this.listening = false; this.eventCaptured = false
+    },
+    confirmAssign: async function () {
+      if (this.rfJson) {
+        if (!Array.isArray(this.capturedEvent.value)) {
+          // Abort non-keyboard settings for rF for now
+          this.abortListeningController()
+          this.makeToast('Re-mapping rFactor controls to non-keyboard keys is currently not supported!',
+              'danger', 'rFactor 2 Control Mapping')
+          return
+        }
+      }
       this.$emit('update-assignment', this.setting, this.capturedEvent)
       this.abortListeningController()
+      if (this.rfJson) { await this.getRfactorKeyName() }
     },
     setFixedWidth: function () {
       // Iterate all elements of this setting group_id and set width to widest element found
@@ -108,12 +157,14 @@ export default {
       let s = document.getElementById(this.elemId)
       if (s !== null) { s.style.width = String(settMaxWidth) + 'px' }
     },
+    getRfactorKeyName: async function() {
+      if (!Array.isArray(this.setting.value)) { return }
+      this.rfValueName = await getEelJsonObject(window.eel.get_rfactor_key_name(this.setting.value[1])())
+    }
   },
   created: function () {
     // Set description
     this.settingDesc = this.setting.desc || ''
-    console.log('Con Setting', this.setting)
-
     // Forward Controller events
     window.addEventListener('con-event', this.handleControllerEvent)
   },
@@ -124,7 +175,8 @@ export default {
   },
   mounted () {
     if (this.variant === undefined) { this.variant = 'secondary'}
-    this.currentSettingValue = this.setting.value
+    if (this.rfJson) { this.getRfactorKeyName() }
+
     if (this.fixWidth) {
       // Access after rendering finished
       setTimeout(() => {
@@ -139,21 +191,30 @@ export default {
       return name
     },
     typeName: function () {
+      if (this.rfJson) { return getRfactorControllerDeviceTypeName(this.setting) }
       return getControllerDeviceTypeName(this.setting)
     },
     settingValueName: function () {
+      if (this.rfJson) { return this.rfValueName }
       return getControllerValueName(this.setting)
     },
+    settingDeviceName: function () {
+      if (this.rfJson) {
+        if (this.setting.value[0] === 0) { return 'Keyboard'}
+        if (this.setting.value[0] > 0) { return 'rF Direct Input Device #' + this.setting.value[0]}
+      }
+      return this.setting.device_name
+    },
     capturedEventDeviceName() {
-      if (!this.eventCaptured) { return this.setting.device_name }
+      if (!this.eventCaptured) { return this.settingDeviceName }
       return this.capturedEvent.name
     },
     capturedValue() {
-      if (!this.eventCaptured) { return getControllerValueName(this.setting) }
+      if (!this.eventCaptured) { return this.settingValueName }
       return getControllerValueName(this.capturedEvent)
     },
     capturedTypeName() {
-      if (!this.eventCaptured) { return getControllerDeviceTypeName(this.setting) }
+      if (!this.eventCaptured) { return this.typeName }
       return getControllerDeviceTypeName(this.capturedEvent)
     },
   }

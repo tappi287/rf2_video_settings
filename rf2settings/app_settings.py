@@ -26,6 +26,7 @@ class AppSettings(JsonRepr):
                             'filter_text': '', 'store_pwd': False}
     headlight_settings = dict()
     headlight_controller_assignments = dict()
+    headlight_rf_key = str()
     server_passwords = dict()
 
     def __init__(self):

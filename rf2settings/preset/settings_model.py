@@ -89,7 +89,7 @@ class BaseOptions(JsonRepr):
         return {'key': self.key, 'title': self.title,
                 'options': [option.to_js_object(export) for option in self.options]}
 
-    def _get_option(self, key) -> Optional[Option]:
+    def get_option(self, key) -> Optional[Option]:
         o = [o for o in self.options if o.key == key]
         if o:
             return o[0]
@@ -102,7 +102,7 @@ class BaseOptions(JsonRepr):
                 #    sub-classes with valid default settings.
                 for js_opt in v:
                     _k, _v = js_opt.get('key'), js_opt.get('value')
-                    opt = self._get_option(_k)
+                    opt = self.get_option(_k)
                     if opt and _v is not None:
                         opt.value = _v
             else:
@@ -262,3 +262,16 @@ class HeadlightControllerAssignments(JsonRepr):
     def __init__(self):
         super(HeadlightControllerAssignments, self).__init__()
         self.options = headlights.controller_assignments
+
+
+class HeadlightControllerJsonSettings(BaseOptions):
+    key = 'Input'
+    app_key = 'headlight_controller_json'
+    title = 'Headlight rFactor Control Mapping'
+    target = OptionsTarget.controller_json
+
+    def __init__(self):
+        super(HeadlightControllerJsonSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(headlights.headlight_rfactor)

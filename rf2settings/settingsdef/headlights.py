@@ -1,13 +1,14 @@
 # AppSettings headlights
 headlight_settings = {
     'enabled': {'name': 'Enable App Headlights', 'value': True,
-                'desc': 'Enable the usage of this applications rf2headlights functionality',
+                'desc': 'Enable the in-game control of the headlights thru this applications '
+                        'rf2headlights functionality',
                 'settings': ({'value': True, 'name': 'On'}, {'value': False, 'name': 'Off'})
                 },
     'pit_limiter': {'name': 'Flash when pit limiter on', 'value': False,
                             'desc': 'Flash headlights whenever the pit limiter is on',
                             'settings': ({'value': True, 'name': 'On'}, {'value': False, 'name': 'Off'})
-                   },
+                    },
     'pit_lane': {'name': 'Flash when in pit lane', 'value': False,
                  'desc': 'Flash headlights whenever the vehicle is in the pit lane',
                  'settings': ({'value': True, 'name': 'On'}, {'value': False, 'name': 'Off'})
@@ -59,4 +60,10 @@ controller_assignments = {
                                                              'flashing Headlights.',
                          'device_name': 'Xbox One S Controller',
                          'guid': '', 'type': 1539, 'hat': None, 'value': 8, 'axis': None},
+}
+
+headlight_rfactor = {
+    'Control - Headlights': {'name': 'Toggle Headlights', 'value': [0, 35],
+                             'desc': 'rFactor 2 Headlight control key/button',
+                             },
 }

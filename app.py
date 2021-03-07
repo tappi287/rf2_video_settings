@@ -5,16 +5,16 @@ import webbrowser
 
 import eel
 
-from rf2settings.app_settings import AppSettings
-from rf2settings.runasadmin import run_as_admin
-
 from rf2settings.app.app_dashboard import expose_dashboard_methods
-from rf2settings.app.app_main import expose_main_methods, CLOSE_EVENT
 from rf2settings.app.app_graphics import expose_graphics_methods
+from rf2settings.app.app_headlights import expose_headlights_methods
+from rf2settings.app.app_main import expose_main_methods, CLOSE_EVENT
 from rf2settings.app.app_multiplayer import expose_multiplayer_methods
 from rf2settings.app.app_presets import expose_preset_methods
-from rf2settings.app.app_headlights import expose_headlights_methods
+from rf2settings.app_settings import AppSettings
 from rf2settings.gamecontroller import controller_greenlet, controller_event_loop
+from rf2settings.headlights import headlights_greenlet
+from rf2settings.runasadmin import run_as_admin
 
 # -- Make sure eel methods are exposed at start-up
 expose_main_methods()
@@ -71,6 +71,9 @@ def start_eel():
 
     # -- Game Controller Greenlet
     eel.spawn(controller_greenlet)
+
+    # -- Headlights Greenlet
+    eel.spawn(headlights_greenlet)
 
     # -- Run until window/tab closed
     while not CLOSE_EVENT.is_set():

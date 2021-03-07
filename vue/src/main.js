@@ -126,11 +126,27 @@ export function getControllerDeviceTypeName(setting) {
   return controllerInputTypes[Number(setting.type)]
 }
 
+// Get the Name of a rFactor Controller.json input Type
+export function getRfactorControllerDeviceTypeName(setting) {
+    const inputType = setting.value[0]
+    if (inputType > 0) {
+        // Controller devices to be defined ...
+        return 'Con'
+    }
+    if (inputType === 0) {
+        // Keyboard keys have type value 0
+        return 'Key'
+    }
+    return 'Unknown'
+}
+
 // Get the Name of a Controller Button/Axis
 export function getControllerValueName({button, key, type, value}) {
+  if (type === 768) {
+      if (key !== undefined && key !== '' && key !== null) { return key.toUpperCase() }
+  }
   if ([768, 1539].indexOf(type) !== -1) {
       if (value !== undefined && value !== '' && value !== null) { return value }
-      if (key !== undefined && key !== '' && key !== null) { return key }
       if (button !== undefined) { return button }
   }
   if (Number(type) === 1538) {
