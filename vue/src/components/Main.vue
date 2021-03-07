@@ -172,7 +172,7 @@
     </template>
 
     <!-- Headlights -->
-    <Headlights ref="headlights" v-if="navActive === 4"></Headlights>
+    <Headlights ref="headlights" v-if="navActive === 4" @make-toast="makeToast"></Headlights>
 
     <!-- Server Browser -->
     <ServerBrowser ref="serverBrowser" v-if="navActive === 5" @launch="stopSlideShow"
