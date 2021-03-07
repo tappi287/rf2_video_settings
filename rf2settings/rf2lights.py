@@ -1,8 +1,8 @@
 import logging
-from threading import Timer
-from typing import Optional
 
-from .rf2headlights.directInputKeySend import PressReleaseKey, DirectInputKeyCodeTable
+import gevent
+
+from .directInputKeySend import PressReleaseKey
 from .rf2sharedmem import sharedMemoryAPI
 
 
@@ -10,21 +10,24 @@ def update_status(message):
     logging.info(message)
 
 
-def set_timer(ms, callback, _args=None) -> Optional[Timer]:
+def timer(ms, callback, args):
+    gevent.sleep(ms / 1000)
+    callback(*args)
+
+
+def set_timer(ms, callback, _args=None) -> None:
     if ms > 0:
-        timer = Timer(ms / 1000, callback, args=_args)
-        timer.start()
-        return timer
+        timer(ms, callback, _args)
     else:
-        pass  # TBD delete timer?
+        pass
 
 
 class RfactorHeadlight:
     info = sharedMemoryAPI.SimInfoAPI()
 
-    def __init__(self):
+    def __init__(self, headlight_toggle_dik: str = None):
         self.headlight_state = None
-        self.headlight_toggle_dik = DirectInputKeyCodeTable.get('DIK_H')
+        self.headlight_toggle_dik = headlight_toggle_dik or 'DIK_H'
         self._flashing = False
         self._count = 0
         self.timer = (0, 0)  # On time, off time
@@ -35,6 +38,9 @@ class RfactorHeadlight:
         self._car_has_headlights = True  # Until we find otherwise
         self.tested_car_has_headlights = False
         self._headlights_state_on_pit_entry = False  # Initially
+
+    def set_toggle_key(self, dik: str):
+        self.headlight_toggle_dik = dik
 
     def count_down(self) -> bool:
         """ Stopping callback function
@@ -137,7 +143,12 @@ class RfactorHeadlight:
             if sharedMemoryAPI.Cbytestring2Python(self.info.Rf2Ext.mLastHistoryMessage) == \
                     'Headlights: N/A':
                 self._car_has_headlights = False
-            _car = self.info.vehicleName()
+
+            try:
+                _car = self.info.vehicleName()
+            except AttributeError:
+                _car = 'Unknown'
+
             if self._car_has_headlights:
                 update_status(_car + " has headlights")
             else:

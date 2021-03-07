@@ -1,3 +1,4 @@
+import json
 import logging
 
 import eel
@@ -5,7 +6,7 @@ import gevent.event
 import gevent.timeout
 
 from .app.app_main import CLOSE_EVENT
-from .utils import _create_js_pygame_event_dict
+from .utils import create_js_pygame_event_dict
 
 try:
     import pygame
@@ -38,7 +39,9 @@ def controller_event_loop():
 
         # -- Forward result
         if event is not None:
-            eel.controller_event(_create_js_pygame_event_dict(ControllerEvents.joysticks, event))
+            eel.controller_event(
+                json.dumps(create_js_pygame_event_dict(ControllerEvents.joysticks, event), ensure_ascii=False)
+            )
 
 
 def _set_event_result(event):
