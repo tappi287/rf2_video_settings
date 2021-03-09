@@ -42,4 +42,9 @@ game_settings = {
                         'settings': ({'value': 0, 'name': 'Off [Default]'},
                                      {'value': 1, 'name': 'Accurate'})
                         },
+    'Inactive Sleep Time': {'name': 'Inactive Sleep Time', 'value': 25,
+                            'settings': ({'settingType': 'range', 'min': 0, 'max': 500, 'step': 1,
+                                          'desc': 'Number of milliseconds to sleep each message loop if the game is '
+                                                  'not the active application (-1 to disable). Will give more CPU '
+                                                  'to other apps when minimized, etc.'},)},
 }
