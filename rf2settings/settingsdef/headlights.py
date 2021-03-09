@@ -22,11 +22,11 @@ headlight_settings = {
                       'desc': 'Automatically turn headlights on when a session started',
                       'settings': ({'value': True, 'name': 'On'}, {'value': False, 'name': 'Off'})
                       },
-    'pit_limiter': {'name': 'Flash when pit limiter on', 'value': False,
+    'pit_limiter': {'name': 'Pit Limiter Auto Flash', 'value': False,
                             'desc': 'Flash headlights whenever the pit limiter is on',
                             'settings': ({'value': True, 'name': 'On'}, {'value': False, 'name': 'Off'})
                     },
-    'pit_lane': {'name': 'Flash when in pit lane', 'value': False,
+    'pit_lane': {'name': 'Pit Lane Auto Flash', 'value': False,
                  'desc': 'Flash headlights whenever the vehicle is in the pit lane',
                  'settings': ({'value': True, 'name': 'On'}, {'value': False, 'name': 'Off'})
                  },

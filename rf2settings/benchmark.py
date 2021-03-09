@@ -1,5 +1,6 @@
 import logging
 import shutil
+import sys
 import threading
 from datetime import datetime
 from pathlib import Path, WindowsPath
@@ -12,11 +13,13 @@ from rf2settings.preset.settings_model import BaseOptions
 from rf2settings.globals import get_fpsvr_dir, FPSVR_APPID, get_present_mon_bin
 from rf2settings.preset.preset import GraphicsPreset
 from rf2settings.process import RunProcess
+from rf2settings.rf2sharedmem import sharedMemoryAPI
 from rf2settings.rfactor import RfactorPlayer
 from rf2settings.valve.steam_utils import SteamApps
 
 
 class RunRfactorBenchmark:
+    sim_info = None  # used to determine if track is loaded
     initial_loading_timeout = 30.0
     loading_timeout = 25.0
     benchmark_length = 60.0
@@ -83,6 +86,21 @@ class RunRfactorBenchmark:
             else:
                 # If we find output we assume rF to be still loading until timeout
                 timeout_start = time()
+
+        # -- additional verify via rf2sharedmemory that we are on track
+        """
+        timeout_start = time()
+        self.sim_info = sharedMemoryAPI.SimInfoAPI()
+        logging.info('Verifying that track is loaded with rf2sharedmemory')
+        while time() - timeout_start < (self.loading_timeout * 2):
+            if self.sim_info.isSharedMemoryAvailable():
+                if self.sim_info.isTrackLoaded():
+                    logging.info('rf2sharedmemory detected that track is loaded')
+                    break
+            else:
+                logging.debug('rf2sharedmemory not available')
+            sleep(self.loading_timeout * 0.2)
+        """
 
         # -- Start fpsVR logging
         self._index_fpsvr_csv_dir()
@@ -242,4 +260,15 @@ def _test_benchmark(settings: List[Tuple[str, str, Any, Optional[str]]]):
 
 
 if __name__ == '__main__':
-    _test_benchmark(msaa_set[2:])
+    """
+        THIS WILL DISABLE ctypes support! But it will make sure "Launch rFactor2" 
+        or basically any executable that is loading DLLs will work.
+    """
+    if sys.platform == "win32":
+        import ctypes
+        ctypes.windll.kernel32.SetDllDirectoryA(None)
+    """
+        //
+    """
+    test_settings = pp_set[0:3] + shadow_set[0:3] + msaa_set[2:]
+    _test_benchmark(test_settings)

@@ -10,7 +10,7 @@
         </b-input-group-text>
       </b-input-group-prepend>
       <b-input-group-append>
-        <div :class="variant + ' setting-item fixed-width-setting'">
+        <div :class="settingVariant + ' setting-item fixed-width-setting'">
           <b-icon shift-v="-1" icon="controller" class="text-white" v-b-popover.hover.topright="settingDeviceName"/>
           <span class="ml-2">{{ typeName }} {{ settingValueName }}</span>
           <b-link @click="startListening" class="text-white ml-2">
@@ -174,7 +174,6 @@ export default {
     window.removeEventListener('con-event', this.handleControllerEvent)
   },
   mounted () {
-    if (this.variant === undefined) { this.variant = 'secondary'}
     if (this.rfJson) { this.getRfactorKeyName() }
 
     if (this.fixWidth) {
@@ -189,6 +188,10 @@ export default {
       let name = 'Not Set!'
       if (this.setting === undefined) { return name }
       return name
+    },
+    settingVariant: function () {
+      if (this.variant === undefined) { return 'secondary' }
+      return this.variant
     },
     typeName: function () {
       if (this.rfJson) { return getRfactorControllerDeviceTypeName(this.setting) }

@@ -1,36 +1,34 @@
 <template>
   <div id="headlights">
-    <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white">
-      <h6 class="mb-0 title">rF2 Headlights</h6>
-      <b-card-text class="text-left" style="font-size: small;">
-       Advanced controls for your rFactor 2 in-game headlight.
-      </b-card-text>
-      <b-card-text class="text-left" style="font-size: small;">
-        To control the headlights
-        <b-link href="https://github.com/TonyWhitley/rF2headlights/wiki">rF2headlights</b-link>
-        depends on
-        <b-link href="https://forum.studio-397.com/index.php?threads/rf2-shared-memory-tools-for-developers.54282/"
-                target="_blank">
-          rF2 Shared Memory Tools
-        </b-link>
-        by
-        <b-link href="https://forum.studio-397.com/index.php?members/44836/" target="_blank">The Iron Wolf</b-link>
-        which must be installed in rFactor. If you have already installed
-        <b-link href="http://thecrewchief.org/forum.php" target="_blank">Crew Chief</b-link>
-        (and if you haven't, you're missing out!) that will have installed the Shared Memory PlugIn already.
-        If not, follow the instructions in
-        <b-link href="https://forum.studio-397.com/index.php?threads/rf2-shared-memory-tools-for-developers.54282/"
-                target="_blank">
-          rF2 Shared Memory Tools
-        </b-link>
-      </b-card-text>
-    </b-card>
+    <b-input-group>
+      <b-input-group-prepend>
+        <!-- Headlight Icon -->
+        <div class="p-1 position-relative bg-transparent rounded-left">
+          <b-img width=".3rem" class="hdl-icon pulse" v-if="isHeadlightAppEnabled"
+                 src="@/assets/rf2_headlights_glow.svg"></b-img>
+          <b-img width=".3rem" class="hdl-icon bottom" src="@/assets/rf2_headlights_off.svg"></b-img>
+        </div>
+        <!-- Title -->
+        <b-input-group-text class="bg-transparent no-border section-title text-white pl-1">
+          rF2 Headlights
+        </b-input-group-text>
+      </b-input-group-prepend>
+
+      <!-- Spacer -->
+      <div class="form-control bg-transparent no-border"></div>
+    </b-input-group>
 
     <!-- Headlight rFactor Control Mapping -->
     <b-card class="mt-2 setting-card" id="hdl-controller-json-area"
-            bg-variant="dark" text-variant="white">
+            bg-variant="dark" text-variant="white" footer-class="pt-0">
       <template #header>
-        <h6 class="mb-0 title">rFactor 2 Headlight Control</h6>
+        <h6 class="mb-0 title headlight-title-line">rFactor 2 Headlight Control</h6>
+        <div class="float-right headlight-title-line">
+          <b-button size="sm" class="rounded-right" @click="getSettings"
+                    v-b-popover.hover.bottom="'Refresh Settings if you updated a setting in-game'">
+            <b-icon icon="arrow-repeat"></b-icon>
+          </b-button>
+        </div>
       </template>
       <ControllerAssignment
           v-for="setting in headlightControllerJsonSettings.options" :key="setting.key"
@@ -48,37 +46,77 @@
               the control setting above and map it to a keyboard key for this functionality to work.
             </span>
           </template>
+          <template v-else>
+            You can remap your rFactor 2 headlight control binding to a keyboard key here.
+          </template>
         </div>
       </template>
     </b-card>
 
     <!-- Headlight App Settings -->
     <b-card class="mt-2 setting-card" id="headlight-settings-area"
-            bg-variant="dark" text-variant="white">
+            bg-variant="dark" text-variant="white" footer-class="pt-0">
       <template #header>
-        <h6 class="mb-0 title">{{ headlightSettings.title }}</h6>
+        <h6 class="mb-0 title headlight-title-line">{{ headlightSettings.title }}</h6>
+        <div class="float-right headlight-title-line">
+          <b-button size="sm" @click="showSettingsWiki = !showSettingsWiki">
+            <b-icon :icon="showSettingsWiki ? 'exclamation' : 'question'"></b-icon>
+          </b-button>
+        </div>
       </template>
       <Setting v-for="setting in headlightSettings.options" :key="setting.key"
-               :setting="setting" variant="rf-orange" class="mr-3 mb-3"
-               group-id="headlight-settings-area" :fix-width="true"
+               :setting="setting" class="mr-3 mb-3" group-id="headlight-settings-area" :fix-width="true"
+               :variant="isHeadlightAppEnabled || setting.key === 'enabled' ? 'rf-orange' : 'secondary'"
                @setting-changed="updateSetting"
                @make-toast="makeToast">
       </Setting>
+      <template #footer v-if="showSettingsWiki">
+        <div class="text-left" style="font-size: small;">
+          To control the headlights
+          <b-link href="https://github.com/TonyWhitley/rF2headlights/wiki">rF2headlights</b-link>
+          depends on
+          <b-link href="https://forum.studio-397.com/index.php?threads/rf2-shared-memory-tools-for-developers.54282/"
+                  target="_blank">
+            rF2 Shared Memory Tools
+          </b-link>
+          by
+          <b-link href="https://forum.studio-397.com/index.php?members/44836/" target="_blank">The Iron Wolf</b-link>
+          which must be installed in rFactor. If you have already installed
+          <b-link href="http://thecrewchief.org/forum.php" target="_blank">Crew Chief</b-link>
+          (and if you haven't, you're missing out!) that will have installed the Shared Memory PlugIn already.
+          If not, follow the instructions in
+          <b-link href="https://forum.studio-397.com/index.php?threads/rf2-shared-memory-tools-for-developers.54282/"
+                  target="_blank">
+            rF2 Shared Memory Tools
+          </b-link>
+        </div>
+      </template>
     </b-card>
 
     <!-- Headlight Controller Mappings -->
     <b-card class="mt-2 setting-card" id="hdl-controller-area"
-            bg-variant="dark" text-variant="white">
+            bg-variant="dark" text-variant="white" footer-class="pt-0">
       <template #header>
-        <h6 class="mb-0 title">Controller Assignments</h6>
+        <h6 class="mb-0 title headlight-title-line">Controller Assignments</h6>
+        <div class="float-right headlight-title-line">
+          <b-button size="sm" @click="showAssignWiki = !showAssignWiki">
+            <b-icon :icon="showAssignWiki ? 'exclamation' : 'question'"></b-icon>
+          </b-button>
+        </div>
       </template>
       <ControllerAssignment
           v-for="setting in controllerAssignments.options" :key="setting.key"
-          :setting="setting" variant="rf-orange" class="mr-3 mb-3"
-          group-id="hdl-controller-area" :fix-width="true"
+          :setting="setting" class="mr-3 mb-3" group-id="hdl-controller-area" :fix-width="true"
+          :variant="isHeadlightAppEnabled ? 'rf-orange' : 'secondary'"
           @update-assignment="updateAssignment"
           @make-toast="makeToast">
       </ControllerAssignment>
+      <template #footer v-if="showAssignWiki">
+        <div class="text-left" style="font-size: small;">
+          These assignments will be used to control this rf2headlights app functionality. You need to have this app
+          opened and running for these controller mappings to work in-game.
+        </div>
+      </template>
     </b-card>
 
     <!-- Footer -->
@@ -98,11 +136,14 @@ export default {
 name: "Headlights",
   data: function () {
     return {
-      message: '',
+      viewMode: 0,
       headlightSettings: {},
       controllerAssignments: {},
       headlightControllerJsonSettings: {},
       groupId: 'headlight-area',
+      isHeadlightAppEnabled: false,
+      showSettingsWiki: false,
+      showAssignWiki: false,
     }
   },
   methods: {
@@ -110,6 +151,9 @@ name: "Headlights",
       this.$emit('make-toast', message, category, title, append, delay)
     },
     setBusy: function (busy) { this.$emit('set-busy', busy) },
+    toggleViewMode: function () {
+      this.viewMode = !this.viewMode ? 1 : 0
+    },
     getSettings: async function () {
       const r = await getEelJsonObject(window.eel.get_headlights_settings()())
       if (r.result) {
@@ -172,6 +216,17 @@ name: "Headlights",
       }
     },
   },
+  watch: {
+    'headlightSettings.options': {
+      handler(val) {
+        console.log('Update:', val)
+        val.forEach(opt => {
+          if (opt.key === 'enabled') { this.isHeadlightAppEnabled = opt.value }
+        })
+      },
+      deep: true
+    }
+  },
   computed: {
     isRfactorKeyboardMapped: function () {
       // If rFactor Headlight control is mapped to keyboard
@@ -191,5 +246,22 @@ name: "Headlights",
 </script>
 
 <style scoped>
-
+.section-title { font-family: Ubuntu, sans-serif; }
+.headlight-title-line { display: inline-block; }
+.hdl-icon { width: 2.275rem; }
+.hdl-icon.bottom { position: relative; }
+@keyframes headlightFlash {
+  0% { opacity: 1; }
+  40% { opacity: 0.9; }
+  50% { opacity: 0; }
+  80% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.hdl-icon.pulse {
+  position: absolute; z-index: 2;
+  animation-name: headlightFlash;
+  animation-duration: 300ms;
+  animation-iteration-count: 4;
+  animation-direction: normal;
+}
 </style>
