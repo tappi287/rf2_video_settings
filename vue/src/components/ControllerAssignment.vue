@@ -126,9 +126,11 @@ export default {
     },
     startListening: function () {
       this.eventCaptured = false; this.capturedEvent = null; this.listening = true
+      window.eel.start_controller_capture()
       this.$nextTick(() => { this.listenToKeyboard(false) })
     },
     abortListeningController: function () {
+      window.eel.stop_controller_capture()
       this.listenToKeyboard(true); this.listening = false; this.eventCaptured = false
     },
     confirmAssign: async function () {
