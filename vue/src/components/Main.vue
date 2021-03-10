@@ -5,32 +5,32 @@
         <b-img width="32px" src="@/assets/app_icon.webp"></b-img>
       </b-navbar-brand>
       <b-nav>
-        <b-nav-item :active="navActive === 0" @click="navActive=0">
+        <b-nav-item :active="navActive === 0" @click="navActive=0" link-classes="pl-0">
           Dashboard
         </b-nav-item>
-        <b-nav-item :active="navActive === 1" @click="navActive=1">
+        <b-nav-item :active="navActive === 1" @click="navActive=1" link-classes="pl-0">
           Graphics
         </b-nav-item>
-        <b-nav-item :active="navActive === 2" @click="navActive=2">
+        <b-nav-item :active="navActive === 2" @click="navActive=2" link-classes="pl-0">
           Controls
         </b-nav-item>
-        <b-nav-item :active="navActive === 3" @click="navActive=3">
+        <b-nav-item :active="navActive === 3" @click="navActive=3" link-classes="pl-0">
           Settings
         </b-nav-item>
-        <b-nav-item :active="navActive === 4" @click="navActive=4">
+        <b-nav-item :active="navActive === 4" @click="navActive=4" link-classes="pl-0">
           Headlights
         </b-nav-item>
-        <b-nav-item :active="navActive === 5" @click="toggleServerBrowser">
+        <b-nav-item :active="navActive === 5" @click="toggleServerBrowser" link-classes="pl-0">
           Server Browser
         </b-nav-item>
       </b-nav>
 
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
-        <b-nav-form>
-          <b-form-input v-model="search" debounce="800" type="search" :disabled="navActive === 0"
+        <b-nav-form v-if="navSearchEnabled">
+          <b-form-input v-model="search" debounce="800" type="search"
                         size="sm" placeholder="Search..."
-                        :class="navActive === 0 ? searchCls + 'search-off' : searchCls + 'text-white'"/>
+                        class="search-bar mr-sm-2 text-white"/>
         </b-nav-form>
         <b-nav-item id="wiki-nav" right :active="navActive === 6" @click="navActive=6">
           <b-icon icon="question-square-fill"></b-icon>
@@ -244,7 +244,6 @@ export default {
     return {
       navActive: 0,
       search: '',
-      searchCls: 'search-bar mr-sm-2 ',
       firstServerBrowserVisit: true,
       gfxReady: false,
       isBusy: false,
@@ -322,6 +321,11 @@ export default {
       }
       if (!r.result) { this.makeToast(r.msg, 'danger', 'Re-Store Original Settings') }
       this.$root.$emit('bv::hide::popover', 'restore-btn')
+    },
+  },
+  computed: {
+    navSearchEnabled() {
+      return [0, 4].indexOf(this.navActive) === -1;
     },
   },
   components: {

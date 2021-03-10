@@ -11,6 +11,8 @@
         function closeApp () {
           return window.close()
         }
+        // Avoid accidental dragging and triggering a preset import
+        window.ondragstart = function() { return false; }
     </script>
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
