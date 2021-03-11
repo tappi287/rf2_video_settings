@@ -1,5 +1,6 @@
 import json
 import logging
+from time import time
 
 import eel
 import gevent.event
@@ -17,7 +18,7 @@ except ImportError:
 
 class SetupControllerAxis:
     AXIS_DEADZONE = 0.35
-    AXIS_DEBOUNCE = 300  # Check axis again after debounce interval
+    AXIS_DEBOUNCE = 300 / 1000  # Check axis again after debounce interval
     AXIS_TRIGGER_VALUE = 0.5
     watched_axis = dict()
 
@@ -86,7 +87,7 @@ def controller_greenlet(event_callback: callable = _set_event_result):
     # When input is triggered by an axis we will not trigger an event again
     # until it is back below it's deadzone value + debounce timer
     a = SetupControllerAxis
-    axis_triggered, axis_debounce = False, pygame.time.get_ticks()
+    axis_triggered, axis_debounce = False, time()
     while event_loop_active:
         for event in pygame.event.get():
             # --- Joystick added ---
@@ -121,10 +122,10 @@ def controller_greenlet(event_callback: callable = _set_event_result):
                         event_callback(event)
                 else:
                     if event.instance_id in a.watched_axis and event.axis in a.watched_axis.get(event.instance_id):
-                        if (pygame.time.get_ticks() - axis_debounce) > a.AXIS_DEBOUNCE:
+                        if (time() - axis_debounce) > a.AXIS_DEBOUNCE:
                             if abs(event.value) > a.AXIS_DEADZONE and not axis_triggered:
                                 axis_triggered = True
-                                axis_debounce = pygame.time.get_ticks()
+                                axis_debounce = time()
                                 event_callback(event)
                             if abs(event.value) < a.AXIS_DEADZONE:
                                 axis_triggered = False
