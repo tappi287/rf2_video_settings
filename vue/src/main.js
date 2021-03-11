@@ -141,13 +141,16 @@ export function getRfactorControllerDeviceTypeName(setting) {
 }
 
 // Get the Name of a Controller Button/Axis
-export function getControllerValueName({button, key, type, value, axis}) {
+export function getControllerValueName({button, key, hat, type, value, axis}) {
   // Key
   if (type === 768) {
       if (key !== undefined && key !== '' && key !== null) { return key.toUpperCase() }
   }
   // Axis
-  if (type === 1536 && axis !== undefined) { return String(axis) + ' ' + String(value.toFixed(2)) }
+  if (type === 1536 && axis !== undefined) {
+      let a = String(axis)
+      return (value > 0) ? a + ' +' : a + ' -'
+  }
   // Button
   if ([768, 1539].indexOf(type) !== -1) {
       if (value !== undefined && value !== '' && value !== null) { return value }
@@ -155,14 +158,14 @@ export function getControllerValueName({button, key, type, value, axis}) {
   }
   // Dpad
   if (Number(type) === 1538) {
-    let result = '-'
+    let result = String(hat) + ' '
     switch (value[0]) {
-      case -1: result = 'Left'; break
-      case 1: result = 'Right'; break
+      case -1: result += 'Left'; break
+      case 1: result += 'Right'; break
     }
     switch (value[1]) {
-      case -1: result = 'Down'; break
-      case 1:result = 'Up'; break
+      case -1: result += 'Down'; break
+      case 1:result += 'Up'; break
     }
     return result
   }
