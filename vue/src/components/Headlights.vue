@@ -3,8 +3,8 @@
     <b-input-group>
       <b-input-group-prepend>
         <!-- Headlight Icon -->
-        <div class="p-1 position-relative bg-transparent rounded-left">
-          <b-img width=".3rem" class="hdl-icon pulse" v-if="isHeadlightAppEnabled"
+        <div class="pl-0 pt-1 pr-1 position-relative bg-transparent rounded-left" @click="triggerLogoFlash">
+          <b-img width=".3rem" :class="logoClass" v-if="isHeadlightAppEnabled"
                  src="@/assets/rf2_headlights_glow.svg"></b-img>
           <b-img width=".3rem" class="hdl-icon bottom" src="@/assets/rf2_headlights_off.svg"></b-img>
         </div>
@@ -21,9 +21,9 @@
     <!-- Headlight rFactor Control Mapping -->
     <b-card class="mt-2 setting-card" id="hdl-controller-json-area"
             bg-variant="dark" text-variant="white" footer-class="pt-0">
-      <template #header>
-        <h6 class="mb-0 title headlight-title-line">rFactor 2 Headlight Control</h6>
-        <div class="float-right headlight-title-line">
+      <template #header class="position-relative">
+        <h6 class="mb-0 title">rFactor 2 Headlight Control</h6>
+        <div class="position-absolute headlight-title-right">
           <b-button size="sm" class="rounded-right" @click="getSettings"
                     v-b-popover.hover.bottom="'Refresh Settings if you updated a setting in-game'">
             <b-icon icon="arrow-repeat"></b-icon>
@@ -56,9 +56,9 @@
     <!-- Headlight App Settings -->
     <b-card class="mt-2 setting-card" id="headlight-settings-area"
             bg-variant="dark" text-variant="white" footer-class="pt-0">
-      <template #header>
-        <h6 class="mb-0 title headlight-title-line">{{ headlightSettings.title }}</h6>
-        <div class="float-right headlight-title-line">
+      <template #header class="position-relative">
+        <h6 class="mb-0 title">{{ headlightSettings.title }}</h6>
+        <div class="position-absolute headlight-title-right">
           <b-button size="sm" @click="showSettingsWiki = !showSettingsWiki">
             <b-icon :icon="showSettingsWiki ? 'exclamation' : 'question'"></b-icon>
           </b-button>
@@ -96,9 +96,9 @@
     <!-- Headlight Controller Mappings -->
     <b-card class="mt-2 setting-card" id="hdl-controller-area"
             bg-variant="dark" text-variant="white" footer-class="pt-0">
-      <template #header>
-        <h6 class="mb-0 title headlight-title-line">Controller Assignments</h6>
-        <div class="float-right headlight-title-line">
+      <template #header class="position-relative">
+        <h6 class="mb-0 title">Controller Assignments</h6>
+        <div class="position-absolute headlight-title-right">
           <b-button size="sm" @click="showAssignWiki = !showAssignWiki">
             <b-icon :icon="showAssignWiki ? 'exclamation' : 'question'"></b-icon>
           </b-button>
@@ -120,7 +120,7 @@
     </b-card>
 
     <!-- Footer -->
-    <div class="mt-3 main-footer small font-weight-lighter">
+    <div class="mt-3 small font-weight-lighter">
       <span>Idea, functionality and code portions courtesy of: </span>
       <a href="https://github.com/TonyWhitley/rF2headlights" target="_blank">rf2headlights</a>
     </div>
@@ -129,7 +129,7 @@
 
 <script>
 import Setting from "@/components/Setting";
-import {getControllerDeviceTypeName, getControllerValueName, getEelJsonObject} from "@/main";
+import {getControllerDeviceTypeName, getControllerValueName, getEelJsonObject, sleep} from "@/main";
 import ControllerAssignment from "@/components/ControllerAssignment";
 
 export default {
@@ -142,6 +142,9 @@ name: "Headlights",
       headlightControllerJsonSettings: {},
       groupId: 'headlight-area',
       isHeadlightAppEnabled: false,
+      flashLogo: false,
+      flashing: false,
+      flashCount: 4, flashOnTime: 80, flashOffTime: 400,
       showSettingsWiki: false,
       showAssignWiki: false,
     }
@@ -153,6 +156,50 @@ name: "Headlights",
     setBusy: function (busy) { this.$emit('set-busy', busy) },
     toggleViewMode: function () {
       this.viewMode = !this.viewMode ? 1 : 0
+    },
+    triggerLogoFlash: async function() {
+      if (this.flashing) { return }
+      this.flashing = true
+      for (let i=0; i < this.flashCount; i++) {
+        this.flashLogo = true; await sleep(this.flashOnTime)
+        this.flashLogo = false; await sleep(this.flashOffTime)
+      }
+      this.flashing = false
+    },
+    setupLogoFlash: function (setting) {
+      // Simulate Headlight flash in front end
+      if (this.headlightSettings.options === undefined) { return }
+      if (setting === undefined) {
+        this.flashOnTime = Number(this.getHeadlightOption('flash_on_time').value)
+        this.flashOffTime = Number(this.getHeadlightOption('flash_off_time').value)
+        this.flashCount = Number(this.getHeadlightOption('flash_count').value)
+      }
+      if (['flash_count', 'flash_on_time', 'flash_off_time'].indexOf(setting.key) !== -1) {
+        let fOn = Number(this.getHeadlightOption('flash_on_time').value)
+        let fOff = Number(this.getHeadlightOption('flash_off_time').value)
+        let c = Number(this.getHeadlightOption('flash_count').value)
+
+        if (fOn !== this.flashOnTime || fOff !== this.flashOffTime || this.flashCount !== c) {
+          this.flashOnTime = fOn; this.flashOffTime = fOff; this.flashCount = c
+          console.log(this.flashOnTime, this.flashOffTime, this.flashCount)
+          this.triggerLogoFlash()
+        }
+      } else if (['pit_flash_off_time', 'pit_flash_on_time', 'pit_lane', 'pit_limiter'].indexOf(setting.key) !== -1) {
+          let fOn = Number(this.getHeadlightOption('pit_flash_on_time').value)
+          let fOff = Number(this.getHeadlightOption('pit_flash_off_time').value)
+          if (fOn !== this.flashOnTime || fOff !== this.flashOffTime) {
+            this.flashOnTime = fOn; this.flashOffTime = fOff; this.flashCount = 8
+            this.triggerLogoFlash()
+          }
+       }
+    },
+    getHeadlightOption: function (key) {
+      if (this.headlightSettings.options === undefined) { return }
+      let r = {value: 10}
+      this.headlightSettings.options.forEach(opt => {
+        if (opt.key === key) { r = opt }
+      })
+      return r
     },
     getSettings: async function () {
       const r = await getEelJsonObject(window.eel.get_headlights_settings()())
@@ -169,6 +216,7 @@ name: "Headlights",
       setting.value = value
       if (save) { await this.saveSettings() }
       this.setBusy(false)
+      this.setupLogoFlash(setting)
     },
     updateAssignment: async function(setting, capturedEvent, save = true) {
       this.setBusy(true)
@@ -183,6 +231,10 @@ name: "Headlights",
         value = capturedEvent.value
       } else {
         value = getControllerValueName(capturedEvent)
+      }
+      if (capturedEvent.axis !== undefined && capturedEvent.axis >= 0) {
+        if (capturedEvent.value > 0) { value = 0.5 }
+        if (capturedEvent.value < 0) { value = -0.5 }
       }
       setting.value = value
 
@@ -214,18 +266,17 @@ name: "Headlights",
       } else {
         console.log('Saved Headlights settings.')
       }
-    },
+    }
   },
   watch: {
     'headlightSettings.options': {
       handler(val) {
-        console.log('Update:', val)
         val.forEach(opt => {
           if (opt.key === 'enabled') { this.isHeadlightAppEnabled = opt.value }
         })
       },
       deep: true
-    }
+    },
   },
   computed: {
     isRfactorKeyboardMapped: function () {
@@ -236,32 +287,30 @@ name: "Headlights",
         }
       }
       return false
+    },
+    logoClass: function () {
+      let c = 'hdl-icon pulse'
+      if (this.flashLogo) { c += ' flash'}
+      return c
     }
   },
-  created() {
-    this.getSettings()
-  },
+  mounted() { this.$nextTick(() => { this.setupLogoFlash() }) },
+  created() { this.getSettings() },
   components: {ControllerAssignment, Setting }
 }
 </script>
 
 <style scoped>
 .section-title { font-family: Ubuntu, sans-serif; }
-.headlight-title-line { display: inline-block; }
+.headlight-title-right { right: 1.15rem; top: .75rem; }
 .hdl-icon { width: 2.275rem; }
 .hdl-icon.bottom { position: relative; }
-@keyframes headlightFlash {
-  0% { opacity: 1; }
-  40% { opacity: 0.9; }
-  50% { opacity: 0; }
-  80% { opacity: 0; }
-  100% { opacity: 1; }
-}
 .hdl-icon.pulse {
   position: absolute; z-index: 2;
-  animation-name: headlightFlash;
-  animation-duration: 300ms;
-  animation-iteration-count: 4;
-  animation-direction: normal;
+  opacity: 0;
+  transition: opacity 10ms;
+}
+.hdl-icon.pulse.flash {
+  opacity: 1;
 }
 </style>
