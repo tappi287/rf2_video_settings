@@ -1,7 +1,7 @@
 # AppSettings headlights
 headlight_settings = {
     'enabled': {'name': 'Enable App Headlights', 'value': False,
-                'desc': 'Enable the in-game control of the headlights thru this applications '
+                'desc': 'Enable the control of your in-game headlights thru this applications '
                         'rf2headlights functionality',
                 'settings': ({'value': True, 'name': 'On'}, {'value': False, 'name': 'Off'})
                 },
@@ -36,18 +36,22 @@ headlight_settings = {
                                   'desc': ''},)
                     },
     'flash_on_time': {'name': 'Overtake Flash ON Time', 'value': 20,
+                      'desc': 'Length of one flash in milliseconds',
                       'settings': ({'settingType': 'range', 'min': 10, 'max': 500, 'step': 10,
                                     'desc': ''},)
                       },
     'flash_off_time': {'name': 'Overtake Flash OFF Time', 'value': 20,
+                       'desc': 'Length of the break between flashes in milliseconds',
                        'settings': ({'settingType': 'range', 'min': 10, 'max': 500, 'step': 10,
                                      'desc': ''},)
                        },
     'pit_flash_on_time': {'name': 'Pit Flash ON Time', 'value': 200,
+                          'desc': 'Length of one flash in milliseconds',
                           'settings': ({'settingType': 'range', 'min': 10, 'max': 500, 'step': 10,
                                         'desc': ''},)
                           },
     'pit_flash_off_time': {'name': 'Pit Flash OFF Time', 'value': 20,
+                           'desc': 'Length of the break between flashes in milliseconds',
                            'settings': ({'settingType': 'range', 'min': 10, 'max': 500, 'step': 10,
                                          'desc': ''},)
                            },
@@ -55,20 +59,20 @@ headlight_settings = {
 
 controller_assignments = {
     # eg. Dpad Motion
-    'toggle_headlights': {'name': 'Toggle Headlights', 'desc': 'Controller button or keyboard key to switch '
+    'toggle_headlights': {'name': 'Toggle Headlights', 'desc': 'Controller mapping to switch '
                                                                'the Headlights on and off.',
                           'device_name': 'Xbox One S Controller',
                           'guid': '', 'type': 1538, 'hat': 1, 'value': [0, -1],
                           'axis': None},
     # eg. Button 8 down
-    'flash_headlights': {'name': 'Flash Headlights', 'desc': 'Controller button or keyboard key to trigger '
+    'flash_headlights': {'name': 'Flash Headlights', 'desc': 'App Controller mapping to trigger '
                                                              'flashing Headlights.',
                          'device_name': 'Xbox One S Controller',
                          'guid': '', 'type': 1539, 'hat': None, 'value': 8, 'axis': None},
-    'headlights_on': {'name': 'Headlights On', 'desc': 'Controller button to turn Headlights on. (No toggle)',
+    'headlights_on': {'name': 'Headlights On', 'desc': 'App Controller mapping to turn Headlights on. (No toggle)',
                       'device_name': 'Xbox One S Controller',
                       'guid': '', 'type': 1539, 'hat': None, 'value': 8, 'axis': None},
-    'headlights_off': {'name': 'Headlights Off', 'desc': 'Controller button to turn Headlights off. (No toggle)',
+    'headlights_off': {'name': 'Headlights Off', 'desc': 'App Controller mapping to turn Headlights off. (No toggle)',
                        'device_name': 'Xbox One S Controller',
                        'guid': '', 'type': 1539, 'hat': None, 'value': 8, 'axis': None},
 }
