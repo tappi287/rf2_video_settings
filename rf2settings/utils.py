@@ -153,7 +153,7 @@ def subprocess_args(include_stdout=True):
 def create_js_pygame_event_dict(joy_dict: dict, joy_event) -> dict:
     """ Create a JS friendly dictionary from a pygame joystick event """
     name, guid = 'Keyboard', 'Keyboard'
-    button, hat, value = None, None, None
+    button, hat, axis, value = None, None, None, None
     j = joy_dict.get(joy_event.instance_id)
 
     if joy_event.type in (pygame.JOYBUTTONDOWN, pygame.JOYBUTTONUP, pygame.JOYHATMOTION, pygame.JOYAXISMOTION):
@@ -163,8 +163,10 @@ def create_js_pygame_event_dict(joy_dict: dict, joy_event) -> dict:
             name, guid = 'Unknown', '-1'
     if joy_event.type in (pygame.JOYBUTTONUP, pygame.JOYBUTTONDOWN):
         button = joy_event.button
-    if joy_event.type == pygame.JOYHATMOTION:
-        value, hat = joy_event.value, joy_event.hat
+    elif joy_event.type == pygame.JOYHATMOTION:
+        value, hat = list(joy_event.value), joy_event.hat
+    elif joy_event.type == pygame.JOYAXISMOTION:
+        value, axis = joy_event.value, joy_event.axis
 
     return {'name': name, 'guid': guid, 'button': button,
-            'hat': hat, 'value': value, 'type': joy_event.type}
+            'hat': hat, 'axis': axis, 'value': value, 'type': joy_event.type}

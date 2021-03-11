@@ -7,6 +7,7 @@ import eel
 
 from rf2settings.app.app_dashboard import expose_dashboard_methods
 from rf2settings.app.app_graphics import expose_graphics_methods
+from rf2settings.app.app_controller import expose_controller_methods
 from rf2settings.app.app_headlights import expose_headlights_methods
 from rf2settings.app.app_main import expose_main_methods, CLOSE_EVENT
 from rf2settings.app.app_multiplayer import expose_multiplayer_methods
@@ -23,7 +24,7 @@ expose_graphics_methods()
 expose_multiplayer_methods()
 expose_preset_methods()
 expose_headlights_methods()
-
+expose_controller_methods()
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)

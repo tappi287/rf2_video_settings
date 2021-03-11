@@ -15,12 +15,20 @@ except ImportError:
     py_game_avail = 0
 
 
+class SetupControllerAxis:
+    AXIS_DEADZONE = 0.35
+    AXIS_DEBOUNCE = 300  # Check axis again after debounce interval
+    AXIS_TRIGGER_VALUE = 0.5
+    watched_axis = dict()
+
+
 class ControllerEvents:
     """ Keep event and result objects in this modules namespace """
     event = gevent.event.Event()
     result = gevent.event.AsyncResult()
     settings_changed = gevent.event.Event()
     joysticks = dict()
+    capturing = False  # When we want to capture input mappings and capture all axis events as well
 
 
 def controller_event_loop():
@@ -75,6 +83,10 @@ def controller_greenlet(event_callback: callable = _set_event_result):
             ControllerEvents.joysticks[j.get_instance_id()] = j
 
     event_loop_active = True
+    # When input is triggered by an axis we will not trigger an event again
+    # until it is back below it's deadzone value + debounce timer
+    a = SetupControllerAxis
+    axis_triggered, axis_debounce = False, pygame.time.get_ticks()
     while event_loop_active:
         for event in pygame.event.get():
             # --- Joystick added ---
@@ -103,7 +115,19 @@ def controller_greenlet(event_callback: callable = _set_event_result):
                     logging.debug('Removed Joystick device with instance id: %s', invalid_id)
             # --- Joystick Axis moved ---
             elif event.type == pygame.JOYAXISMOTION:
-                pass
+                if ControllerEvents.capturing:
+                    if abs(event.value) > a.AXIS_DEADZONE:
+                        logging.info('Axis event %s %s', event.type, event)
+                        event_callback(event)
+                else:
+                    if event.instance_id in a.watched_axis and event.axis in a.watched_axis.get(event.instance_id):
+                        if (pygame.time.get_ticks() - axis_debounce) > a.AXIS_DEBOUNCE:
+                            if abs(event.value) > a.AXIS_DEADZONE and not axis_triggered:
+                                axis_triggered = True
+                                axis_debounce = pygame.time.get_ticks()
+                                event_callback(event)
+                            if abs(event.value) < a.AXIS_DEADZONE:
+                                axis_triggered = False
             # --- Joystick Button pressed ---
             elif event.type == pygame.JOYBUTTONDOWN:
                 event_callback(event)
