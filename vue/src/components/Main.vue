@@ -247,6 +247,7 @@ export default {
   data: function () {
     return {
       navActive: 0,
+      searchInactive: [0, 4, 5],
       search: '',
       firstServerBrowserVisit: true,
       gfxReady: false,
@@ -322,7 +323,7 @@ export default {
   },
   computed: {
     navSearchEnabled() {
-      return [0, 4].indexOf(this.navActive) === -1;
+      return this.searchInactive.indexOf(this.navActive) === -1;
     },
   },
   components: {
