@@ -118,6 +118,19 @@ export async function getRequest(url) {
   }
 }
 
+window.eel.expose(updateProgress, 'server_progress')
+function updateProgress (newProgress, newMaxProgress) {
+  const progressEvent = new CustomEvent('update-progress',
+      {detail: {progress: newProgress, maxProgress: newMaxProgress}})
+  window.dispatchEvent(progressEvent)
+}
+
+window.eel.expose(addServerListChunk, 'add_server_list_chunk')
+function addServerListChunk (newServerListChunk) {
+  const serverListEvent = new CustomEvent('add-server-list-chunk', {detail: newServerListChunk})
+  window.dispatchEvent(serverListEvent)
+}
+
 export const controllerInputTypes = {768: 'Key', 1536: 'Axis', 1538: 'Dpad', 1539: 'Button' }
 
 // Get the Name of a Controller input Type
