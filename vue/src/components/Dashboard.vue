@@ -97,7 +97,7 @@ export default {
       posterImg: rfWPoster
     }
   },
-  props: {gfxHandler: PresetHandler},
+  props: {gfxHandler: PresetHandler, refreshFavs: Boolean },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
@@ -140,15 +140,28 @@ export default {
       const maxWidth = getMaxWidth(elements)
       elements.forEach(e => { e.style.width = String(maxWidth) + 'px' })
     },
+    updateFavs: async function () {
+      if (this.refreshFavs) {
+        // Reset ServerBrowser data
+        this.$refs.serverBrowser.serverListData = []
+        await this.$refs.serverBrowser.loadSettings()
+        await this.$refs.serverBrowser.refreshServerList(true)
+      }
+      this.$emit('favs-updated')
+    },
   },
   activated() {
+    console.log('Dashboard activated')
     this.resize()
     this.$refs.slider.play()
+    this.updateFavs()
   },
   updated() {
+    console.log('Dashboard updated')
     this.updateHeight()
   },
   mounted() {
+    console.log('Dashboard mounted')
     // Access after rendering finished
     setTimeout(() => {
       this.equalPresetButtonWidth()
