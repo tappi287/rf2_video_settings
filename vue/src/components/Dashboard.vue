@@ -47,7 +47,7 @@
 
     <!-- Server Favourites -->
     <transition name="fade">
-      <ServerBrowser ref="serverBrowser" only-favourites class="mt-3" :delay="1500"
+      <ServerBrowser ref="serverBrowser" only-favourites class="mt-3" :delay="100"
                      @server-browser-ready="resize" @make-toast="makeToast" @launch="$refs.slider.stop()"
                      @set-busy="setBusy"/>
     </transition>
@@ -143,7 +143,6 @@ export default {
     updateFavs: async function () {
       if (this.refreshFavs) {
         // Reset ServerBrowser data
-        this.$refs.serverBrowser.serverListData = []
         await this.$refs.serverBrowser.loadSettings()
         await this.$refs.serverBrowser.refreshServerList(true)
       }
