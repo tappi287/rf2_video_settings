@@ -27,7 +27,7 @@
 
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
-        <b-nav-form v-if="navSearchEnabled">
+        <b-nav-form v-if="navSearchEnabled" @submit.prevent>
           <b-form-input v-model="search" debounce="800" type="search"
                         size="sm" placeholder="Search..."
                         class="search-bar mr-sm-2 text-white"/>
