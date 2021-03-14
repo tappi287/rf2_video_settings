@@ -20,7 +20,7 @@
         <b-nav-item :active="navActive === 4" @click="navActive=4" link-classes="pl-0">
           Headlights
         </b-nav-item>
-        <b-nav-item :active="navActive === 5" @click="toggleServerBrowser" link-classes="pl-0">
+        <b-nav-item :active="navActive === 5" @click="navActive=5" link-classes="pl-0">
           Server Browser
         </b-nav-item>
       </b-nav>
@@ -52,7 +52,8 @@
 
     <!-- Dashboard -->
     <keep-alive>
-      <Dashboard ref="dash" v-if="navActive === 0 && gfxReady" :gfx-handler="$refs.gfx"
+      <Dashboard ref="dash" :gfx-handler="$refs.gfx" v-if="navActive === 0 && gfxReady"
+                 :refresh-favs="refreshDashFavs" @favs-updated="refreshDashFavs = false"
                  @make-toast="makeToast" @error="setError" @set-busy="setBusy"></Dashboard>
     </keep-alive>
 
@@ -175,8 +176,11 @@
     <Headlights ref="headlights" v-if="navActive === 4" @make-toast="makeToast"></Headlights>
 
     <!-- Server Browser -->
-    <ServerBrowser ref="serverBrowser" v-if="navActive === 5" @launch="stopSlideShow"
-                   @make-toast="makeToast" @set-busy="setBusy"/>
+    <keep-alive>
+      <ServerBrowser ref="serverBrowser" v-if="navActive === 5" @launch="stopSlideShow"
+               @make-toast="makeToast" @set-busy="setBusy"
+               @fav-updated="refreshDashFavs = true"/>
+    </keep-alive>
 
     <!-- Wiki -->
     <template  v-if="navActive === 6">
@@ -247,6 +251,7 @@ export default {
       firstServerBrowserVisit: true,
       gfxReady: false,
       isBusy: false,
+      refreshDashFavs: false,
     }
   },
   methods: {
@@ -298,14 +303,6 @@ export default {
       console.log(importPreset.preset_type)
     },
     setError: async function (error) { this.$emit('error', error) },
-    toggleServerBrowser() {
-      this.navActive = 5
-      // Refresh full server list on first visit
-      this.$nextTick(() => {
-        if (this.firstServerBrowserVisit) { this.$refs.serverBrowser.refreshServerList(true) }
-        this.firstServerBrowserVisit = false
-      })
-    },
     stopSlideShow() {
       if (this.$refs.dash !== undefined) { this.$refs.dash.$refs.slider.stop() }
     },
