@@ -37,6 +37,7 @@ class ServerList:
             This will block until all worker threads are finished.
         """
         server_address_list = list()
+        update_chunk_size = self.chunk_size
 
         # -- Get a list of IP:Port addresses from the Steam Master Server
         #    that run rFactor 2 Servers
@@ -47,6 +48,7 @@ class ServerList:
                 return
 
         if self.only_favourites:
+            update_chunk_size = 1
             for favourite_id in AppSettings.server_favourites:
                 fav_ip, fav_port = favourite_id.split(':')
                 server_address_list.append((fav_ip, int(fav_port)))
@@ -59,7 +61,7 @@ class ServerList:
         address_chunks: List[list] = list()
         while server_address_list:
             chunks = list()
-            for i in range(min(self.chunk_size, len(server_address_list))):
+            for i in range(min(update_chunk_size, len(server_address_list))):
                 chunks.append(server_address_list.pop())
             address_chunks.append(chunks)
 
