@@ -181,6 +181,12 @@ class SimInfoAPI(rF2data.SimInfo):
         return Cbytestring2Python(
             self.Rf2Scor.mVehicles[self.__playersDriverNum()].mDriverName)
 
+    def vehicleName(self):
+        """
+        Get the vehicle's name
+        """
+        return Cbytestring2Python(self.playersVehicleScoring().mVehicleName)
+
     def playersVehicleTelemetry(self):
         """ Get the variable for the player's vehicle """
         self.__playersDriverNum()
