@@ -309,7 +309,8 @@ export default {
       storePwd: true,
       showPwdToggle: false,
       pwdModalId: 'password-modal' + this._uid,
-      onlyFav: false
+      onlyFav: false,
+      isActive: false
     }
   },
   props: { onlyFavourites: Boolean, delay: Number },
@@ -393,6 +394,7 @@ export default {
     },
     refreshServerList: async function() {
       this.setBusy(true)
+      this.serverListData = []
 
       try {
         console.log('Calling get server list. Favs:', this.onlyFav)
@@ -427,6 +429,7 @@ export default {
       this.maxLoadProgress = event.detail.maxProgress
     },
     updateServerListData(event) {
+      if (!this.isActive) { return }
       const newServerListChunk = event.detail
       console.log('Adding server list chunk', newServerListChunk.length)
       newServerListChunk.forEach(entry => { this.serverListData.push(entry) })
@@ -499,6 +502,12 @@ export default {
     window.addEventListener('update-progress', this.updateProgress)
     window.addEventListener('add-server-list-chunk', this.updateServerListData)
     this.asyncCreate()
+  },
+  activated() {
+    this.isActive = true
+  },
+  deactivated() {
+    this.isActive = false
   },
   created() {
     this.onlyFav = this.onlyFavourites
