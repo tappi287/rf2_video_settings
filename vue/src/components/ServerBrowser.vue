@@ -43,7 +43,7 @@
       </b-input-group-append>
     </b-input-group>
 
-    <b-progress v-if="isBusy" :max="maxLoadProgress" variant="dark" height="3em"
+    <b-progress v-if="isBusy && !onlyFav" :max="maxLoadProgress" variant="dark" height="3em"
                 class="mt-0 mb-0">
       <b-progress-bar :value="loadProgress">
         <span>Loading: <strong>{{ loadProgress }} / {{ maxLoadProgress }}</strong></span>
@@ -277,24 +277,6 @@
 import {getEelJsonObject, sleep} from "@/main";
 import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 
-let progress = 0
-let maxProgress = 1
-let serverList = []
-const progressEvent = new Event('update-progress')
-const serverListEvent = new Event('add-server-list-chunk')
-
-window.eel.expose(updateProgress, 'server_progress')
-function updateProgress (newProgress, newMaxProgress) {
-  progress = newProgress
-  maxProgress = newMaxProgress
-  window.dispatchEvent(progressEvent)
-}
-
-window.eel.expose(addServerListChunk, 'add_server_list_chunk')
-function addServerListChunk (newServerListChunk) {
-  newServerListChunk.forEach(entry => { serverList.push(entry) })
-  window.dispatchEvent(serverListEvent)
-}
 
 export default {
   name: "ServerBrowser",
@@ -353,6 +335,8 @@ export default {
     toggleServerDetails: function(row) { row.toggleDetails(); this.showPwdToggle = false },
     isServerFav: function (server_info) { return this.serverFavs.indexOf(server_info.id) !== -1 },
     toggleServerFavourite: async function (server) {
+      this.$emit('fav-updated')
+
       // Add Favourite
       if (!this.isServerFav(server)) {
           const result = await getEelJsonObject(window.eel.server_favourite(server, true)())
@@ -407,18 +391,13 @@ export default {
 
       return filteredList
     },
-    refreshServerList: async function(force = false) {
-      if (serverList.length && !force) {
-        this.serverListData = serverList; return
-      } else {
-        serverList = []
-      }
-
+    refreshServerList: async function() {
       this.setBusy(true)
 
       try {
-        const server_data = await getEelJsonObject(window.eel.get_server_list(this.onlyFav)())
-        if (server_data === undefined || server_data === null) {
+        console.log('Calling get server list. Favs:', this.onlyFav)
+        const r = await getEelJsonObject(window.eel.get_server_list(this.onlyFav)())
+        if (r === undefined || r === null) {
           this.makeToast('Error acquiring server list.', 'danger', 'Server Browser')
         }
       } catch (error) {
@@ -441,27 +420,16 @@ export default {
         return
       }
 
-      const ip = update_data.result.address[0]
-      const port = Number(update_data.result.address[1])
-
-      // Clumsy JS array update
-      this.serverListData = []
-      serverList.forEach(entry => {
-        if (entry.address !== undefined) {
-          if (entry.address[0] === ip && entry.address[1] === port) {
-            serverList[serverList.indexOf(entry)] = update_data.result
-            this.serverListData.push(update_data.result)
-            console.log('Updated Server data:', ip, port, update_data.result.ping, update_data.result)
-          } else {
-            this.serverListData.push(entry)
-          }
-        }
-      })
+      this.serverListData[this.serverListData.indexOf(update_data.result)] = update_data.result
     },
-    updateProgress() { this.loadProgress = progress; this.maxLoadProgress = maxProgress },
-    updateServerListData() {
-      console.log('Adding server list chunk', serverList.length)
-      this.serverListData = serverList
+    updateProgress(event) {
+      this.loadProgress = event.detail.progress
+      this.maxLoadProgress = event.detail.maxProgress
+    },
+    updateServerListData(event) {
+      const newServerListChunk = event.detail
+      console.log('Adding server list chunk', newServerListChunk.length)
+      newServerListChunk.forEach(entry => { this.serverListData.push(entry) })
     },
     getRfVersion: async function () {
       let r = await getEelJsonObject(window.eel.get_rf_version()())
@@ -516,6 +484,7 @@ export default {
       this.$bvModal.hide(this.pwdModalId)
     },
     asyncCreate: async function () {
+      console.log('AsyncCreate called. Favs', this.onlyFavourites)
       this.setBusy(true)
       if (this.delay !== undefined) { await sleep(this.delay) }
       await this.getRfVersion()
@@ -526,11 +495,13 @@ export default {
       this.setBusy(false)
     }
   },
-  created() {
-    this.onlyFav = this.onlyFavourites
+  mounted() {
     window.addEventListener('update-progress', this.updateProgress)
     window.addEventListener('add-server-list-chunk', this.updateServerListData)
     this.asyncCreate()
+  },
+  created() {
+    this.onlyFav = this.onlyFavourites
   },
   destroyed() {
     if (!this.onlyFav) { this.saveSettings() }
