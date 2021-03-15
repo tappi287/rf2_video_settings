@@ -19,6 +19,9 @@ class ServerList:
     chunk_size = 8  # Max number of servers to query per worker
     transfer_chunk_size = chunk_size * 10  # Reduce update rate for a more responsive front end
 
+    # Age in hours of a player instance we consider no longer valid
+    skip_player_threshold_age = 8.0
+
     # Server info attributes we're interested in
     attributes = ('map_name', 'max_players', 'mod_version', 'version', 'protocol', 'password_protected', 'ping',
                   'platform', 'bot_count', 'player_count', 'protocol', 'server_name', 'server_type', 'steam_id',
@@ -165,19 +168,19 @@ class ServerList:
 
         return server_info_ls
 
-    @staticmethod
-    def _serialize_player_info(players: List[Player]):
-        player_set = set()
+    @classmethod
+    def _serialize_player_info(cls, players: List[Player]):
+        player_list = list()
 
-        for player in players:
-            if player.name:
-                # Skip players older than 24 hours
-                if player.duration and (player.duration / 3600 > 24.0):
-                    continue
+        for idx, player in enumerate(players):
+            # Skip players older than threshold in hours
+            if player.duration and (player.duration / 3600 > cls.skip_player_threshold_age):
+                continue
 
-                player_set.add(player.name)
+            # Most player names are reported as index 0 with name ''
+            player_list.append(player.name or f'Player_{idx:02d}')
 
-        return list(player_set)
+        return list(player_list)
 
     @staticmethod
     def get_server_addresses(region='rest') -> list:

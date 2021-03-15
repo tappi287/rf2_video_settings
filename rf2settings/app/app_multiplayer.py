@@ -34,6 +34,7 @@ def refresh_server(address: list):
         address = (address[0], int(address[1]))
         server_info = server_list.update_single(address)
         if server_info:
+            logging.debug('Updated Server info for: %s', server_info.get('server_name'))
             return json.dumps({'result': server_info, 'msg': f'Server info updated for {address[0]}'})
 
     return json.dumps({'result': False, 'msg': 'Could not obtain server info for this address'})
