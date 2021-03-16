@@ -18,6 +18,24 @@ from rf2settings.rfactor import RfactorPlayer
 from rf2settings.valve.steam_utils import SteamApps
 
 
+"""
+base_url = 'localhost'
+web_ui_port = 5397
+
+Get replay dict: GET
+/rest/watch/replays
+
+Load and play replay: GET
+/rest/watch/play/<replay_id>'
+
+Switch to fullscreen: POST (with data=None)
+/navigation/action/NAV_TO_FULL_EVENT_MONITOR
+
+Quit the game: POST (with data=None)
+/rest/start/quitGame
+"""
+
+
 class RunRfactorBenchmark:
     sim_info = None  # used to determine if track is loaded
     initial_loading_timeout = 30.0
