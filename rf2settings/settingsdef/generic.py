@@ -48,3 +48,16 @@ game_settings = {
                                                   'not the active application (-1 to disable). Will give more CPU '
                                                   'to other apps when minimized, etc.'},)},
 }
+# JSON Category: Miscellaneous
+misc_settings = {
+    'WebUI port': {'name': 'WebUI port', 'value': 5397,
+
+                   'settings': ({'settingType': 'range', 'min': 1024, 'max': 99999, 'step': 1,
+                                 'desc': 'Port for the WebUI'},)
+                   },
+    'enable UI Keyboard Nav': {'name': 'UI Keyboard Nav', 'value': 0,
+                               'desc': 'Enables keyboard navigation (enter forwards, esc backwards) through the UI',
+                               'settings': ({'value': 0, 'name': 'Disabled'},
+                                            {'value': 1, 'name': 'Enabled'})
+                               },
+}

@@ -161,7 +161,8 @@ class GraphicsPreset(BasePreset):
 
 class AdvancedSettingsPreset(BasePreset):
     preset_type: int = PresetType.advanced_settings
-    option_class_keys = {settings_model.DriverOptions.app_key, settings_model.GameOptions.app_key}
+    option_class_keys = {settings_model.DriverOptions.app_key, settings_model.GameOptions.app_key,
+                         settings_model.MiscOptions.app_key}
     prefix = 'adv_settings'
 
     def __init__(self, name: str = None, desc: str = None):

@@ -151,6 +151,19 @@ class GameOptions(BaseOptions):
         self.read_from_python_dict(generic.game_settings)
 
 
+class MiscOptions(BaseOptions):
+    key = 'Miscellaneous'
+    app_key = 'misc_options'
+    title = 'Miscellaneous'
+    target = OptionsTarget.player_json
+
+    def __init__(self):
+        super(MiscOptions, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(generic.misc_settings)
+
+
 class GamepadMouseOptions(BaseOptions):
     key = 'Controls'
     app_key = 'gamepad_mouse_settings'

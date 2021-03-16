@@ -167,6 +167,13 @@
                                  @update-setting="$refs.gen.updateSetting"
                                  @set-busy="setBusy"
                                  @make-toast="makeToast"/>
+            <GenericSettingsArea :preset="genPreset" :idx="idx" :search="search"
+                                 settings-key="misc_options"
+                                 :current_preset_idx="$refs.gen.selectedPresetIdx"
+                                 :view_mode="$refs.gen.viewMode"
+                                 @update-setting="$refs.gen.updateSetting"
+                                 @set-busy="setBusy"
+                                 @make-toast="makeToast"/>
           </div>
         </div>
       </b-overlay>
