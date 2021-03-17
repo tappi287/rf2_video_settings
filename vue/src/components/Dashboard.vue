@@ -47,7 +47,7 @@
 
     <!-- Server Favourites -->
     <transition name="fade">
-      <ServerBrowser ref="serverBrowser" only-favourites class="mt-3" :delay="100"
+      <ServerBrowser ref="serverBrowser" only-favourites class="mt-3" :delay="100" :rfactor-version="rfactorVersion"
                      @server-browser-ready="resize" @make-toast="makeToast" @launch="$refs.slider.stop()"
                      @set-busy="setBusy"/>
     </transition>
@@ -97,7 +97,7 @@ export default {
       posterImg: rfWPoster
     }
   },
-  props: {gfxHandler: PresetHandler, refreshFavs: Boolean },
+  props: {gfxHandler: PresetHandler, refreshFavs: Boolean, rfactorVersion: String },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)

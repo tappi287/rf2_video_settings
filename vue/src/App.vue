@@ -5,7 +5,7 @@
       <b-overlay :show="dragActive" variant="white" :no-center="true" opacity="0.9" :fixed="true">
 
         <!-- Main component -->
-        <Main v-on:error="setError" ref="main"></Main>
+        <Main v-on:error="setError" ref="main" :rfactor-version="rfactorVersion"></Main>
 
         <!-- Drag Overlay Content-->
         <template #overlay>
@@ -53,6 +53,7 @@
 import Main from "./components/Main.vue";
 import Updater from "@/components/Updater";
 import {createPopperLite as createPopper, flip, preventOverflow} from "@popperjs/core";
+import {getEelJsonObject} from "@/main";
 
 
 export default {
@@ -61,6 +62,7 @@ export default {
     return {
       dragActive: false,
       error: '',
+      rfactorVersion: ''
     }
   },
   methods: {
@@ -91,6 +93,15 @@ export default {
         await this.$refs.main.importPreset(importPreset)
       }
     },
+    getRfVersion: async function () {
+      let r = await getEelJsonObject(window.eel.get_rf_version()())
+      if (r !== undefined) {
+        r = r.replace('.', '')
+        r = r.replace('\n', '')
+        this.rfactorVersion = r
+        console.log('App found rF version:', this.rfactorVersion)
+      }
+    },
     setError: function (error) { this.error = error },
     requestClose: async function () {
       await window.eel.close_request()
@@ -110,6 +121,9 @@ export default {
     dropZone.addEventListener('dragleave', this.handleDragLeave, false)
     dropZone.addEventListener('drop', this.handleFileDrop, false)
     window.addEventListener('beforeunload', this.requestClose)
+  },
+  created() {
+    this.getRfVersion()
   }
 }
 
