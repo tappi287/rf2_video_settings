@@ -15,6 +15,7 @@ from rf2settings.app.app_presets import expose_preset_methods
 from rf2settings.app_settings import AppSettings
 from rf2settings.gamecontroller import controller_greenlet, controller_event_loop
 from rf2settings.headlights import headlights_greenlet
+from rf2settings.rf2connect import rfactor_event_loop
 from rf2settings.runasadmin import run_as_admin
 
 # -- Make sure eel methods are exposed at start-up
@@ -80,6 +81,8 @@ def start_eel():
     while not CLOSE_EVENT.is_set():
         # Game controller event loop
         controller_event_loop()
+        # rFactor 2 event loop
+        rfactor_event_loop()
 
 
 if __name__ == '__main__':
