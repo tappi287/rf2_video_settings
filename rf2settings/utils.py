@@ -14,9 +14,11 @@ except ImportError:
     pygame_avail = 0
 
 
-def create_file_safe_name(filename: str) -> str:
+def create_file_safe_name(filename: str, allow_spaces: bool = False) -> str:
     """ Replace any non alphanumeric characters from a string expect minus/underscore/period """
-    return re.sub('[^\\w\\-_.]', '_', filename)
+    if not allow_spaces:
+        return re.sub('[^\\w\\-_.]', '_', filename)
+    return re.sub('[^\\w\\- _.]', '_', filename)
 
 
 class JsonRepr:
