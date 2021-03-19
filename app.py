@@ -4,18 +4,20 @@ import sys
 import webbrowser
 
 import eel
+import gevent
 
+from rf2settings.app.app_controller import expose_controller_methods
 from rf2settings.app.app_dashboard import expose_dashboard_methods
 from rf2settings.app.app_graphics import expose_graphics_methods
-from rf2settings.app.app_controller import expose_controller_methods
 from rf2settings.app.app_headlights import expose_headlights_methods
 from rf2settings.app.app_main import expose_main_methods, CLOSE_EVENT
 from rf2settings.app.app_multiplayer import expose_multiplayer_methods
 from rf2settings.app.app_presets import expose_preset_methods
+from rf2settings.app.app_replays import expose_replay_methods
 from rf2settings.app_settings import AppSettings
 from rf2settings.gamecontroller import controller_greenlet, controller_event_loop
 from rf2settings.headlights import headlights_greenlet
-from rf2settings.rf2connect import rfactor_event_loop
+from rf2settings.rf2connect import rfactor_greenlet, rfactor_event_loop
 from rf2settings.runasadmin import run_as_admin
 
 # -- Make sure eel methods are exposed at start-up
@@ -26,6 +28,7 @@ expose_multiplayer_methods()
 expose_preset_methods()
 expose_headlights_methods()
 expose_controller_methods()
+expose_replay_methods()
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%H:%M', level=logging.DEBUG)
@@ -72,10 +75,13 @@ def start_eel():
             webbrowser.open_new(f'http://{host}:{port}')
 
     # -- Game Controller Greenlet
-    eel.spawn(controller_greenlet)
+    cg = eel.spawn(controller_greenlet)
 
     # -- Headlights Greenlet
-    eel.spawn(headlights_greenlet)
+    hg = eel.spawn(headlights_greenlet)
+
+    # -- rFactor Greenlet
+    rg = eel.spawn(rfactor_greenlet)
 
     # -- Run until window/tab closed
     while not CLOSE_EVENT.is_set():
@@ -83,6 +89,10 @@ def start_eel():
         controller_event_loop()
         # rFactor 2 event loop
         rfactor_event_loop()
+
+    # -- Shutdown Greenlets
+    logging.debug('Shutting down Greenlets.')
+    gevent.joinall((cg, hg, rg), timeout=15.0)
 
 
 if __name__ == '__main__':
