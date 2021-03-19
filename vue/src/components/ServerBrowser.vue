@@ -53,7 +53,7 @@
     <!-- Server List -->
     <div v-if="onlyFav" class="text-center bg-dark text-muted rounded-top">Favourites</div>
     <b-table :items="computedServerList" :fields="serverFields" table-variant="dark" :busy="isBusy" show-empty
-             primary-key="id" id="server-list" class="server-list"
+             primary-key="id" class="server-list"
              :thead-class="onlyFav ? 'hidden' : 'bg-dark text-white'"
              small :striped="!onlyFav" borderless>
 
@@ -294,7 +294,6 @@ export default {
       filterPwd: false,
       filterFavs: false,
       filterVer: false,
-      rfactorVersion: '',
       serverFields: [
         { key: 'server_name', label: 'Name', sortable: true, class: 'text-left' },
         { key: 'password_protected', label: 'Pwd', sortable: true },
@@ -313,7 +312,7 @@ export default {
       isActive: false
     }
   },
-  props: { onlyFavourites: Boolean, delay: Number },
+  props: { onlyFavourites: Boolean, delay: Number, rfactorVersion: String },
   emits: ['launch', 'make-toast', 'server-browser-ready'],
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
@@ -434,15 +433,6 @@ export default {
       console.log('Adding server list chunk', newServerListChunk.length)
       newServerListChunk.forEach(entry => { this.serverListData.push(entry) })
     },
-    getRfVersion: async function () {
-      let r = await getEelJsonObject(window.eel.get_rf_version()())
-      if (r !== undefined) {
-        r = r.replace('.', '')
-        r = r.replace('\n', '')
-        this.rfactorVersion = r;
-        console.log('Found rf2', this.rfactorVersion)
-      }
-    },
     loadSettings: async function () {
       try {
         const server_fav_data = await getEelJsonObject(window.eel.get_server_favourites()())
@@ -490,7 +480,6 @@ export default {
       console.log('AsyncCreate called. Favs', this.onlyFavourites)
       this.setBusy(true)
       if (this.delay !== undefined) { await sleep(this.delay) }
-      await this.getRfVersion()
       await this.loadSettings()
       await this.refreshServerList()
       this.$emit('server-browser-ready')
