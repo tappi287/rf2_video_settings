@@ -90,7 +90,7 @@ class RequestResponse(object):
             return self.json().keys()
 
 
-def base_request(method, url, params=None, headers=None, data=None, json=None):
+def base_request(method, url, params=None, headers=None, data=None, json=None, timeout=None):
     # process url
     if params:
         query = urlencode(params)
@@ -140,7 +140,7 @@ def base_request(method, url, params=None, headers=None, data=None, json=None):
     # make http(s) connection
     try:
         if socket_path:
-            response = urllib2.build_opener(CustomHTTPHandler).open(request_obj)
+            response = urllib2.build_opener(CustomHTTPHandler).open(request_obj, timeout=timeout)
         else:
             response = urllib2.urlopen(request_obj)
     except urllib2.HTTPError as e:
@@ -149,18 +149,18 @@ def base_request(method, url, params=None, headers=None, data=None, json=None):
     return RequestResponse(request_obj, response)
 
 
-def get(url, params=None, headers=None, data=None, json=None):
-    return base_request("GET", url, params=params, headers=headers, data=data, json=json)
+def get(url, params=None, headers=None, data=None, json=None, timeout=None):
+    return base_request("GET", url, params=params, headers=headers, data=data, json=json, timeout=timeout)
 
 
-def post(url, params=None, headers=None, data=None, json=None):
-    return base_request("POST", url, params=params, headers=headers, data=data, json=json)
+def post(url, params=None, headers=None, data=None, json=None, timeout=None):
+    return base_request("POST", url, params=params, headers=headers, data=data, json=json, timeout=timeout)
 
 
-def delete(url, params=None, headers=None, data=None, json=None):
-    return base_request("DELETE", url, params=params, headers=headers, data=data, json=json)
+def delete(url, params=None, headers=None, data=None, json=None, timeout=None):
+    return base_request("DELETE", url, params=params, headers=headers, data=data, json=json, timeout=timeout)
 
 
-def put(url, params=None, headers=None, data=None, json=None):
-    return base_request("PUT", url, params=params, headers=headers, data=data, json=json)
+def put(url, params=None, headers=None, data=None, json=None, timeout=None):
+    return base_request("PUT", url, params=params, headers=headers, data=data, json=json, timeout=timeout)
 
