@@ -17,6 +17,7 @@ from .preset.preset import PresetType
 from .preset.preset_base import load_presets_from_dir
 from .preset.presets_dir import get_user_presets_dir
 from .rfactor import RfactorPlayer
+from .utils import AppExceptionHook, capture_app_exceptions
 
 
 class RfactorState:
@@ -472,6 +473,7 @@ def _rfactor_greenlet_loop():
             RfactorLiveEvent.set(False)
 
 
+@capture_app_exceptions
 def rfactor_greenlet():
     logging.info('rFactor Greenlet started.')
     RfactorConnect.start_request_thread()
@@ -488,6 +490,7 @@ def rfactor_greenlet():
     logging.info('rFactor Greenlet exiting')
 
 
+@capture_app_exceptions
 def rfactor_event_loop():
     """ Will be run in main eel greenlet to be able to post events to JS frontend """
     if RfactorLiveEvent.event.is_set():
