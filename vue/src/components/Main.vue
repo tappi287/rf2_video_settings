@@ -213,7 +213,12 @@
 
     <!-- Wiki -->
     <template  v-if="navActive === 7">
-      <Wiki></Wiki>
+      <Wiki @nav="navigate" />
+    </template>
+
+    <!-- Log -->
+    <template  v-if="navActive === 8">
+      <Log @nav="navigate" />
     </template>
 
     <!-- rFactor Actions -->
@@ -310,6 +315,7 @@ import Wiki from "@/components/Wiki";
 import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 import Headlights from "@/components/Headlights";
 import Replays from "@/components/Replays";
+import Log from "@/components/Log";
 import {getEelJsonObject} from "@/main";
 // --- </ Prepare receiving rfactor live events
 window.eel.expose(rfactorLiveFunc, 'rfactor_live')
@@ -454,7 +460,8 @@ export default {
     PresetHandler,
     PresetUi,
     GraphicsArea,
-    Wiki
+    Wiki,
+    Log
   },
 }
 </script>

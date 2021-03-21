@@ -8,7 +8,7 @@ import eel
 import gevent.event
 
 from rf2settings.app_settings import AppSettings
-from rf2settings.globals import RFACTOR_SETUPS, RFACTOR_MODMGR
+from rf2settings.globals import RFACTOR_SETUPS, RFACTOR_MODMGR, get_log_file, get_log_dir
 from rf2settings.rfactor import RfactorPlayer
 from rf2settings.runasadmin import run_as_admin
 from rf2settings.utils import AppExceptionHook
@@ -114,6 +114,23 @@ def run_mod_mgr():
 @eel.expose
 def test_app_exception():
     AppExceptionHook.produce_exception = True
+
+
+@eel.expose
+def get_log():
+    log_file_path = get_log_file()
+    try:
+        with open(log_file_path, 'r') as l:
+            return json.dumps({'result': True, 'log': l.read()}, ensure_ascii=False)
+    except Exception as e:
+        return json.dumps({'result': False, 'msg': str(e)})
+
+
+@eel.expose
+def open_log_folder():
+    log_dir = str(WindowsPath(get_log_dir()))
+    logging.info('Opening folder: %s', log_dir)
+    Popen(f'explorer /n,"{log_dir}"')
 
 
 def expose_main_methods():

@@ -78,7 +78,8 @@
         are distributed with this app.</span>
       </b-list-group-item>
     </b-list-group>
-    <b-button class="mt-4" variant="danger" @click="testException">Produce Test App Exception</b-button>
+    <b-button class="mt-4" variant="primary" @click="$emit('nav', 8)">Show App Logs</b-button>
+    <b-button class="ml-2 mt-4" variant="danger" @click="testException">Produce Test App Exception</b-button>
   </div>
 </template>
 
