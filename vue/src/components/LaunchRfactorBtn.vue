@@ -1,9 +1,12 @@
 <template>
   <b-button-group>
     <b-dropdown variant="primary" size="sm" right split @click="launchRfactor">
-      <template #button-content>
+      <template #button-content class="rounded-right">
         <b-icon icon="play"></b-icon>
         {{ buttonText }}
+        <span class="ml-2" v-if="displayLive">
+          <b-icon shift-v="-1" :icon="live ? 'circle-fill' : 'circle'" :variant="live ? 'success' : 'primary'"/>
+        </span>
       </template>
       <b-dropdown-item @click="launchRfactor">
         Launch via Steam
@@ -20,13 +23,26 @@
 
 <script>
 import {getEelJsonObject} from "@/main";
+// --- </ Prepare receiving rfactor live events
+window.eel.expose(rfactorLiveFunc, 'rfactor_live')
+async function rfactorLiveFunc (event) {
+  const liveEvent = new CustomEvent('rfactor-live-event', {detail: event})
+  window.dispatchEvent(liveEvent)
+}
+// --- />
 
 export default {
 name: "LaunchRfactorBtn",
-  props: {text: String, server: Object},
+  props: {text: String, server: Object, displayLive: Boolean},
+  data: function () {
+    return { live: false }
+  },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
+    },
+    updateRfactorState: function (event) {
+      this.live = event.detail
     },
     launchRfactor: async function (method) {
       if (typeof (method) !== 'number') { method = 0 }
@@ -50,6 +66,16 @@ name: "LaunchRfactorBtn",
     buttonText: function () {
       if (this.text !== undefined) { return this.text }
       return 'Start rFactor 2'
+    }
+  },
+  mounted() {
+    if (this.displayLive) {
+      window.addEventListener('rfactor-live-event', this.updateRfactorState)
+    }
+  },
+  destroyed() {
+    if (this.displayLive) {
+      window.removeEventListener('rfactor-live-event', this.updateRfactorState)
     }
   }
 }
