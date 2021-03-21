@@ -10,9 +10,6 @@ from appdirs import user_data_dir, user_log_dir
 from .knownpaths import get_current_user_documents_path
 
 
-logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
-                    datefmt='%H:%M', level=logging.DEBUG)
-
 APP_NAME = 'rf2_settings_widget'
 SETTINGS_DIR_NAME = 'rf2_settings_widget'
 EXPORT_DIR_NAME = 'exported'
