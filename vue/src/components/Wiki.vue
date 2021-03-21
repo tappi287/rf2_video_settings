@@ -78,6 +78,7 @@
         are distributed with this app.</span>
       </b-list-group-item>
     </b-list-group>
+    <b-button class="mt-4" variant="danger" @click="testException">Produce Test App Exception</b-button>
   </div>
 </template>
 
@@ -96,6 +97,7 @@ export default {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
     },
+    testException: async function () { await window.eel.test_app_exception() },
   },
   components: {
   },
