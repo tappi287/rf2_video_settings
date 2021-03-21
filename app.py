@@ -6,6 +6,7 @@ import webbrowser
 import eel
 import gevent
 
+from rf2settings.log import setup_logging
 from rf2settings.app.app_controller import expose_controller_methods
 from rf2settings.app.app_dashboard import expose_dashboard_methods
 from rf2settings.app.app_graphics import expose_graphics_methods
@@ -16,9 +17,11 @@ from rf2settings.app.app_presets import expose_preset_methods
 from rf2settings.app.app_replays import expose_replay_methods
 from rf2settings.app_settings import AppSettings
 from rf2settings.gamecontroller import controller_greenlet, controller_event_loop
+from rf2settings.globals import FROZEN
 from rf2settings.headlights import headlights_greenlet
 from rf2settings.rf2connect import rfactor_greenlet, rfactor_event_loop
 from rf2settings.runasadmin import run_as_admin
+from rf2settings.utils import AppExceptionHook, capture_app_exceptions
 
 # -- Make sure eel methods are exposed at start-up
 expose_main_methods()
@@ -30,14 +33,24 @@ expose_headlights_methods()
 expose_controller_methods()
 expose_replay_methods()
 
-logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
-                    datefmt='%H:%M', level=logging.DEBUG)
 
-# TODO: -Proper- logging setup
-# TODO: App-level Exception hook
+@capture_app_exceptions
+def test_exception():
+    if AppExceptionHook.produce_exception:
+        AppExceptionHook.produce_exception = False
+        AppExceptionHook.test_exception()
 
 
 def start_eel():
+    logging.info('\n\n\n')
+    logging.info('#######################################################')
+    logging.info('################ Starting APP               ###########')
+    logging.info('#######################################################\n\n\n')
+
+    if FROZEN:
+        # Set Exception hook
+        sys.excepthook = AppExceptionHook.exception_hook
+
     AppSettings.load()
     AppSettings.copy_default_presets()
     AppSettings.delete_current_settings_presets()
@@ -90,11 +103,22 @@ def start_eel():
         controller_event_loop()
         # rFactor 2 event loop
         rfactor_event_loop()
+        # Capture exception events
+        AppExceptionHook.exception_event_loop()
+        test_exception()
 
     # -- Shutdown Greenlets
     logging.debug('Shutting down Greenlets.')
     gevent.joinall((cg, hg, rg), timeout=15.0)
 
+    # -- Shutdown logging
+    logging.info('\n\n\n')
+    logging.info('#######################################################')
+    logging.info('################ APP SHUTDOWN               ###########')
+    logging.info('#######################################################\n\n\n')
+    logging.shutdown()
+
 
 if __name__ == '__main__':
+    setup_logging()
     start_eel()

@@ -119,6 +119,13 @@ def get_log_dir() -> str:
     return check_and_create_dir(log_dir)
 
 
+def get_log_file() -> Path:
+    if FROZEN:
+        return Path(get_log_dir()) / f'{APP_NAME}.log'
+    else:
+        return Path(get_log_dir()) / f'{APP_NAME}_DEV.log'
+
+
 def get_version() -> str:
     f = Path('.') / 'vue' / 'package.json'
     if f.is_file():
