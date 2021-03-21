@@ -9,6 +9,7 @@ from .gamecontroller import ControllerEvents, SetupControllerAxis
 from .preset.settings_model import HeadlightSettings, HeadlightControllerAssignments
 from .settingsdef.headlights import controller_assignments
 from .rf2lights import RfactorHeadlight
+from .rf2connect import RfactorConnect, RfactorState
 from .utils import create_js_pygame_event_dict
 
 try:
@@ -178,6 +179,9 @@ def headlights_greenlet():
     config = _Settings()
     con = _ControllerHandler()
 
+    # -- Setup the RfactorConnect shared memory only once
+    _setup_rfconnect = True
+
     # -- This will be our rf2headlights instance if needed
     rf2_hdl = None
     # -- Keep track if player is driving for the first time
@@ -208,6 +212,15 @@ def headlights_greenlet():
         # --- Init rf2headlights
         if rf2_hdl is None:
             rf2_hdl = RfactorHeadlight(AppSettings.headlight_rf_key)
+
+        # -- Update global App RfactorConnect connection state
+        #    from Headlights shared memory
+        if (rf2_hdl.info.sharedMemoryVerified and _setup_rfconnect) or \
+                (_setup_rfconnect and RfactorConnect.state == RfactorState.ready):
+            RfactorConnect.setup_shared_memory(rf2_hdl.info.isSharedMemoryAvailable)
+            _setup_rfconnect = False
+        if RfactorConnect.use_shared_memory:
+            RfactorConnect.set_state_from_shared_memory(rf2_hdl.info.sharedMemoryVerified)
 
         # ------ RF2 Headlights functionality --------
         # --------------------------------------------
