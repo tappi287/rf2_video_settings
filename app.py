@@ -34,6 +34,7 @@ logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(mess
                     datefmt='%H:%M', level=logging.DEBUG)
 
 # TODO: -Proper- logging setup
+# TODO: App-level Exception hook
 
 
 def start_eel():

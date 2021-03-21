@@ -19,6 +19,8 @@ class AppSettings(JsonRepr):
     backup_created = False
     needs_admin = False
     selected_presets: Dict[str, str] = dict()
+    replay_preset = str()
+    replay_playing = False
     user_presets_dir = str()
     deleted_defaults = list()  # Default Presets the user deleted
     server_favourites = list()

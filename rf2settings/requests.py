@@ -4,6 +4,7 @@ import socket
 import urllib.parse as urlparse
 from urllib.parse import urlencode
 import urllib.request as urllib2
+from urllib.error import HTTPError
 import http.client as httplib
 
 # configurations
@@ -11,6 +12,8 @@ socket_scheme = "+unix"
 
 # UNIX socket code
 # referenced from https://github.com/docker/docker-py/blob/master/docker/transport/unixconn.py
+
+
 class UnixHTTPResponse(httplib.HTTPResponse, object):
     def __init__(self, sock, *args, **kwargs):
         disable_buffering = kwargs.pop('disable_buffering', False)
@@ -127,7 +130,7 @@ def base_request(method, url, params=None, headers=None, data=None, json=None, t
     
     # get request obj
     if data:
-        request_obj = urllib2.Request(url, data=data, headers=_headers)
+        request_obj = urllib2.Request(url, data=bytes(data), headers=_headers)
     else:
         request_obj = urllib2.Request(url, headers=_headers)
 
@@ -143,7 +146,7 @@ def base_request(method, url, params=None, headers=None, data=None, json=None, t
             response = urllib2.build_opener(CustomHTTPHandler).open(request_obj, timeout=timeout)
         else:
             response = urllib2.urlopen(request_obj)
-    except urllib2.HTTPError as e:
+    except HTTPError as e:
         return RequestResponse(request_obj, e)
 
     return RequestResponse(request_obj, response)
