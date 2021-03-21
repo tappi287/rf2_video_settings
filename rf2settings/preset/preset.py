@@ -8,9 +8,6 @@ from .presets_dir import get_user_presets_dir, get_user_export_dir
 from .settings_model_base import OPTION_CLASSES
 from ..utils import create_file_safe_name
 
-logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
-                    datefmt='%H:%M', level=logging.DEBUG)
-
 
 class PresetType:
     graphics = 0
