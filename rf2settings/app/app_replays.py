@@ -5,12 +5,13 @@ from datetime import datetime
 from pathlib import Path
 
 import eel
+import gevent
 
 from ..app_settings import AppSettings
 from ..preset.preset import PresetType
 from ..preset.preset_base import load_presets_from_dir
 from ..preset.presets_dir import get_user_presets_dir
-from ..rf2connect import ReplayPlayEvent, RfactorConnect
+from ..rf2connect import ReplayPlayEvent, RfactorConnect, RfactorQuitEvent
 from ..rfactor import RfactorPlayer
 from ..utils import create_file_safe_name
 
@@ -28,6 +29,21 @@ def apply_gfx_preset_with_name(rf: RfactorPlayer, preset_name: str) -> bool:
         eel.sleep(0.01)
         return True
     return False
+
+
+@eel.expose
+def quit_rfactor():
+    result = False
+    RfactorQuitEvent.set(True)
+    try:
+        result = RfactorQuitEvent.quit_result.get(timeout=20.0)
+    except gevent.Timeout:
+        pass
+
+    if result:
+        return json.dumps({'result': True})
+    else:
+        return json.dumps({'result': False})
 
 
 @eel.expose
