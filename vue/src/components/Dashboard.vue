@@ -29,7 +29,9 @@
 
       <!-- Shortcuts Play with Preset -->
       <div v-if="gfxPresetsReady" class="text-center mb-5" style="position: relative; top: -.5rem;">
-        <h6 class="title int-font">Graphics Presets</h6>
+        <h6 class="title int-font">
+          <b-link class="text-white" @click="$emit('nav', 1)">Graphics Presets</b-link>
+        </h6>
         <template v-for="(preset, idx) in gfxHandler.presets.slice(1)">
           <b-button :key="idx"
                     v-b-popover.bottom.hover="preset.desc"
