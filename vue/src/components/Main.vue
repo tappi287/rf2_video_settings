@@ -290,6 +290,7 @@
                 </div>
               </b-popover>
             </div>
+            <pre class="text-white" v-if="rf2Status !== ''"><span>{{ rf2Status }}</span></pre>
             <span>rFactor 2 is currently running. Please wait.</span>
           </div>
         </template>
@@ -317,6 +318,13 @@ async function rfactorLiveFunc (event) {
   window.dispatchEvent(liveEvent)
 }
 // --- />
+// --- </ Prepare receiving rfactor status events
+window.eel.expose(rfactorStatusFunc, 'rfactor_status')
+async function rfactorStatusFunc (event) {
+  const statusEvent = new CustomEvent('rfactor-status-event', {detail: event})
+  window.dispatchEvent(statusEvent)
+}
+// --- />
 
 export default {
   name: 'Main',
@@ -326,6 +334,7 @@ export default {
       searchActive: [1, 2, 3],
       search: '',
       live: false,  // rFactor 2 running
+      rf2Status: '',  // Desc of current rF2 status eg. loading/quitting
       firstServerBrowserVisit: true,
       gfxReady: false,
       isBusy: false,
@@ -344,10 +353,15 @@ export default {
         solid: true,
       })
     },
-    updateRfactorState: function (event) {
+    updateRfactorLiveState: function (event) {
       this.live = event.detail
       if (this.live) { this.stopSlideShow() }
       this.setBusy(this.live)
+    },
+    updateRfactorStatus: function (event) {
+      let status = ''
+      if (event.detail !== undefined) { status = event.detail }
+      this.rf2Status = status
     },
     setBusy: function (busy) { this.isBusy = busy},
     quitRfactor: async function () {
@@ -422,10 +436,12 @@ export default {
     },
   },
   created() {
-    window.addEventListener('rfactor-live-event', this.updateRfactorState)
+    window.addEventListener('rfactor-live-event', this.updateRfactorLiveState)
+    window.addEventListener('rfactor-status-event', this.updateRfactorStatus)
   },
   destroyed() {
-    window.removeEventListener('rfactor-live-event', this.updateRfactorState)
+    window.removeEventListener('rfactor-live-event', this.updateRfactorLiveState)
+    window.removeEventListener('rfactor-status-event', this.updateRfactorStatus)
   },
   components: {
     Replays,
