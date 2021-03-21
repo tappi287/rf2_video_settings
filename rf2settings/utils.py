@@ -1,11 +1,16 @@
-import json
 import logging
 import os
 import os.path
 import re
 import subprocess as sp
+from datetime import datetime
 from pathlib import Path, WindowsPath
 from typing import Tuple, Union, Optional
+
+import eel
+import gevent.event
+
+from .globals import get_settings_dir
 
 try:
     import pygame
@@ -47,6 +52,67 @@ class JsonRepr:
 
         if self.after_load_callback:
             self.after_load_callback()
+
+
+class AppExceptionHook:
+    app = None
+    event = gevent.event.Event()
+    gui_msg = ''
+    produce_exception = False
+
+    @classmethod
+    def exception_hook(cls, etype, value, tb):
+        """ sys.excepthook will call this method """
+        import traceback
+
+        # Print exception
+        traceback.print_exception(etype, value, tb)
+
+        # Log exception
+        stacktrace_msg = ''.join(traceback.format_tb(tb))
+        if etype:
+            exception_msg = '{0}: {1}'.format(etype, value)
+        else:
+            exception_msg = 'Exception: {}'.format(value)
+
+        logging.critical(stacktrace_msg)
+        logging.critical(exception_msg)
+
+        # Write to exception log file
+        exception_file_name = datetime.now().strftime('rf2-settings-widget_Exception_%Y-%m-%d_%H%M%S.log')
+        exception_file = Path(get_settings_dir()) / exception_file_name
+
+        with open(exception_file, 'w') as f:
+            traceback.print_exception(etype, value, tb, file=f)
+
+        cls.gui_msg = f'{stacktrace_msg}\n{exception_msg}'
+        cls.event.set()
+
+    @classmethod
+    def set_exception(cls, e: BaseException):
+        cls.exception_hook(type(e), e, e.__traceback__)
+
+    @staticmethod
+    def test_exception():
+        a = 1 / 0
+
+    @staticmethod
+    def exception_event_loop():
+        if AppExceptionHook.event.is_set():
+            logging.debug('Reporting App exception to front end')
+            eel.app_exception(AppExceptionHook.gui_msg)
+            AppExceptionHook.event.clear()
+
+
+def capture_app_exceptions(func):
+    """ Decorator to capture exceptions at app level """
+    def func_wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except Exception as e:
+            AppExceptionHook.set_exception(e)
+
+    return func_wrapper
 
 
 def execute_powershell_cmd(cmd: str) -> Tuple[int, Union[bytes, str], Union[bytes, str]]:
