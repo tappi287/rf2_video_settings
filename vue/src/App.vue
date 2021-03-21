@@ -18,18 +18,26 @@
       </b-overlay>
     </div>
 
-    <!-- Report missing rF2 installation or missing privileges -->
+    <!-- Report missing rF2 installation or missing privileges or App Exceptions -->
     <template v-if="error !== ''">
       <b-container fluid="sm">
         <b-card class="mt-3" bg-variant="dark" text-variant="white">
           <template #header>
-            <h6 class="mb-0"><span class="title">Error</span></h6>
+            <h6 class="mb-0"><span class="title">Critical Error</span></h6>
           </template>
-          <pre class="text-white">{{ error }}</pre>
-          <p>
-            Try to re-run this application with administrative privileges:
-            <b-button @click="reRunAsAdmin" size="sm">Re-Run-as-Admin</b-button>
-          </p>
+          <b-card-text class="text-left">
+            <pre class="text-white">{{ error }}</pre>
+          </b-card-text>
+          <b-card-text>
+            If you think the error relates to missing privileges:
+            try to re-run this application with administrative privileges:
+            <b-button @click="reRunAsAdmin" size="sm">UAC Re-Run-as-Admin</b-button>
+          </b-card-text>
+          <b-card-text>
+            If you have previously set this app to request Admin privileges. You can set the App to not
+            request administrative privileges on start up:
+            <b-button @click="resetAdmin" size="sm">Reset UAC</b-button>
+          </b-card-text>
           <template #footer>
             <span class="small">
               Please make sure that a rFactor 2 Steam installation is present on your machine and that you have at least
@@ -38,7 +46,7 @@
           </template>
         </b-card>
         <div class="mt-3">
-          <b-button @click="requestClose" size="sm">Close</b-button>
+          <b-button @click="requestClose" size="sm">Exit</b-button>
         </div>
       </b-container>
     </template>
@@ -54,7 +62,13 @@ import Main from "./components/Main.vue";
 import Updater from "@/components/Updater";
 import {createPopperLite as createPopper, flip, preventOverflow} from "@popperjs/core";
 import {getEelJsonObject} from "@/main";
-
+// --- </ Prepare receiving App Exceptions
+window.eel.expose(appExceptionFunc, 'app_exception')
+async function appExceptionFunc (event) {
+  const excEvent = new CustomEvent('app-exception-event', {detail: event})
+  window.dispatchEvent(excEvent)
+}
+// --- />
 
 export default {
   name: 'App',
@@ -102,12 +116,21 @@ export default {
         console.log('App found rF version:', this.rfactorVersion)
       }
     },
-    setError: function (error) { this.error = error },
+    setException: function (event) {
+      this.setError(event.detail)
+    },
+    setError: function (error) {
+      console.error(error)
+      this.error = error
+    },
     requestClose: async function () {
       await window.eel.close_request()
     },
     reRunAsAdmin: async function () {
       await window.eel.re_run_admin()
+    },
+    resetAdmin: async function () {
+      await window.eel.reset_admin()
     },
   },
   components: {
@@ -123,7 +146,11 @@ export default {
     window.addEventListener('beforeunload', this.requestClose)
   },
   created() {
+    window.addEventListener('app-exception-event', this.setException)
     this.getRfVersion()
+  },
+  destroyed() {
+    window.removeEventListener('app-exception-event', this.setException)
   }
 }
 
