@@ -36,7 +36,7 @@ class RfactorConnect:
     long_timeout = 120.0    # Maximum connection check timeout
     idle_timeout = 20.0     # Start with this time out after an active connection
     active_timeout = 2.0    # Check connection timeout while eg. loading
-    memory_timeout = 15.0   # Shorter idle timeout if state can be checked with shared memory
+    memory_timeout = 5.0   # Shorter idle timeout if state can be checked with shared memory
 
     last_connection_check = time.time()
     connection_check_interval = idle_timeout  # Revalidate connection every float seconds
@@ -70,11 +70,21 @@ class RfactorConnect:
 
             # -- Fulfill request
             if r.get('method') == 'GET':
-                response = RfactorConnect._get_request(r.get('url'))
+                try:
+                    response = RfactorConnect._get_request(r.get('url'))
+                except Exception as e:
+                    logging.error('Error during GET request: %s', e)
+                    continue
+
                 logging.debug('Request Thread received response for GET request to %s', r.get('url'))
                 response_queue.put(response or False)  # Make sure we do not put None in the queue
             elif r.get('method') == 'POST':
-                response = RfactorConnect._post_request(r.get('url'), r.get('data'))
+                try:
+                    response = RfactorConnect._post_request(r.get('url'), r.get('data'))
+                except Exception as e:
+                    logging.error('Error during POST request: %s', e)
+                    continue
+
                 logging.debug('Request Thread received response for POST request to %s', r.get('url'))
                 response_queue.put(response or False)  # Make sure we do not put None in the queue
 
@@ -227,6 +237,7 @@ class RfactorConnect:
             return False
 
         r = cls._post_request('/rest/start/quitGame')
+        cls.set_state_from_shared_memory(False)
         if not r:
             return False
         return True if r.status_code == 204 else False
@@ -318,6 +329,22 @@ class RfactorQuitEvent:
         cls.result = gevent.event.AsyncResult()
 
 
+class RfactorStatusEvent:
+    """ post status updates to the FrontEnd """
+    event = gevent.event.Event()
+    result = gevent.event.AsyncResult()
+
+    @classmethod
+    def set(cls, value):
+        cls.result.set(value)
+        cls.event.set()
+
+    @classmethod
+    def reset(cls):
+        cls.event.clear()
+        cls.result = gevent.event.AsyncResult()
+
+
 class ReplayPlayEvent:
     """ Communicate a replay play request to rfactor event loop """
     event = gevent.event.Event()
@@ -364,30 +391,20 @@ def play_replay(replay_name: str) -> bool:
     # -- Switch to FullScreen
     logging.debug('Switching rF replay to fullscreen.')
     RfactorConnect.switch_event_monitor_fullscreen()
+    RfactorStatusEvent.set(f'Switching to fullscreen mode.')
     return True
-
-
-def rfactor_event_loop():
-    """ Will be run in main eel greenlet to be able to post events to JS frontend """
-    if RfactorLiveEvent.event.is_set():
-        try:
-            is_live = RfactorLiveEvent.result.get_nowait()
-        except gevent.Timeout:
-            is_live = None
-
-        # -- Update rFactor live state to front end
-        if is_live is not None:
-            eel.rfactor_live(is_live)
 
 
 def _restore_pre_replay_preset():
     if AppSettings.replay_playing:
-        gevent.sleep(1.0)  # If rf2 just quit, give it some time to write settings
         if AppSettings.replay_preset != '':
             # -- Get currently selected graphics preset
             selected_preset_name = AppSettings.selected_presets.get(str(PresetType.graphics))
             _, selected_preset = load_presets_from_dir(get_user_presets_dir(), PresetType.graphics,
                                                        selected_preset_name=selected_preset_name)
+
+            RfactorStatusEvent.set(f'Applying pre-replay graphics preset: {selected_preset.name}')
+            gevent.sleep(1.0)  # If rf2 just quit, give it some time to write settings
 
             # -- Apply selected preset to rF2
             if selected_preset:
@@ -406,7 +423,7 @@ def _rfactor_greenlet_loop():
 
     # -- Quit rFactor
     if RfactorQuitEvent.event.is_set():
-        RfactorConnect.wait_for_rf2_ui(15.0)
+        RfactorStatusEvent.set('Sending quit event to WebUI')
         quit_result = RfactorConnect.quit()
         RfactorQuitEvent.quit_result.set(quit_result)
 
@@ -429,6 +446,7 @@ def _rfactor_greenlet_loop():
         ReplayPlayEvent.reset()
 
         RfactorLiveEvent.set(True)
+        RfactorStatusEvent.set(f'Loading Replay {replay_name}')
 
         # -- Play Replay
         logging.info('rF2 greenlet playing replay: %s', replay_name)
@@ -437,6 +455,9 @@ def _rfactor_greenlet_loop():
             AppSettings.replay_playing = True
             AppSettings.save()
             RfactorLiveEvent.set(True)
+
+        # -- Reset rFactor Status message
+        RfactorStatusEvent.set('')
     else:
         # -- Check rf2 connection state
         #    Restore pre-replay graphics preset if we watched a replay before
@@ -465,3 +486,28 @@ def rfactor_greenlet():
 
     RfactorConnect.stop_request_thread()
     logging.info('rFactor Greenlet exiting')
+
+
+def rfactor_event_loop():
+    """ Will be run in main eel greenlet to be able to post events to JS frontend """
+    if RfactorLiveEvent.event.is_set():
+        try:
+            is_live = RfactorLiveEvent.result.get_nowait()
+        except gevent.Timeout:
+            is_live = None
+
+        # -- Update rFactor live state to front end
+        if is_live is not None:
+            eel.rfactor_live(is_live)
+
+    if RfactorStatusEvent.event.is_set():
+        try:
+            status = RfactorStatusEvent.result.get_nowait()
+        except gevent.Timeout:
+            status = False
+
+        if status is not False:
+            logging.debug('Updating rf2 status message: %s', status)
+            eel.rfactor_status(status)
+
+        RfactorStatusEvent.reset()
