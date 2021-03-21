@@ -278,6 +278,6 @@ html {
   animation-iteration-count: infinite;
   animation-direction: alternate;
 }
-#server-list * td { vertical-align: baseline !important; }
-#server-list { margin-bottom: 0; font-family: "Segoe UI", system-ui, sans-serif; }
+.server-list * td { vertical-align: baseline !important; }
+.server-list { margin-bottom: 0; font-family: "Segoe UI", system-ui, sans-serif; }
 </style>

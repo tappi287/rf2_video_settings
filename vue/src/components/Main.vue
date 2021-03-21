@@ -1,26 +1,43 @@
 <template>
   <div id="main" class="position-relative" v-cloak>
     <b-navbar class="text-left pl-0 pr-0" type="dark">
-      <b-navbar-brand @click="navActive=0">
-        <b-img width="32px" src="@/assets/app_icon.webp"></b-img>
+      <b-navbar-brand href="#" @click="navActive=0" class="r-icon-brand position-relative"
+                      v-b-popover.auto.hover="'Dashboard'">
+        <b-img width="32px" key="1" src="@/assets/rfW_logo_white.svg"
+               :class="navActive === 0 ? 'r-icon top' : 'r-icon top inv'"></b-img>
+        <b-img width="32px" key="2" src="@/assets/rfW_logo.svg"
+               :class="navActive !== 0 ? 'r-icon bottom' : 'r-icon bottom inv'"></b-img>
       </b-navbar-brand>
       <b-nav>
-        <b-nav-item :active="navActive === 0" @click="navActive=0" link-classes="pl-0">
-          Dashboard
+        <b-nav-item v-if="false" :active="navActive === 0" @click="navActive=0" link-classes="pl-0">
+          Dash
         </b-nav-item>
-        <b-nav-item :active="navActive === 1" @click="navActive=1" link-classes="pl-0">
-          Graphics
-        </b-nav-item>
-        <b-nav-item :active="navActive === 2" @click="navActive=2" link-classes="pl-0">
-          Controls
-        </b-nav-item>
-        <b-nav-item :active="navActive === 3" @click="navActive=3" link-classes="pl-0">
-          Settings
-        </b-nav-item>
+        <b-nav-item-dropdown text="Settings"
+                             :toggle-class="[1,2,3].indexOf(navActive) !== -1 ? 'used pl-0' : 'pl-0'">
+          <b-dropdown-item>
+            <b-nav-item :active="navActive === 1" @click="navActive=1" link-classes="pl-0">
+              Graphics Settings
+            </b-nav-item>
+          </b-dropdown-item>
+          <b-dropdown-item>
+            <b-nav-item :active="navActive === 2" @click="navActive=2" link-classes="pl-0">
+              Control Settings
+            </b-nav-item>
+          </b-dropdown-item>
+          <b-dropdown-item>
+            <b-nav-item :active="navActive === 3" @click="navActive=3" link-classes="pl-0">
+              Generic Settings
+            </b-nav-item>
+          </b-dropdown-item>
+        </b-nav-item-dropdown>
+
         <b-nav-item :active="navActive === 4" @click="navActive=4" link-classes="pl-0">
           Headlights
         </b-nav-item>
         <b-nav-item :active="navActive === 5" @click="navActive=5" link-classes="pl-0">
+          Replays
+        </b-nav-item>
+        <b-nav-item :active="navActive === 6" @click="navActive=6" link-classes="pl-0">
           Server Browser
         </b-nav-item>
       </b-nav>
@@ -32,7 +49,7 @@
                         size="sm" placeholder="Search..."
                         class="search-bar mr-sm-2 text-white"/>
         </b-nav-form>
-        <b-nav-item id="wiki-nav" right :active="navActive === 6" @click="navActive=6">
+        <b-nav-item id="wiki-nav" right :active="navActive === 7" @click="navActive=7">
           <b-icon icon="question-square-fill"></b-icon>
         </b-nav-item>
       </b-navbar-nav>
@@ -54,6 +71,7 @@
     <keep-alive>
       <Dashboard ref="dash" :gfx-handler="$refs.gfx" v-if="navActive === 0 && gfxReady"
                  :refresh-favs="refreshDashFavs" @favs-updated="refreshDashFavs = false"
+                 :rfactor-version="rfactorVersion"
                  @make-toast="makeToast" @error="setError" @set-busy="setBusy"></Dashboard>
     </keep-alive>
 
@@ -182,15 +200,19 @@
     <!-- Headlights -->
     <Headlights ref="headlights" v-if="navActive === 4" @make-toast="makeToast"></Headlights>
 
+    <!-- Replays -->
+    <Replays ref="replays" v-if="navActive === 5" @make-toast="makeToast" @set-busy="setBusy"
+             :rfactor-version="rfactorVersion" :gfx-handler="$refs.gfx"/>
+
     <!-- Server Browser -->
     <keep-alive>
-      <ServerBrowser ref="serverBrowser" v-if="navActive === 5" @launch="stopSlideShow"
-               @make-toast="makeToast" @set-busy="setBusy"
+      <ServerBrowser ref="serverBrowser" v-if="navActive === 6" @launch="stopSlideShow"
+               @make-toast="makeToast" @set-busy="setBusy" :rfactor-version="rfactorVersion"
                @fav-updated="refreshDashFavs = true"/>
     </keep-alive>
 
     <!-- Wiki -->
-    <template  v-if="navActive === 6">
+    <template  v-if="navActive === 7">
       <Wiki></Wiki>
     </template>
 
@@ -198,7 +220,7 @@
     <b-container fluid class="mt-3 p-0">
       <b-row>
         <b-col cols="8" class="text-left">
-          <LaunchRfactorBtn @make-toast="makeToast" @launch="stopSlideShow"></LaunchRfactorBtn>
+          <LaunchRfactorBtn display-live @make-toast="makeToast" @launch="stopSlideShow"></LaunchRfactorBtn>
         </b-col>
         <b-col cols="4" class="text-right">
           <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Open rF2 vehicle setups folder'"
@@ -233,7 +255,46 @@
         </b-button>
       </div>
     </b-popover>
-    <b-overlay no-wrap variant="transparent" :show="isBusy" blur="1px"></b-overlay>
+    <b-overlay no-wrap fixed variant="transparent" :show="isBusy" blur="1px">
+      <template #overlay>
+        <template v-if="!live">
+          <div class="d-flex justify-content-center mb-3">
+            <b-spinner label="Loading..."></b-spinner>
+          </div>
+        </template>
+        <template v-else>
+          <div class="busy-div p-4 rounded">
+            <div class="d-flex justify-content-center mb-3">
+              <b-button variant="secondary"
+                        @click="setBusy(false)"
+                        v-b-popover.top.hover="'If you started to watch a replay with this app: ' +
+                         'Please wait a moment so the app can restore the original video settings. ' +
+                         'Detecting rFactor not running can take up to a minute.'">
+                Proceed
+              </b-button>
+              <b-button class="ml-2" variant="danger" id="quit-rfactor">Quit rFactor 2</b-button>
+
+              <!-- Quit Popover -->
+              <b-popover target="quit-rfactor" triggers="click">
+                <template #title>Quit rFactor 2</template>
+                <p>Do you really want to request the currently running instance of rFactor 2 to quit?</p>
+                <div class="text-right">
+                  <b-button variant="danger"
+                            @click="quitRfactor(); $root.$emit('bv::hide::popover', 'quit-rfactor')">
+                    <b-spinner v-if="quitBusy" class="mr-1"></b-spinner>Quit
+                  </b-button>
+                  <b-button class="ml-2" variant="secondary"
+                            @click="$root.$emit('bv::hide::popover', 'quit-rfactor')">
+                    Close
+                  </b-button>
+                </div>
+              </b-popover>
+            </div>
+            <span>rFactor 2 is currently running. Please wait.</span>
+          </div>
+        </template>
+      </template>
+    </b-overlay>
   </div>
 </template>
 
@@ -246,22 +307,33 @@ import PresetHandler from "@/components/PresetHandler";
 import GenericSettingsArea from "@/components/GenericSettingsArea";
 import Wiki from "@/components/Wiki";
 import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
-import {getEelJsonObject} from "@/main";
 import Headlights from "@/components/Headlights";
+import Replays from "@/components/Replays";
+import {getEelJsonObject} from "@/main";
+// --- </ Prepare receiving rfactor live events
+window.eel.expose(rfactorLiveFunc, 'rfactor_live')
+async function rfactorLiveFunc (event) {
+  const liveEvent = new CustomEvent('rfactor-live-event', {detail: event})
+  window.dispatchEvent(liveEvent)
+}
+// --- />
 
 export default {
   name: 'Main',
   data: function () {
     return {
       navActive: 0,
-      searchInactive: [0, 4, 5],
+      searchActive: [1, 2, 3],
       search: '',
+      live: false,  // rFactor 2 running
       firstServerBrowserVisit: true,
       gfxReady: false,
       isBusy: false,
+      quitBusy: false,
       refreshDashFavs: false,
     }
   },
+  props: { rfactorVersion: String },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$bvToast.toast(message, {
@@ -272,7 +344,23 @@ export default {
         solid: true,
       })
     },
+    updateRfactorState: function (event) {
+      this.live = event.detail
+      if (this.live) { this.stopSlideShow() }
+      this.setBusy(this.live)
+    },
     setBusy: function (busy) { this.isBusy = busy},
+    quitRfactor: async function () {
+      this.quitBusy = true
+      const r = await getEelJsonObject(window.eel.quit_rfactor()())
+      if (r.result) {
+        this.makeToast('Rfactor 2 is quitting.', 'success', 'rFactor 2 Control')
+      } else if (!r.result) {
+        this.makeToast('Could not connect to an rFactor 2 instance to request a game exit.',
+            'warning', 'rFactor 2 Control')
+      }
+      this.quitBusy = false
+    },
     setDashGfxHandler: function () {
       this.gfxReady = true
       this.$nextTick(() => {
@@ -330,10 +418,17 @@ export default {
   },
   computed: {
     navSearchEnabled() {
-      return this.searchInactive.indexOf(this.navActive) === -1;
+      return this.searchActive.indexOf(this.navActive) !== -1;
     },
   },
+  created() {
+    window.addEventListener('rfactor-live-event', this.updateRfactorState)
+  },
+  destroyed() {
+    window.removeEventListener('rfactor-live-event', this.updateRfactorState)
+  },
   components: {
+    Replays,
     Headlights,
     LaunchRfactorBtn,
     GenericSettingsArea,
@@ -358,8 +453,21 @@ export default {
   text-decoration: underline;
   text-decoration-skip-ink: auto;
 }
+.used {
+  color: white;
+  text-decoration: underline !important;
+  text-decoration-skip-ink: auto !important;
+}
 .search-bar {
   background: transparent; border: none;
 }
+.busy-div { background: rgba(0,0,0, 0.5); }
 .search-off { opacity: 0.3; }
+
+.r-icon { transition: opacity .8s; }
+.r-icon-brand { display: inline-block; width: 1.725rem; height: 2.5rem; }
+.r-icon.bottom { position: relative; vertical-align: baseline; }
+.r-icon.bottom.inv { opacity: 0; }
+.r-icon.top { position: absolute; z-index: 2; }
+.r-icon.top.inv { opacity: 0; }
 </style>
