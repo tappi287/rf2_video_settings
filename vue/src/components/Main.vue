@@ -72,7 +72,7 @@
       <Dashboard ref="dash" :gfx-handler="$refs.gfx" v-if="navActive === 0 && gfxReady"
                  :refresh-favs="refreshDashFavs" @favs-updated="refreshDashFavs = false"
                  :rfactor-version="rfactorVersion"
-                 @make-toast="makeToast" @error="setError" @set-busy="setBusy"></Dashboard>
+                 @make-toast="makeToast" @error="setError" @set-busy="setBusy" @nav="navigate"/>
     </keep-alive>
 
     <!-- Graphic Settings-->
@@ -353,6 +353,7 @@ export default {
         solid: true,
       })
     },
+    navigate(target=0) {this.navActive = target },
     updateRfactorLiveState: function (event) {
       this.live = event.detail
       if (this.live) { this.stopSlideShow() }
