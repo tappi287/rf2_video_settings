@@ -10,7 +10,7 @@ from .preset.settings_model import HeadlightSettings, HeadlightControllerAssignm
 from .settingsdef.headlights import controller_assignments
 from .rf2lights import RfactorHeadlight
 from .rf2connect import RfactorConnect, RfactorState
-from .utils import create_js_pygame_event_dict
+from .utils import create_js_pygame_event_dict, capture_app_exceptions
 
 try:
     import pygame
@@ -167,6 +167,7 @@ class _ControllerHandler:
 # -------------------------------------------------------------------
 # ---             Headlights Greenlet Event Loop                  ---
 # -------------------------------------------------------------------
+@capture_app_exceptions
 def headlights_greenlet():
     """ Headlights greenlet event loop spawned on app launch.
         This event loop will run until app termination.
