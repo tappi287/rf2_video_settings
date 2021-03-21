@@ -11,9 +11,6 @@ from .preset.presets_dir import PresetDir, get_user_presets_dir
 from .rfactor import RfactorPlayer
 from .utils import JsonRepr
 
-logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
-                    datefmt='%H:%M', level=logging.DEBUG)
-
 
 class AppSettings(JsonRepr):
     backup_created = False
