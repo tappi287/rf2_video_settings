@@ -433,9 +433,7 @@ def _rfactor_greenlet_loop():
 
         # -- Set RfactorConnect to unconnected
         if quit_result:
-            RfactorConnect.set_state(False)
             _restore_pre_replay_preset()
-            gevent.sleep(20.0)
 
     # -- LookUp current Replay Play Event and load a replay
     # -- Process ReplayPlay event
