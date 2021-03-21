@@ -1,12 +1,8 @@
 import logging
-import sys
 from typing import Union, List, Optional
 
 from ..settingsdef import graphics, generic, controls, headlights
 from ..utils import JsonRepr
-
-logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
-                    datefmt='%H:%M', level=logging.DEBUG)
 
 _allowed_value_types = (bool, str, int, float)
 
