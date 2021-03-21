@@ -33,6 +33,9 @@ expose_headlights_methods()
 expose_controller_methods()
 expose_replay_methods()
 
+# -- Setup logging
+setup_logging()
+
 
 @capture_app_exceptions
 def test_exception():
@@ -120,5 +123,4 @@ def start_eel():
 
 
 if __name__ == '__main__':
-    setup_logging()
     start_eel()
