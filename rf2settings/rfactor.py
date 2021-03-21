@@ -12,9 +12,6 @@ from .preset.settings_model import BaseOptions, OptionsTarget
 from .preset.settings_model_base import OPTION_CLASSES
 from .valve.steam_utils import SteamApps
 
-logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(levelname)s: %(message)s',
-                    datefmt='%H:%M', level=logging.DEBUG)
-
 """
 ModMgr.exe
 HKEY_CURRENT_USER\\SOFTWARE\\Image Space Incorporated\\rFactor2 Mod Manager\\--guid--\\Packages Dir
