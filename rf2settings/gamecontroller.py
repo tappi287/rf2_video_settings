@@ -7,7 +7,7 @@ import gevent.event
 import gevent.timeout
 
 from .app.app_main import CLOSE_EVENT
-from .utils import create_js_pygame_event_dict
+from .utils import create_js_pygame_event_dict, capture_app_exceptions, AppExceptionHook
 
 try:
     import pygame
@@ -32,6 +32,7 @@ class ControllerEvents:
     capturing = False  # When we want to capture input mappings and capture all axis events as well
 
 
+@capture_app_exceptions
 def controller_event_loop():
     """ Will be run in main eel greenlet to be able to post events to JS frontend """
     # -- Block for timeout until event is set
@@ -58,6 +59,7 @@ def _set_event_result(event):
     ControllerEvents.event.set()
 
 
+@capture_app_exceptions
 def controller_greenlet(event_callback: callable = _set_event_result):
     """ Controller greenlet/thread receiving pygame joystick events and sending
         it to event_callback. Default callback will forward this to the controller_event_loop
