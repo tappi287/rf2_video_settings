@@ -1,10 +1,9 @@
 import json
 import logging
 from pathlib import Path
-from typing import Dict, Type
+from typing import Dict, Type, Optional
 
 from . import preset
-from .preset import PresetType
 from ..globals import find_subclasses
 
 PRESET_TYPES: Dict[int, Type[preset.BasePreset]] = dict()
@@ -36,7 +35,7 @@ def load_presets_from_dir(preset_dir, preset_type, current_preset=None, selected
     return preset_ls, selected_preset
 
 
-def load_preset(file: Path, load_preset_type: int):
+def load_preset(file: Path, load_preset_type: int) -> Optional[preset.BasePreset]:
     """
 
     :param file:
@@ -45,13 +44,24 @@ def load_preset(file: Path, load_preset_type: int):
     """
     try:
         with open(file.as_posix(), 'r') as f:
-            new_preset_dict = json.loads(f.read())
+            new_preset_dict: dict = json.loads(f.read())
     except Exception as e:
         logging.fatal('Could not load Preset from file! %s', e)
         return
 
-    # -- Get type, fallback to GraphicsPreset
-    preset_type = new_preset_dict.get('preset_type', PresetType.graphics)
+    # -- Get type
+    preset_type = new_preset_dict.get('preset_type', None)
+
+    # -- Check JSON is actually a preset file
+    if preset_type is None:
+        test_keys = {'desc', 'name', 'title'}
+        if test_keys.difference(new_preset_dict.keys()):
+            logging.error('%s was not identified as valid preset file.', file.name)
+            return
+
+        # -- Fallback to GraphicsPreset
+        preset_type = preset.PresetType.graphics
+
     # -- Skip Presets that are not of the desired type
     if load_preset_type != preset_type:
         return
