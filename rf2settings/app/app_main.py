@@ -11,7 +11,7 @@ from rf2settings.app_settings import AppSettings
 from rf2settings.globals import RFACTOR_SETUPS, RFACTOR_MODMGR
 from rf2settings.rfactor import RfactorPlayer
 from rf2settings.runasadmin import run_as_admin
-
+from rf2settings.utils import AppExceptionHook
 
 CLOSE_EVENT = gevent.event.Event()
 
@@ -38,6 +38,14 @@ def re_run_admin():
 
     if not run_as_admin():
         request_close()
+
+
+@eel.expose
+def reset_admin():
+    AppSettings.needs_admin = False
+    AppSettings.save()
+
+    request_close()
 
 
 @eel.expose
@@ -101,6 +109,11 @@ def run_mod_mgr():
         return
     logging.info('Opening ModMgr: %s', mod_mgr_path)
     Popen(mod_mgr_path, cwd=WindowsPath(mod_mgr_path).parent.parent)
+
+
+@eel.expose
+def test_app_exception():
+    AppExceptionHook.produce_exception = True
 
 
 def expose_main_methods():
