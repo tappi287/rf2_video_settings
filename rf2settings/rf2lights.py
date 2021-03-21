@@ -222,10 +222,7 @@ class RfactorHeadlight:
                     self.on()
             else:
                 update_status('Engine not running')
-            __flashTimer = set_timer(self.timer[0],
-                                     self.__toggle_off,
-                                     _args=[stopping_callback])
-            # type: ignore
+            set_timer(self.timer[0], self.__toggle_off, _args=[stopping_callback])
             return
         self.stop_flashing()
 
@@ -234,10 +231,7 @@ class RfactorHeadlight:
         if self.headlight_control_is_live() and not stopping_callback():
             self._flashing = True
             self.off()
-            __flashTimer = set_timer(self.timer[1],
-                                     self.__toggle_on,
-                                     _args=[stopping_callback])
-            # type: ignore
+            set_timer(self.timer[1], self.__toggle_on, _args=[stopping_callback])
             return
         self.stop_flashing()
 
