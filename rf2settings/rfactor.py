@@ -268,6 +268,8 @@ class RfactorPlayer:
         settings_updated = False
         for option in video_settings.options:
             if option.key not in config_dict:
+                option.exists_in_rf = False
+                option.hidden = True
                 continue
             value = config_dict.get(option.key)
             if option.ini_type is int:
