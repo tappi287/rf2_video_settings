@@ -246,7 +246,6 @@ def headlights_greenlet():
 
         # -- Check Pit Limiter
         if config.pit_limiter:
-            logging.debug('Headlights checking Pit Limiter')
             rf2_hdl.check_pit_limiter(config.pit_flash_duration)
         # -- Check if in pit lane
         if config.pit_lane:
