@@ -16,7 +16,7 @@ class OptionsTarget:
 
 class Option(JsonRepr):
     # Entries we don't want to export or save
-    export_skip_keys = ['settings', 'hidden', 'ini_type', 'desc']
+    export_skip_keys = ['settings', 'hidden', 'ini_type', 'desc', 'name']
 
     def __init__(self):
         self.key = 'Player JSON key'
