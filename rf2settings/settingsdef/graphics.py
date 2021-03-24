@@ -179,7 +179,7 @@ adjustable_video_settings = {
                    'settings': ({'value': 0, 'name': 'Disabled'}, {'value': 1, 'name': 'HMD only'},
                                 {'value': 2, 'name': 'HMD + Mirror'})
                    },
-    'FSAA': {'name': 'Anti Aliasing', 'value': 0, '_type': int,
+    'FSAA': {'name': 'Anti Aliasing (old)', 'value': 0, '_type': int,
              'settings': ({'value': 0, 'name': 'Off'},
                           {'value': 32, 'name': 'Level 1', 'desc': '2x [2x Multisampling]', 'perf': 'G+0,20% C+0,00%'},
                           {'value': 33, 'name': 'Level 2', 'desc': '2xQ [2x Quincunx (blurred)]',
@@ -192,6 +192,14 @@ adjustable_video_settings = {
                           # {'value': 32, 'name': 'Level 6', 'desc': '8xQ [8x Multisampling]'},
                           # {'value': 32, 'name': 'Level 7', 'desc': '16xQ [16x CSAA (8 color + 8 cv samples)]'},
                           # {'value': 32, 'name': 'Level 8', 'desc': '32x [32x CSAA (8 color + 24 cv samples)]'},
+                          )
+             },
+    'MSAA': {'name': 'Anti Aliasing', 'value': 0, '_type': int,
+             'settings': ({'value': 0, 'name': 'Off'},
+                          {'value': 2, 'name': '2x MSAA', 'desc': '2x [2x Multisampling]', 'perf': 'G+0,20% C+0,00%'},
+                          {'value': 4, 'name': '4x MSAA', 'desc': '4x [4x Multisampling]', 'perf': 'G+14,62% C+0,17%'},
+                          {'value': 8, 'name': '8x MSAA', 'desc': '8x [8x Multisampling]',
+                           'perf': 'G+1,1% C+0,95%'}
                           )
              },
     'EPostProcessingSettings': {'name': 'Post Effects', 'value': 1, '_type': int,
