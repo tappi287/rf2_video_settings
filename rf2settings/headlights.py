@@ -6,7 +6,9 @@ import gevent
 from .app_settings import AppSettings
 from .app.app_main import CLOSE_EVENT
 from .gamecontroller import ControllerEvents, SetupControllerAxis
-from .preset.settings_model import HeadlightSettings, HeadlightControllerAssignments
+from .preset.preset import HeadlightControlsSettingsPreset
+from .preset.settings_model import HeadlightSettings, HeadlightControllerAssignments, AutoHeadlightSettings
+from .rfactor import RfactorPlayer
 from .settingsdef.headlights import controller_assignments
 from .rf2lights import RfactorHeadlight
 from .rf2connect import RfactorConnect, RfactorState
@@ -40,12 +42,14 @@ class _Settings:
     def __init__(self):
         self.headlight_settings = HeadlightSettings()
         self.controller_assignments = HeadlightControllerAssignments()
+        self.rf2_auto_headlight = False
 
         self.refresh()
 
     def refresh(self):
         self.headlight_settings = self._read_headlight_settings()
         self.controller_assignments = self._read_headlight_controller_assignments()
+        self.rf2_auto_headlight = self._read_auto_headlight_setting()
     
     def _read_headlight_settings(self):
         """ Called on launch or after settings_changed event to re-read
@@ -83,6 +87,27 @@ class _Settings:
         con_assignments.from_js_dict(AppSettings.headlight_controller_assignments)
         _ControllerHandler.setup_axis(con_assignments)
         return con_assignments
+
+    def _read_auto_headlight_setting(self) -> bool:
+        """ Read the rFactor 2 Auto Headlights setting available from >= v1124RC """
+        # - Read the actual, current rFactor Settings
+        rf = RfactorPlayer()
+        if not rf.is_valid:
+            return False
+
+        # -- Read rFactor Auto headlight setting
+        hdl_preset = HeadlightControlsSettingsPreset()
+        hdl_preset.update(rf)
+        rf_auto_headlight: AutoHeadlightSettings = getattr(hdl_preset, AutoHeadlightSettings.app_key)
+        rf_auto_hdl_opt = rf_auto_headlight.get_option('Auto Headlights')
+
+        # -- Update Headlights settings
+        if rf_auto_hdl_opt:
+            if self.rf2_auto_headlight != rf_auto_hdl_opt.value:
+                logging.info('Updating rFactor Auto Headlight setting: %s',
+                             rf_auto_hdl_opt.value)
+            return rf_auto_hdl_opt.value
+        return False
 
 
 class _ControllerHandler:
@@ -204,6 +229,7 @@ def headlights_greenlet():
             # -- Update keyboard key used to trigger headlights
             if rf2_hdl is not None:
                 rf2_hdl.set_toggle_key(AppSettings.headlight_rf_key)
+                rf2_hdl.rf2_auto_headlights_enabled = config.rf2_auto_headlight
 
         # --- Headlights App En-/Disabled ---
         if not config.enabled:
@@ -212,7 +238,7 @@ def headlights_greenlet():
 
         # --- Init rf2headlights
         if rf2_hdl is None:
-            rf2_hdl = RfactorHeadlight(AppSettings.headlight_rf_key)
+            rf2_hdl = RfactorHeadlight(AppSettings.headlight_rf_key, config.rf2_auto_headlight)
 
         # -- Update global App RfactorConnect connection state
         #    from Headlights shared memory
