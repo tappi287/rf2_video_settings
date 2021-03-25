@@ -16,7 +16,7 @@ class OptionsTarget:
 
 class Option(JsonRepr):
     # Entries we don't want to export or save
-    export_skip_keys = ['settings', 'hidden', 'ini_type', 'desc', 'name']
+    export_skip_keys = ['settings', 'hidden', 'ini_type', 'desc', 'name', 'exists_in_rf']
 
     def __init__(self):
         self.key = 'Player JSON key'
@@ -28,6 +28,7 @@ class Option(JsonRepr):
         # Extra Attributes
         self.hidden: bool = False
         self.ini_type = None
+        self.exists_in_rf = False  # Mark options not found on disk so we can ignore them during comparison and saving
 
         # Possible settings
         self.settings: tuple = tuple()
@@ -117,7 +118,7 @@ class BaseOptions(JsonRepr):
         #    sort both by their keys
         options = sorted(self.options, key=lambda k: k.key)
         other_options = sorted(other.options, key=lambda k: k.key)
-        return all([a == b for a, b in zip(options, other_options) if a.key not in self.skip_keys])
+        return all((a == b for a, b in zip(options, other_options) if a.key not in self.skip_keys and a.exists_in_rf))
 
 
 class DriverOptions(BaseOptions):
@@ -249,6 +250,20 @@ class AdvancedGraphicSettings(BaseOptions):
 
         # -- Read Default options
         self.read_from_python_dict(graphics.advanced_settings)
+
+
+class AutoHeadlightSettings(BaseOptions):
+    """ rFactors build-in Auto-Headlight from >= v1124RC """
+    key = 'DRIVING AIDS'
+    app_key = 'auto_headlight_settings'
+    title = 'Auto Headlight rFactor Aid'
+    target = OptionsTarget.player_json
+
+    def __init__(self):
+        super(AutoHeadlightSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(headlights.auto_headlight_rfactor)
 
 
 class HeadlightSettings(BaseOptions):

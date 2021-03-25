@@ -183,7 +183,8 @@ class ControlsSettingsPreset(BasePreset):
 
 
 class HeadlightControlsSettingsPreset(BasePreset):
-    option_class_keys = {settings_model.HeadlightControllerJsonSettings.app_key}
+    option_class_keys = {settings_model.HeadlightControllerJsonSettings.app_key,
+                         settings_model.AutoHeadlightSettings.app_key}
     prefix = 'hdl_controls'
 
     def __init__(self, name: str = None, desc: str = None):

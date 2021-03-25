@@ -82,3 +82,11 @@ headlight_rfactor = {
                              'desc': 'rFactor 2 Headlight control key/button',
                              },
 }
+
+auto_headlight_rfactor = {
+    'Auto Headlights': {'name': 'Auto Headlights', 'value': True,
+                        'desc': 'Adds an automatic options and set it to the default setting. Automatically turn on and'
+                                ' off headlights dependent on weather conditions.',
+                        'settings': ({'value': True, 'name': 'On'}, {'value': False, 'name': 'Off'})
+                        }
+}
