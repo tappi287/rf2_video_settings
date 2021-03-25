@@ -1,4 +1,5 @@
 import logging
+from threading import Timer
 
 import gevent
 
@@ -10,12 +11,20 @@ def update_status(message):
     logging.info(message)
 
 
+def set_timer(ms, callback, _args=None):
+    if ms <= 0:
+        return
+
+    t = Timer(ms / 1000, callback, args=_args)
+    t.start()
+
+
 def timer(ms, callback, args):
     gevent.sleep(ms / 1000)
     callback(*args)
 
 
-def set_timer(ms, callback, _args=None) -> None:
+def __set_timer(ms, callback, _args=None) -> None:
     if ms > 0:
         timer(ms, callback, _args)
     else:
@@ -25,9 +34,10 @@ def set_timer(ms, callback, _args=None) -> None:
 class RfactorHeadlight:
     info = sharedMemoryAPI.SimInfoAPI()
 
-    def __init__(self, headlight_toggle_dik: str = None):
+    def __init__(self, headlight_toggle_dik: str = None, rf2_auto_headlights_enabled: bool = False):
         self.headlight_state = None
         self.headlight_toggle_dik = headlight_toggle_dik or 'DIK_H'
+        self.rf2_auto_headlights_enabled = False
         self._flashing = False
         self._count = 0
         self.timer = (0, 0)  # On time, off time

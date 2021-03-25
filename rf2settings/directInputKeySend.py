@@ -8,6 +8,8 @@ time.sleep -> gevent.sleep for rf2settingswidget
 # It works in rF2!
 
 import ctypes
+import time
+
 import gevent
 
 # DirectInput Key Code Table
@@ -211,7 +213,8 @@ def PressReleaseKey(keyStr):
     Press and release a key
     """
     PressKey(keyStr)
-    gevent.sleep(.05)
+    time.sleep(.04)
+    # gevent.sleep(.05)
     ReleaseKey(keyStr)
 
 def KeycodeToDIK(keycode):
