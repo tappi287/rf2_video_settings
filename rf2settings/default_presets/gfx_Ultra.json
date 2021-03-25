@@ -4,57 +4,46 @@
     "options": [
       {
         "key": "Transparency AA",
-        "name": "Transparency AA",
         "value": true
       },
       {
         "key": "Texture Sharpening",
-        "name": "Texture Sharpening",
         "value": 4
       },
       {
         "key": "Heat FX Fade Speed",
-        "name": "Heat FX Fade Speed",
         "value": 30
       },
       {
         "key": "Rearview Particles",
-        "name": "Rearview Particles",
         "value": true
       },
       {
         "key": "Rearview_Back_Clip",
-        "name": "Rearview Back Clip",
         "value": 0
       },
       {
         "key": "Rearview Driving",
-        "name": "Rearview Driving",
         "value": 1
       },
       {
         "key": "Rearview Onboard",
-        "name": "Rearview Onboard",
         "value": 0
       },
       {
         "key": "Rearview Swingman",
-        "name": "Rearview Swingman",
         "value": 0
       },
       {
         "key": "Screenshot Format",
-        "name": "Screenshot Format",
         "value": 0
       },
       {
         "key": "Sun Occlusion",
-        "name": "Sun Occlusion",
         "value": false
       },
       {
         "key": "Max Framerate",
-        "name": "Max Framerate",
         "value": 0
       }
     ],
@@ -66,82 +55,66 @@
     "options": [
       {
         "key": "Track Detail",
-        "name": "Circuit Detail",
         "value": 3
       },
       {
         "key": "Player Detail",
-        "name": "Player Detail",
         "value": 3
       },
       {
         "key": "Opponent Detail",
-        "name": "Opponent Detail",
         "value": 3
       },
       {
         "key": "Texture Detail",
-        "name": "Texture Detail",
         "value": 3
       },
       {
         "key": "Texture Filter",
-        "name": "Texture Filter",
         "value": 5
       },
       {
         "key": "Special FX",
-        "name": "Special Effects",
         "value": 4
       },
       {
         "key": "Shadows",
-        "name": "Shadows",
         "value": 4
       },
       {
         "key": "Shadow Blur",
-        "name": "Shadow Blur",
         "value": 3
       },
       {
         "key": "Soft Particles",
-        "name": "Soft Particles",
         "value": 2
       },
       {
         "key": "Rain FX Quality",
-        "name": "Rain Drops",
         "value": 5
       },
       {
         "key": "Road Reflections",
-        "name": "Road Reflection",
         "value": 3
       },
       {
         "key": "Environment Reflections",
-        "name": "Environment Reflection",
         "value": 2
       },
       {
         "key": "LSI Top",
-        "name": "Low Speed Info",
         "value": 0.15
       },
       {
         "key": "Stabilize Horizon",
-        "name": "Stabilize Horizon",
         "value": 1
       },
       {
         "key": "Steering Wheel",
-        "name": "Steering Wheel",
         "value": 0
       },
       {
         "key": "Max Visible Vehicles",
-        "name": "Visible Vehicles",
         "value": 24
       }
     ],
@@ -154,22 +127,18 @@
     "options": [
       {
         "key": "WindowedMode",
-        "name": "Windowed Mode",
         "value": null
       },
       {
         "key": "Borderless",
-        "name": "Borderless",
         "value": null
       },
       {
         "key": "VideoMode",
-        "name": "Resolution",
         "value": null
       },
       {
         "key": "VideoRefresh",
-        "name": "Refresh Rate",
         "value": null
       }
     ],
@@ -180,22 +149,22 @@
     "options": [
       {
         "key": "VrSettings",
-        "name": "VR",
         "value": 0
       },
       {
         "key": "FSAA",
-        "name": "Anti Aliasing",
         "value": 36
       },
       {
+        "key": "MSAA",
+        "value": 8
+      },
+      {
         "key": "EPostProcessingSettings",
-        "name": "Post Effects",
         "value": 5
       },
       {
         "key": "UseFXAA",
-        "name": "FXAA",
         "value": 0
       }
     ],
