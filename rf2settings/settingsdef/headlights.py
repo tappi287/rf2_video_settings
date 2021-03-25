@@ -35,24 +35,24 @@ headlight_settings = {
                     'settings': ({'settingType': 'range', 'min': 2, 'max': 24, 'step': 1,
                                   'desc': ''},)
                     },
-    'flash_on_time': {'name': 'Overtake Flash ON Time', 'value': 20,
+    'flash_on_time': {'name': 'Overtake Flash ON Time', 'value': 50,
                       'desc': 'Length of one flash in milliseconds',
-                      'settings': ({'settingType': 'range', 'min': 10, 'max': 500, 'step': 10,
+                      'settings': ({'settingType': 'range', 'min': 40, 'max': 500, 'step': 10,
                                     'desc': ''},)
                       },
-    'flash_off_time': {'name': 'Overtake Flash OFF Time', 'value': 20,
+    'flash_off_time': {'name': 'Overtake Flash OFF Time', 'value': 90,
                        'desc': 'Length of the break between flashes in milliseconds',
-                       'settings': ({'settingType': 'range', 'min': 10, 'max': 500, 'step': 10,
+                       'settings': ({'settingType': 'range', 'min': 40, 'max': 500, 'step': 10,
                                      'desc': ''},)
                        },
-    'pit_flash_on_time': {'name': 'Pit Flash ON Time', 'value': 200,
+    'pit_flash_on_time': {'name': 'Pit Flash ON Time', 'value': 100,
                           'desc': 'Length of one flash in milliseconds',
-                          'settings': ({'settingType': 'range', 'min': 10, 'max': 500, 'step': 10,
+                          'settings': ({'settingType': 'range', 'min': 50, 'max': 500, 'step': 10,
                                         'desc': ''},)
                           },
-    'pit_flash_off_time': {'name': 'Pit Flash OFF Time', 'value': 20,
+    'pit_flash_off_time': {'name': 'Pit Flash OFF Time', 'value': 200,
                            'desc': 'Length of the break between flashes in milliseconds',
-                           'settings': ({'settingType': 'range', 'min': 10, 'max': 500, 'step': 10,
+                           'settings': ({'settingType': 'range', 'min': 50, 'max': 500, 'step': 10,
                                          'desc': ''},)
                            },
 }
