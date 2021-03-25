@@ -78,12 +78,18 @@ adjustable_graphics_settings = {
                                     ({'value': 0, 'name': 'Off'},
                                      {'value': 1, 'name': 'Low',
                                       'desc': 'Live cubic mapping is used '
-                                              '(if track and car are setup properly)',
-                                      'perf': 'G+0,00% C+0,00%'},
-                                     {'value': 2, 'name': 'High',
+                                              '(if track and car are setup properly)'},
+                                     {'value': 2, 'name': 'Medium',
                                       'desc': 'Live cubic mapping is used '
-                                              '(if track and car are setup properly)',
-                                      'perf': 'G+3,39% C+4,45%'}),
+                                              '(if track and car are setup properly)'},
+                                     {'value': 3, 'name': 'High',
+                                      'desc': 'Live cubic mapping is used '
+                                              '(if track and car are setup properly)'
+                                      },
+                                     {'value': 4, 'name': 'Ultra',
+                                      'desc': 'v1124 RC: increase refresh rate and resolution'
+                                      }
+                                     ),
                                 },
     'LSI Top': {'name': 'Low Speed Info', 'value': 0.15,
                 'settings': ({'settingType': 'range', 'min': 0.01, 'max': 1.0, 'step': 0.01, 'display': 'floatpercent',
