@@ -13,7 +13,6 @@ from .knownpaths import get_current_user_documents_path
 APP_NAME = 'rf2_settings_widget'
 SETTINGS_DIR_NAME = 'rf2_settings_widget'
 EXPORT_DIR_NAME = 'exported'
-SETTINGS_FILE_NAME = 'settings.json'
 PRESETS_DIR = 'presets'
 DEFAULT_PRESETS_DIR = 'default_presets'
 APP_FRIENDLY_NAME = 'rF2 Settings Widget'
@@ -57,6 +56,8 @@ if getattr(sys, 'frozen', False):
 else:
     # -- Running in IDE ---
     FROZEN = False
+
+SETTINGS_FILE_NAME = 'settings.json' if FROZEN else 'settings_dev.json'
 
 
 def check_and_create_dir(directory: Union[str, Path]) -> str:
