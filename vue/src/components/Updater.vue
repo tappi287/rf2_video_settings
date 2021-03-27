@@ -3,7 +3,7 @@
     <template v-if="error === ''">
       <span class="mr-2">Update available!</span>
       <template v-if="!updateReady">
-        <a :href="downloadUrl">
+        <a :href="downloadUrl" target="_blank">
           <b-button size="sm" variant="primary" :disabled="downloadInProgress">
             <b-spinner small type="grow" v-if="downloadInProgress"></b-spinner>
             Download Version {{ updatedVersion }}
