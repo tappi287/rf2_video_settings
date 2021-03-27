@@ -142,7 +142,7 @@ class RfactorPlayer:
 
     def _read_options_from_target(self, target: OptionsTarget, json_dict) -> bool:
         for preset_options in self._get_target_options(target):
-            if not self._get_options_from_player_json(preset_options, json_dict):
+            if not self._get_options_from_player_json(preset_options, json_dict) and preset_options.mandatory:
                 self.error += f'Could not read rFactor2 settings for ' \
                               f'{preset_options.__class__.__name__}\n'
                 self.is_valid = False

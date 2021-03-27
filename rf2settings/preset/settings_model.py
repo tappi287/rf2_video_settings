@@ -62,6 +62,9 @@ class BaseOptions(JsonRepr):
     # Target to indicate RfactorPlayer where to write these options
     # eg. OptionsTarget.player_json
     target = None
+    # Set rfactor instance to invalid and block the app with an error
+    # if none of these options could be found
+    mandatory = True
 
     def __init__(self, options: List[Option] = None):
         if options is None:
@@ -258,6 +261,7 @@ class AutoHeadlightSettings(BaseOptions):
     app_key = 'auto_headlight_settings'
     title = 'Auto Headlight rFactor Aid'
     target = OptionsTarget.player_json
+    mandatory = False
 
     def __init__(self):
         super(AutoHeadlightSettings, self).__init__()

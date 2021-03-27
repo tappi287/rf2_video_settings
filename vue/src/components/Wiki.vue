@@ -77,6 +77,11 @@
         <span> - most of the dashboard shots are taken from there, every author is credited and no images
         are distributed with this app.</span>
       </b-list-group-item>
+      <b-list-group-item variant="dark">
+        <b-link target="_blank" href="https://github.com/andybluenoes">
+          andybluenoes</b-link>
+        <span> - providing feedback and settings research</span>
+      </b-list-group-item>
     </b-list-group>
     <b-button class="mt-4" variant="primary" @click="$emit('nav', 8)">Show App Logs</b-button>
     <b-button class="ml-2 mt-4" variant="danger" @click="testException">Produce Test App Exception</b-button>
