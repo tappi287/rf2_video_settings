@@ -29,12 +29,39 @@
         </template>
         <!-- Spinner Menu -->
         <template v-if="inputType === 'range'">
-          <div :id="elemId" class="fixed-width-setting">
+          <div :id="elemId" class="fixed-width-setting position-relative">
             <b-form-spinbutton v-model="rangeValue" :min="rangeMin" :max="rangeMax" :step="rangeStep" inline
                                :class="'spinner-setting no-border btn-' + variant"
                                @change="spinnerSettingUpdated" :formatter-fn="spinnerDisplay">
             </b-form-spinbutton>
           </div>
+          <b-popover ref="spinnerPopover" :target="elemId" :triggers="'manual'">
+            <template #title>Manual Input</template>
+            <template #default>
+              <div role="group">
+                <label :for="'input-' + elemId">
+                  Manually enter a value between {{ rangeMin }} and {{ rangeMax }}:
+                </label>
+                <b-form-input
+                    :id="'input-' + elemId" size="sm" debounce="100"
+                    v-model="spinnerInputValue" type="number"
+                    :max="rangeMax" :min="rangeMin" :step="rangeStep"
+                    :state="spinnerInputState" number />
+                <b-form-invalid-feedback :id="'input-' + elemId + '-feedback'">
+                  Enter a value within the described range and use a dot . as decimal separator.
+                </b-form-invalid-feedback>
+              </div>
+              <div class="text-right mt-2">
+                <b-button @click="confirmSpinnerPopover"
+                          size="sm" variant="success" aria-label="Confirm">
+                  Confirm
+                </b-button>
+                <b-button @click="closeSpinnerPopover" size="sm" aria-label="Close" class="ml-1">
+                  Abort
+                </b-button>
+              </div>
+            </template>
+          </b-popover>
         </template>
       </b-input-group-append>
     </b-input-group>
@@ -60,6 +87,8 @@ export default {
       rangeDisp: undefined,
       rangeValue: 0,
       spinnerTimeout: null,
+      showSpinnerInputPopover: false,
+      spinnerInputValue: 0,
       spinnerDebounceRate: 2000,
     }
   },
@@ -94,6 +123,32 @@ export default {
         func(this, setting)
       }
     },
+    setupSpinnerDblClick: function () {
+      // Double clicking the output/value will open a manual input Popover
+      let output = document.getElementById(this.elemId).querySelector('output')
+      output.addEventListener('dblclick', this.handleSpinnerDblClick, false)
+    },
+    handleSpinnerDblClick: function () {
+      this.spinnerInputValue = this.rangeValue
+      this.$refs.spinnerPopover.$emit('open')
+    },
+    confirmSpinnerPopover: function () {
+      this.closeSpinnerPopover()
+      if (this.checkSpinnerInputValue(this.spinnerInputValue)) {
+        this.rangeValue = this.spinnerInputValue
+        this.spinnerSettingUpdated()
+        console.log('Confirmed spinner manual input value', this.spinnerInputValue)
+      }
+    },
+    closeSpinnerPopover: function () { this.$refs.spinnerPopover.$emit('close') },
+    checkSpinnerInputValue: function (value) {
+      if (Number.isFinite(value)) {
+        if (value >= this.rangeMin && value <= this.rangeMax) {
+          return true
+        }
+      }
+      return false
+    },
     setFixedWidth: function () {
       // Iterate all elements of this setting group_id and set width to widest element found
       const nameElem = document.querySelectorAll('#' + this.groupId + ' .fixed-width-name')
@@ -120,7 +175,9 @@ export default {
         this.rangeStep = this.setting.settings[0].step
         this.rangeDisp = this.setting.settings[0].display
         this.rangeValue = this.setting.value
+        this.spinnerInputValue = this.setting.value
         this.settingDesc = this.setting.desc || this.setting.settings[0].desc || ''
+        this.$nextTick(() => { this.setupSpinnerDblClick() })
       }
     }
   },
@@ -152,6 +209,9 @@ export default {
     settingHidden: function () {
       if (this.setting === undefined) { return true }
       return this.setting['hidden'] || false
+    },
+    spinnerInputState: function () {
+      return this.checkSpinnerInputValue(this.spinnerInputValue)
     }
   }
 }
@@ -162,4 +222,11 @@ export default {
 .setting { display: inline-block }
 .setting-item { min-width: 7.0rem; font-weight: lighter; }
 .spinner-setting { width: 100% !important; }
+.spinner-overlay {
+  width: 50%;
+  height: 75%;
+  position: absolute;
+  left: 22.5%;
+  margin: .25rem;
+}
 </style>
