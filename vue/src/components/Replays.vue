@@ -273,6 +273,7 @@ export default {
       if (r.result) {
         this.makeToast(r.msg, 'success', 'Playing replay')
         this.setBusy(true)
+        this.$eventHub.$emit('play-audio', 'audioConfirm')
       }
       if (!r.result) { this.makeToast(r.msg, 'danger', 'Replay Play Error') }
     },

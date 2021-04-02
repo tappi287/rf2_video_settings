@@ -198,7 +198,8 @@
     </template>
 
     <!-- Headlights -->
-    <Headlights ref="headlights" v-if="navActive === 4" @make-toast="makeToast"></Headlights>
+    <Headlights ref="headlights" v-if="navActive === 4"
+                @make-toast="makeToast" />
 
     <!-- Replays -->
     <Replays ref="replays" v-if="navActive === 5" @make-toast="makeToast" @set-busy="setBusy"
@@ -301,6 +302,14 @@
         </template>
       </template>
     </b-overlay>
+
+    <!-- Audio -->
+    <div style="display: none">
+      <audio src="@/assets/UI_Confirm.mp4" id="audioConfirm"></audio>
+      <audio src="@/assets/UI_Ping.mp4" id="audioPing"></audio>
+      <audio src="@/assets/UI_Indicator.mp4" id="audioIndicator"></audio>
+      <audio src="@/assets/UI_Cute-Select.mp4" id="audioSelect"></audio>
+    </div>
   </div>
 </template>
 
@@ -358,6 +367,11 @@ export default {
         variant: category,
         solid: true,
       })
+      this.playAudio('audioSelect')
+    },
+    playAudio(elemId) {
+      let a = document.getElementById(elemId)
+      if (a !== undefined) { a.play() }
     },
     navigate(target=0) {this.navActive = target },
     updateRfactorLiveState: function (event) {
@@ -445,8 +459,10 @@ export default {
   created() {
     window.addEventListener('rfactor-live-event', this.updateRfactorLiveState)
     window.addEventListener('rfactor-status-event', this.updateRfactorStatus)
+    this.$eventHub.$on('play-audio', this.playAudio)
   },
-  destroyed() {
+  beforeDestroy() {
+    this.$eventHub.$off('play-audio')
     window.removeEventListener('rfactor-live-event', this.updateRfactorLiveState)
     window.removeEventListener('rfactor-status-event', this.updateRfactorStatus)
   },

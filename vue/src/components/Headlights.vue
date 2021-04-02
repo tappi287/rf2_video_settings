@@ -160,6 +160,7 @@ name: "Headlights",
     triggerLogoFlash: async function() {
       if (this.flashing) { return }
       this.flashing = true
+      this.$eventHub.$emit('play-audio', 'audioIndicator')
       for (let i=0; i < this.flashCount; i++) {
         this.flashLogo = true; await sleep(this.flashOnTime)
         this.flashLogo = false; await sleep(this.flashOffTime)

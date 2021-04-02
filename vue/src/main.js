@@ -70,6 +70,8 @@ export const userScreenShots =
 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-359#post-1059819']
     ]
 
+Vue.prototype.$eventHub = new Vue(); // Global event bus
+
 new Vue({
   render: h => h(App),
 }).$mount('#app')

@@ -83,8 +83,16 @@
         <span> - providing feedback and settings research</span>
       </b-list-group-item>
     </b-list-group>
+    <p></p>
     <b-button class="mt-4" variant="primary" @click="$emit('nav', 8)">Show App Logs</b-button>
     <b-button class="ml-2 mt-4" variant="danger" @click="testException">Produce Test App Exception</b-button>
+    <p></p>
+    <b-button-group size="sm">
+      <b-button @click="$eventHub.$emit('play-audio', 'audioConfirm')">audioConfirm</b-button>
+      <b-button @click="$eventHub.$emit('play-audio', 'audioPing')">audioPing</b-button>
+      <b-button @click="$eventHub.$emit('play-audio', 'audioIndicator')">audioIndicator</b-button>
+      <b-button @click="$eventHub.$emit('play-audio', 'audioSelect')">audioSelect</b-button>
+    </b-button-group>
   </div>
 </template>
 
