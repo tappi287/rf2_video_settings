@@ -82,7 +82,25 @@
           andybluenoes</b-link>
         <span> - providing feedback and settings research</span>
       </b-list-group-item>
+      <b-list-group-item variant="dark">
+        <b-link target="_blank" href="https://github.com/fholger/reshade">
+          ReShade - Copyright 2014 Patrick Mours. All rights reserved.
+        </b-link>
+      </b-list-group-item>
     </b-list-group>
+    <h4 class="mt-5">ReShade - Copyright 2014 Patrick Mours. All rights reserved.</h4>
+    <pre class="text-muted">
+      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+      EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+      OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+      SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+      INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+      TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+      BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+      CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+      ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+      SUCH DAMAGE.
+    </pre>
     <p></p>
     <b-button class="mt-4" variant="primary" @click="$emit('nav', 8)">Show App Logs</b-button>
     <b-button class="ml-2 mt-4" variant="danger" @click="testException">Produce Test App Exception</b-button>
