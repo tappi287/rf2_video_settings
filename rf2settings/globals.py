@@ -15,6 +15,11 @@ SETTINGS_DIR_NAME = 'rf2_settings_widget'
 EXPORT_DIR_NAME = 'exported'
 PRESETS_DIR = 'presets'
 DEFAULT_PRESETS_DIR = 'default_presets'
+DATA_DIR = 'data'
+RESHADE_ZIP = 'reshade_ovr_alpha2_rf2_settings_widget.zip'
+RESHADE_FILES = ('dxgi.dll', 'ReShade.ini',
+                 'ReShadePreset_Instagram.ini', 'ReShadePreset_Sharpen.ini',
+                 'reshade-shaders')
 APP_FRIENDLY_NAME = 'rF2 Settings Widget'
 BASE_PATH = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__ + '/..')))
 RFACTOR_PLAYER = 'UserData/player/player.JSON'
@@ -105,6 +110,10 @@ def get_default_presets_dir() -> Path:
         return Path(get_current_modules_dir()) / DEFAULT_PRESETS_DIR
     else:
         return Path(get_current_modules_dir()) / 'rf2settings' / DEFAULT_PRESETS_DIR
+
+
+def get_data_dir() -> Path:
+    return Path(get_current_modules_dir()) / DATA_DIR
 
 
 def get_present_mon_bin() -> Path:

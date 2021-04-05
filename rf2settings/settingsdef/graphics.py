@@ -239,3 +239,25 @@ resolution_video_settings = {
                      'settings': ({'value': 1, 'name': '60Hz'}, )
                      },
     }
+reshade_settings = {
+    'use_reshade': {'name': 'Use Reshade', 'value': False,
+                    'desc': 'Experimental ReShade preset with OpenVR support. Applies sharpening and color correction'
+                            '(optional) to the 3D scene. '
+                            'ReShade will be installed to rFactor Bin64 dir. Use NumPad 1 to display ReShade menu '
+                            'and NumPad 0 to enable/disable ReShade in-game.',
+                    'settings': (
+                          {'value': False, 'name': 'Off'},
+                          {'value': True, 'name': 'On'},
+                      ),
+                    },
+    'preset_name': {'name': 'Preset', 'value': 'ReShadePreset_Sharpen.ini',
+                    'settings': (
+                        {'value': 'ReShadePreset_Sharpen.ini', 'name': 'Sharpen',
+                         'desc': 'rFactor 2 preset which only applies sharpening without reducing image '
+                                 'dynamic range.'},
+                        {'value': 'ReShadePreset_Instagram.ini', 'name': 'Sharpen + Color Correction',
+                         'desc': 'Applies the ReShade default Preset increasing saturation by 20% and reducing '
+                                 'image dynamic range by 0.2% aka contrast/brightness.'},
+                     ),
+                    }
+}

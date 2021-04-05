@@ -5,8 +5,9 @@ from configparser import ConfigParser
 from pathlib import Path, WindowsPath
 import subprocess
 from typing import Optional, Iterator
+from zipfile import ZipFile
 
-from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, RF2_APPID, RFACTOR_VERSION_TXT, RFACTOR_CONTROLLER
+from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, RF2_APPID, RFACTOR_VERSION_TXT, RFACTOR_CONTROLLER, get_data_dir, RESHADE_ZIP
 from .preset.preset import BasePreset
 from .preset.settings_model import BaseOptions, OptionsTarget
 from .preset.settings_model_base import OPTION_CLASSES
@@ -158,6 +159,9 @@ class RfactorPlayer:
         # -- Write video config to dx_config
         self._write_video_config(preset)
 
+        # -- Write reshade settings
+        self.write_reshade(preset)
+
         # -- Update Player Json settings
         player_json_dict = self.read_player_json_dict(self.player_file, encoding='utf-8')
         update_result = self._write_to_target(OptionsTarget.player_json, preset, player_json_dict)
@@ -258,6 +262,89 @@ class RfactorPlayer:
             logging.info('Updated Setting: %s: %s', option.key, option.value)
 
         return True
+
+    def write_reshade(self, preset: BasePreset) -> bool:
+        # -- Read ReShade options from GraphicsPreset
+        use_reshade, preset_name = False, 'ReShadePreset_Sharpen.ini'
+        for preset_options in self._get_target_options(OptionsTarget.reshade, preset):
+            for option in preset_options.options:
+                if option.key == 'use_reshade':
+                    use_reshade = option.value
+                elif option.key == 'preset_name':
+                    preset_name = option.value
+
+        if not self._check_bin_dir():
+            self.error += 'Could not locate rFactor 2 Bin directory.\n'
+            return False
+
+        logging.info('Applying ReShade settings: %s %s', use_reshade, preset_name)
+
+        bin_dir = self.location / 'Bin64'
+        reshade_zip = get_data_dir() / RESHADE_ZIP
+        reshade_preset = bin_dir / 'ReShadePreset.ini'
+        remove_dirs = list()
+        reshade_removed = False
+
+        with ZipFile(reshade_zip, 'r') as zip_obj:
+            for zip_info in zip_obj.filelist:
+                file = bin_dir / zip_info.filename
+
+                # -- Extract Zip member
+                if use_reshade:
+                    # -- Skip existing files
+                    if file.exists():
+                        continue
+
+                    logging.info('Extracting ReShade file %s to rF2 bin dir.', file)
+                    zip_obj.extract(zip_info, path=bin_dir)
+                else:
+                    if file.is_file():
+                        logging.info('Removing ReShade file %s from rF2 bin dir.', file)
+                        file.unlink(missing_ok=True)
+                        reshade_removed = True
+                    else:
+                        if file.exists():
+                            remove_dirs.append(file)
+
+        # -- Finish removing ReShade files
+        if not use_reshade:
+            # -- Remove empty ReShade dirs
+            if remove_dirs:
+                for d in sorted(remove_dirs, key=lambda x: len(x.as_posix()), reverse=True):
+                    try:
+                        d.rmdir()
+                    except Exception as e:
+                        # Eg. if the use has saved screenshots, directory will not be removed
+                        msg = f'Error removing ReShade directory: {e}'
+                        logging.error(msg)
+                        self.error += msg
+
+            # -- Remove ReShade preset
+            if reshade_preset.exists():
+                reshade_preset.unlink()
+
+            return reshade_removed
+
+        # -- Write ReShade Preset file
+        preset_written = False
+        for preset_file in bin_dir.glob('*.ini'):
+            if preset_file.name == preset_name:
+                try:
+                    # -- Remove existing preset
+                    if reshade_preset.exists():
+                        reshade_preset.unlink()
+                    # -- write selected preset
+                    with open(preset_file, 'r') as s:
+                        with open(reshade_preset, 'w') as w:
+                            w.write(s.read())
+                except Exception as e:
+                    logging.error('Error writing ReShade preset: %s', e)
+                    self.error += f'Error writing ReShade preset: {e}'
+                    break
+                preset_written = True
+                break
+
+        return preset_written
 
     def _get_options_from_dx_config(self, video_settings: BaseOptions, config: ConfigParser) -> bool:
         if not config:

@@ -11,6 +11,7 @@ class OptionsTarget:
     player_json = 0
     controller_json = 1
     dx_config = 10
+    reshade = 20
     app_settings = 100
 
 
@@ -227,6 +228,18 @@ class VideoSettings(BaseOptions):
 
         # -- Read Default options
         self.read_from_python_dict(graphics.adjustable_video_settings)
+
+
+class ReshadeSettings(BaseOptions):
+    app_key = 'reshade_settings'
+    title = 'Reshade'
+    target = OptionsTarget.reshade
+
+    def __init__(self):
+        super(ReshadeSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(graphics.reshade_settings)
 
 
 class ResolutionSettings(BaseOptions):

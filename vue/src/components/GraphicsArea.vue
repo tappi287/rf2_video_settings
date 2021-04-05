@@ -63,6 +63,23 @@
                        @make-toast="makeToast">
   </GenericSettingsArea>
 
+  <!-- ReShade Settings -->
+  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="reshade_settings"
+                       :current_preset_idx="current_preset_idx"
+                       :view_mode="viewMode"
+                       :search="search"
+                       @update-setting="updateSetting"
+                       @set-busy="setBusy"
+                       @make-toast="makeToast">
+    <template #footer>
+      <div class="float-right">
+        <b-button size="sm" href="https://github.com/fholger/reshade/releases/tag/openvr_alpha2" target="_blank">
+          <b-icon icon="github"></b-icon>
+        </b-button>
+      </div>
+    </template>
+  </GenericSettingsArea>
+
   <!-- Video Setup Modal -->
   <b-modal id="video-modal" centered hide-header-close no-close-on-backdrop no-close-on-esc>
     <template #modal-title>

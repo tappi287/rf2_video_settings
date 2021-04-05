@@ -143,7 +143,8 @@ class BasePreset:
 class GraphicsPreset(BasePreset):
     preset_type: int = PresetType.graphics
     option_class_keys = {settings_model.GraphicOptions.app_key, settings_model.AdvancedGraphicSettings.app_key,
-                         settings_model.VideoSettings.app_key, settings_model.ResolutionSettings.app_key}
+                         settings_model.VideoSettings.app_key, settings_model.ResolutionSettings.app_key,
+                         settings_model.ReshadeSettings.app_key}
     prefix = 'gfx'
 
     def __init__(self, name: str = None, desc: str = None):
