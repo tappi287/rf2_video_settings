@@ -4,7 +4,7 @@ from typing import Optional
 import gevent
 
 from .app_settings import AppSettings
-from .app.app_main import CLOSE_EVENT
+from .app.app_main import CLOSE_EVENT, AppAudioFx
 from .gamecontroller import ControllerEvents, SetupControllerAxis
 from .preset.preset import HeadlightControlsSettingsPreset
 from .preset.settings_model import HeadlightSettings, HeadlightControllerAssignments, AutoHeadlightSettings
@@ -301,15 +301,23 @@ def headlights_greenlet():
 
         if command_name == con.toggle_hdl:
             logging.info('Toggling headlights %s', rf2_hdl.headlight_toggle_dik)
-            rf2_hdl.toggle()
+            rf2_hdl.toggle(True)
+
+            if rf2_hdl.are_headlights_on():
+                AppAudioFx.play_audio(AppAudioFx.switch_on)
+            else:
+                AppAudioFx.play_audio(AppAudioFx.switch_off)
         elif command_name == con.flash_hdl:
             logging.info('Flashing headlights %s', rf2_hdl.headlight_toggle_dik)
             rf2_hdl.four_flashes(config.flash_duration, config.flash_count)
+            AppAudioFx.play_audio(AppAudioFx.flash)
         elif command_name == con.hdl_on:
             logging.info('Turning headlights on %s', rf2_hdl.headlight_toggle_dik)
+            AppAudioFx.play_audio(AppAudioFx.switch_on)
             rf2_hdl.on()
         elif command_name == con.hdl_off:
             logging.info('Turning headlights off %s', rf2_hdl.headlight_toggle_dik)
+            AppAudioFx.play_audio(AppAudioFx.switch_off)
             rf2_hdl.off()
         # --
         # -- End Of Event Loop

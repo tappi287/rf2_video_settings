@@ -67,8 +67,12 @@ export const userScreenShots =
 ['https://forum.studio-397.com/index.php?attachments/2021-01-29-19-44-png.36723/', 'MiguelVallejo',
 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-359#post-1058550'],
 ['https://forum.studio-397.com/index.php?attachments/2021-02-07-17-56-png.36950/', 'MiguelVallejo',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-359#post-1059819']
-    ]
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-359#post-1059819'],
+['https://i.imgur.com/1JMXxzi.jpg', 'jayarrbee36',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-362#post-1064530'],
+['https://live.staticflickr.com/65535/51106673051_f69cb339a8_h.jpg', 'Franck',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-363#post-1065569'],
+]
 
 Vue.prototype.$eventHub = new Vue(); // Global event bus
 

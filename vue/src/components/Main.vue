@@ -308,7 +308,12 @@
       <audio src="@/assets/UI_Confirm.mp4" id="audioConfirm"></audio>
       <audio src="@/assets/UI_Ping.mp4" id="audioPing"></audio>
       <audio src="@/assets/UI_Indicator.mp4" id="audioIndicator"></audio>
-      <audio src="@/assets/UI_Cute-Select.mp4" id="audioSelect"></audio>
+      <audio src="@/assets/UI_Cute-Select.mp4" id="audioCuteSelect"></audio>
+      <audio src="@/assets/UI_Switch.mp4" id="audioSwitch"></audio>
+      <audio src="@/assets/UI_SwitchOn.mp4" id="audioSwitchOn"></audio>
+      <audio src="@/assets/UI_SwitchOff.mp4" id="audioSwitchOff"></audio>
+      <audio src="@/assets/UI_Select.mp4" id="audioSelect"></audio>
+      <audio src="@/assets/UI_Flash.mp4" id="audioFlash"></audio>
     </div>
   </div>
 </template>
@@ -340,6 +345,13 @@ async function rfactorStatusFunc (event) {
   window.dispatchEvent(statusEvent)
 }
 // --- />
+// --- </ Prepare receiving play audio events
+window.eel.expose(playAudio, 'play_audio')
+async function playAudio (event) {
+  const audioEvent = new CustomEvent('play-audio-event', {detail: event})
+  window.dispatchEvent(audioEvent)
+}
+// --- />
 
 export default {
   name: 'Main',
@@ -368,6 +380,10 @@ export default {
         solid: true,
       })
       this.playAudio('audioSelect')
+    },
+    externalPlayAudioEvent(event) {
+      if (event.detail === undefined) { return }
+      this.playAudio(event.detail)
     },
     playAudio(elemId) {
       let a = document.getElementById(elemId)
@@ -459,12 +475,14 @@ export default {
   created() {
     window.addEventListener('rfactor-live-event', this.updateRfactorLiveState)
     window.addEventListener('rfactor-status-event', this.updateRfactorStatus)
+    window.addEventListener('play-audio-event', this.externalPlayAudioEvent)
     this.$eventHub.$on('play-audio', this.playAudio)
   },
   beforeDestroy() {
     this.$eventHub.$off('play-audio')
     window.removeEventListener('rfactor-live-event', this.updateRfactorLiveState)
     window.removeEventListener('rfactor-status-event', this.updateRfactorStatus)
+    window.removeEventListener('play-audio-event', this.externalPlayAudioEvent)
   },
   components: {
     Replays,

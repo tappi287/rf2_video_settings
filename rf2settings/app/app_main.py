@@ -16,6 +16,24 @@ from rf2settings.utils import AppExceptionHook
 CLOSE_EVENT = gevent.event.Event()
 
 
+class AppAudioFx:
+    confirm = "audioConfirm"
+    ping = "audioPing"
+    indicator = "audioIndicator"
+    select = "audioSelect"
+    cute_select = "audioCuteSelect"
+    switch = "audioSwitch"
+    switch_on = "audioSwitchOn"
+    switch_off = "audioSwitchOff"
+    flash = "audioFlash"
+
+    @classmethod
+    def play_audio(cls, audio_fx_id: str):
+        if not audio_fx_id:
+            return
+        eel.play_audio(audio_fx_id)
+
+
 def request_close():
     logging.info('Received close request.')
     CLOSE_EVENT.set()
@@ -98,6 +116,7 @@ def open_setup_folder():
     setup_path = _get_rf_location(RFACTOR_SETUPS)
     if setup_path is None:
         return
+    AppAudioFx.play_audio(AppAudioFx.confirm)
     logging.info('Opening folder: %s', setup_path)
     Popen(f'explorer /n,"{setup_path}"')
 

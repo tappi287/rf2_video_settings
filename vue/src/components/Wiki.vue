@@ -110,6 +110,11 @@
       <b-button @click="$eventHub.$emit('play-audio', 'audioPing')">audioPing</b-button>
       <b-button @click="$eventHub.$emit('play-audio', 'audioIndicator')">audioIndicator</b-button>
       <b-button @click="$eventHub.$emit('play-audio', 'audioSelect')">audioSelect</b-button>
+      <b-button @click="$eventHub.$emit('play-audio', 'audioCuteSelect')">audioCuteSelect</b-button>
+      <b-button @click="$eventHub.$emit('play-audio', 'audioSwitch')">audioSwitch</b-button>
+      <b-button @click="$eventHub.$emit('play-audio', 'audioSwitchOn')">audioSwitchOn</b-button>
+      <b-button @click="$eventHub.$emit('play-audio', 'audioSwitchOff')">audioSwitchOff</b-button>
+      <b-button @click="$eventHub.$emit('play-audio', 'audioFlash')">audioFlash</b-button>
     </b-button-group>
   </div>
 </template>
