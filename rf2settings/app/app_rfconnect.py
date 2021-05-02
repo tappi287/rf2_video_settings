@@ -16,7 +16,7 @@ from ..rfactor import RfactorPlayer
 from ..utils import create_file_safe_name
 
 
-def expose_replay_methods():
+def expose_rfconnect_methods():
     """ empty method we import to have the exposed methods registered """
     pass
 

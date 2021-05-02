@@ -14,7 +14,7 @@ from rf2settings.app.app_headlights import expose_headlights_methods
 from rf2settings.app.app_main import expose_main_methods, CLOSE_EVENT
 from rf2settings.app.app_multiplayer import expose_multiplayer_methods
 from rf2settings.app.app_presets import expose_preset_methods
-from rf2settings.app.app_replays import expose_replay_methods
+from rf2settings.app.app_rfconnect import expose_rfconnect_methods
 from rf2settings.app_settings import AppSettings
 from rf2settings.gamecontroller import controller_greenlet, controller_event_loop
 from rf2settings.globals import FROZEN
@@ -31,7 +31,7 @@ expose_multiplayer_methods()
 expose_preset_methods()
 expose_headlights_methods()
 expose_controller_methods()
-expose_replay_methods()
+expose_rfconnect_methods()
 
 # -- Setup logging
 setup_logging()
