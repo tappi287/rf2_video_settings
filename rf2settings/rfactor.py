@@ -1,6 +1,5 @@
 import json
 import logging
-import sys
 from configparser import ConfigParser
 from pathlib import Path, WindowsPath
 import subprocess
@@ -61,7 +60,10 @@ class RfactorLocation:
 
 class RfactorPlayer:
     resolution_key = 'resolution_settings'
-    config_parser_args = {'inline_comment_prefixes': '//', 'default_section': 'COMPONENTS'}
+    config_parser_args = {'inline_comment_prefixes': ('//', ),
+                          'comment_prefixes': ('#', ';', '//'),
+                          'default_section': 'COMPONENTS',
+                          }
 
     class Options:
         def __init__(self):
@@ -217,7 +219,7 @@ class RfactorPlayer:
         try:
             # - Write config
             with open(self.ini_file, 'w') as f:
-                self.ini_config.write(f)
+                self.ini_config.write(f, space_around_delimiters=False)
 
             # - Restore first ini comment line
             with open(self.ini_file, 'r') as f:
@@ -229,10 +231,6 @@ class RfactorPlayer:
                 f_lines = f_lines[:-1]
             # - Remove trailing new line character
             f_lines[-1] = f_lines[-1].rstrip('\n')
-
-            # - Remove spaced assign
-            for idx, line in enumerate(f_lines):
-                f_lines[idx] = line.replace(' = ', '=')
 
             # - Write modified config
             with open(self.ini_file, 'w') as f:
@@ -468,7 +466,7 @@ class RfactorPlayer:
             return False
 
         executable = self.location / "Bin64" / "rF Config.exe"
-        p = subprocess.Popen(executable, cwd=self.location, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        p = subprocess.Popen(executable.as_posix(), cwd=self.location, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                              stdin=subprocess.PIPE)
         out, errs = p.communicate()
         if p.returncode != 0:
