@@ -116,7 +116,6 @@ def open_setup_folder():
     setup_path = _get_rf_location(RFACTOR_SETUPS)
     if setup_path is None:
         return
-    AppAudioFx.play_audio(AppAudioFx.confirm)
     logging.info('Opening folder: %s', setup_path)
     Popen(f'explorer /n,"{setup_path}"')
 

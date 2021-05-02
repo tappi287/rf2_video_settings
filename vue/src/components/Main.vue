@@ -503,7 +503,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #main {
-  width: 92%;
+  width: 97%;
   margin: 0 auto 0 auto;
 }
 #wiki-nav a { padding-right: 0; }
