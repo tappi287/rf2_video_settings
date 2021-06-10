@@ -32,6 +32,7 @@ class SteamApps:
 
         m = self.steam_apps.get(app_id)
         if not m:
+            logging.error('Could not locate Steam app with id %s', app_id)
             return
 
         for lib_folder in self.steam_apps.get(STEAM_LIBRARY_FOLDERS, list()):

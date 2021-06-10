@@ -21,13 +21,28 @@ File1
 
 
 class RfactorLocation:
-    path: Path = None
+    path: Optional[Path] = None
     player_json = Path()
     controller_json = Path()
     dx_config = Path()
     version_txt = Path()
     _app_id = RF2_APPID
     is_valid = False
+
+    @classmethod
+    def overwrite_location(cls, location):
+        # -- Reset Paths
+        cls.player_json = Path()
+        cls.controller_json = Path()
+        cls.dx_config = Path()
+        cls.version_txt = Path()
+        cls.is_valid = False
+
+        # -- Update from overwrite
+        if location is not None:
+            cls.path = Path(location)
+        else:
+            cls.path = None
 
     @classmethod
     def get_location(cls, dev: Optional[bool] = False):
@@ -37,7 +52,12 @@ class RfactorLocation:
             logging.error('Error getting rFactor location: %s', e)
             return
 
-        path = s.find_game_location(cls._app_id)
+        # -- Path maybe already set by overwrite location
+        if cls.path is None or not cls.path.exists():
+            path = s.find_game_location(cls._app_id)
+        else:
+            path = cls.path
+
         if path and path.exists():
             player_json = path / RFACTOR_PLAYER
             controller_json = path / RFACTOR_CONTROLLER

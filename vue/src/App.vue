@@ -31,12 +31,28 @@
           <b-card-text>
             If you think the error relates to missing privileges:
             try to re-run this application with administrative privileges:
-            <b-button @click="reRunAsAdmin" size="sm">UAC Re-Run-as-Admin</b-button>
+            <b-button class="mt-2 mb-2" @click="reRunAsAdmin" size="sm">UAC Re-Run-as-Admin</b-button>
           </b-card-text>
           <b-card-text>
             If you have previously set this app to request Admin privileges. You can set the App to not
             request administrative privileges on start up:
-            <b-button @click="resetAdmin" size="sm">Reset UAC</b-button>
+            <b-button class="mt-2 mb-2" @click="resetAdmin" size="sm">Reset UAC</b-button>
+          </b-card-text>
+          <b-card-text class="mt-3 mb-3">
+            <h5>rFactor 2 Location</h5>
+            If you have trouble locating the correct rFactor 2 installation path, enter it manually here and restart the app.
+            <b-form-group class="mt-2" :state="rfOverwriteLocationValid"
+                          :valid-feedback="'rF2 install detected! ' + rfactorPath"
+                          :invalid-feedback="'Could not detect valid rF2 install ' + rfactorPath">
+              <b-input-group>
+                <b-form-input v-model="rfOverwriteLocation" :state="rfOverwriteLocationValid"
+                              :placeholder="rfactorLocationPlaceholder">
+                </b-form-input>
+                <b-input-group-append>
+                  <b-button variant="warning" @click="rfOverwriteLocation=''">Reset</b-button>
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-group>
           </b-card-text>
           <template #footer>
             <span class="small">
@@ -76,7 +92,10 @@ export default {
     return {
       dragActive: false,
       error: '',
-      rfactorVersion: ''
+      rfactorVersion: '',
+      rfactorPath: '',
+      rfOverwriteLocation: null,
+      rfOverwriteLocationValid: null,
     }
   },
   methods: {
@@ -110,11 +129,18 @@ export default {
     getRfVersion: async function () {
       let r = await getEelJsonObject(window.eel.get_rf_version()())
       if (r !== undefined) {
-        r = r.replace('.', '')
-        r = r.replace('\n', '')
-        this.rfactorVersion = r
+        let version = r.version
+        this.rfactorPath = r.location
+
+        version = version.replace('.', '')
+        version = version.replace('\n', '')
+        this.rfactorVersion = version
         console.log('App found rF version:', this.rfactorVersion)
       }
+    },
+    getRfLocationValid: async function () {
+      let r = await getEelJsonObject(window.eel.rf_is_valid()())
+      if (r !== undefined) { this.rfOverwriteLocationValid = r }
     },
     setException: function (event) {
       this.setError(event.detail)
@@ -137,6 +163,15 @@ export default {
     Updater,
     Main
   },
+  watch: {
+    rfOverwriteLocation: async function (newValue) {
+      let r = await getEelJsonObject(window.eel.overwrite_rf_location(newValue)())
+      if (r !== undefined) {
+        await this.getRfVersion()  // Update rF location
+        await this.getRfLocationValid()  // Update rf install valid state
+      }
+    },
+  },
   mounted() {
     // Setup the dnd listeners.
     let dropZone = document.getElementById('dropzone')
@@ -148,6 +183,12 @@ export default {
   created() {
     window.addEventListener('app-exception-event', this.setException)
     this.getRfVersion()
+  },
+  computed: {
+    rfactorLocationPlaceholder: function () {
+      if (this.rfactorPath !== '') { return 'Auto detected: ' + this.rfactorPath }
+      return 'Path eg. D:\\Steam\\steamapps\\common\\rFactor 2\\'
+    }
   },
   destroyed() {
     window.removeEventListener('app-exception-event', this.setException)

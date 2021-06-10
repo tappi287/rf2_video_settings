@@ -14,12 +14,6 @@ def expose_multiplayer_methods():
 
 
 @eel.expose
-def get_rf_version():
-    rf = RfactorPlayer(only_version=True)
-    return json.dumps(rf.version)
-
-
-@eel.expose
 def get_server_list(only_favourites: bool = False):
     server_list = ServerList(update_players=True, only_favourites=only_favourites)
     server_list.update(eel.add_server_list_chunk, eel.server_progress)

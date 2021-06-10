@@ -1,6 +1,5 @@
 import json
 import logging
-import sys
 from pathlib import Path, WindowsPath
 from shutil import copyfile
 from typing import Iterator, Union, Dict
@@ -8,7 +7,7 @@ from typing import Iterator, Union, Dict
 from .globals import get_settings_dir, SETTINGS_FILE_NAME, get_default_presets_dir
 from .preset.preset_base import PRESET_TYPES
 from .preset.presets_dir import PresetDir, get_user_presets_dir
-from .rfactor import RfactorPlayer
+from .rfactor import RfactorPlayer, RfactorLocation
 from .utils import JsonRepr
 
 
@@ -18,6 +17,7 @@ class AppSettings(JsonRepr):
     selected_presets: Dict[str, str] = dict()
     replay_preset = str()
     replay_playing = False
+    rf_overwrite_location = ''
     user_presets_dir = str()
     deleted_defaults = list()  # Default Presets the user deleted
     server_favourites = list()
@@ -209,4 +209,9 @@ class AppSettings(JsonRepr):
 
         # -- Setup custom user preset dir if set --
         PresetDir.value = AppSettings.user_presets_dir
+
+        # -- Overwrite rf2 location if overwrite location set
+        if cls.rf_overwrite_location and cls.rf_overwrite_location not in ('.', '..', '../modules'):
+            RfactorLocation.overwrite_location(cls.rf_overwrite_location)
+
         return True

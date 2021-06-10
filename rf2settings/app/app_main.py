@@ -1,6 +1,6 @@
 import json
 import logging
-from pathlib import WindowsPath
+from pathlib import WindowsPath, Path
 from subprocess import Popen
 from typing import Optional
 
@@ -9,7 +9,7 @@ import gevent.event
 
 from rf2settings.app_settings import AppSettings
 from rf2settings.globals import RFACTOR_SETUPS, RFACTOR_MODMGR, get_log_file, get_log_dir
-from rf2settings.rfactor import RfactorPlayer
+from rf2settings.rfactor import RfactorPlayer, RfactorLocation
 from rf2settings.runasadmin import run_as_admin
 from rf2settings.utils import AppExceptionHook
 
@@ -67,6 +67,30 @@ def reset_admin():
 
 
 @eel.expose
+def overwrite_rf_location(value):
+    result = False
+    if Path(value).exists() and Path(value).is_dir() and Path(value) != Path('.'):
+        AppSettings.rf_overwrite_location = Path(value).as_posix()
+        RfactorLocation.overwrite_location(AppSettings.rf_overwrite_location)
+        logging.warning('Overwriting rf2 location: %s', Path(value).as_posix())
+        result = True
+    else:
+        logging.warning('Overwriting rf2 location cleared!')
+        AppSettings.rf_overwrite_location = ''
+        RfactorLocation.overwrite_location(None)
+
+    AppSettings.save()
+    return result
+
+
+@eel.expose
+def rf_is_valid():
+    rf = RfactorPlayer()
+    logging.info('Detected valid rF2 installation: %s %s', rf.is_valid, rf.location)
+    return json.dumps(rf.is_valid)
+
+
+@eel.expose
 def restore_backup():
     rf = RfactorPlayer()
 
@@ -109,6 +133,12 @@ def _get_rf_location(sub_path):
         logging.error('Could not locate rF2 Setups directory in %s', rf_path.as_posix())
         return
     return str(WindowsPath(rf_path))
+
+
+@eel.expose
+def get_rf_version():
+    rf = RfactorPlayer(only_version=True)
+    return json.dumps({'version': rf.version, 'location': str(rf.location)})
 
 
 @eel.expose
