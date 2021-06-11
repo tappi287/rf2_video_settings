@@ -361,6 +361,7 @@ export default {
       searchActive: [1, 2, 3],
       search: '',
       live: false,  // rFactor 2 running
+      wasLive: true, // rFactor 2 was running before
       rf2Status: '',  // Desc of current rF2 status eg. loading/quitting
       firstServerBrowserVisit: true,
       gfxReady: false,
@@ -392,7 +393,8 @@ export default {
     navigate(target=0) {this.navActive = target },
     updateRfactorLiveState: function (event) {
       this.live = event.detail
-      if (this.live) { this.stopSlideShow() }
+      if (this.live) { this.stopSlideShow(); this.wasLive = true }
+      if (!this.live && this.wasLive) { this.wasLive = false; this.returnedFromLive() }
       this.setBusy(this.live)
     },
     updateRfactorStatus: function (event) {
@@ -416,6 +418,15 @@ export default {
       this.gfxReady = true
       this.$nextTick(() => {
         if (this.$refs.dash !== undefined) { this.$refs.dash.gfxPresetsReady = true }
+      })
+    },
+    returnedFromLive: function () {
+      this.makeToast('Rfactor 2 closed. Refreshing settings.', 'success', 'rFactor 2 Control')
+      this.$nextTick(() => {
+        // Refresh settings
+        if (this.$refs.gfx !== undefined) { this.$refs.gfx.getPresets() }
+        if (this.$refs.con !== undefined) { this.$refs.con.getPresets() }
+        if (this.$refs.gen !== undefined) { this.$refs.gen.getPresets() }
       })
     },
     importPreset: async function (importPreset) {
