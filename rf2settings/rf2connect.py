@@ -4,12 +4,12 @@ import time
 from queue import Queue, Empty
 from threading import Thread, Event
 from typing import Optional, Union, List, Any
+from urllib.error import URLError
 
 import eel
 import gevent
 import gevent.event
 
-from urllib.error import URLError
 from . import requests
 from .app.app_main import CLOSE_EVENT
 from .app_settings import AppSettings
@@ -17,7 +17,7 @@ from .preset.preset import PresetType
 from .preset.preset_base import load_presets_from_dir
 from .preset.presets_dir import get_user_presets_dir
 from .rfactor import RfactorPlayer
-from .utils import AppExceptionHook, capture_app_exceptions
+from .utils import capture_app_exceptions
 
 
 class RfactorState:
@@ -385,7 +385,23 @@ class RfactorConnect:
         return False
 
 
-class RfactorLiveEvent:
+class RfactorBaseEvent:
+    @classmethod
+    def get_nowait(cls) -> Optional[gevent.event.AsyncResult]:
+        if hasattr(cls, 'result'):
+            try:
+                return cls.result.get_nowait()
+            except gevent.Timeout:
+                pass
+
+    @classmethod
+    def reset(cls):
+        if hasattr(cls, 'event') and hasattr(cls, 'result'):
+            cls.event.clear()
+            cls.result = gevent.event.AsyncResult()
+
+
+class RfactorLiveEvent(RfactorBaseEvent):
     """ Communicate a rfactor live/running event from the rfactor greenlet to the frontend """
     event = gevent.event.Event()
     result = gevent.event.AsyncResult()
@@ -411,7 +427,7 @@ class RfactorLiveEvent:
         return False
 
 
-class RfactorQuitEvent:
+class RfactorQuitEvent(RfactorBaseEvent):
     """ Communicate a rfactor quit request event from the frontend to the rfactor greenlet """
     event = gevent.event.Event()
     result = gevent.event.AsyncResult()
@@ -424,13 +440,8 @@ class RfactorQuitEvent:
         # -- Reset async result
         cls.quit_result = gevent.event.AsyncResult()
 
-    @classmethod
-    def reset(cls):
-        cls.event.clear()
-        cls.result = gevent.event.AsyncResult()
 
-
-class RfactorStatusEvent:
+class RfactorStatusEvent(RfactorBaseEvent):
     """ post status updates to the FrontEnd """
     event = gevent.event.Event()
     result = gevent.event.AsyncResult()
@@ -445,13 +456,8 @@ class RfactorStatusEvent:
         cls.result.set(value)
         cls.event.set()
 
-    @classmethod
-    def reset(cls):
-        cls.event.clear()
-        cls.result = gevent.event.AsyncResult()
 
-
-class ReplayPlayEvent:
+class ReplayPlayEvent(RfactorBaseEvent):
     """ Communicate a replay play request to rfactor event loop """
     event = gevent.event.Event()
     result = gevent.event.AsyncResult()
@@ -461,11 +467,6 @@ class ReplayPlayEvent:
     def set(cls, value):
         cls.result.set(value)
         cls.event.set()
-
-    @classmethod
-    def reset(cls):
-        cls.event.clear()
-        cls.result = gevent.event.AsyncResult()
 
 
 def _create_replay_commands(replay_name: str):
@@ -535,10 +536,7 @@ def _rfactor_greenlet_loop():
 
     # -- Receive Replay Play Event from FrontEnd
     if ReplayPlayEvent.event.is_set():
-        try:
-            replay_name = ReplayPlayEvent.result.get_nowait()
-        except gevent.Timeout:
-            replay_name = None
+        replay_name = ReplayPlayEvent.get_nowait()
         ReplayPlayEvent.reset()
         _create_replay_commands(replay_name)
 
@@ -629,22 +627,15 @@ def rfactor_greenlet():
 def rfactor_event_loop():
     """ Will be run in main eel greenlet to be able to post events to JS frontend """
     if RfactorLiveEvent.event.is_set():
-        try:
-            is_live = RfactorLiveEvent.result.get_nowait()
-        except gevent.Timeout:
-            is_live = None
-
+        is_live = RfactorLiveEvent.get_nowait()
         # -- Update rFactor live state to front end
         if is_live is not None:
             eel.rfactor_live(is_live)
 
     if RfactorStatusEvent.event.is_set():
-        try:
-            status = RfactorStatusEvent.result.get_nowait()
-        except gevent.Timeout:
-            status = False
-
-        if status is not False:
+        status = RfactorStatusEvent.get_nowait()
+        # -- Update rFactor status message in front end
+        if status is not None:
             logging.debug('Updating rf2 status message: %s', status)
             eel.rfactor_status(status)
 
