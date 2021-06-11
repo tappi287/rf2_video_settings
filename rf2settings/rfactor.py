@@ -390,11 +390,12 @@ class RfactorPlayer:
             return False
 
         settings_updated = False
-        player_graphic_options = player_json.get(preset_options.key)
+        player_json_options = player_json.get(preset_options.key)
         for option in preset_options.options:
-            if option.key not in player_graphic_options:
+            if option.key not in player_json_options:
                 continue
-            option.value = player_graphic_options.get(option.key)
+            option.value = player_json_options.get(option.key)
+            option.exists_in_rf = True
             settings_updated = True
 
         return settings_updated
