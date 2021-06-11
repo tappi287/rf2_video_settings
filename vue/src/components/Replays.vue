@@ -18,14 +18,24 @@
 
       <!-- Preset Selection -->
       <div class="mt-1">
-        <b-dropdown size="sm" :text="currentPresetName" class="pl-4 float-right"
-                    v-b-popover.auto.hover="'Select a Graphics Preset you want to use when watching a Replay.'"
-                    :variant="currentPresetName !== nonePreset.name ? 'rf-orange' : 'rf-blue'">
-          <b-dropdown-item v-for="(preset, idx) in replayPresetList" :key="idx"
-                           @click="setReplayPreset(preset)">
-            {{ preset.name }}
-          </b-dropdown-item>
-        </b-dropdown>
+        <b-input-group size="sm" class="setting-field">
+          <b-input-group-prepend>
+            <b-input-group-text class="info-field fixed-width-name">
+              Replay Graphics Preset
+            </b-input-group-text>
+          </b-input-group-prepend>
+          <b-input-group-append>
+              <b-dropdown size="sm" :text="currentPresetName" right
+                          class="setting-item fixed-width-setting no-border"
+                          v-b-popover.auto.hover="'Select a Graphics Preset you want to use when watching a Replay.'"
+                          :variant="currentPresetName !== nonePreset.name ? 'rf-orange' : 'rf-blue'">
+                <b-dropdown-item v-for="(preset, idx) in replayPresetList" :key="idx"
+                                 @click="setReplayPreset(preset)">
+                  {{ preset.name }}
+                </b-dropdown-item>
+              </b-dropdown>
+            </b-input-group-append>
+          </b-input-group>
       </div>
     </b-input-group>
 
