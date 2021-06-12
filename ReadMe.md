@@ -1,7 +1,7 @@
 # rF2 Settings Widget
 
 M$ Windows application that will let you create presets/profiles of your rFactor 2 settings and directly connect to rFactor 2 multiplayer sessions.
-Quickly change between eg. a performance focused VR setup or
+Quickly change between e.g., a performance focused VR setup, or
 an eye-candy favoured Replay setup.
 
 <p align="center">
@@ -28,9 +28,9 @@ Graphics Presets can save your video resolution/window mode/VR/Non-VR settings
 if you configure them from inside the app.
 
 ##### Replay Manager
-Quickly browse through your replay library, sort, filter by race/qualy etc.
-and batch delete and watch replays.
-You can even choose a replay specific Graphics Preset if you start 
+Browse through your replay library, sort, filter by race/qualy etc.
+and batch delete or watch replays.
+Choose a replay specific Graphics Preset if you start 
 the replay from within the app.
 
 ##### Server favourites

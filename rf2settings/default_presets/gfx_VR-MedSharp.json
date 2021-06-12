@@ -120,8 +120,22 @@
     ],
     "title": "Display Settings"
   },
-  "name": "VR-MedSharp",
+  "name": "VR-MedSharp_1",
   "preset_type": 0,
+  "reshade_settings": {
+    "key": "Base Options",
+    "options": [
+      {
+        "key": "use_reshade",
+        "value": true
+      },
+      {
+        "key": "preset_name",
+        "value": "generic_vr.ini"
+      }
+    ],
+    "title": "Reshade"
+  },
   "resolution_settings": {
     "key": "Resolution Settings",
     "options": [
