@@ -253,10 +253,10 @@ reshade_settings = {
                     'settings': (
                         {'value': 'generic_vr.ini', 'name': 'Valve Index',
                          'desc': 'rFactor 2 preset which applies sharpening with Circle Radius '
-                                 'optimized fpr Valve Index'},
+                                 'optimized for Valve Index 0.30'},
                         {'value': 'generic_vr_hp.ini', 'name': 'HP Reverb G1/G2',
                          'desc': 'rFactor 2 preset which applies sharpening with Circle Radius '
-                                 'optimized fpr HP Reverb G1 or G2'},
+                                 'optimized for HP Reverb G1 or G2 0.43'},
                      ),
                     }
 }
