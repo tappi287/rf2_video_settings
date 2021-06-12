@@ -11,7 +11,7 @@ from .preset.settings_model import HeadlightSettings, HeadlightControllerAssignm
 from .rfactor import RfactorPlayer
 from .settingsdef.headlights import controller_assignments
 from .rf2lights import RfactorHeadlight
-from .rf2connect import RfactorConnect, RfactorState
+from .rf2webui import RfactorState, RfactorConnect
 from .utils import create_js_pygame_event_dict, capture_app_exceptions
 
 try:

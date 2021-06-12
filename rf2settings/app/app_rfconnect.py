@@ -11,7 +11,8 @@ from ..app_settings import AppSettings
 from ..preset.preset import PresetType
 from ..preset.preset_base import load_presets_from_dir
 from ..preset.presets_dir import get_user_presets_dir
-from ..rf2connect import ReplayPlayEvent, RfactorConnect, RfactorQuitEvent
+from ..rf2connect import ReplayPlayEvent, RfactorQuitEvent
+from ..rf2webui import RfactorConnect
 from ..rfactor import RfactorPlayer
 from ..utils import create_file_safe_name
 
