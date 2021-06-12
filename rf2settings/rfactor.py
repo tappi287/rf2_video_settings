@@ -1,12 +1,14 @@
 import json
 import logging
+import shutil
 from configparser import ConfigParser
 from pathlib import Path, WindowsPath
 import subprocess
 from typing import Optional, Iterator
 from zipfile import ZipFile
 
-from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, RF2_APPID, RFACTOR_VERSION_TXT, RFACTOR_CONTROLLER, get_data_dir, RESHADE_ZIP
+from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, RF2_APPID, RFACTOR_VERSION_TXT, RFACTOR_CONTROLLER, get_data_dir, \
+    RESHADE_ZIP, RESHADE_PRESET_SRC, RESHADE_PRESET_DIR, RESHADE_TARGET_PRESET_NAME, RESHADE_LEGACY
 from .preset.preset import BasePreset
 from .preset.settings_model import BaseOptions, OptionsTarget
 from .preset.settings_model_base import OPTION_CLASSES
@@ -295,13 +297,29 @@ class RfactorPlayer:
             self.error += 'Could not locate rFactor 2 Bin directory.\n'
             return False
 
-        logging.info('Applying ReShade settings: %s %s', use_reshade, preset_name)
-
         bin_dir = self.location / 'Bin64'
         reshade_zip = get_data_dir() / RESHADE_ZIP
-        reshade_preset = bin_dir / 'ReShadePreset.ini'
+        reshade_preset_source_dir = bin_dir / RESHADE_PRESET_SRC
+        reshade_preset = bin_dir / RESHADE_PRESET_DIR / RESHADE_TARGET_PRESET_NAME
         remove_dirs = list()
         reshade_removed = False
+
+        # -- Remove ReShade from previous versions
+        for f in RESHADE_LEGACY:
+            legacy_path = bin_dir / f
+            if legacy_path.is_dir():
+                try:
+                    shutil.rmtree(legacy_path)
+                except Exception as e:
+                    logging.error('Error removing ReShade legacy dir: %s', e)
+            else:
+                try:
+                    legacy_path.unlink(missing_ok=True)
+                except Exception as e:
+                    logging.error('Error removing ReShade legacy file: %s', e)
+
+        # -- Extract ReShade files
+        logging.info('Applying ReShade settings: %s %s', use_reshade, preset_name)
 
         with ZipFile(reshade_zip, 'r') as zip_obj:
             for zip_info in zip_obj.filelist:
@@ -326,6 +344,10 @@ class RfactorPlayer:
 
         # -- Finish removing ReShade files
         if not use_reshade:
+            # -- Remove ReShade preset
+            if reshade_preset.exists():
+                reshade_preset.unlink()
+
             # -- Remove empty ReShade dirs
             if remove_dirs:
                 for d in sorted(remove_dirs, key=lambda x: len(x.as_posix()), reverse=True):
@@ -333,19 +355,15 @@ class RfactorPlayer:
                         d.rmdir()
                     except Exception as e:
                         # Eg. if the use has saved screenshots, directory will not be removed
-                        msg = f'Error removing ReShade directory: {e}'
+                        msg = f'Can not delete ReShade directory with user data: {e}'
                         logging.error(msg)
                         self.error += msg
-
-            # -- Remove ReShade preset
-            if reshade_preset.exists():
-                reshade_preset.unlink()
 
             return reshade_removed
 
         # -- Write ReShade Preset file
         preset_written = False
-        for preset_file in bin_dir.glob('*.ini'):
+        for preset_file in reshade_preset_source_dir.glob('*.ini'):
             if preset_file.name == preset_name:
                 try:
                     # -- Remove existing preset

@@ -241,10 +241,9 @@ resolution_video_settings = {
     }
 reshade_settings = {
     'use_reshade': {'name': 'Use Reshade', 'value': False,
-                    'desc': 'Experimental ReShade preset with OpenVR support. Applies sharpening and color correction'
-                            '(optional) to the 3D scene. '
-                            'ReShade will be installed to rFactor Bin64 dir. Use NumPad 1 to display ReShade menu '
-                            'and NumPad 0 to enable/disable ReShade in-game.',
+                    'desc': 'Experimental ReShade preset with OpenVR support that applies sharpening. '
+                            'Open Reshade Config Menu in SteamVR (circle Reshade icon in the bottom of the dashboard) '
+                            'Untick "Peformance Mode" checkbox and go to the VRToolkit tab',
                     'settings': (
                           {'value': False, 'name': 'Off'},
                           {'value': True, 'name': 'On'},
@@ -252,12 +251,12 @@ reshade_settings = {
                     },
     'preset_name': {'name': 'Preset', 'value': 'ReShadePreset_Sharpen.ini',
                     'settings': (
-                        {'value': 'ReShadePreset_Sharpen.ini', 'name': 'Sharpen',
-                         'desc': 'rFactor 2 preset which only applies sharpening without reducing image '
-                                 'dynamic range.'},
-                        {'value': 'ReShadePreset_Instagram.ini', 'name': 'Sharpen + Color Correction',
-                         'desc': 'Applies the ReShade default Preset increasing saturation by 20% and reducing '
-                                 'image dynamic range by 0.2% aka contrast/brightness.'},
+                        {'value': 'generic_vr.ini', 'name': 'Valve Index',
+                         'desc': 'rFactor 2 preset which applies sharpening with Circle Radius '
+                                 'optimized fpr Valve Index'},
+                        {'value': 'generic_vr_hp.ini', 'name': 'HP Reverb G1/G2',
+                         'desc': 'rFactor 2 preset which applies sharpening with Circle Radius '
+                                 'optimized fpr HP Reverb G1 or G2'},
                      ),
                     }
 }

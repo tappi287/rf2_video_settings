@@ -72,10 +72,12 @@
                        @set-busy="setBusy"
                        @make-toast="makeToast">
     <template #footer>
-      <div class="float-right">
-        <b-button size="sm" href="https://github.com/fholger/reshade/releases/tag/openvr_alpha2" target="_blank">
-          <b-icon icon="github"></b-icon>
-        </b-button>
+      <div style="font-size: small;">
+        Visit
+        <b-link class="text-rf-orange" target="_blank" href="https://gitlab.com/Retrolux/reshade-vrtoolkit#configure-your-hmd-and-preset">
+        Reshade VRToolkit
+        </b-link>
+        for more information.
       </div>
     </template>
   </GenericSettingsArea>

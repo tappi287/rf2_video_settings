@@ -16,10 +16,11 @@ EXPORT_DIR_NAME = 'exported'
 PRESETS_DIR = 'presets'
 DEFAULT_PRESETS_DIR = 'default_presets'
 DATA_DIR = 'data'
-RESHADE_ZIP = 'reshade_ovr_alpha2_rf2_settings_widget.zip'
-RESHADE_FILES = ('dxgi.dll', 'ReShade.ini',
-                 'ReShadePreset_Instagram.ini', 'ReShadePreset_Sharpen.ini',
-                 'reshade-shaders')
+RESHADE_ZIP = 'VRToolkit_0.9.2_rf2_settings_widget.zip'
+RESHADE_PRESET_SRC = 'ReShade/rf2_settings_widget_presets/'
+RESHADE_PRESET_DIR = 'ReShade/Presets/'
+RESHADE_TARGET_PRESET_NAME = 'generic_vr.ini'
+RESHADE_LEGACY = ('ReShadePreset.ini', 'ReShadePreset_Instagram.ini', 'ReShadePreset_Sharpen.ini', 'reshade-shaders')
 APP_FRIENDLY_NAME = 'rF2 Settings Widget'
 BASE_PATH = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__ + '/..')))
 RFACTOR_PLAYER = 'UserData/player/player.JSON'
