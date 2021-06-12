@@ -41,6 +41,12 @@ export default {
       this.$emit('make-toast', message, category, title, append, delay)
     },
     setBusy: function (busy) {this.$emit('set-busy', busy) },
+    getPresetTypeName: async function (pType) {
+      if (pType === 0) { return 'Graphics Settings'}
+      if (pType === 1) { return 'Generic Settings'}
+      if (pType === 2) { return 'Control Settings'}
+      return 'Settings'
+    },
     getPresetsDirLocation: async function () {
       this.userPresetsDir = await window.eel.get_user_presets_dir_web()()
     },
@@ -64,7 +70,7 @@ export default {
         this.previousPresetName = r.preset_changed
         this.makeToast('Detected settings deviations to previously selected Preset ' + this.previousPresetName +
             ' on disk. Pointing you to the "Current Preset" reflecting the actual settings on disk.',
-            'secondary','Graphics Preset', true, 15000)
+            'secondary',this.getPresetTypeName(this.presetType), true, 15000)
       }
 
       for (let i = 0; i <= this.presets.length; i++) {
