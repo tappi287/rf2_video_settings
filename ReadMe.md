@@ -24,7 +24,7 @@ the app window to import those presets.
 Drop a player.json onto the app window to import the graphics settings.
 
 ##### Manage video resolution/refresh rate settings
-Graphics Presets can save your resolution/window mode/VR/Non-VR settings
+Graphics Presets can save your video resolution/window mode/VR/Non-VR settings
 if you configure them from inside the app.
 
 ##### Replay Manager
@@ -41,6 +41,9 @@ and can be joined directly from within the app.
 Easily manage the builtin <a href="https://github.com/TonyWhitley/rF2headlights">rf2 headlights<a/> 
 functionality. Assign flashing headlights to any controller button and automatically start with 
 headlights enabled and/or pit lane or speed limiter auto-flash.
+
+##### Advanced Settings
+Adjust settings not available in the game UI without hacking through json files. 
 
 ### Requirements
  - M$ Windows >= 7 (only tested on 10)
