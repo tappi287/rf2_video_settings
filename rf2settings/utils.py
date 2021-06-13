@@ -53,6 +53,21 @@ class JsonRepr:
         if self.after_load_callback:
             self.after_load_callback()
 
+    def set_missing_defaults(self):
+        """ Set this as after load callback to make sure all defined
+            default options are there.
+        """
+        if hasattr(self, 'defaults') and hasattr(self, 'options'):
+            # -- Set defaults that were not loaded
+            for k, opt in self.defaults.items():
+                if k not in self.options:
+                    self.options[k] = opt
+
+            # -- Remove options no longer available
+            for k, opt in self.options.items():
+                if k not in self.defaults:
+                    self.options.pop(k)
+
 
 class AppExceptionHook:
     app = None
