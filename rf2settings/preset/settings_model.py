@@ -165,6 +165,20 @@ class MiscOptions(BaseOptions):
         self.read_from_python_dict(generic.misc_settings)
 
 
+class AppControllerAssignments(BaseOptions):
+    key = 'App_Controller_Assignments'
+    app_key = 'app_controller_assignments'
+    title = 'App Controller Assignments'
+    defaults = generic.app_controller_assignments
+    target = OptionsTarget.app_settings
+
+    def __init__(self):
+        super(AppControllerAssignments, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(generic.app_controller_assignments)
+
+
 class GamepadMouseOptions(BaseOptions):
     key = 'Controls'
     app_key = 'gamepad_mouse_settings'
@@ -296,30 +310,6 @@ class HeadlightSettings(BaseOptions):
         self.read_from_python_dict(headlights.headlight_settings)
 
 
-class HeadlightControllerAssignments(JsonRepr):
-    app_key = 'headlight_controller_assignments'
-    title = 'Headlight Controller Assignments'
-
-    def __init__(self):
-        super(HeadlightControllerAssignments, self).__init__()
-        self.after_load_callback = self.after_json_load
-        self.options = headlights.controller_assignments
-
-    def after_json_load(self):
-        """ Call this after load from js dict to make sure all defined
-            default options are there.
-        """
-        # -- Set defaults that were not loaded
-        for k, opt in headlights.controller_assignments.items():
-            if k not in self.options:
-                self.options[k] = opt
-
-        # -- Remove options no longer available
-        for k, opt in self.options.items():
-            if k not in headlights.controller_assignments:
-                self.options.pop(k)
-
-
 class HeadlightControllerJsonSettings(BaseOptions):
     key = 'Input'
     app_key = 'headlight_controller_json'
@@ -331,3 +321,17 @@ class HeadlightControllerJsonSettings(BaseOptions):
 
         # -- Read Default options
         self.read_from_python_dict(headlights.headlight_rfactor)
+
+
+# ------------------------------------------------
+# Direct json Options not wrapped in BaseOptions #
+# ------------------------------------------------
+class HeadlightControllerAssignments(JsonRepr):
+    app_key = 'headlight_controller_assignments'
+    title = 'Headlight Controller Assignments'
+    defaults = headlights.controller_assignments
+
+    def __init__(self):
+        super(HeadlightControllerAssignments, self).__init__()
+        self.after_load_callback = self.set_missing_defaults
+        self.options = headlights.controller_assignments

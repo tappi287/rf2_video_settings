@@ -61,3 +61,10 @@ misc_settings = {
                                             {'value': 1, 'name': 'Enabled'})
                                },
 }
+
+# App specific controller assignments
+app_controller_assignments = {
+    'quit_rfactor': {'name': 'Quit rFactor 2', 'desc': 'Use a controller button to quit rFactor.',
+                     'device_name': 'Xbox One S Controller',
+                     'guid': '', 'type': 1539, 'hat': None, 'value': None, 'axis': None},
+}
