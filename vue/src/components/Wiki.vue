@@ -10,7 +10,8 @@
       published under MIT license &#169; 2020-2021
       <a href="https://sim-site.netlify.app" target="_blank" class="text-rf-orange">Stefan Tapper</a>
       <p class="mt-2">
-        If you feel like it: <a href="https://sim-site.netlify.app/page/donate" class="text-rf-orange">donate</a>.
+        If you feel like it: <a href="https://sim-site.netlify.app/page/donate" target="_blank"
+                                class="text-rf-orange">donate</a>.
       </p>
     </b-card>
 
