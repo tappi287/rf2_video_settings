@@ -224,11 +224,11 @@
 
     <!-- rFactor Actions -->
     <b-container fluid class="mt-3 p-0">
-      <b-row>
-        <b-col cols="8" class="text-left">
+      <b-row cols="2" class="m-0">
+        <b-col class="text-left p-0">
           <LaunchRfactorBtn display-live @make-toast="makeToast" @launch="stopSlideShow"></LaunchRfactorBtn>
         </b-col>
-        <b-col cols="4" class="text-right">
+        <b-col class="text-right p-0">
           <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Open rF2 vehicle setups folder'"
                     @click="openSetupFolder">
             <b-icon icon="folder"></b-icon>
