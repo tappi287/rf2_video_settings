@@ -419,13 +419,25 @@ class RfactorPlayer:
         return settings_updated
 
     def read_player_json_dict(self, file: Path, encoding: Optional[str] = None) -> Optional[dict]:
-        try:
-            with open(file, 'r', encoding=encoding) as f:
-                return json.load(f)
-        except Exception as e:
-            msg = f'Could not read {file.name} file! {e}'
-            logging.fatal(msg)
-            self.error += f'{msg}\n'
+        encoding_ls = ['utf-8', 'cp1252']
+        if encoding :
+            if encoding in encoding_ls:
+                encoding_ls.remove(encoding)
+            encoding_ls.append(encoding)
+
+        while encoding_ls:
+            encoding = encoding_ls.pop()
+            try:
+                try:
+                    with open(file, 'r', encoding=encoding) as f:
+                        return json.load(f)
+                except UnicodeDecodeError:
+                    logging.debug('Could not decode JSON data with encoding %s', encoding)
+                    continue
+            except Exception as e:
+                msg = f'Could not read {file.name} file! {e}'
+                logging.fatal(msg)
+                self.error += f'{msg}\n'
 
     def read_dx_ini(self) -> Optional[ConfigParser]:
         try:
