@@ -41,7 +41,7 @@ export default {
       this.$emit('make-toast', message, category, title, append, delay)
     },
     setBusy: function (busy) {this.$emit('set-busy', busy) },
-    getPresetTypeName: async function (pType) {
+    getPresetTypeName: function (pType) {
       if (pType === 0) { return 'Graphics Settings'}
       if (pType === 1) { return 'Generic Settings'}
       if (pType === 2) { return 'Control Settings'}
