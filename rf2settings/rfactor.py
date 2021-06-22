@@ -398,6 +398,7 @@ class RfactorPlayer:
             if option.ini_type is int:
                 value = int(value)
             option.value = value
+            option.exists_in_rf = True
             settings_updated = True
 
         return settings_updated
@@ -420,7 +421,7 @@ class RfactorPlayer:
 
     def read_player_json_dict(self, file: Path, encoding: Optional[str] = None) -> Optional[dict]:
         encoding_ls = ['utf-8', 'cp1252']
-        if encoding :
+        if encoding:
             if encoding in encoding_ls:
                 encoding_ls.remove(encoding)
             encoding_ls.append(encoding)
@@ -431,8 +432,8 @@ class RfactorPlayer:
                 try:
                     with open(file, 'r', encoding=encoding) as f:
                         return json.load(f)
-                except UnicodeDecodeError:
-                    logging.debug('Could not decode JSON data with encoding %s', encoding)
+                except UnicodeDecodeError as e:
+                    logging.debug('Could not decode JSON data with encoding %s: %s', encoding, e)
                     continue
             except Exception as e:
                 msg = f'Could not read {file.name} file! {e}'

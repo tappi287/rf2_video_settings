@@ -132,12 +132,13 @@ class BasePreset:
         :param modules.preset.Preset other:
         :return: True if other options differ
         """
+        equals = True
         for key, options in self._iterate_options():
             if getattr(other, key) != options:
                 logging.debug('Compared Presets %s to %s. Found deviating options in %s',
                               self.name, other.name, options.title)
-                return False
-        return True
+                equals = False
+        return equals
 
 
 class GraphicsPreset(BasePreset):

@@ -101,9 +101,10 @@
 
       <!-- Preset deviates from current rF2 settings message -->
       <b-alert :show="previousPresetName !== ''" dismissible variant="warning" class="mt-3">
+        <h5><b-icon class="mr-1" icon="exclamation-triangle-fill"></b-icon>Settings difference on disk</h5>
         The previously selected Preset <i>{{ previousPresetName }}</i> has different settings than the current
         rFactor 2 settings on disk. Select your previous Preset <i>{{ previousPresetName }}</i> to restore it's
-        settings and overwrite the current settings.
+        settings and overwrite the current settings on disk.
       </b-alert>
     </template>
   </div>

@@ -2,10 +2,14 @@
   <div class="setting" v-if="!settingHidden">
     <b-input-group size="sm" class="setting-field">
       <b-input-group-prepend>
-        <b-input-group-text class="info-field fixed-width-name" :id="nameId">
+        <b-input-group-text
+            :class="infoFieldClass" :id="nameId">
           {{ setting.name }}
           <b-icon v-if="settingDesc !== ''" icon="info-square" class="ml-2 mr-1"
-                      v-b-popover.hover.topright="settingDesc">
+                  v-b-popover.hover.topright="settingDesc">
+          </b-icon>
+          <b-icon v-if="settingDiff" class="ml-2 mr-1" icon="exclamation-triangle-fill"
+                  v-b-popover.hover.topright="settingDifferenceMessage">
           </b-icon>
         </b-input-group-text>
       </b-input-group-prepend>
@@ -94,7 +98,7 @@ export default {
   },
   props: {
     setting: Object, variant: String, fixWidth: Boolean, show_performance: Boolean,
-    disabled: Boolean, groupId: String
+    disabled: Boolean, groupId: String, previousPresetName: String
   },
   methods: {
     selectSetting: function (s) {
@@ -202,6 +206,10 @@ export default {
       })
       return name
     },
+    infoFieldClass: function () {
+      if (this.settingDiff) { return 'info-field diff fixed-width-name' }
+      return 'info-field fixed-width-name'
+    },
     showPerformance: function () {
       if (this.show_performance !== undefined) { return this.show_performance }
       return false
@@ -209,6 +217,19 @@ export default {
     settingHidden: function () {
       if (this.setting === undefined) { return true }
       return this.setting['hidden'] || false
+    },
+    settingDiff: function () {
+      if (this.previousPresetName === '' || this.setting === undefined) { return false }
+      return this.setting.difference
+    },
+    settingDifferenceMessage: function () {
+      let name = this.setting.difference_value
+      this.iterateSettings(function (instance, setting) {
+        if (instance.setting.difference_value === setting.value) {
+          name = setting.name
+        }
+      })
+      return 'Deviating value in Preset "' + this.previousPresetName + '": ' + name
     },
     spinnerInputState: function () {
       return this.checkSpinnerInputValue(this.spinnerInputValue)

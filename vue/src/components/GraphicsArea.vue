@@ -3,6 +3,7 @@
   <!-- Video Settings -->
   <GenericSettingsArea :preset="preset" :idx="idx" settings-key="video_settings"
                        :current_preset_idx="current_preset_idx"
+                       :previous-preset-name="previousPresetName"
                        :setting-disabled="settingDisabled"
                        :show-performance="showPerformance"
                        :search="search"
@@ -34,6 +35,7 @@
   <!-- Display Settings -->
   <GenericSettingsArea :preset="preset" :idx="idx" settings-key="graphic_options"
                        :current_preset_idx="current_preset_idx"
+                       :previous-preset-name="previousPresetName"
                        :show-performance="showPerformance"
                        :view_mode="viewMode"
                        :search="search"
@@ -55,6 +57,7 @@
   <!-- Advanced Display Settings -->
   <GenericSettingsArea :preset="preset" :idx="idx" settings-key="advanced_graphic_options"
                        :current_preset_idx="current_preset_idx"
+                       :previous-preset-name="previousPresetName"
                        :show_performance="showPerformance"
                        :view_mode="viewMode"
                        :search="search"
@@ -66,6 +69,7 @@
   <!-- ReShade Settings -->
   <GenericSettingsArea :preset="preset" :idx="idx" settings-key="reshade_settings"
                        :current_preset_idx="current_preset_idx"
+                       :previous-preset-name="previousPresetName"
                        :view_mode="viewMode"
                        :search="search"
                        @update-setting="updateSetting"
@@ -74,7 +78,7 @@
     <template #footer>
       <div style="font-size: small;">
         Visit
-        <b-link class="text-rf-orange" target="_blank" href="https://gitlab.com/Retrolux/reshade-vrtoolkit#configure-your-hmd-and-preset">
+        <b-link class="text-rf-orange" target="_blank" href="https://vrtoolkit.retrolux.de/configuration.html">
         Reshade VRToolkit
         </b-link>
         for more information.
@@ -126,7 +130,8 @@ export default {
       abortResolutionUpdate: false,
     }
   },
-  props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number, search: String },
+  props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number, search: String,
+          previousPresetName: String},
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)

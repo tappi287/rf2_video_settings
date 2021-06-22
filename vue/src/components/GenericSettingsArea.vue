@@ -15,6 +15,7 @@
                :show_performance="showPerformance"
                :disabled="settingDisabledLocal(setting)"
                :group-id="groupId"
+               :previous-preset-name="previousPresetName"
                @setting-changed="updateSetting">
       </Setting>
     </template>
@@ -27,6 +28,7 @@
                    :show_performance="showPerformance"
                    :disabled="settingDisabledLocal(setting)"
                    :group-id="groupId"
+                   :previous-preset-name="previousPresetName"
                    @setting-changed="updateSetting">
           </Setting>
         </b-list-group-item>
@@ -46,7 +48,7 @@ import Setting from "./Setting.vue"
 export default {
   name: "GenericSettingsArea",
   props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number, settingsKey: String,
-          settingDisabled: Function, showPerformance: Boolean, search: String },
+          settingDisabled: Function, showPerformance: Boolean, search: String, previousPresetName: String },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)

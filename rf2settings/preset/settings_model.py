@@ -17,7 +17,8 @@ class OptionsTarget:
 
 class Option(JsonRepr):
     # Entries we don't want to export or save
-    export_skip_keys = ['settings', 'hidden', 'ini_type', 'desc', 'name', 'exists_in_rf']
+    export_skip_keys = ['settings', 'hidden', 'ini_type', 'desc', 'name', 'exists_in_rf',
+                        'difference', 'difference_value']
 
     def __init__(self):
         self.key = 'Player JSON key'
@@ -30,6 +31,8 @@ class Option(JsonRepr):
         self.hidden: bool = False
         self.ini_type = None
         self.exists_in_rf = False  # Mark options not found on disk so we can ignore them during comparison and saving
+        self.difference = False
+        self.difference_value = None
 
         # Possible settings
         self.settings: tuple = tuple()
@@ -46,6 +49,10 @@ class Option(JsonRepr):
         if other.value != self.value or other.key != self.key:
             logging.debug('Option %s %s differs from current setting %s %s',
                           other.key, other.value, self.key, self.value)
+
+            # -- Report difference to FrontEnd
+            self.difference = True
+            self.difference_value = other.value
             return False
         return True
 
@@ -119,10 +126,23 @@ class BaseOptions(JsonRepr):
             return False
 
         # -- Compare every Option
-        #    sort both by their keys
+        #    sort both .options by their keys
         options = sorted(self.options, key=lambda k: k.key)
         other_options = sorted(other.options, key=lambda k: k.key)
-        return all((a == b for a, b in zip(options, other_options) if a.key not in self.skip_keys and a.exists_in_rf))
+
+        # - FrontEnd variant
+        #   Slower but will mark all settings differences for FrontEnd display
+        equals = True
+        for a, b in zip(options, other_options):
+            if a.key not in self.skip_keys and a.exists_in_rf:
+                if a != b:
+                    equals = False
+
+        # - Performance variant
+        #   Quicker as it exits as soon as it finds the first difference
+        # return all((a == b for a, b in zip(options, other_options) if a.key not in self.skip_keys and a.exists_in_rf))
+
+        return equals
 
 
 class DriverOptions(BaseOptions):

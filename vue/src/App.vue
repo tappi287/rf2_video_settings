@@ -240,6 +240,10 @@ html {
   background-image: linear-gradient(to left, #ddd9de 0%, #c6c7cd 100%), radial-gradient(88% 271%, rgba(255, 255, 255, 0.25) 0%, rgba(254, 254, 254, 0.25) 1%, rgba(0, 0, 0, 0.25) 100%), radial-gradient(50% 100%, rgba(255, 255, 255, 0.30) 0%, rgba(0, 0, 0, 0.30) 100%);
   background-blend-mode: normal, lighten, soft-light;
 }
+.info-field.diff {
+  background-image: linear-gradient(120deg, #ddd9de 70%, #fa7c56 100%);
+  border: none;
+}
 
 .setting-field {
   box-shadow: 0 6px 15px rgba(36, 37, 38, 0.3);
