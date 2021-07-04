@@ -17,12 +17,15 @@
                        @click="launchRfactor(1)">
         Launch via Exe
       </b-dropdown-item>
+      <b-dropdown-item v-if="chooseContent" @click="$emit('show-content')">
+        Choose Tracks and Cars
+      </b-dropdown-item>
     </b-dropdown>
   </b-button-group>
 </template>
 
 <script>
-import {getEelJsonObject} from "@/main";
+import {getEelJsonObject, sleep} from "@/main";
 // --- </ Prepare receiving rfactor live events
 window.eel.expose(rfactorLiveFunc, 'rfactor_live')
 async function rfactorLiveFunc (event) {
@@ -33,24 +36,28 @@ async function rfactorLiveFunc (event) {
 
 export default {
 name: "LaunchRfactorBtn",
-  props: {text: String, server: Object, displayLive: Boolean},
+  props: {text: String, server: Object, displayLive: Boolean, chooseContent: Boolean },
   data: function () {
-    return { live: false }
+    return { live: false, contentModal: false }
   },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
     },
+    setBusy: function (busy) {this.$emit('set-busy', busy) },
     updateRfactorState: function (event) {
       this.live = event.detail
     },
     launchRfactor: async function (method) {
       if (typeof (method) !== 'number') { method = 0 }
+      // Give BackEnd some time to write settings
+      this.$emit('launch')
+      await sleep(200)
+
       let r = await getEelJsonObject(window.eel.run_rfactor(this.serverData, method)())
       if (r !== undefined && r.result) {
         this.makeToast('rFactor2.exe launched. Do not change settings here while the game is running. ' +
             'The game would overwrite those settings anyway upon exit.', 'success', 'rFactor 2 Launch')
-        this.$emit('launch')
       } else {
         this.makeToast('Could not launch rFactor2.exe', 'danger', 'rFactor 2 Launch')
         this.$emit('launch-failed')

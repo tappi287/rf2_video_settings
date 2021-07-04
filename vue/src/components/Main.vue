@@ -29,6 +29,11 @@
               Generic Settings
             </b-nav-item>
           </b-dropdown-item>
+          <b-dropdown-item>
+            <b-nav-item :active="navActive === 10" @click="navActive=10" link-classes="pl-0">
+              Session Settings
+            </b-nav-item>
+          </b-dropdown-item>
         </b-nav-item-dropdown>
 
         <b-nav-item :active="navActive === 4" @click="navActive=4" link-classes="pl-0">
@@ -39,6 +44,9 @@
         </b-nav-item>
         <b-nav-item :active="navActive === 6" @click="navActive=6" link-classes="pl-0">
           Server Browser
+        </b-nav-item>
+        <b-nav-item :active="navActive === 9" @click="navActive=9" link-classes="pl-0">
+          Benchmark
         </b-nav-item>
       </b-nav>
 
@@ -59,13 +67,17 @@
     <PresetHandler ref="gfx" @make-toast="makeToast" @error="setError" id-ref="gfx"
                    :preset-type="0" @presets-ready="setDashGfxHandler" @set-busy="setBusy" />
 
-    <!-- Controls Settings Handler -->
-    <PresetHandler ref="con" @make-toast="makeToast" @error="setError" id-ref="con"
-                   :preset-type="2" @set-busy="setBusy" />
-
     <!-- Game Settings Handler -->
     <PresetHandler ref="gen" @make-toast="makeToast" @error="setError" id-ref="gen"
                    :preset-type="1" @set-busy="setBusy" />
+    
+    <!-- Controls Settings Handler -->
+    <PresetHandler ref="con" @make-toast="makeToast" @error="setError" id-ref="con"
+                   :preset-type="2" @set-busy="setBusy" />
+    
+    <!-- Session Settings Handler -->
+    <PresetHandler ref="ses" @make-toast="makeToast" @error="setError" id-ref="ses"
+                   :preset-type="3" @set-busy="setBusy" />
 
     <!-- Dashboard -->
     <keep-alive>
@@ -78,34 +90,11 @@
     <!-- Graphic Settings-->
     <template  v-if="navActive === 1">
       <b-overlay :show="$refs.gfx.isBusy" variant="dark" rounded>
-        <PresetUi ref="gfxUi" id-ref="gfx" display-name="Graphics"
-                  :presets="$refs.gfx.presets"
-                  :previous-preset-name="$refs.gfx.previousPresetName"
-                  :selected-preset-idx="$refs.gfx.selectedPresetIdx"
-                  :preset-dir="$refs.gfx.userPresetsDir"
-                  @save-preset="$refs.gfx.savePreset"
-                  @refresh="$refs.gfx.getPresets"
-                  @update-presets-dir="$refs.gfx.setPresetsDir"
-                  @export-current="$refs.gfx.exportPreset"
-                  @select-preset="$refs.gfx.selectPreset"
-                  @create-preset="$refs.gfx.createPreset"
-                  @delete-preset="$refs.gfx.deletePreset"
-                  @update-setting="$refs.gfx.updateSetting"
-                  @update-desc="$refs.gfx.updateDesc"
-                  @update-view-mode="$refs.gfx.viewMode=$event"
-                  @make-toast="makeToast" />
-
-        <div>
-          <div v-for="(gfxPreset, idx) in $refs.gfx.presets" :key="gfxPreset.name">
-            <GraphicsArea :preset="gfxPreset" :idx="idx" :search="search"
-                          :current_preset_idx="$refs.gfx.selectedPresetIdx"
-                          :previous-preset-name="$refs.gfx.previousPresetName"
-                          :view_mode="$refs.gfx.viewMode"
-                          @update-setting="$refs.gfx.updateSetting"
-                          @set-busy="setBusy"
-                          @make-toast="makeToast" />
-          </div>
-        </div>
+        <GraphicsPresetArea id-ref="gfx" fixed-width
+                            @make-toast="makeToast"
+                            @set-busy="setBusy"
+                            :gfx-handler="$refs.gfx"
+                            :search="search" />
       </b-overlay>
     </template>
 
@@ -131,7 +120,7 @@
 
         <div>
           <div v-for="(conPreset, idx) in $refs.con.presets" :key="conPreset.name">
-            <GenericSettingsArea :preset="conPreset" :idx="idx" :search="search"
+            <GenericSettingsArea :preset="conPreset" :idx="idx" :search="search" fixed-width
                                  settings-key="freelook_settings"
                                  :current_preset_idx="$refs.con.selectedPresetIdx"
                                  :previous-preset-name="$refs.con.previousPresetName"
@@ -139,7 +128,7 @@
                                  @update-setting="$refs.con.updateSetting"
                                  @set-busy="setBusy"
                                  @make-toast="makeToast"/>
-            <GenericSettingsArea :preset="conPreset" :idx="idx" :search="search"
+            <GenericSettingsArea :preset="conPreset" :idx="idx" :search="search" fixed-width
                                  settings-key="gamepad_mouse_settings"
                                  :current_preset_idx="$refs.con.selectedPresetIdx"
                                  :previous-preset-name="$refs.con.previousPresetName"
@@ -147,7 +136,7 @@
                                  @update-setting="$refs.con.updateSetting"
                                  @set-busy="setBusy"
                                  @make-toast="makeToast"/>
-            <GenericSettingsArea :preset="conPreset" :idx="idx" :search="search"
+            <GenericSettingsArea :preset="conPreset" :idx="idx" :search="search" fixed-width
                                  settings-key="general_steering_settings"
                                  :current_preset_idx="$refs.con.selectedPresetIdx"
                                  :previous-preset-name="$refs.con.previousPresetName"
@@ -182,7 +171,7 @@
 
         <div>
           <div v-for="(genPreset, idx) in $refs.gen.presets" :key="genPreset.name">
-            <GenericSettingsArea :preset="genPreset" :idx="idx" :search="search"
+            <GenericSettingsArea :preset="genPreset" :idx="idx" :search="search" fixed-width
                                  settings-key="game_options"
                                  :current_preset_idx="$refs.gen.selectedPresetIdx"
                                  :previous-preset-name="$refs.gen.previousPresetName"
@@ -190,7 +179,7 @@
                                  @update-setting="$refs.gen.updateSetting"
                                  @set-busy="setBusy"
                                  @make-toast="makeToast"/>
-            <GenericSettingsArea :preset="genPreset" :idx="idx" :search="search"
+            <GenericSettingsArea :preset="genPreset" :idx="idx" :search="search" fixed-width
                                  settings-key="misc_options"
                                  :current_preset_idx="$refs.gen.selectedPresetIdx"
                                  :previous-preset-name="$refs.gen.previousPresetName"
@@ -219,20 +208,30 @@
     </keep-alive>
 
     <!-- Wiki -->
-    <template  v-if="navActive === 7">
-      <Wiki @nav="navigate" />
-    </template>
+    <Wiki v-if="navActive === 7" @nav="navigate" />
 
     <!-- Log -->
-    <template  v-if="navActive === 8">
-      <Log @nav="navigate" />
+    <Log v-if="navActive === 8" @nav="navigate" />
+
+    <!-- Benchmark -->
+    <template v-if="navActive === 9">
+      <b-overlay :show="$refs.ses.isBusy" variant="dark" rounded>
+        <Benchmark ref="Benchmark" @make-toast="makeToast" @set-busy="setBusy"
+                   :gfx-handler="$refs.gfx" :ses-handler="$refs.ses"/>
+      </b-overlay>
     </template>
+
+    <!-- Session Settings and Content Selection -->
+    <SessionSettingArea v-if="navActive === 10" fixed-width
+                        @content-launched="navActive = 0" :ses-handler="$refs.ses" :search="search"
+                        @make-toast="makeToast" @set-busy="setBusy"/>
 
     <!-- rFactor Actions -->
     <b-container fluid class="mt-3 p-0">
       <b-row cols="2" class="m-0">
         <b-col class="text-left p-0">
-          <LaunchRfactorBtn display-live @make-toast="makeToast" @launch="stopSlideShow"></LaunchRfactorBtn>
+          <LaunchRfactorBtn display-live choose-content @make-toast="makeToast" @launch="rfactorLaunched"
+                            @show-content="navActive = 10"/>
         </b-col>
         <b-col class="text-right p-0">
           <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Open rF2 vehicle setups folder'"
@@ -309,6 +308,7 @@
       </template>
     </b-overlay>
 
+
     <!-- Audio -->
     <div style="display: none">
       <audio src="@/assets/UI_Confirm.mp4" id="audioConfirm"></audio>
@@ -327,7 +327,6 @@
 <script>
 import Dashboard from "@/components/Dashboard";
 import PresetUi from "@/components/PresetUi";
-import GraphicsArea from "@/components/GraphicsArea";
 import ServerBrowser from "@/components/ServerBrowser";
 import PresetHandler from "@/components/PresetHandler";
 import GenericSettingsArea from "@/components/GenericSettingsArea";
@@ -337,6 +336,9 @@ import Headlights from "@/components/Headlights";
 import Replays from "@/components/Replays";
 import Log from "@/components/Log";
 import {getEelJsonObject} from "@/main";
+import Benchmark from "@/components/Benchmark";
+import GraphicsPresetArea from "@/components/GraphicsPresetArea";
+import SessionSettingArea from "@/components/SessionSettingArea";
 // --- </ Prepare receiving rfactor live events
 window.eel.expose(rfactorLiveFunc, 'rfactor_live')
 async function rfactorLiveFunc (event) {
@@ -374,6 +376,7 @@ export default {
       isBusy: false,
       quitBusy: false,
       refreshDashFavs: false,
+      contentModal: false,
     }
   },
   props: { rfactorVersion: String },
@@ -434,6 +437,7 @@ export default {
         if (this.$refs.con !== undefined) { this.$refs.con.getPresets() }
         if (this.$refs.gen !== undefined) { this.$refs.gen.getPresets() }
       })
+      this.$refs.Benchmark.refresh()
     },
     importPreset: async function (importPreset) {
       if (importPreset.CHAT !== undefined) {
@@ -467,8 +471,12 @@ export default {
       console.log(importPreset.preset_type)
     },
     setError: async function (error) { this.$emit('error', error) },
-    stopSlideShow() {
-      if (this.$refs.dash !== undefined) { this.$refs.dash.$refs.slider.stop() }
+    rfactorLaunched: async function() {
+      await this.stopSlideShow()
+      if (this.$refs.ses !== undefined) { await this.$refs.ses.update() }
+    },
+    stopSlideShow: async function() {
+      if (this.$refs.dash !== undefined) { await this.$refs.dash.$refs.slider.stop() }
     },
     openSetupFolder: async function () { await window.eel.open_setup_folder()() },
     runModMgr: async function () { await window.eel.run_mod_mgr()() },
@@ -479,6 +487,7 @@ export default {
         await this.$refs.gfx.getPresets()
         await this.$refs.con.getPresets()
         await this.$refs.gen.getPresets()
+        await this.$refs.ses.getPresets()
       }
       if (!r.result) { this.makeToast(r.msg, 'danger', 'Re-Store Original Settings') }
       this.$root.$emit('bv::hide::popover', 'restore-btn')
@@ -502,6 +511,9 @@ export default {
     window.removeEventListener('play-audio-event', this.externalPlayAudioEvent)
   },
   components: {
+    SessionSettingArea,
+    GraphicsPresetArea,
+    Benchmark,
     Replays,
     Headlights,
     LaunchRfactorBtn,
@@ -510,7 +522,6 @@ export default {
     ServerBrowser,
     PresetHandler,
     PresetUi,
-    GraphicsArea,
     Wiki,
     Log
   },

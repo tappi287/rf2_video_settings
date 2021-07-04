@@ -1,7 +1,16 @@
 <template>
 <div v-if="current_preset_idx === idx">
+  <!-- Content Selection -->
+  <RfactorContent show-launch text="Content Selection" @launched="$emit('content-launched')"
+                  :fix-width="fixedWidth" v-if="contentSelection" :settings="contentSettings"
+                  @make-toast="makeToast" @set-busy="setBusy" @update-setting="updateSetting">
+    <template #footer>
+      <slot name="contentFooter"></slot>
+    </template>
+  </RfactorContent>
+
   <!-- Generic Settings -->
-  <b-card class="mt-2 setting-card" :id="groupId"
+  <b-card class="mt-2 setting-card" :id="groupId" v-if="!contentSelection"
           bg-variant="dark" text-variant="white">
     <template #header>
       <h6 class="mb-0">
@@ -11,7 +20,7 @@
     <template v-if="!viewMode">
       <!-- View Mode Grid -->
       <Setting v-for="setting in searchedOptions" :key="setting.key"
-               :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixWidth="true"
+               :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixWidth="fixedWidth"
                :show_performance="showPerformance"
                :disabled="settingDisabledLocal(setting)"
                :group-id="groupId"
@@ -24,7 +33,7 @@
       <b-list-group class="text-left">
         <b-list-group-item class="bg-transparent" v-for="setting in searchedOptions"
                            :key="setting.key">
-          <Setting :setting="setting" variant="rf-orange" :fixWidth="true"
+          <Setting :setting="setting" variant="rf-orange" :fixWidth="fixedWidth"
                    :show_performance="showPerformance"
                    :disabled="settingDisabledLocal(setting)"
                    :group-id="groupId"
@@ -43,16 +52,19 @@
 
 <script>
 import Setting from "./Setting.vue"
+import RfactorContent from "@/components/RfactorContent";
 /* import {getEelJsonObject} from "@/main"; */
 
 export default {
   name: "GenericSettingsArea",
   props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number, settingsKey: String,
-          settingDisabled: Function, showPerformance: Boolean, search: String, previousPresetName: String },
+          settingDisabled: Function, showPerformance: Boolean, search: String, previousPresetName: String,
+          fixedWidth: Boolean, contentSelection: Boolean},
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
     },
+    setBusy: function (busy) {this.$emit('set-busy', busy) },
     updateSetting: function (setting, value) {
       this.$emit('update-setting', setting, value)
     },
@@ -75,7 +87,8 @@ export default {
     },
   },
   components: {
-      Setting
+    Setting,
+    RfactorContent
   },
   computed: {
     viewMode: function () {
@@ -96,6 +109,9 @@ export default {
       })
       return settings
     },
+    contentSettings: function () {
+      return this.preset[this.settingsKey].options
+    }
   },
 }
 </script>

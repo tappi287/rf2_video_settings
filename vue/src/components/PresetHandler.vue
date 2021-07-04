@@ -45,6 +45,7 @@ export default {
       if (pType === 0) { return 'Graphics Settings'}
       if (pType === 1) { return 'Generic Settings'}
       if (pType === 2) { return 'Control Settings'}
+      if (pType === 3) { return 'Session Settings'}
       return 'Settings'
     },
     getPresetsDirLocation: async function () {
@@ -238,7 +239,8 @@ export default {
       console.log('Updated', setting.name, 'to', setting.value)
       if (save) { await this.savePreset(this.getSelectedPreset()) }
       this.setBusy(false)
-    }
+    },
+    update: async function () { await this.savePreset(this.getSelectedPreset()) },
   },
   created() {
     this.getPresets()

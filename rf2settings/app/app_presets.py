@@ -88,7 +88,10 @@ def save_preset(preset_js_dict):
 
     # -- Update WebUi Session Settings for next run
     if rf.webui_session_settings:
-        AppSettings.web_ui_session_settings = rf.webui_session_settings
+        AppSettings.session_selection = rf.webui_session_settings
+    # -- Update WebUi Content Selection Settings for next run
+    if rf.webui_content_selection:
+        AppSettings.content_selected = rf.webui_content_selection
 
     return json.dumps({'result': True, 'msg': 'Preset saved and rFactor 2 Settings successfully written.'})
 

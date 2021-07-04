@@ -130,7 +130,7 @@ def base_request(method, url, params=None, headers=None, data=None, json=None, t
     
     # get request obj
     if data:
-        request_obj = urllib2.Request(url, data=bytes(data), headers=_headers)
+        request_obj = urllib2.Request(url, data=bytes(data, 'UTF-8'), headers=_headers)
     else:
         request_obj = urllib2.Request(url, headers=_headers)
 

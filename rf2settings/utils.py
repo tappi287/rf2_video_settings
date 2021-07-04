@@ -1,4 +1,5 @@
 import logging
+import math
 import os
 import os.path
 import re
@@ -30,24 +31,34 @@ class JsonRepr:
     skip_keys = list()
     export_skip_keys = list()
     after_load_callback: Optional[callable] = None
-    before_load_callback: Optional[callable] = None
+    before_save_callback: Optional[callable] = None
 
-    def to_js_object(self, export: bool = False):
-        if self.before_load_callback:
-            self.before_load_callback()
+    @staticmethod
+    def update_skip_keys(keys):
+        return set(keys).union({'skip_keys', 'export_skip_keys'})
+
+    def to_js_object(self, export: bool = False) -> dict:
+        if self.before_save_callback:
+            self.before_save_callback()
+
+        self.skip_keys = self.update_skip_keys(self.skip_keys)
 
         js_dict = dict()
         for k, v in self.__dict__.items():
             if (export and k in self.export_skip_keys) or k in self.skip_keys:
                 continue
-            if k[:2] == '__' or callable(v):
+            if k[:2] == '__' or callable(v) or isinstance(v, (classmethod, staticmethod)):
                 continue
 
             js_dict[k] = v
         return js_dict
 
     def from_js_dict(self, json_dict):
+        self.skip_keys = self.update_skip_keys(self.skip_keys)
+
         for k, v in json_dict.items():
+            if k in self.skip_keys:
+                continue
             setattr(self, k, v)
 
         if self.after_load_callback:
@@ -253,3 +264,8 @@ def create_js_pygame_event_dict(joy_dict: dict, joy_event) -> dict:
 
     return {'name': name, 'guid': guid, 'button': button,
             'hat': hat, 'axis': axis, 'value': value, 'type': joy_event.type}
+
+
+def percentile(values, percentile_value: int):
+    size = len(values)
+    return sorted(values)[int(math.ceil((size * percentile_value) / 100)) - 1]

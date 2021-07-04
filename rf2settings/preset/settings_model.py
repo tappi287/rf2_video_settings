@@ -12,13 +12,17 @@ class OptionsTarget:
     controller_json = 1
     dx_config = 10
     reshade = 20
+    webui_session = 30
+    webui_content = 40
     app_settings = 100
 
 
 class Option(JsonRepr):
+    # No need to save these internal attributes
+    skip_keys = ['dupl']
     # Entries we don't want to export or save
     export_skip_keys = ['settings', 'hidden', 'ini_type', 'desc', 'name', 'exists_in_rf',
-                        'difference', 'difference_value']
+                        'difference', 'difference_value', 'dupl']
 
     def __init__(self):
         self.key = 'Player JSON key'
@@ -33,6 +37,7 @@ class Option(JsonRepr):
         self.exists_in_rf = False  # Mark options not found on disk so we can ignore them during comparison and saving
         self.difference = False
         self.difference_value = None
+        self.dupl = None  # Mark options that need another value written eg. GPRIX Time + CURNT Time
 
         # Possible settings
         self.settings: tuple = tuple()
@@ -46,6 +51,7 @@ class Option(JsonRepr):
         # -- Ignore null values
         if self.value is None or other.value is None:
             return True
+
         if other.value != self.value or other.key != self.key:
             logging.debug('Option %s %s differs from current setting %s %s',
                           other.key, other.value, self.key, self.value)
@@ -91,11 +97,19 @@ class BaseOptions(JsonRepr):
             option.desc = detail_dict.get('desc')
             option.hidden = detail_dict.get('hidden')
             option.ini_type = detail_dict.get('_type')
+            option.dupl = detail_dict.get('_dupl')
             self.options.append(option)
 
     def to_js(self, export: bool = False) -> dict:
         return {'key': self.key, 'title': self.title,
                 'options': [option.to_js_object(export) for option in self.options]}
+
+    def to_webui_js(self) -> dict:
+        webui_dict = dict()
+        for option in self.options:
+            webui_dict[option.key] = option.value
+
+        return webui_dict
 
     def get_option(self, key) -> Optional[Option]:
         o = [o for o in self.options if o.key == key]
@@ -124,6 +138,10 @@ class BaseOptions(JsonRepr):
         """
         if other.key != self.key:
             return False
+
+        # -- Ignore WebUi Settings not readable from disk
+        if self.target == OptionsTarget.webui_session:
+            return True
 
         # -- Compare every Option
         #    sort both .options by their keys
@@ -341,6 +359,85 @@ class HeadlightControllerJsonSettings(BaseOptions):
 
         # -- Read Default options
         self.read_from_python_dict(headlights.headlight_rfactor)
+
+
+class BenchmarkSettings(BaseOptions):
+    key = 'benchmark_settings'
+    app_key = 'benchmark_settings'
+    title = 'Benchmark Settings'
+    target = OptionsTarget.app_settings
+
+    def __init__(self):
+        super(BenchmarkSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(generic.benchmark_settings)
+
+
+class BenchmarkControllerJsonSettings(BaseOptions):
+    """ Helper object to locate AI Control and Show FPS keycodes """
+    key = 'Input'
+    app_key = 'benchmark_controller_json'
+    title = 'Benchmark rFactor Control Mapping'
+    target = OptionsTarget.controller_json
+
+    def __init__(self):
+        super(BenchmarkControllerJsonSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(controls.benchmark_rfactor)
+
+
+class SessionUiSettings(BaseOptions):
+    key = 'Session UI Options'
+    app_key = 'session_ui_settings'
+    title = 'Session Ui Settings'
+    target = OptionsTarget.webui_session
+
+    def __init__(self):
+        super(SessionUiSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(generic.session_ui_settings)
+
+
+class ContentUiSettings(BaseOptions):
+    key = 'Content UI Options'
+    app_key = 'content_ui_settings'
+    title = 'Content Selection'
+    target = OptionsTarget.webui_content
+
+    def __init__(self):
+        super(ContentUiSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(generic.content_ui_settings)
+
+
+class SessionGameSettings(BaseOptions):
+    key = 'Game Options'
+    app_key = 'session_game_settings'
+    title = 'Session Settings'
+    target = OptionsTarget.player_json
+
+    def __init__(self):
+        super(SessionGameSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(generic.session_settings)
+
+
+class SessionConditionSettings(BaseOptions):
+    key = 'Race Conditions'
+    app_key = 'session_condition_settings'
+    title = 'Race Conditions'
+    target = OptionsTarget.player_json
+
+    def __init__(self):
+        super(SessionConditionSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(generic.session_conditions)
 
 
 # ------------------------------------------------

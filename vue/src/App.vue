@@ -244,7 +244,8 @@ html {
   background-image: linear-gradient(120deg, #ddd9de 70%, #fa7c56 100%);
   border: none;
 }
-
+.setting { display: inline-block }
+.setting-item { min-width: 7.0rem; font-weight: lighter; }
 .setting-field {
   box-shadow: 0 6px 15px rgba(36, 37, 38, 0.3);
 }

@@ -28,6 +28,7 @@ RFACTOR_CONTROLLER = 'UserData/player/Controller.JSON'
 RFACTOR_DXCONFIG = 'UserData/Config_DX11.ini'
 RFACTOR_VERSION_TXT = 'Core/Version.txt'
 RFACTOR_SETUPS = 'UserData/player/Settings'
+RFACTOR_LOG = 'UserData/Log'
 RFACTOR_MODMGR = 'Bin64/ModMgr.exe'
 
 GIT_RELEASE_URL = 'https://api.github.com/repos/tappi287/rf2_video_settings/releases/latest'
@@ -53,7 +54,6 @@ KNOWN_APPS = {
 }
 
 RF2_APPID = [k for k in KNOWN_APPS.keys()][0]
-FPSVR_APPID = [k for k in KNOWN_APPS.keys()][1]
 
 # Frozen or Debugger
 if getattr(sys, 'frozen', False):
@@ -64,6 +64,7 @@ else:
     FROZEN = False
 
 SETTINGS_FILE_NAME = 'settings.json' if FROZEN else 'settings_dev.json'
+SETTINGS_CONTENT_FILE_NAME = 'content.json'
 
 
 def check_and_create_dir(directory: Union[str, Path]) -> str:
@@ -92,18 +93,23 @@ def get_presets_dir() -> Path:
     return Path(check_and_create_dir(settings_dir / PRESETS_DIR))
 
 
+def get_present_mon_bin() -> Path:
+    bin_dir = Path(get_current_modules_dir()) / 'bin'
+    present_mon_exe = bin_dir / 'PresentMon-1.7.0-x64.exe'
+
+    for f in bin_dir.glob('PresentMon*.exe'):
+        if f:
+            present_mon_exe = f
+            break
+
+    return present_mon_exe
+
+
 def _get_user_doc_dir() -> Path:
     docs_dir = get_current_user_documents_path()
     if not docs_dir:
         docs_dir = os.path.expanduser('~\\Documents\\')
     return Path(docs_dir)
-
-
-def get_fpsvr_dir() -> Path:
-    docs_dir = _get_user_doc_dir()
-    if not docs_dir:
-        docs_dir = os.path.expanduser('~\\Documents\\')
-    return Path(check_and_create_dir(Path(docs_dir) / 'fpsVR' / 'CSV'))
 
 
 def get_default_presets_dir() -> Path:
@@ -115,10 +121,6 @@ def get_default_presets_dir() -> Path:
 
 def get_data_dir() -> Path:
     return Path(get_current_modules_dir()) / DATA_DIR
-
-
-def get_present_mon_bin() -> Path:
-    return Path(get_current_modules_dir()) / 'bin' / 'PresentMon-1.6.0-x64.exe'
 
 
 def get_log_dir() -> str:

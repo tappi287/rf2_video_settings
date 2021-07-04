@@ -74,7 +74,7 @@
 
 <script>
 
-import {getMaxWidth} from "@/main";
+import {minutesToDaytime, setFixedWidth} from "@/main";
 
 export default {
   name: 'Setting',
@@ -117,6 +117,8 @@ export default {
     },
     spinnerDisplay: function (value) {
       if (this.rangeDisp === 'floatpercent') { return String(Math.round(value * 100)) + '%' }
+      if (this.rangeDisp === 'time') { return minutesToDaytime(value) }
+      if (this.rangeDisp === 'position') { if (value === 0) { return 'Random' } }
       return value
     },
     iterateSettings: function (func) {
@@ -154,16 +156,7 @@ export default {
       return false
     },
     setFixedWidth: function () {
-      // Iterate all elements of this setting group_id and set width to widest element found
-      const nameElem = document.querySelectorAll('#' + this.groupId + ' .fixed-width-name')
-      const settElem = document.querySelectorAll('#' + this.groupId + ' .fixed-width-setting')
-
-      let nameMaxWidth = getMaxWidth(nameElem); let settMaxWidth = getMaxWidth(settElem)
-
-      let e = document.getElementById(this.nameId)
-      if (e !== null) { e.style.width = String(nameMaxWidth) + 'px' }
-      let s = document.getElementById(this.elemId)
-      if (s !== null) { s.style.width = String(settMaxWidth) + 'px' }
+      setFixedWidth(this.groupId, this.nameId, this.elemId)
     },
   },
   created: function () {
@@ -240,8 +233,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
-.setting { display: inline-block }
-.setting-item { min-width: 7.0rem; font-weight: lighter; }
 .spinner-setting { width: 100% !important; }
 .spinner-overlay {
   width: 50%;

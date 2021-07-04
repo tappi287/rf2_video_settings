@@ -4,7 +4,7 @@ from pathlib import Path, WindowsPath
 from shutil import copyfile
 from typing import Iterator, Union, Dict
 
-from .globals import get_settings_dir, SETTINGS_FILE_NAME, get_default_presets_dir
+from .globals import get_settings_dir, SETTINGS_FILE_NAME, SETTINGS_CONTENT_FILE_NAME, get_default_presets_dir
 from .preset.preset_base import PRESET_TYPES
 from .preset.presets_dir import PresetDir, get_user_presets_dir
 from .rfactor import RfactorPlayer, RfactorLocation
@@ -12,6 +12,9 @@ from .utils import JsonRepr
 
 
 class AppSettings(JsonRepr):
+    skip_keys = ['web_ui_session_settings',
+                 'content_selected', 'content_keys', 'content_urls', 'content', 'content_saved', 'content_loaded']
+
     backup_created = False
     needs_admin = False
     selected_presets: Dict[str, str] = dict()
@@ -23,10 +26,19 @@ class AppSettings(JsonRepr):
     server_favourites = list()
     server_browser: dict = {'filter_fav': False, 'filter_empty': False, 'filter_pwd': False, 'filter_version': False,
                             'filter_text': '', 'store_pwd': False}
+    benchmark_settings = dict()
     headlight_settings = dict()
     headlight_controller_assignments = dict()
     headlight_rf_key = 'DIK_H'
     server_passwords = dict()
+
+    content_keys = ['series', 'tracks', 'cars']
+    content_urls = ['/rest/race/series', '/rest/race/track', '/rest/race/car']
+    content = dict()
+    content_selected = dict()
+    session_selection = dict()
+    content_saved = False
+    content_loaded = False
 
     def __init__(self):
         self.backup_created = AppSettings.backup_created
@@ -179,32 +191,55 @@ class AppSettings(JsonRepr):
     def _get_settings_file() -> Path:
         return get_settings_dir() / SETTINGS_FILE_NAME
 
+    @staticmethod
+    def _get_settings_content_file() -> Path:
+        return get_settings_dir() / SETTINGS_CONTENT_FILE_NAME
+
     @classmethod
-    def save(cls):
+    def save(cls, save_content: bool = False):
+        # -- Save 'content' in separate file
+        if save_content:
+            cls.content_saved = True
+        elif not save_content and cls.content and not cls.content_saved:
+            cls.save(save_content=True)
+
+        file = cls._get_settings_content_file() if save_content else cls._get_settings_file()
+
         try:
-            with open(cls._get_settings_file().as_posix(), 'w') as f:
-                js_dict = dict()
-                for k, v in cls.__dict__.items():
-                    if k[:2] != '__' and isinstance(v, (bool, str, list, dict)):
-                        js_dict[k] = v
-                f.write(json.dumps(js_dict))
+            with open(file.as_posix(), 'w') as f:
+                if not save_content:
+                    # -- Save Settings
+                    # noinspection PyTypeChecker
+                    f.write(json.dumps(cls.to_js_object(cls)))
+                else:
+                    # -- Save Content
+                    f.write(json.dumps(cls.content))
         except Exception as e:
-            logging.fatal('Could not save application settings! %s', e)
+            logging.error('Could not save application settings! %s', e)
             return False
         return True
 
     @classmethod
-    def load(cls) -> bool:
-        try:
-            with open(cls._get_settings_file().as_posix(), 'r') as f:
-                settings = json.loads(f.read())
+    def load(cls, load_content: bool = False) -> bool:
+        # -- Load 'content' from separate file
+        if load_content:
+            cls.content_loaded = True
+        if not cls.content and not cls.content_loaded:
+            cls.load(load_content=True)
 
-                # - Restore class fields
-                for k, v in settings.items():
-                    if k[:2] != '__' and not callable(v):
-                        setattr(AppSettings, k, v)
+        file = cls._get_settings_content_file() if load_content else cls._get_settings_file()
+
+        try:
+            with open(file.as_posix(), 'r') as f:
+                if not load_content:
+                    # -- Load Settings
+                    # noinspection PyTypeChecker
+                    cls.from_js_dict(cls, json.loads(f.read()))
+                else:
+                    # -- Load content
+                    cls.content = json.loads(f.read())
         except Exception as e:
-            logging.fatal('Could not load application settings! %s', e)
+            logging.error('Could not load application settings! %s', e)
             return False
 
         # -- Setup custom user preset dir if set --

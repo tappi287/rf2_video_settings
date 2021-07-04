@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Dict, Type, Optional
 
 from . import preset
+from .settings_model import OptionsTarget
 from ..globals import find_subclasses
 
 PRESET_TYPES: Dict[int, Type[preset.BasePreset]] = dict()
@@ -12,7 +13,8 @@ for name, preset_cls in find_subclasses(preset, preset.BasePreset):
 del preset_cls
 
 
-def load_presets_from_dir(preset_dir, preset_type, current_preset=None, selected_preset_name=None):
+def load_presets_from_dir(preset_dir, preset_type: int, current_preset: Optional[preset.BasePreset]=None,
+                          selected_preset_name=None):
     """ Load all Presets from a directory of a certain type
 
     :param Path preset_dir: Directory to search in
@@ -31,6 +33,15 @@ def load_presets_from_dir(preset_dir, preset_type, current_preset=None, selected
             selected_preset = preset_obj
         if current_preset and preset_obj and preset_obj.name != current_preset.name:
             preset_ls.append(preset_obj)
+
+        # -- Make sure we read WebUi Options for Current Preset from Preset file
+        #    Because these options can not be read from the rF installation.
+        if current_preset and preset_obj and preset_obj.name == current_preset.name:
+            webui_opt = {k: o for k, o in preset_obj.iterate_options()
+                         if o.target in (OptionsTarget.webui_session, OptionsTarget.webui_content)}
+            if webui_opt:
+                for key, options in webui_opt.items():
+                    setattr(current_preset, key, options)
 
     return preset_ls, selected_preset
 

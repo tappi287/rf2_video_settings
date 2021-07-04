@@ -45,7 +45,7 @@
 
         <!-- New Preset Name -->
         <b-form-input v-model="newPresetName" :state="presetFileNameState" class="no-border"
-                      type="text" placeholder="[New Preset Name]" id="preset-name-input"
+                      type="text" placeholder="[New Preset Name]" :id="'preset-name-input' + _uid"
                       v-b-popover.hover.bottom="'Enter a name for a new Preset and click the + button'">
         </b-form-input>
 
@@ -83,7 +83,7 @@
         </b-input-group-append>
 
         <!-- New Preset Name invalid feedback -->
-        <b-form-invalid-feedback id="preset-name-input-feedback">
+        <b-form-invalid-feedback :id="'preset-name-input' + _uid + '-feedback'">
           Enter a valid Windows file name
         </b-form-invalid-feedback>
       </b-input-group>

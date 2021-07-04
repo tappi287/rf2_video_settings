@@ -17,7 +17,7 @@ def setup_logging(logger_name: str = APP_NAME):
         'formatters': {
             'simple': {
                 'format': '%(asctime)s %(thread)d-%(module)s %(levelname)s: %(message)s',
-                'datefmt': '%d.%m.%Y %H:%M'
+                'datefmt': '%d.%m.%Y %H:%M:%S'
                 },
             'file_formatter': {
                 'format': '%(asctime)s.%(msecs)03d %(thread)d-%(module)s %(funcName)s %(levelname)s: %(message)s',

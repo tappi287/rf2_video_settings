@@ -1,7 +1,7 @@
 import json
 import logging
-import sys
-from typing import Iterable, Tuple
+from pathlib import Path
+from typing import Iterable, Tuple, Optional
 
 from . import settings_model
 from .presets_dir import get_user_presets_dir, get_user_export_dir
@@ -13,6 +13,7 @@ class PresetType:
     graphics = 0
     advanced_settings = 1
     controls = 2
+    session = 3
 
 
 class BasePreset:
@@ -43,7 +44,10 @@ class BasePreset:
         :return:
         """
         # Update Graphic Options, Video Settings etc. from rF object
-        for key, _ in self._iterate_options():
+        for key, options in self.iterate_options():
+            if options.target == settings_model.OptionsTarget.webui_session:
+                # Skip options not readable from disk
+                continue
             setattr(self, key, getattr(rf.options, key))
 
         # Set Preset Name from Player Nick
@@ -78,9 +82,12 @@ class BasePreset:
         """ Should be overwritten in sub classes """
         pass
 
-    def export(self, unique_name: str = None) -> bool:
+    def export(self, unique_name: str = None, export_dir: Optional[Path] = None) -> bool:
         file_name = create_file_safe_name(unique_name or self.name)
-        file = get_user_export_dir() / f'{file_name}.json'
+        if export_dir is None:
+            file = get_user_export_dir() / f'{file_name}.json'
+        else:
+            file = export_dir / f'{file_name}.json'
         self.name = unique_name or self.name
         self.additional_export_operations()
 
@@ -102,14 +109,14 @@ class BasePreset:
             return False
         return True
 
-    def _iterate_options(self) -> Iterable[Tuple[str, settings_model.BaseOptions]]:
+    def iterate_options(self) -> Iterable[Tuple[str, settings_model.BaseOptions]]:
         """ Helper to iterate thru all BaseOptions assigned to the preset. """
         for key in self.option_class_keys:
             yield key, getattr(self, key)
 
     def to_js(self, export: bool = False):
         """ Convert to json serializable dictionary """
-        preset_dict = {k: v.to_js(export) for k, v in self._iterate_options()}
+        preset_dict = {k: v.to_js(export) for k, v in self.iterate_options()}
         preset_dict['name'] = self.name
         preset_dict['desc'] = self.desc
         preset_dict['preset_type'] = self.preset_type
@@ -120,7 +127,7 @@ class BasePreset:
         self.name = js_dict.get('name')
         self.desc = js_dict.get('desc')
 
-        for key, _ in self._iterate_options():
+        for key, _ in self.iterate_options():
             options_class = OPTION_CLASSES.get(key)
             options_instance = options_class()
             options_instance.from_js_dict(js_dict.get(key, dict()))
@@ -133,7 +140,7 @@ class BasePreset:
         :return: True if other options differ
         """
         equals = True
-        for key, options in self._iterate_options():
+        for key, options in self.iterate_options():
             if getattr(other, key) != options:
                 logging.debug('Compared Presets %s to %s. Found deviating options in %s',
                               self.name, other.name, options.title)
@@ -182,6 +189,18 @@ class ControlsSettingsPreset(BasePreset):
 
     def __init__(self, name: str = None, desc: str = None):
         super(ControlsSettingsPreset, self).__init__(name, desc)
+
+
+class SessionPreset(BasePreset):
+    preset_type: int = PresetType.session
+    option_class_keys = {settings_model.SessionGameSettings.app_key,
+                         settings_model.SessionConditionSettings.app_key,
+                         settings_model.SessionUiSettings.app_key,
+                         settings_model.ContentUiSettings.app_key}
+    prefix = 'race_session'
+
+    def __init__(self, name: str = None, desc: str = None):
+        super(SessionPreset, self).__init__(name, desc)
 
 
 class HeadlightControlsSettingsPreset(BasePreset):

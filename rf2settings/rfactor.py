@@ -30,6 +30,7 @@ class RfactorLocation:
     version_txt = Path()
     _app_id = RF2_APPID
     is_valid = False
+    dev = False
 
     @classmethod
     def overwrite_location(cls, location):
@@ -79,6 +80,8 @@ class RfactorLocation:
                 cls.dx_config = dx_config
                 cls.version_txt = version_txt
 
+        cls.dev = dev
+
 
 class RfactorPlayer:
     resolution_key = 'resolution_settings'
@@ -86,6 +89,8 @@ class RfactorPlayer:
                           'comment_prefixes': ('#', ';', '//'),
                           'default_section': 'COMPONENTS',
                           }
+    webui_session_settings = dict()
+    webui_content_selection = dict()
 
     class Options:
         def __init__(self):
@@ -186,6 +191,10 @@ class RfactorPlayer:
         # -- Write reshade settings
         self.write_reshade(preset)
 
+        # -- Update WebUi Session Settings and Content Selection
+        self.update_webui_settings(preset, OptionsTarget.webui_session)
+        self.update_webui_settings(preset, OptionsTarget.webui_content)
+
         # -- Update Player Json settings
         player_json_dict = self.read_player_json_dict(self.player_file, encoding='utf-8')
         update_result = self._write_to_target(OptionsTarget.player_json, preset, player_json_dict)
@@ -201,6 +210,13 @@ class RfactorPlayer:
         # -- Write JSON files
         r = self.write_json(player_json_dict, self.player_file, encoding='utf-8')
         return r and self.write_json(controller_json_dict, self.controller_file, encoding='cp1252')
+
+    def update_webui_settings(self, preset, target):
+        for preset_options in self._get_target_options(target, preset):
+            if target == OptionsTarget.webui_session:
+                self.webui_session_settings = preset_options.to_webui_js()
+            elif target == OptionsTarget.webui_content:
+                self.webui_content_selection = preset_options.to_webui_js()
 
     def write_json(self, json_dict: dict, file: Path, encoding: str = 'UTF-8') -> bool:
         try:
@@ -280,6 +296,14 @@ class RfactorPlayer:
 
             player_json_dict[preset_options.key][option.key] = option.value
             logging.info('Updated Setting: %s: %s', option.key, option.value)
+
+            # -- Write duplicate keys e.g. GPRIX RaceTime + CURNT RaceTime
+            duplicates_list = option.dupl or list()
+            if isinstance(option.dupl, str):
+                duplicates_list = [option.dupl]
+            for key in duplicates_list:
+                player_json_dict[preset_options.key][key] = option.value
+                logging.info('Updated duplicated Setting: %s: %s', key, option.value)
 
         return True
 
@@ -409,7 +433,7 @@ class RfactorPlayer:
             return False
 
         settings_updated = False
-        player_json_options = player_json.get(preset_options.key)
+        player_json_options = player_json.get(preset_options.key, dict())
         for option in preset_options.options:
             if option.key not in player_json_options:
                 continue
@@ -469,7 +493,7 @@ class RfactorPlayer:
         return config_parser
 
     def _get_location(self):
-        if not RfactorLocation.is_valid:
+        if RfactorLocation.is_valid is False or RfactorLocation.dev != self.dev:
             RfactorLocation.get_location(self.dev)
             self.error += f'rFactor 2 installation detected at {RfactorLocation.path}\n'
         if not RfactorLocation.is_valid:

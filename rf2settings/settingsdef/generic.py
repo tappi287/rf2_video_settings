@@ -68,3 +68,80 @@ app_controller_assignments = {
                      'device_name': 'Xbox One S Controller',
                      'guid': '', 'type': 1539, 'hat': None, 'value': None, 'axis': None},
 }
+
+# Benchmark settings
+benchmark_settings = {
+    'Length': {'key': 'BenchmarkLength', 'name': 'Benchmark Length', 'value': 50,
+               'settings': ({'settingType': 'range', 'min': 10, 'max': 200, 'step': 1,
+                             'desc': 'Recording Length in Seconds'}, )},
+}
+# Settings set via WebUI
+session_ui_settings = {
+    'SESSSET_Grid_Position': {'name': 'Grid Position', 'value': 15,
+                              'settings': ({'settingType': 'range', 'min': 0, 'max': 99, 'step': 1,
+                                            'display': 'position'},)},
+    'SESSSET_AI_Strength': {'name': 'AI Strength', 'value': 20,
+                            'settings': ({'settingType': 'range', 'min': 10, 'max': 120, 'step': 1, },)}
+}
+# Content Settings set via WebUi
+content_ui_settings = {
+    'series': {'name': 'Series', 'value': None},
+    'tracks': {'name': 'Tracks', 'value': None},
+    'location': {'name': 'Location', 'value': None},
+    'layout': {'name': 'Layout', 'value': None},
+    'manufacturer': {'name': 'Manufacturer', 'value': None},
+    'model': {'name': 'Model', 'value': None},
+    'cars': {'name': 'Cars', 'value': None},
+}
+
+# Benchmark specific: Game Options
+session_settings = {
+    'GPRIX Opponents': {'name': 'GRPRIX Opponents', 'value': 25, 'desc': 'Number of Opponents',
+                        '_dupl': ['CHAMP Opponents', 'CURNT Opponents'],
+                        'settings': ({'settingType': 'range', 'min': 0, 'max': 99, 'step': 1, },)},
+    'Exit Confirmation': {'name': 'Exit Confirmation', 'value': 0,
+                          'desc': '0=none, 1=race only, 2=always',
+                          'settings': ({'value': 0, 'name': 'Never'},
+                                       {'value': 1, 'name': 'Race Only [Default]'},
+                                       {'value': 2, 'name': 'Always'})},
+}
+# Benchmark specific: Race Conditions
+session_conditions = {
+    'GPRIX Weather': {'name': 'Simple Weather', 'value': 3,
+                      'desc': '0=sun, 1=clouds, 2=rain, 3=default, 4=random, 5=scripted',
+                      'settings': ({'value': 0, 'name': 'Sunny'},
+                                   {'value': 1, 'name': 'Clouds'},
+                                   {'value': 2, 'name': 'Rain'},
+                                   {'value': 3, 'name': 'Default'},
+                                   {'value': 4, 'name': 'Random'},
+                                   {'value': 5, 'name': 'Scripted'},)
+                      },
+    'GPRIX RaceStartingTime': {'name': 'Race Starting Time', 'value': 840,
+                               '_dupl': 'CURNT RaceStartingTime',
+                               'settings': ({'settingType': 'range', 'min': 0, 'max': 1440, 'step': 30,
+                                             'display': 'time'},)},
+    'GPRIX Num Qual Sessions': {'name': 'Num Qualy Sessions', 'value': 0,
+                                'settings': ({'settingType': 'range', 'min': 0, 'max': 4, 'step': 1, },)},
+    'GPRIX Num Race Sessions': {'name': 'Num Race Sessions', 'value': 1,
+                                'settings': ({'settingType': 'range', 'min': 1, 'max': 4, 'step': 1, },)},
+    'Run Practice1': {'name': 'Run Practice 1', 'value': False,
+                      'desc': '',
+                      'settings': ({'value': True, 'name': 'On'},
+                                   {'value': False, 'name': 'Off'})},
+    'Run Practice2': {'name': 'Run Practice 2', 'value': False,
+                      'desc': '',
+                      'settings': ({'value': True, 'name': 'On'},
+                                   {'value': False, 'name': 'Off'})},
+    'Run Practice3': {'name': 'Run Practice 3', 'value': False,
+                      'desc': '',
+                      'settings': ({'value': True, 'name': 'On'},
+                                   {'value': False, 'name': 'Off'})},
+    'Run Practice4': {'name': 'Run Practice 4', 'value': False,
+                      'desc': '',
+                      'settings': ({'value': True, 'name': 'On'},
+                                   {'value': False, 'name': 'Off'})},
+    'Run Warmup':    {'name': 'Run Warmup', 'value': False,
+                      'desc': '',
+                      'settings': ({'value': True, 'name': 'On'},
+                                   {'value': False, 'name': 'Off'})},
+}
