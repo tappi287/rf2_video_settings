@@ -11,8 +11,9 @@ from ..app_settings import AppSettings
 from ..preset.preset import PresetType
 from ..preset.preset_base import load_presets_from_dir
 from ..preset.presets_dir import get_user_presets_dir
-from ..rf2connect import ReplayPlayEvent, RfactorQuitEvent
-from ..rf2webui import RfactorConnect
+from ..rf2command import CommandQueue, Command
+from ..rf2connect import RfactorState
+from ..rf2events import RfactorQuitEvent, StartBenchmarkEvent
 from ..rfactor import RfactorPlayer
 from ..utils import create_file_safe_name
 
@@ -125,7 +126,17 @@ def play_replay(replay_name):
         return json.dumps({'result': False, 'msg': f'Could not launch rF2: {rf.error}'})
 
     # -- Tell the rFactor Greenlet to play a replay in next iteration
-    ReplayPlayEvent.set(replay_name)
+    # 1. Wait for UI
+    CommandQueue.append(Command(Command.wait_for_state, data=RfactorState.ready, timeout=30.0))
+    # 2. Load Replay
+    CommandQueue.append(Command(Command.play_replay, replay_name, timeout=30.0))
+    # 3. Wait UI Loading State
+    CommandQueue.append(Command(Command.wait_for_state, data=RfactorState.loading, timeout=30.0))
+    # 4. Wait UI Ready State
+    CommandQueue.append(Command(Command.wait_for_state, data=RfactorState.ready, timeout=800.0))
+    # 5. Switch FullScreen
+    CommandQueue.append(Command(Command.switch_fullscreen, timeout=30.0))
+
     return json.dumps({'result': True, 'msg': rf.error})
 
 

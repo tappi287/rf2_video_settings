@@ -9,30 +9,13 @@ import gevent.event
 
 from rf2settings.app_settings import AppSettings
 from rf2settings.globals import RFACTOR_SETUPS, RFACTOR_MODMGR, get_log_file, get_log_dir
-from rf2settings.rf2connect import RfactorConnect
+from rf2settings.rf2command import CommandQueue, Command
+from rf2settings.rf2connect import RfactorState
 from rf2settings.rfactor import RfactorPlayer, RfactorLocation
 from rf2settings.runasadmin import run_as_admin
 from rf2settings.utils import AppExceptionHook
 
 CLOSE_EVENT = gevent.event.Event()
-
-
-class AppAudioFx:
-    confirm = "audioConfirm"
-    ping = "audioPing"
-    indicator = "audioIndicator"
-    select = "audioSelect"
-    cute_select = "audioCuteSelect"
-    switch = "audioSwitch"
-    switch_on = "audioSwitchOn"
-    switch_off = "audioSwitchOff"
-    flash = "audioFlash"
-
-    @classmethod
-    def play_audio(cls, audio_fx_id: str):
-        if not audio_fx_id:
-            return
-        eel.play_audio(audio_fx_id)
 
 
 def request_close():
@@ -123,7 +106,8 @@ def run_rfactor(server_info: Optional[dict] = None, method: Optional[int] = 0):
     rf, result = RfactorPlayer(), False
     if rf.is_valid:
         result = rf.run_rfactor(method, server_info)
-        RfactorConnect.set_to_active_timeout()
+        if not server_info:
+            CommandQueue.append(Command(Command.wait_for_state, data=RfactorState.ready, timeout=10.0))
 
     return json.dumps({'result': result, 'msg': rf.error})
 

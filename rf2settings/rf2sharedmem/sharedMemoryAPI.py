@@ -133,7 +133,7 @@ class SimInfoAPI(rF2data.SimInfo):
                 except psutil.NoSuchProcess:
                     self.rf2_pid = None
                     return False
-                if p.name().lower().startswith('rfactor2.exe') or p.name().lower().startswith('rfactor2 Mod Mode.exe'):
+                if p.name().lower().startswith('rfactor2.exe') or p.name().lower().startswith('rfactor2 mod mode.exe'):
                     self.rf2_running = True
         else:
             if self.rf2_pid_counter >= find_counter:

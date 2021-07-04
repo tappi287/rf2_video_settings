@@ -3,15 +3,15 @@ from typing import Optional
 
 import gevent
 
+from .app.app_main import CLOSE_EVENT
+from .app.app_audio import AppAudioFx
 from .app_settings import AppSettings
-from .app.app_main import CLOSE_EVENT, AppAudioFx
 from .gamecontroller import ControllerEvents, SetupControllerAxis
 from .preset.preset import HeadlightControlsSettingsPreset
 from .preset.settings_model import HeadlightSettings, HeadlightControllerAssignments, AutoHeadlightSettings
+from .rf2lights import RfactorHeadlight
 from .rfactor import RfactorPlayer
 from .settingsdef.headlights import controller_assignments
-from .rf2lights import RfactorHeadlight
-from .rf2webui import RfactorState, RfactorConnect
 from .utils import create_js_pygame_event_dict, capture_app_exceptions
 
 try:
@@ -205,9 +205,6 @@ def headlights_greenlet():
     config = _Settings()
     con = _ControllerHandler()
 
-    # -- Setup the RfactorConnect shared memory only once
-    _setup_rfconnect = True
-
     # -- This will be our rf2headlights instance if needed
     rf2_hdl = None
     # -- Keep track if player is driving for the first time
@@ -239,15 +236,6 @@ def headlights_greenlet():
         # --- Init rf2headlights
         if rf2_hdl is None:
             rf2_hdl = RfactorHeadlight(AppSettings.headlight_rf_key, config.rf2_auto_headlight)
-
-        # -- Update global App RfactorConnect connection state
-        #    from Headlights shared memory
-        if (rf2_hdl.info.sharedMemoryVerified and _setup_rfconnect) or \
-                (_setup_rfconnect and RfactorConnect.state == RfactorState.ready):
-            RfactorConnect.setup_shared_memory(rf2_hdl.info.isSharedMemoryAvailable)
-            _setup_rfconnect = False
-        if RfactorConnect.use_shared_memory:
-            RfactorConnect.set_state_from_shared_memory(rf2_hdl.info.sharedMemoryVerified)
 
         # ------ RF2 Headlights functionality --------
         # --------------------------------------------

@@ -4,6 +4,7 @@ from threading import Timer
 import gevent
 
 from .directInputKeySend import PressReleaseKey
+from .rf2connect import RfactorConnect
 from .rf2sharedmem import sharedMemoryAPI
 
 
@@ -32,12 +33,11 @@ def __set_timer(ms, callback, _args=None) -> None:
 
 
 class RfactorHeadlight:
-    info = sharedMemoryAPI.SimInfoAPI()
-
     def __init__(self, headlight_toggle_dik: str = None, rf2_auto_headlights_enabled: bool = False):
         self.headlight_state = None
         self.headlight_toggle_dik = headlight_toggle_dik or 'DIK_H'
         self.rf2_auto_headlights_enabled = False
+        info = RfactorConnect.shared_memory_obj
         self._flashing = False
         self._count = 0
         self.timer = (0, 0)  # On time, off time

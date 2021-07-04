@@ -6,32 +6,20 @@ import webbrowser
 import eel
 import gevent
 
-from rf2settings.log import setup_logging
-from rf2settings.app.app_controller import expose_controller_methods
-from rf2settings.app.app_dashboard import expose_dashboard_methods
-from rf2settings.app.app_graphics import expose_graphics_methods
-from rf2settings.app.app_headlights import expose_headlights_methods
-from rf2settings.app.app_main import expose_main_methods, CLOSE_EVENT
-from rf2settings.app.app_multiplayer import expose_multiplayer_methods
-from rf2settings.app.app_presets import expose_preset_methods
-from rf2settings.app.app_rfconnect import expose_rfconnect_methods
+from rf2settings.app import expose_app_methods
+from rf2settings.app.app_main import CLOSE_EVENT
 from rf2settings.app_settings import AppSettings
 from rf2settings.gamecontroller import controller_greenlet, controller_event_loop
 from rf2settings.globals import FROZEN
 from rf2settings.headlights import headlights_greenlet
-from rf2settings.rf2connect import rfactor_greenlet, rfactor_event_loop
+from rf2settings.log import setup_logging
+from rf2settings.rf2connect import RfactorConnect
+from rf2settings.rf2greenlet import rfactor_greenlet, rfactor_event_loop
 from rf2settings.runasadmin import run_as_admin
 from rf2settings.utils import AppExceptionHook, capture_app_exceptions
 
 # -- Make sure eel methods are exposed at start-up
-expose_main_methods()
-expose_dashboard_methods()
-expose_graphics_methods()
-expose_multiplayer_methods()
-expose_preset_methods()
-expose_headlights_methods()
-expose_controller_methods()
-expose_rfconnect_methods()
+expose_app_methods()
 
 # -- Setup logging
 setup_logging()
@@ -108,11 +96,12 @@ def start_eel():
         rfactor_event_loop()
         # Capture exception events
         AppExceptionHook.exception_event_loop()
+        # -- Test App Exception
         test_exception()
 
     # -- Shutdown Greenlets
     logging.debug('Shutting down Greenlets.')
-    gevent.joinall((cg, hg, rg), timeout=15.0)
+    gevent.joinall((cg, hg, rg), timeout=15.0, raise_error=True)
 
     # -- Shutdown logging
     logging.info('\n\n\n')
