@@ -13,6 +13,8 @@
     "@popperjs/core": "^2.8.6",
     "axios": "^0.21.1",
     "bootstrap-vue": "^2.21.2",
+    "chart.js": "^3.4.0",
+    "chartjs-plugin-zoom": "^1.1.0",
     "core-js": "^3.9.0",
     "vue": "^2.6.11",
     "vue-flux": "^6.4.0"

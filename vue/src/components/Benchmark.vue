@@ -1,18 +1,37 @@
 <template>
 <div v-cloak id="benchmark-app" class="position-relative mb-5">
   <!-- Introduction -->
-  <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white">
-    <b-card-text>You can run automated Benchmarks here. Choose the desired content, session settings and graphics
-    settings. The app will launch the game, switch to the desired settings, start a race session,
-    switch to AI Control, record the performance with Present Mon and quit the game.
-    </b-card-text>
-    <Setting v-for="setting in settings.options" :key="setting.key"
-             :setting="setting" variant="rf-orange" class="mr-3 mb-3"
-             @setting-changed="updateSetting">></Setting>
-  </b-card>
+  <b-button block @click="setNav('benchmark')" class="mt-2"
+            :variant="navModel.benchmark ? 'rf-orange' : 'dark'">
+    <b-icon icon="clock-history"></b-icon><span class="ml-2"><b>Benchmark</b></span>
+  </b-button>
+  <b-collapse v-model="navModel.benchmark" accordion="bench-accordion" role="tabpanel">
+    <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white">
+      <b-card-text class="text-left">You can run automated Benchmarks here. Choose the desired content, session settings and graphics
+      settings. The app will:
+        <ul class="mt-2">
+          <li>Launch the Game</li>
+          <li>Switch to the selected
+            <b-link class="text-rf-orange" @click="navModel.content=true">Content and Session Settings</b-link></li>
+          <li>Start a Race Session</li>
+          <li>Turn on AI Control(make sure you have mapped this to a keyboard button).</li>
+          <li>Record frame times for Benchmark Length seconds</li>
+        </ul>
+        <h6 class="text-rf-orange">Attention</h6>
+        This will start an actual race session. Make sure everyone is <b>in safe distance</b> of your
+        Steering Wheel, Bass Shakers and Head Cutter equipment during the benchmark.
+      </b-card-text>
+      <Setting v-for="setting in settings.options" :key="setting.key"
+               :setting="setting" variant="rf-orange" class="mr-3 mb-3"
+               @setting-changed="updateSetting">></Setting>
+    </b-card>
+  </b-collapse>
 
   <!-- Session Settings and Content Selection -->
-  <b-button block @click="setNav('content')" variant="dark" class="mt-2">Session Settings</b-button>
+  <b-button block @click="setNav('content')" class="mt-2"
+            :variant="navModel.content ? 'rf-orange' : 'dark'">
+    <b-icon icon="receipt"></b-icon><span class="ml-2">Session Settings</span>
+  </b-button>
   <b-collapse v-model="navModel.content" accordion="bench-accordion" role="tabpanel">
     <div class="mt-2">
       <SessionSettingArea :ses-handler="sesHandler" @make-toast="makeToast" @set-busy="setBusy"/>
@@ -20,13 +39,19 @@
   </b-collapse>
 
   <!-- Graphics Presets -->
-  <b-button block @click="setNav('graphics')" variant="dark" class="mt-2">Graphics Settings</b-button>
+  <b-button block @click="setNav('graphics')" class="mt-2"
+            :variant="navModel.graphics ? 'rf-orange' : 'dark'">
+    <b-icon icon="display"></b-icon><span class="ml-2">Graphics Settings</span>
+  </b-button>
   <b-collapse v-model="navModel.graphics" accordion="bench-accordion" role="tabpanel">
     <GraphicsPresetArea id-ref="gfxBench" class="mt-2" :gfx-handler="gfxHandler"/>
   </b-collapse>
 
   <!-- Results -->
-  <b-button block @click="setNav('results')" variant="dark" class="mt-2">Results</b-button>
+  <b-button block @click="setNav('results')" class="mt-2"
+            :variant="navModel.results ? 'rf-orange' : 'dark'">
+    <b-icon icon="bar-chart-line"></b-icon><span class="ml-2">Results</span>
+  </b-button>
   <b-collapse v-model="navModel.results" accordion="bench-accordion" role="tabpanel">
     <b-collapse :visible="selectedResult != null" @shown="chartCloseBtn=true">
       <!-- Chart Close Button -->
@@ -45,6 +70,9 @@
 
     <!-- Result list -->
     <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white">
+      <div v-if="!benchmarkResults.length">
+        No result files
+      </div>
       <div v-for="r in benchmarkResults" :key="r.id" class="mt-3 mb-3">
         <b-link @click="selectResult(r)"
                 :class="selectedResult === r.id ? 'text-rf-orange' : 'text-primary'">
@@ -75,7 +103,7 @@
           </div>
         </b-popover>
       </div>
-      <b-button class="ml-2" variant="secondary" @click="openResultFolder"
+      <b-button class="mt-2" variant="secondary" @click="openResultFolder"
                 v-b-popover.hover.auto="'Open result files folder'" size="sm">
         <b-icon icon="folder"></b-icon>
       </b-button>
@@ -103,7 +131,7 @@ export default {
   },
   data: function () {
     return {
-      navModel: {content: false, graphics: false, results: true},
+      navModel: {content: false, graphics: false, results: true, benchmark: true},
       settings: {},
       benchmarkPresetName: '',
       benchmarkResults: [],

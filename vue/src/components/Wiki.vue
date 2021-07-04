@@ -105,9 +105,21 @@
           </b-link>
         </b-list-group-item>
         <b-list-group-item variant="dark">
-          <b-link target="_blank" href="https://gitlab.com/Retrolux/reshade-vrtoolkit" class="text-rf-orange">
+          <b-link target="_blank" href="https://vrtoolkit.retrolux.de" class="text-rf-orange">
             ReShade VRToolkit - Copyright 2021 Retrolux. All rights reserved.
           </b-link>
+        </b-list-group-item>
+        <b-list-group-item variant="dark">
+          <b-link target="_blank" href="github.com/CXWorld/CapFrameX/releases/latest" class="text-rf-orange">
+            CapFrameX
+          </b-link>
+          <span> - use this to further analyse benchmark capture data!</span>
+        </b-list-group-item>
+        <b-list-group-item variant="dark">
+          <b-link target="_blank" href="https://github.com/GameTechDev/PresentMon" class="text-rf-orange">
+            PresentMon
+          </b-link>
+          <span> - PresentMon is a tool to capture and analyze ETW events related to swap chain presentation on Windows.</span>
         </b-list-group-item>
       </b-list-group>
       <h4 class="mt-5">ReShade - Copyright 2014 Patrick Mours. All rights reserved.</h4>
@@ -122,6 +134,26 @@
         CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
         ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
         SUCH DAMAGE.
+      </pre>
+      <h4 class="mt-5">PresentMon - Copyright 2017-2020 Intel Corporation</h4>
+      <pre class="text-muted">
+        Permission is hereby granted, free of charge, to any person obtaining a copy of
+        this software and associated documentation files (the "Software"), to deal in
+        the Software without restriction, including without limitation the rights to
+        use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+        of the Software, and to permit persons to whom the Software is furnished to do
+        so, subject to the following conditions:
+
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
       </pre>
     </b-card>
 

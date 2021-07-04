@@ -34,7 +34,7 @@
         </div>
       </template>
       <template v-else>
-        <div class="info-field fixed-width-name text-field">
+        <div>
           rF2 content is unknown. Use the refresh button to acquire rF2 content list.
         </div>
       </template>
