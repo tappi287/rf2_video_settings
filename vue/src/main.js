@@ -72,6 +72,22 @@ export const userScreenShots =
 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-362#post-1064530'],
 ['https://live.staticflickr.com/65535/51106673051_f69cb339a8_h.jpg', 'Franck',
 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-363#post-1065569'],
+['https://rehost.diberie.com/Picture/Get/f/43550', 'leseb64',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-368#post-1072495'],
+['https://rehost.diberie.com/Picture/Get/f/43551', 'leseb64',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-368#post-1072495'],
+['https://rehost.diberie.com/Picture/Get/f/43549', 'leseb64',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-368#post-1072495'],
+['https://i.imgur.com/SbWk9px.jpg', 'jayarrbee36',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-367#post-1070446'],
+['https://forum.studio-397.com/index.php?attachments/20210612210607_1-jpg.39120/', 'jayarrbee36',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-367#post-1071125'],
+['https://i.imgur.com/PRD6FLd.jpg', 'jayarrbee36',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-367#post-1071137'],
+['https://i.imgur.com/TQlkDNd.jpg', 'jayarrbee36',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-367#post-1071137'],
+['https://forum.studio-397.com/index.php?attachments/2021-06-29-13-10-png.39390/', 'MiguelVallejo',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-368#post-1072242']
 ]
 
 Vue.prototype.$eventHub = new Vue(); // Global event bus
@@ -189,4 +205,23 @@ export function getControllerValueName({button, key, hat, type, value, axis}) {
     return result
   }
   return 'Not Set'
+}
+
+export function setFixedWidth(groupId, nameId, elemId) {
+  // Iterate all elements of this setting group_id and set width to widest element found
+  const nameElem = document.querySelectorAll('#' + groupId + ' .fixed-width-name')
+  const settElem = document.querySelectorAll('#' + groupId + ' .fixed-width-setting')
+
+  let nameMaxWidth = getMaxWidth(nameElem); let settMaxWidth = getMaxWidth(settElem)
+
+  let e = document.getElementById(nameId)
+  if (e !== null) { e.style.width = String(nameMaxWidth) + 'px' }
+  let s = document.getElementById(elemId)
+  if (s !== null) { s.style.width = String(settMaxWidth) + 'px' }
+}
+
+export function minutesToDaytime(num) {
+  const hours = ('0' + String(Math.floor(num / 60))).slice(-2)
+  const minutes = ('0' + String(num % 60)).slice(-2)
+  return String(hours + ":" + minutes)
 }
