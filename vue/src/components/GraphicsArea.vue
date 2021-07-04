@@ -1,7 +1,7 @@
 <template>
 <div v-if="current_preset_idx === idx">
   <!-- Video Settings -->
-  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="video_settings"
+  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="video_settings" :fixed-width="fixedWidth"
                        :current_preset_idx="current_preset_idx"
                        :previous-preset-name="previousPresetName"
                        :setting-disabled="settingDisabled"
@@ -33,7 +33,7 @@
   </GenericSettingsArea>
 
   <!-- Display Settings -->
-  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="graphic_options"
+  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="graphic_options" :fixed-width="fixedWidth"
                        :current_preset_idx="current_preset_idx"
                        :previous-preset-name="previousPresetName"
                        :show-performance="showPerformance"
@@ -55,7 +55,7 @@
   </GenericSettingsArea>
 
   <!-- Advanced Display Settings -->
-  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="advanced_graphic_options"
+  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="advanced_graphic_options" :fixed-width="fixedWidth"
                        :current_preset_idx="current_preset_idx"
                        :previous-preset-name="previousPresetName"
                        :show_performance="showPerformance"
@@ -67,7 +67,7 @@
   </GenericSettingsArea>
 
   <!-- ReShade Settings -->
-  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="reshade_settings"
+  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="reshade_settings" :fixed-width="fixedWidth"
                        :current_preset_idx="current_preset_idx"
                        :previous-preset-name="previousPresetName"
                        :view_mode="viewMode"
@@ -78,7 +78,7 @@
     <template #footer>
       <div style="font-size: small;">
         Visit
-        <b-link class="text-rf-orange" target="_blank" href="https://vrtoolkit.retrolux.de/configuration.html">
+        <b-link class="text-rf-orange" target="_blank" href="https://vrtoolkit.retrolux.de/">
         Reshade VRToolkit
         </b-link>
         for more information.
@@ -131,7 +131,7 @@ export default {
     }
   },
   props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number, search: String,
-          previousPresetName: String},
+          previousPresetName: String, fixedWidth: Boolean },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
