@@ -464,8 +464,12 @@ export default {
           // Controls
           await this.$refs.con.importPreset(importPreset)
           break
+        case 3:
+          // Session
+          await this.$refs.ses.importPreset(importPreset)
+          break
         default:
-          this.makeToast('The type of preset you dropped is not supported or from a newer version than' +
+          this.makeToast('The type of preset you dropped is not supported or from a newer version than ' +
               'your version of the app.', 'warning', 'Preset Import')
       }
       console.log(importPreset.preset_type)
