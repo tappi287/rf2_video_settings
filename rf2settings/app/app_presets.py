@@ -66,7 +66,7 @@ def get_presets(preset_type: int):
 
 @eel.expose
 def select_preset(preset_name: str, preset_type: int):
-    logging.debug('Updating AppSettings: selected_preset = %s %s', preset_name, type(preset_type))
+    logging.debug('Updating AppSettings: selected_preset = %s %s', preset_name, preset_type)
 
     AppSettings.selected_presets[str(preset_type)] = preset_name
     AppSettings.save()
@@ -85,6 +85,11 @@ def save_preset(preset_js_dict):
     if rf.is_valid:
         if not rf.write_settings(p):
             return json.dumps({'result': False, 'msg': rf.error})
+
+    # -- Update WebUi Session Settings for next run
+    if rf.webui_session_settings:
+        AppSettings.web_ui_session_settings = rf.webui_session_settings
+
     return json.dumps({'result': True, 'msg': 'Preset saved and rFactor 2 Settings successfully written.'})
 
 
