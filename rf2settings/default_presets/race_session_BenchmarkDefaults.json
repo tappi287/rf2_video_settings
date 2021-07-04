@@ -1,0 +1,109 @@
+{
+  "content_ui_settings": {
+    "key": "Content UI Options",
+    "options": [
+      {
+        "key": "series",
+        "value": "b8026d9bf3351cef864b6db0d48aa374e6e7e5ed"
+      },
+      {
+        "key": "tracks",
+        "value": "6ea195c8243eb0a30b7f8e101fd964010b3842ae"
+      },
+      {
+        "key": "location",
+        "value": "Silverstone 2.12"
+      },
+      {
+        "key": "layout",
+        "value": "Silverstone -- Endurance"
+      },
+      {
+        "key": "manufacturer",
+        "value": "Nissan"
+      },
+      {
+        "key": "model",
+        "value": "Nissan, GT-R GT500 2013"
+      },
+      {
+        "key": "cars",
+        "value": "f178e3409600b420ca59f33287458ca1a09c6873"
+      }
+    ],
+    "title": "Content Selection"
+  },
+  "desc": "",
+  "name": "BenchmarkDefaults",
+  "preset_type": 3,
+  "session_condition_settings": {
+    "key": "Race Conditions",
+    "options": [
+      {
+        "key": "GPRIX Weather",
+        "value": 2
+      },
+      {
+        "key": "GPRIX RaceStartingTime",
+        "value": 1170
+      },
+      {
+        "key": "GPRIX Num Qual Sessions",
+        "value": 0
+      },
+      {
+        "key": "GPRIX Num Race Sessions",
+        "value": 1
+      },
+      {
+        "key": "Run Practice1",
+        "value": false
+      },
+      {
+        "key": "Run Practice2",
+        "value": false
+      },
+      {
+        "key": "Run Practice3",
+        "value": false
+      },
+      {
+        "key": "Run Practice4",
+        "value": false
+      },
+      {
+        "key": "Run Warmup",
+        "value": false
+      }
+    ],
+    "title": "Race Conditions"
+  },
+  "session_game_settings": {
+    "key": "Game Options",
+    "options": [
+      {
+        "key": "GPRIX Opponents",
+        "value": 45
+      },
+      {
+        "key": "Exit Confirmation",
+        "value": 0
+      }
+    ],
+    "title": "Session Settings"
+  },
+  "session_ui_settings": {
+    "key": "Session UI Options",
+    "options": [
+      {
+        "key": "SESSSET_Grid_Position",
+        "value": 20
+      },
+      {
+        "key": "SESSSET_AI_Strength",
+        "value": 90
+      }
+    ],
+    "title": "Session Ui Settings"
+  }
+}

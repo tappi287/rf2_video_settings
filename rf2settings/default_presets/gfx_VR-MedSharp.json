@@ -120,7 +120,7 @@
     ],
     "title": "Display Settings"
   },
-  "name": "VR-MedSharp_1",
+  "name": "VR-MedSharp",
   "preset_type": 0,
   "reshade_settings": {
     "key": "Base Options",
