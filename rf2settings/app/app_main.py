@@ -9,6 +9,7 @@ import gevent.event
 
 from rf2settings.app_settings import AppSettings
 from rf2settings.globals import RFACTOR_SETUPS, RFACTOR_MODMGR, get_log_file, get_log_dir
+from rf2settings.rf2connect import RfactorConnect
 from rf2settings.rfactor import RfactorPlayer, RfactorLocation
 from rf2settings.runasadmin import run_as_admin
 from rf2settings.utils import AppExceptionHook
@@ -122,6 +123,7 @@ def run_rfactor(server_info: Optional[dict] = None, method: Optional[int] = 0):
     rf, result = RfactorPlayer(), False
     if rf.is_valid:
         result = rf.run_rfactor(method, server_info)
+        RfactorConnect.set_to_active_timeout()
 
     return json.dumps({'result': result, 'msg': rf.error})
 
