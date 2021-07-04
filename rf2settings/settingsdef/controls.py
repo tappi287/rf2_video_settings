@@ -79,3 +79,8 @@ general_steering = {
              {'value': True, 'name': 'On'}, {'value': False, 'name': 'Off [Default]'})
          }
 }
+# Controller JSON Category: Input
+benchmark_rfactor = {
+    'Control - Toggle AI Control': {'name': 'Toggle AI Control', 'value': [0, 40], },
+    'Control - Framerate': {'name': 'Toggle FPS Counter', 'value': [0, 49], },
+}

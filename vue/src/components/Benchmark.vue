@@ -1,0 +1,261 @@
+<template>
+<div v-cloak id="benchmark-app" class="position-relative mb-5">
+  <!-- Introduction -->
+  <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white">
+    <b-card-text>You can run automated Benchmarks here. Choose the desired content, session settings and graphics
+    settings. The app will launch the game, switch to the desired settings, start a race session,
+    switch to AI Control, record the performance with Present Mon and quit the game.
+    </b-card-text>
+    <Setting v-for="setting in settings.options" :key="setting.key"
+             :setting="setting" variant="rf-orange" class="mr-3 mb-3"
+             @setting-changed="updateSetting">></Setting>
+  </b-card>
+
+  <!-- Session Settings and Content Selection -->
+  <b-button block @click="setNav('content')" variant="dark" class="mt-2">Session Settings</b-button>
+  <b-collapse v-model="navModel.content" accordion="bench-accordion" role="tabpanel">
+    <div class="mt-2">
+      <SessionSettingArea :ses-handler="sesHandler" @make-toast="makeToast" @set-busy="setBusy"/>
+    </div>
+  </b-collapse>
+
+  <!-- Graphics Presets -->
+  <b-button block @click="setNav('graphics')" variant="dark" class="mt-2">Graphics Settings</b-button>
+  <b-collapse v-model="navModel.graphics" accordion="bench-accordion" role="tabpanel">
+    <GraphicsPresetArea id-ref="gfxBench" class="mt-2" :gfx-handler="gfxHandler"/>
+  </b-collapse>
+
+  <!-- Results -->
+  <b-button block @click="setNav('results')" variant="dark" class="mt-2">Results</b-button>
+  <b-collapse v-model="navModel.results" accordion="bench-accordion" role="tabpanel">
+    <b-collapse :visible="selectedResult != null" @shown="chartCloseBtn=true">
+      <!-- Chart Close Button -->
+      <div v-if="chartCloseBtn" class="position-absolute" style="width: 100%; z-index: 100;">
+        <b-button class="mt-1 mr-1 border-0 bg-dark float-right" size="sm"
+                  @click="selectedResult=null; chartCloseBtn=false">
+          <b-icon icon="x"></b-icon>
+        </b-button>
+      </div>
+
+      <!-- Result Chart -->
+      <b-card class="mt-2 setting-card position-relative" bg-variant="dark" text-variant="white">
+        <BenchChart ref="chart" :chart-data="chartData" :title="currentResultName" />
+      </b-card>
+    </b-collapse>
+
+    <!-- Result list -->
+    <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white">
+      <div v-for="r in benchmarkResults" :key="r.id" class="mt-3 mb-3">
+        <b-link @click="selectResult(r)"
+                :class="selectedResult === r.id ? 'text-rf-orange' : 'text-primary'">
+          <h6>{{ r.name }}</h6>
+        </b-link>
+
+        Fps 99th: <span class="text-rf-orange">{{ fNum(r.data['fps99']) }}</span>
+        Fps 98th: <span class="text-rf-orange">{{ fNum(r.data['fps98']) }}</span>
+        Fps Avg: <span class="text-rf-orange">{{ fNum(r.data['fpsmean']) }}</span>
+        Fps Median: <span class="text-rf-orange">{{ fNum( r.data['fpsmedian']) }}</span>
+        <div class="mt-2">
+          <b-button size="sm" variant="danger" :id="'delete-result-btn' + r.id">
+            <b-icon icon="x"></b-icon>
+          </b-button>
+        </div>
+        <!-- Delete Popover -->
+        <b-popover :target="'delete-result-btn' + r.id" triggers="click">
+          <p>Do you really want to delete the Result: {{ r.name }}?</p>
+          <div class="text-right">
+            <b-button @click="deleteResult(r)" size="sm" variant="danger"
+                      aria-label="Delete" class="mr-2">
+              Delete
+            </b-button>
+            <b-button @click="$root.$emit('bv::hide::popover', 'delete-result-btn' + r.id)"
+                      size="sm" aria-label="Close">
+              Close
+            </b-button>
+          </div>
+        </b-popover>
+      </div>
+      <b-button class="ml-2" variant="secondary" @click="openResultFolder"
+                v-b-popover.hover.auto="'Open result files folder'" size="sm">
+        <b-icon icon="folder"></b-icon>
+      </b-button>
+    </b-card>
+  </b-collapse>
+
+  <b-button block variant="primary" class="mt-2" @click="start">Run Benchmark</b-button>
+</div>
+</template>
+
+<script>
+
+import {getEelJsonObject} from "@/main";
+import BenchChart from "@/components/BenchChart";
+import Setting from "@/components/Setting";
+import GraphicsPresetArea from "@/components/GraphicsPresetArea";
+import SessionSettingArea from "@/components/SessionSettingArea";
+export default {
+  name: "Benchmark",
+  components: {
+    SessionSettingArea,
+    GraphicsPresetArea,
+    Setting,
+    BenchChart,
+  },
+  data: function () {
+    return {
+      navModel: {content: false, graphics: false, results: true},
+      settings: {},
+      benchmarkPresetName: '',
+      benchmarkResults: [],
+      nonePreset: {name: 'None', isNonePreset: true},
+      chartCloseBtn: false,
+      chartData: {
+        labels: [],
+        yAxisSize: 15.0,
+        datasets: [
+          { label: 'Frame time',
+            data: {},
+            backgroundColor: 'rgba(70,62,166,0.4)',
+            borderColor: 'rgba(116,90,196,0.8)'
+          },
+          { label: 'Frames per second',
+            data: {},
+            backgroundColor: 'rgba(255,153,0,0.4)',
+            borderColor: 'rgba(250,124,86,0.8)'
+          }
+        ]
+      },
+      selectedResult: null,
+    }
+  },
+  props: { gfxHandler: Object, sesHandler: Object },
+  methods: {
+    makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
+      this.$emit('make-toast', message, category, title, append, delay)
+    },
+    fNum: function (num) { return parseFloat(Number.parseFloat(num).toFixed(2)) },
+    setBusy: function (busy) {this.$emit('set-busy', busy) },
+    setNav: function (nav) { this.navModel[nav] = !this.navModel[nav] },
+    refresh: async function() { await this.getResults() },
+    selectResult: function (r) {
+      this.setBusy(true)
+      this.selectedResult = r.id
+      this.updateChartData(r)
+      this.$nextTick(() => { this.$refs.chart.refresh() })
+      this.setBusy(false)
+    },
+    getResults: async function () {
+      this.benchmarkResults = await getEelJsonObject(window.eel.get_benchmark_results()())
+    },
+    deleteResult: async function(r) {
+      await window.eel.delete_benchmark_result(r.name)()
+      await this.getResults()
+      this.$root.$emit('bv::hide::popover', 'delete-result-btn' + r.id)
+    },
+    start: async function () {
+      this.setBusy(true)
+      // Save Session and Content Settings
+      await this.sesHandler.update()
+      // Save Benchmark settings
+      await this.saveSettings()
+      // Trigger a Benchmark Run
+      await window.eel.start_benchmark()()
+      this.setBusy(false)
+    },
+    getSettings: async function () {
+      this.setBusy(true)
+      const r = await getEelJsonObject(window.eel.get_benchmark_settings()())
+      if (!r.result) {
+        this.makeToast(r.msg, 'danger')
+        console.error('Error getting Benchmark Settings!', r.msg)
+        console.log(r)
+        return
+      }
+      this.settings = r.benchmark_settings
+      this.setBusy(false)
+    },
+    saveSettings: async function () {
+      this.setBusy(true)
+      const r = await getEelJsonObject(window.eel.save_benchmark_settings(this.settings)())
+
+      if (!r.result) {
+        this.makeToast(r.msg, 'danger')
+        console.error('Error writing Benchmark Settings!', r.msg)
+        console.log(r)
+      } else {
+        console.log('Saved Benchmark settings.')
+      }
+      this.setBusy(false)
+    },
+    openResultFolder: async function() {
+      await window.eel.open_result_folder()()
+    },
+    updateSetting: async function(setting, value) {
+      this.settings.options.forEach(s => { if (s.key === setting.key) { s.value = value }})
+      setting.value = value
+      await this.saveSettings()
+    },
+    updateChartData: function (r) {
+      if (r === null) { return {} }
+      this.chartData.labels = []            // X-Axis time
+      this.chartData.yAxisSize = 60         // Min Y-Axis size
+      this.chartData.xAxisSize = 50
+      this.chartData.datasets[0].data = []  // Frame times
+      this.chartData.datasets[1].data = []  // FPS
+
+      for (let i = 0; i < r.data['TimeInSeconds'].length; i++) {
+        // X-Axis Time in s
+        const time = r.data['TimeInSeconds'][i]
+        const time_label = String(this.fNum(time)) + 's'
+        this.chartData.labels.push(time_label)
+
+        // Y-Axis Frame Times
+        this.chartData.datasets[0].data.push(r.data['msBetweenPresents'][i])
+        this.chartData.datasets[1].data.push(r.data['fps'][i])
+
+        // Set Y-Axis size
+        this.chartData.yAxisSize = Number(
+            Math.max(r.data['fps'][i], this.chartData.yAxisSize, r.data['msBetweenPresents'][i]).toFixed()
+        )
+        // Set X-Axis size
+        this.chartData.xAxisSize = i
+
+        // Limit number of Data points
+        if (i > 15000) { break }
+      }
+    },
+  },
+  computed: {
+    currentPresetName() {
+      if (this.benchmarkPresetName === '') { return this.nonePreset.name }
+      return this.benchmarkPresetName
+    },
+    currentResult () {
+      let result = null
+      this.benchmarkResults.forEach(r => {
+        if (r.id === this.selectedResult) { result = r }
+      })
+      return result
+    },
+    currentResultName () {
+      let result = this.currentResult
+      if (result === null) { return '' }
+      return result.name
+    },
+    benchmarkPresetList() {
+      let presets = this.gfxHandler.presets.slice(1)
+      presets.unshift(this.nonePreset)
+      return presets
+    },
+  },
+  async created() {
+    this.setNav('results') // Display results
+    await this.getResults()
+    await this.getSettings()
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
