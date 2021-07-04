@@ -203,7 +203,7 @@ def start_lnk_from_powershell(shortcut: Path):
 #
 #   subprocess.check_output(['program_to_run', 'arg_1'],
 #                           **subprocess_args(False))
-def subprocess_args(include_stdout=True):
+def subprocess_args(include_stdout=True, cwd=None):
     # The following is true only on Windows.
     if hasattr(sp, 'STARTUPINFO'):
         # On Windows, subprocess calls will pop up a command window by default
@@ -240,7 +240,8 @@ def subprocess_args(include_stdout=True):
     ret.update({'stdin': sp.PIPE,
                 'stderr': sp.PIPE,
                 'startupinfo': si,
-                'env': env})
+                'env': env,
+                'cwd': cwd})
     return ret
 
 

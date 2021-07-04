@@ -5,6 +5,8 @@ from pathlib import Path
 from queue import Queue, Empty
 from typing import Union, Optional
 
+from rf2settings.utils import subprocess_args
+
 
 class RunProcess(threading.Thread):
     result_timeout = 10
@@ -59,7 +61,7 @@ class RunProcess(threading.Thread):
                       global_queue: Optional[Queue]):
         """ Reads and writes process stdout to log until process ends """
         try:
-            process = sp.Popen(args, stdout=sp.PIPE, stderr=sp.STDOUT, stdin=sp.PIPE, cwd=cwd)
+            process = sp.Popen(args, **subprocess_args(True, cwd=cwd))
         except Exception as e:
             logging.error('Error starting process: %s', e)
             event.set()
