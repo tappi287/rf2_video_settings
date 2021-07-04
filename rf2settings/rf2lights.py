@@ -37,7 +37,7 @@ class RfactorHeadlight:
         self.headlight_state = None
         self.headlight_toggle_dik = headlight_toggle_dik or 'DIK_H'
         self.rf2_auto_headlights_enabled = False
-        info = RfactorConnect.shared_memory_obj
+        self.info = RfactorConnect.shared_memory_obj
         self._flashing = False
         self._count = 0
         self.timer = (0, 0)  # On time, off time
