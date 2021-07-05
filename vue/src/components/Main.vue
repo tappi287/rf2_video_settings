@@ -76,7 +76,7 @@
                    :preset-type="2" @set-busy="setBusy" />
     
     <!-- Session Settings Handler -->
-    <PresetHandler ref="ses" @make-toast="makeToast" @error="setError" id-ref="ses"
+    <PresetHandler ref="ses" @make-toast="makeToast" @error="setError" id-ref="ses" ignore-deviations
                    :preset-type="3" @set-busy="setBusy" />
 
     <!-- Dashboard -->

@@ -35,7 +35,7 @@ export default {
       error: '',
     }
   },
-  props: { presetType: Number, idRef: String },
+  props: { presetType: Number, idRef: String, ignoreDeviations: Boolean },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
@@ -67,7 +67,7 @@ export default {
 
       this.presets = sortPresets(r.presets)
       let appSelectedPresetIdx = -1
-      if (r.preset_changed !== null) {
+      if (r.preset_changed !== null && !this.ignoreDeviations) {
         this.previousPresetName = r.preset_changed
         this.makeToast('Detected settings deviations to previously selected Preset ' + this.previousPresetName +
             ' on disk. Pointing you to the "Current Preset" reflecting the actual settings on disk.',
