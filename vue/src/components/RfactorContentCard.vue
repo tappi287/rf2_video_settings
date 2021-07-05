@@ -20,8 +20,8 @@
             </b-input-group-prepend>
             <b-input-group-append>
               <!-- Dropdown Menu -->
-              <b-dropdown :text="currentContentName[contentType]" toggle-class="rounded-0"
-                          class="setting-item no-border"
+              <b-dropdown :text="currentContentName[contentType]" class="setting-item fixed-width-setting no-border"
+                          :id="elemId + contentType"
                           :variant="currentContentName[contentType] === 'None' ? 'rf-blue' : 'rf-orange'">
                 <b-dropdown-item v-for="item in displayContent[contentType]" :key="item.id"
                                  @click="selectItem(contentType, item)">
@@ -66,17 +66,18 @@
 </template>
 
 <script>
-import {getEelJsonObject, setFixedWidth} from "@/main";
+import {getEelJsonObject, setFixedWidth, clearElementsWidthStyle} from "@/main";
 import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 
 export default {
   name: "RfactorContentCard",
   components: {LaunchRfactorBtn},
-  props: {text: String, fixWidth: Boolean, settings: Array, headerIcon: String },
+  props: {text: String, fixedWidth: Boolean, settings: Array, headerIcon: String },
   data: function () {
     return {
       groupId: 'contentarea' + this._uid,
-      nameId: 'content' + this._uid,
+      nameId: 'contentname' + this._uid,
+      elemId: 'contentdrop' + this._uid,
       content: {'series': [], 'tracks': [], 'location': [], 'layout': [], 'manufacturer': [], 'model': [], 'cars': []},
       contentTypes: ['series', 'location', 'layout', 'manufacturer', 'model', 'cars'],
       staticTypes: ['series', 'tracks', 'location', 'manufacturer'],
@@ -194,14 +195,13 @@ export default {
       await this.getContent()
 
       // Update fixed width
-      if (this.fixWidth) {
-        // Access after rendering finished
-        setTimeout(() => { this.setFixedWidth() }, 0)
-      }
+      // Access after rendering finished
+      setTimeout(() => { this.setFixedWidth() }, 0)
     },
-    setFixedWidth() {
+    setFixedWidth: function () {
+      if (!this.fixedWidth) { return }
       this.contentTypes.forEach(c => {
-        setFixedWidth(this.groupId, this.nameId + c, '')
+        setFixedWidth(this.groupId, this.nameId + c, this.elemId + c)
       })
     },
     getPresetSetting: function (contentType) {
@@ -213,6 +213,11 @@ export default {
       if (value === null || value === undefined) { return }
       console.log('Updating Content Selection:', contentType, value, )
       this.$emit('update-setting', this.getPresetSetting(contentType), value)
+
+      this.$nextTick(() => {
+        clearElementsWidthStyle(this.groupId)
+        this.$nextTick(() => { this.setFixedWidth() })
+      })
     },
   },
   watch: {

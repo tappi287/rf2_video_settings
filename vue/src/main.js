@@ -115,6 +115,12 @@ export function getMaxWidth (elements) {
   return maxWidth
 }
 
+export function clearWidthStyle (elements) {
+  for (let i in elements) {
+      if (elements[i].style !== undefined) { elements[i].style.width = null }
+  }
+}
+
 export function chooseIndex(choices) {
   return Math.floor(Math.random() * choices.length);
 }
@@ -205,6 +211,13 @@ export function getControllerValueName({button, key, hat, type, value, axis}) {
     return result
   }
   return 'Not Set'
+}
+
+export function clearElementsWidthStyle(groupId) {
+  const nameElem = document.querySelectorAll('#' + groupId + ' .fixed-width-name')
+  const settElem = document.querySelectorAll('#' + groupId + ' .fixed-width-setting')
+  clearWidthStyle(nameElem)
+  clearWidthStyle(settElem)
 }
 
 export function setFixedWidth(groupId, nameId, elemId) {

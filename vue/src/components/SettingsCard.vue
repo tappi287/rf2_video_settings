@@ -2,7 +2,7 @@
 <div v-if="current_preset_idx === idx">
   <!-- Content Selection -->
   <RfactorContentCard show-launch text="Content Selection" @launched="$emit('content-launched')"
-                      :fix-width="fixedWidth" v-if="contentSelection" :settings="contentSettings"
+                      :fixed-width="fixedWidth" v-if="contentSelection" :settings="contentSettings"
                       :header-icon="headerIcon"
                       @make-toast="makeToast" @set-busy="setBusy" @update-setting="updateSetting">
     <template #footer>
