@@ -12,15 +12,14 @@ from .utils import JsonRepr
 
 
 class AppSettings(JsonRepr):
-    skip_keys = ['web_ui_session_settings',
-                 'content_selected', 'content_keys', 'content_urls', 'content', 'content_saved', 'content_loaded']
-
     backup_created = False
     needs_admin = False
     selected_presets: Dict[str, str] = dict()
     replay_preset = str()
-    replay_playing = False
+
     rf_overwrite_location = ''
+
+    last_rf_version = str()
     user_presets_dir = str()
     deleted_defaults = list()  # Default Presets the user deleted
     server_favourites = list()
@@ -32,13 +31,20 @@ class AppSettings(JsonRepr):
     headlight_rf_key = 'DIK_H'
     server_passwords = dict()
 
+    # -- Won't be saved to file:
+    skip_keys = ['first_load_complete', 'session_selection', 'replay_playing',
+                 'content_selected', 'content_keys', 'content_urls', 'content', 'content_saved']
+
+    first_load_complete = False
+    replay_playing = False
+
+    content = dict()
     content_keys = ['series', 'tracks', 'cars']
     content_urls = ['/rest/race/series', '/rest/race/track', '/rest/race/car']
-    content = dict()
-    content_selected = dict()
-    session_selection = dict()
+
+    content_selected = dict()   # Content Selection will be saved to preset but transferred to greenlets via this var
+    session_selection = dict()  # Session Selection will be saved to preset but transferred to greenlets via this var
     content_saved = False
-    content_loaded = False
 
     def __init__(self):
         self.backup_created = AppSettings.backup_created
@@ -196,12 +202,24 @@ class AppSettings(JsonRepr):
         return get_settings_dir() / SETTINGS_CONTENT_FILE_NAME
 
     @classmethod
+    def save_content(cls):
+        file = cls._get_settings_content_file()
+
+        try:
+            with open(file.as_posix(), 'w') as f:
+                f.write(json.dumps(cls.content))
+        except Exception as e:
+            logging.error('Could not save content! %s', e)
+            return False
+
+        cls.content_saved = True
+        return True
+
+    @classmethod
     def save(cls, save_content: bool = False):
         # -- Save 'content' in separate file
-        if save_content:
-            cls.content_saved = True
-        elif not save_content and cls.content and not cls.content_saved:
-            cls.save(save_content=True)
+        if cls.content and not cls.content_saved:
+            cls.save_content()
 
         file = cls._get_settings_content_file() if save_content else cls._get_settings_file()
 
@@ -220,24 +238,49 @@ class AppSettings(JsonRepr):
         return True
 
     @classmethod
-    def load(cls, load_content: bool = False) -> bool:
-        # -- Load 'content' from separate file
-        if load_content:
-            cls.content_loaded = True
-        if not cls.content and not cls.content_loaded:
-            cls.load(load_content=True)
+    def _first_load(cls):
+        if not cls.first_load_complete:
+            # -- Reset Content data if rFactor version changed
+            version = RfactorPlayer(only_version=True).version.replace('\n', '')
+            logging.debug('Compared last known rF version %s with current version %s', cls.last_rf_version, version)
 
-        file = cls._get_settings_content_file() if load_content else cls._get_settings_file()
+            if version != cls.last_rf_version:
+                cls.last_rf_version = version
+                content_data_file = cls._get_settings_content_file()
+                if content_data_file.exists():
+                    logging.info('Found differing rFactor version. Deleting content data.')
+                    content_data_file.unlink()
+                # -- Save updated version
+                cls.save()
+            else:
+                cls.load_content()
+
+            cls.first_load_complete = True
+
+    @classmethod
+    def load_content(cls) -> bool:
+        file = cls._get_settings_content_file()
 
         try:
-            with open(file.as_posix(), 'r') as f:
-                if not load_content:
+            if file.exists():
+                with open(file.as_posix(), 'r') as f:
+                    cls.content = json.loads(f.read())
+        except Exception as e:
+            logging.error('Could not load content list! %s', e)
+            return False
+
+        return True
+
+    @classmethod
+    def load(cls) -> bool:
+        file = cls._get_settings_file()
+
+        try:
+            if file.exists():
+                with open(file.as_posix(), 'r') as f:
                     # -- Load Settings
                     # noinspection PyTypeChecker
                     cls.from_js_dict(cls, json.loads(f.read()))
-                else:
-                    # -- Load content
-                    cls.content = json.loads(f.read())
         except Exception as e:
             logging.error('Could not load application settings! %s', e)
             return False
@@ -248,5 +291,8 @@ class AppSettings(JsonRepr):
         # -- Overwrite rf2 location if overwrite location set
         if cls.rf_overwrite_location and cls.rf_overwrite_location not in ('.', '..', '../modules'):
             RfactorLocation.overwrite_location(cls.rf_overwrite_location)
+
+        # -- Operations on first load
+        cls._first_load()
 
         return True
