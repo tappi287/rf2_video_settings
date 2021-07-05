@@ -49,7 +49,6 @@ def _rfactor_greenlet_loop():
 
     # -- If we were live before, re-apply previous graphics preset
     if RfactorLiveEvent.changed_from_live():
-        RfactorBenchmark.rf_changed_from_live = True
         _restore_pre_replay_preset()
         gevent.sleep(0.5)
 

@@ -129,7 +129,6 @@ def _create_benchmark_commands(ai_key, fps_key):
 class RfactorBenchmark:
     running = False
     recording = False
-    rf_changed_from_live = False
 
     # -- Keyboard Mappings to be read from rF2
     ai_key = 'Control - Toggle AI Control'
@@ -151,7 +150,7 @@ class RfactorBenchmark:
         """
         self.kill_pm_event = threading.Event()
         self.kill_event = threading.Event()
-        self.present_mon_process: Optional[threading.Thread] = None
+        self.present_mon_process: Optional[RunProcess] = None
 
         self.rf = rf or RfactorPlayer()
 
@@ -177,8 +176,6 @@ class RfactorBenchmark:
             RecordBenchmarkEvent.reset()
             if not self.start_present_mon_logging():
                 self.finish()
-        else:
-            RecordBenchmarkEvent.reset()
 
         # -- End Benchmark after benchmark length
         if self.recording and self.start_time > 0.0:
@@ -186,14 +183,12 @@ class RfactorBenchmark:
             RfactorStatusEvent.set(f'Recording Benchmark: {remaining:.0f}s remaining.')
 
             if remaining <= 0.0:
-                logging.info('Benchmark is requesting rF2 quit.')
-                RfactorQuitEvent.set(True)
                 self.start_time = 0.0
+                self.finish()
 
-        # -- If we were live before, close Benchmark
-        if self.rf_changed_from_live and self.recording:
-            RfactorStatusEvent.set(f'Benchmark finished.')
-            self.rf_changed_from_live = False
+        # -- End Benchmark if PresentMon process finished
+        if self.present_mon_process is not None and self.present_mon_process.event.is_set():
+            logging.info('Detected end of Benchmark Recording process.')
             self.finish()
 
     def run(self):
@@ -234,6 +229,8 @@ class RfactorBenchmark:
             self.start_time = time.time()
             self.recording = True
             return True
+
+        logging.info('Instance of PresentMon process is already present. Can not start Benchmark Recording.')
         return False
 
     def finish(self):
@@ -251,6 +248,9 @@ class RfactorBenchmark:
         self.recording = False
 
     def abort(self):
+        logging.info('Benchmark is requesting rF2 quit.')
+        RfactorQuitEvent.set(True)
+
         self.kill_event.set()
         self.kill_pm_event.set()
         if self.present_mon_process is not None:
