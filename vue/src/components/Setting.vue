@@ -97,7 +97,7 @@ export default {
     }
   },
   props: {
-    setting: Object, variant: String, fixWidth: Boolean, show_performance: Boolean,
+    setting: Object, variant: String, fixedWidth: Boolean, show_performance: Boolean,
     disabled: Boolean, groupId: String, previousPresetName: String
   },
   methods: {
@@ -156,7 +156,9 @@ export default {
       return false
     },
     setFixedWidth: function () {
-      setFixedWidth(this.groupId, this.nameId, this.elemId)
+      if (this.fixedWidth) {
+        setFixedWidth(this.groupId, this.nameId, this.elemId)
+      }
     },
   },
   created: function () {
@@ -164,29 +166,29 @@ export default {
     this.settingDesc = this.setting.desc || ''
 
     // Check Setting Type
-    if (this.setting.settings[0].settingType !== undefined) {
-      if (this.setting.settings[0].settingType === 'range') {
-        this.inputType = 'range'
-        this.rangeMin = this.setting.settings[0].min
-        this.rangeMax = this.setting.settings[0].max
-        this.rangeStep = this.setting.settings[0].step
-        this.rangeDisp = this.setting.settings[0].display
-        this.rangeValue = this.setting.value
-        this.spinnerInputValue = this.setting.value
-        this.settingDesc = this.setting.desc || this.setting.settings[0].desc || ''
-        this.$nextTick(() => { this.setupSpinnerDblClick() })
+    if (this.setting.settings !== undefined && this.setting.settings.length) {
+      if (this.setting.settings[0].settingType !== undefined) {
+        if (this.setting.settings[0].settingType === 'range') {
+          this.inputType = 'range'
+          this.rangeMin = this.setting.settings[0].min
+          this.rangeMax = this.setting.settings[0].max
+          this.rangeStep = this.setting.settings[0].step
+          this.rangeDisp = this.setting.settings[0].display
+          this.rangeValue = this.setting.value
+          this.spinnerInputValue = this.setting.value
+          this.settingDesc = this.setting.desc || this.setting.settings[0].desc || ''
+          this.$nextTick(() => { this.setupSpinnerDblClick() })
+        }
       }
     }
   },
   mounted () {
     if (this.variant === undefined) { this.variant = 'secondary'}
     this.currentSettingValue = this.setting.value
-    if (this.fixWidth) {
-      // Access after rendering finished
-      setTimeout(() => {
-        this.setFixedWidth()
-      }, 0)
-    }
+    // Access after rendering finished
+    this.$nextTick(() => {
+      this.setFixedWidth()
+    })
   },
   computed: {
     currentSettingName: function () {

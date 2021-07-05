@@ -1,11 +1,10 @@
 <template>
   <div>
-    <b-card class="mt-2 setting-card text-center" bg-variant="dark" text-variant="white" :id="groupId">
+    <b-card class="mt-2 setting-card text-center" header-class="m-0 p-2"
+            bg-variant="dark" text-variant="white" :id="groupId">
       <template #header v-if="displayText">
-        <h6 class="mb-0">
-          <b-icon icon="box-seam" variant="primary"></b-icon>
-          <span class="title ml-2">{{ displayText }}</span>
-        </h6>
+        <b-icon v-if="headerIcon" :icon="headerIcon"></b-icon>
+        <span :class="headerIcon ? 'ml-2' : ''">{{ displayText }}</span>
       </template>
 
       <slot name="content"></slot>
@@ -73,7 +72,7 @@ import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 export default {
   name: "RfactorContent",
   components: {LaunchRfactorBtn},
-  props: {text: String, fixWidth: Boolean, settings: Array },
+  props: {text: String, fixWidth: Boolean, settings: Array, headerIcon: String },
   data: function () {
     return {
       groupId: 'contentarea' + this._uid,
@@ -202,7 +201,6 @@ export default {
     },
     setFixedWidth() {
       this.contentTypes.forEach(c => {
-        console.log('Setting up width:', this.groupId, this.nameId + c)
         setFixedWidth(this.groupId, this.nameId + c, '')
       })
     },

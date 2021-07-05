@@ -120,30 +120,30 @@
 
         <div>
           <div v-for="(conPreset, idx) in $refs.con.presets" :key="conPreset.name">
-            <GenericSettingsArea :preset="conPreset" :idx="idx" :search="search" fixed-width
-                                 settings-key="freelook_settings"
-                                 :current_preset_idx="$refs.con.selectedPresetIdx"
-                                 :previous-preset-name="$refs.con.previousPresetName"
-                                 :view_mode="$refs.con.viewMode"
-                                 @update-setting="$refs.con.updateSetting"
-                                 @set-busy="setBusy"
-                                 @make-toast="makeToast"/>
-            <GenericSettingsArea :preset="conPreset" :idx="idx" :search="search" fixed-width
-                                 settings-key="gamepad_mouse_settings"
-                                 :current_preset_idx="$refs.con.selectedPresetIdx"
-                                 :previous-preset-name="$refs.con.previousPresetName"
-                                 :view_mode="$refs.con.viewMode"
-                                 @update-setting="$refs.con.updateSetting"
-                                 @set-busy="setBusy"
-                                 @make-toast="makeToast"/>
-            <GenericSettingsArea :preset="conPreset" :idx="idx" :search="search" fixed-width
-                                 settings-key="general_steering_settings"
-                                 :current_preset_idx="$refs.con.selectedPresetIdx"
-                                 :previous-preset-name="$refs.con.previousPresetName"
-                                 :view_mode="$refs.con.viewMode"
-                                 @update-setting="$refs.con.updateSetting"
-                                 @set-busy="setBusy"
-                                 @make-toast="makeToast"/>
+            <SettingsCard :preset="conPreset" :idx="idx" :search="search" fixed-width
+                          settings-key="freelook_settings" header-icon="card-list"
+                          :current_preset_idx="$refs.con.selectedPresetIdx"
+                          :previous-preset-name="$refs.con.previousPresetName"
+                          :view_mode="$refs.con.viewMode"
+                          @update-setting="$refs.con.updateSetting"
+                          @set-busy="setBusy"
+                          @make-toast="makeToast"/>
+            <SettingsCard :preset="conPreset" :idx="idx" :search="search" fixed-width
+                          settings-key="gamepad_mouse_settings" header-icon="receipt"
+                          :current_preset_idx="$refs.con.selectedPresetIdx"
+                          :previous-preset-name="$refs.con.previousPresetName"
+                          :view_mode="$refs.con.viewMode"
+                          @update-setting="$refs.con.updateSetting"
+                          @set-busy="setBusy"
+                          @make-toast="makeToast"/>
+            <SettingsCard :preset="conPreset" :idx="idx" :search="search" fixed-width
+                          settings-key="general_steering_settings" header-icon="filter-circle"
+                          :current_preset_idx="$refs.con.selectedPresetIdx"
+                          :previous-preset-name="$refs.con.previousPresetName"
+                          :view_mode="$refs.con.viewMode"
+                          @update-setting="$refs.con.updateSetting"
+                          @set-busy="setBusy"
+                          @make-toast="makeToast"/>
           </div>
         </div>
       </b-overlay>
@@ -171,22 +171,22 @@
 
         <div>
           <div v-for="(genPreset, idx) in $refs.gen.presets" :key="genPreset.name">
-            <GenericSettingsArea :preset="genPreset" :idx="idx" :search="search" fixed-width
-                                 settings-key="game_options"
-                                 :current_preset_idx="$refs.gen.selectedPresetIdx"
-                                 :previous-preset-name="$refs.gen.previousPresetName"
-                                 :view_mode="$refs.gen.viewMode"
-                                 @update-setting="$refs.gen.updateSetting"
-                                 @set-busy="setBusy"
-                                 @make-toast="makeToast"/>
-            <GenericSettingsArea :preset="genPreset" :idx="idx" :search="search" fixed-width
-                                 settings-key="misc_options"
-                                 :current_preset_idx="$refs.gen.selectedPresetIdx"
-                                 :previous-preset-name="$refs.gen.previousPresetName"
-                                 :view_mode="$refs.gen.viewMode"
-                                 @update-setting="$refs.gen.updateSetting"
-                                 @set-busy="setBusy"
-                                 @make-toast="makeToast"/>
+            <SettingsCard :preset="genPreset" :idx="idx" :search="search" fixed-width
+                          settings-key="game_options" header-icon="card-heading"
+                          :current_preset_idx="$refs.gen.selectedPresetIdx"
+                          :previous-preset-name="$refs.gen.previousPresetName"
+                          :view_mode="$refs.gen.viewMode"
+                          @update-setting="$refs.gen.updateSetting"
+                          @set-busy="setBusy"
+                          @make-toast="makeToast"/>
+            <SettingsCard :preset="genPreset" :idx="idx" :search="search" fixed-width
+                          settings-key="misc_options" header-icon="card-text"
+                          :current_preset_idx="$refs.gen.selectedPresetIdx"
+                          :previous-preset-name="$refs.gen.previousPresetName"
+                          :view_mode="$refs.gen.viewMode"
+                          @update-setting="$refs.gen.updateSetting"
+                          @set-busy="setBusy"
+                          @make-toast="makeToast"/>
           </div>
         </div>
       </b-overlay>
@@ -329,7 +329,7 @@ import Dashboard from "@/components/Dashboard";
 import PresetUi from "@/components/PresetUi";
 import ServerBrowser from "@/components/ServerBrowser";
 import PresetHandler from "@/components/PresetHandler";
-import GenericSettingsArea from "@/components/GenericSettingsArea";
+import SettingsCard from "@/components/SettingsCard";
 import Wiki from "@/components/Wiki";
 import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 import Headlights from "@/components/Headlights";
@@ -521,7 +521,7 @@ export default {
     Replays,
     Headlights,
     LaunchRfactorBtn,
-    GenericSettingsArea,
+    SettingsCard,
     Dashboard,
     ServerBrowser,
     PresetHandler,

@@ -3,6 +3,7 @@
   <!-- Content Selection -->
   <RfactorContent show-launch text="Content Selection" @launched="$emit('content-launched')"
                   :fix-width="fixedWidth" v-if="contentSelection" :settings="contentSettings"
+                  :header-icon="headerIcon"
                   @make-toast="makeToast" @set-busy="setBusy" @update-setting="updateSetting">
     <template #footer>
       <slot name="contentFooter"></slot>
@@ -10,17 +11,18 @@
   </RfactorContent>
 
   <!-- Generic Settings -->
-  <b-card class="mt-2 setting-card" :id="groupId" v-if="!contentSelection"
+  <b-card class="mt-2 setting-card" header-class="m-0 p-2" :id="groupId" v-if="!contentSelection"
           bg-variant="dark" text-variant="white">
+    <!-- Header -->
     <template #header>
-      <h6 class="mb-0">
-        <span class="title">{{ preset[settingsKey].title }}</span>
-      </h6>
+        <b-icon v-if="headerIcon" :icon="headerIcon"></b-icon>
+        <span :class="headerIcon ? 'ml-2' : ''">{{ preset[settingsKey].title }}</span>
     </template>
+    <!-- Settings -->
     <template v-if="!viewMode">
       <!-- View Mode Grid -->
       <Setting v-for="setting in searchedOptions" :key="setting.key"
-               :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixWidth="fixedWidth"
+               :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixedWidth="fixedWidth"
                :show_performance="showPerformance"
                :disabled="settingDisabledLocal(setting)"
                :group-id="groupId"
@@ -33,7 +35,7 @@
       <b-list-group class="text-left">
         <b-list-group-item class="bg-transparent" v-for="setting in searchedOptions"
                            :key="setting.key">
-          <Setting :setting="setting" variant="rf-orange" :fixWidth="fixedWidth"
+          <Setting :setting="setting" variant="rf-orange" :fixedWidth="fixedWidth"
                    :show_performance="showPerformance"
                    :disabled="settingDisabledLocal(setting)"
                    :group-id="groupId"
@@ -56,10 +58,10 @@ import RfactorContent from "@/components/RfactorContent";
 /* import {getEelJsonObject} from "@/main"; */
 
 export default {
-  name: "GenericSettingsArea",
+  name: "SettingsCard",
   props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number, settingsKey: String,
           settingDisabled: Function, showPerformance: Boolean, search: String, previousPresetName: String,
-          fixedWidth: Boolean, contentSelection: Boolean},
+          fixedWidth: Boolean, contentSelection: Boolean, headerIcon: String },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)

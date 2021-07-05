@@ -84,7 +84,7 @@ export default {
     }
   },
   props: {
-    setting: Object, variant: String, fixWidth: Boolean, groupId: String, rfJson: Boolean
+    setting: Object, variant: String, fixedWidth: Boolean, groupId: String, rfJson: Boolean
   },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
@@ -178,7 +178,7 @@ export default {
   mounted () {
     if (this.rfJson) { this.getRfactorKeyName() }
 
-    if (this.fixWidth) {
+    if (this.fixedWidth) {
       // Access after rendering finished
       setTimeout(() => {
         this.setFixedWidth()

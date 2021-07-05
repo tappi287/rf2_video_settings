@@ -1,15 +1,15 @@
 <template>
 <div v-if="current_preset_idx === idx">
   <!-- Video Settings -->
-  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="video_settings" :fixed-width="fixedWidth"
-                       :current_preset_idx="current_preset_idx"
-                       :previous-preset-name="previousPresetName"
-                       :setting-disabled="settingDisabled"
-                       :show-performance="showPerformance"
-                       :search="search"
-                       @update-setting="updateSetting"
-                       @set-busy="setBusy"
-                       @make-toast="makeToast">
+  <SettingsCard :preset="preset" :idx="idx" settings-key="video_settings" :fixed-width="fixedWidth"
+                :current_preset_idx="current_preset_idx"
+                :previous-preset-name="previousPresetName"
+                :setting-disabled="settingDisabled"
+                :show-performance="showPerformance"
+                :search="search" header-icon="film"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
     <template #footer>
       <div class="float-left video-indicator">
         <template v-if="preset.resolution_settings.options[0].value !== null">
@@ -30,18 +30,18 @@
         </b-button>
       </div>
     </template>
-  </GenericSettingsArea>
+  </SettingsCard>
 
   <!-- Display Settings -->
-  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="graphic_options" :fixed-width="fixedWidth"
-                       :current_preset_idx="current_preset_idx"
-                       :previous-preset-name="previousPresetName"
-                       :show-performance="showPerformance"
-                       :view_mode="viewMode"
-                       :search="search"
-                       @update-setting="updateSetting"
-                       @set-busy="setBusy"
-                       @make-toast="makeToast">
+  <SettingsCard :preset="preset" :idx="idx" settings-key="graphic_options" :fixed-width="fixedWidth"
+                :current_preset_idx="current_preset_idx"
+                :previous-preset-name="previousPresetName"
+                :show-performance="showPerformance"
+                :view_mode="viewMode"
+                :search="search" header-icon="display"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
     <template #footer>
       <div class="float-right">
         <b-button size="sm" @click="showPerformance = !showPerformance"
@@ -52,29 +52,29 @@
         </b-button>
       </div>
     </template>
-  </GenericSettingsArea>
+  </SettingsCard>
 
   <!-- Advanced Display Settings -->
-  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="advanced_graphic_options" :fixed-width="fixedWidth"
-                       :current_preset_idx="current_preset_idx"
-                       :previous-preset-name="previousPresetName"
-                       :show_performance="showPerformance"
-                       :view_mode="viewMode"
-                       :search="search"
-                       @update-setting="updateSetting"
-                       @set-busy="setBusy"
-                       @make-toast="makeToast">
-  </GenericSettingsArea>
+  <SettingsCard :preset="preset" :idx="idx" settings-key="advanced_graphic_options" :fixed-width="fixedWidth"
+                :current_preset_idx="current_preset_idx"
+                :previous-preset-name="previousPresetName"
+                :show_performance="showPerformance"
+                :view_mode="viewMode"
+                :search="search" header-icon="card-list"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
+  </SettingsCard>
 
   <!-- ReShade Settings -->
-  <GenericSettingsArea :preset="preset" :idx="idx" settings-key="reshade_settings" :fixed-width="fixedWidth"
-                       :current_preset_idx="current_preset_idx"
-                       :previous-preset-name="previousPresetName"
-                       :view_mode="viewMode"
-                       :search="search"
-                       @update-setting="updateSetting"
-                       @set-busy="setBusy"
-                       @make-toast="makeToast">
+  <SettingsCard :preset="preset" :idx="idx" settings-key="reshade_settings" :fixed-width="fixedWidth"
+                :current_preset_idx="current_preset_idx"
+                :previous-preset-name="previousPresetName"
+                :view_mode="viewMode"
+                :search="search" header-icon="image"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
     <template #footer>
       <div style="font-size: small;">
         Visit
@@ -84,7 +84,7 @@
         for more information.
       </div>
     </template>
-  </GenericSettingsArea>
+  </SettingsCard>
 
   <!-- Video Setup Modal -->
   <b-modal id="video-modal" centered hide-header-close no-close-on-backdrop no-close-on-esc>
@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import GenericSettingsArea from "@/components/GenericSettingsArea";
+import SettingsCard from "@/components/SettingsCard";
 import {getEelJsonObject} from "@/main";
 
 export default {
@@ -212,7 +212,7 @@ export default {
     }
   },
   components: {
-      GenericSettingsArea
+      SettingsCard
   },
   computed: {
     viewMode: function () {

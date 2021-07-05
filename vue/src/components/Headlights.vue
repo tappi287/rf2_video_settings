@@ -19,10 +19,10 @@
     </b-input-group>
 
     <!-- Headlight rFactor Control Mapping -->
-    <b-card class="mt-2 setting-card" id="hdl-controller-json-area"
+    <b-card class="mt-2 setting-card" id="hdl-controller-json-area" header-class="p-3"
             bg-variant="dark" text-variant="white" footer-class="pt-0">
       <template #header class="position-relative">
-        <h6 class="mb-0 title">rFactor 2 Headlight Control</h6>
+        <b-icon icon="lamp" /><span class="ml-2">rFactor 2 Headlight Control</span>
         <div class="position-absolute headlight-title-right">
           <b-button size="sm" class="rounded-right" @click="getSettings"
                     v-b-popover.hover.bottom="'Refresh Settings if you updated a setting in-game'">
@@ -33,7 +33,7 @@
       <ControllerAssignment
           v-for="setting in headlightControllerJsonSettings.options" :key="setting.key"
           :setting="setting" variant="rf-orange" class="mr-3 mb-3" :rf-json="true"
-          group-id="hdl-controller-json-area" :fix-width="true"
+          group-id="hdl-controller-json-area" :fixed-width="true"
           @update-assignment="updateJsonAssignment"
           @make-toast="makeToast">
       </ControllerAssignment>
@@ -54,10 +54,10 @@
     </b-card>
 
     <!-- Headlight App Settings -->
-    <b-card class="mt-2 setting-card" id="headlight-settings-area"
+    <b-card class="mt-2 setting-card" id="headlight-settings-area"  header-class="p-3"
             bg-variant="dark" text-variant="white" footer-class="pt-0">
       <template #header class="position-relative">
-        <h6 class="mb-0 title">{{ headlightSettings.title }}</h6>
+        <b-icon icon="stopwatch" /><span class="ml-2">{{ headlightSettings.title }}</span>
         <div class="position-absolute headlight-title-right">
           <b-button size="sm" @click="showSettingsWiki = !showSettingsWiki">
             <b-icon :icon="showSettingsWiki ? 'exclamation' : 'question'"></b-icon>
@@ -65,7 +65,7 @@
         </div>
       </template>
       <Setting v-for="setting in headlightSettings.options" :key="setting.key"
-               :setting="setting" class="mr-3 mb-3" group-id="headlight-settings-area" :fix-width="true"
+               :setting="setting" class="mr-3 mb-3" group-id="headlight-settings-area" :fixed-width="true"
                :variant="isHeadlightAppEnabled || setting.key === 'enabled' ? 'rf-orange' : 'secondary'"
                @setting-changed="updateSetting"
                @make-toast="makeToast">
@@ -94,10 +94,10 @@
     </b-card>
 
     <!-- Headlight Controller Mappings -->
-    <b-card class="mt-2 setting-card" id="hdl-controller-area"
+    <b-card class="mt-2 setting-card" id="hdl-controller-area" header-class="p-3"
             bg-variant="dark" text-variant="white" footer-class="pt-0">
       <template #header class="position-relative">
-        <h6 class="mb-0 title">Controller Assignments</h6>
+        <b-icon icon="controller" /><span class="ml-2">Controller Assignments</span>
         <div class="position-absolute headlight-title-right">
           <b-button size="sm" @click="showAssignWiki = !showAssignWiki">
             <b-icon :icon="showAssignWiki ? 'exclamation' : 'question'"></b-icon>
@@ -106,7 +106,7 @@
       </template>
       <ControllerAssignment
           v-for="setting in controllerAssignments.options" :key="setting.key"
-          :setting="setting" class="mr-3 mb-3" group-id="hdl-controller-area" :fix-width="true"
+          :setting="setting" class="mr-3 mb-3" group-id="hdl-controller-area" :fixed-width="true"
           :variant="isHeadlightAppEnabled ? 'rf-orange' : 'secondary'"
           @update-assignment="updateAssignment"
           @make-toast="makeToast">

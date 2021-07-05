@@ -12,7 +12,8 @@
         <ul class="mt-2">
           <li>Launch the Game</li>
           <li>Switch to the selected
-            <b-link class="text-rf-orange" @click="navModel.content=true">Content and Session Settings</b-link></li>
+            <b-link class="text-rf-orange" @click="navModel.content=true">Content and Session Settings</b-link>
+          </li>
           <li>Start a Race Session</li>
           <li>Turn on AI Control(make sure you have mapped this to a keyboard button).</li>
           <li>Record frame times for Benchmark Length seconds</li>
@@ -34,7 +35,7 @@
   </b-button>
   <b-collapse v-model="navModel.content" accordion="bench-accordion" role="tabpanel">
     <div class="mt-2">
-      <SessionSettingArea :ses-handler="sesHandler" @make-toast="makeToast" @set-busy="setBusy"/>
+      <SessionSettingArea fixed-width :ses-handler="sesHandler" @make-toast="makeToast" @set-busy="setBusy"/>
     </div>
   </b-collapse>
 
@@ -44,7 +45,7 @@
     <b-icon icon="display"></b-icon><span class="ml-2">Graphics Settings</span>
   </b-button>
   <b-collapse v-model="navModel.graphics" accordion="bench-accordion" role="tabpanel">
-    <GraphicsPresetArea id-ref="gfxBench" class="mt-2" :gfx-handler="gfxHandler"/>
+    <GraphicsPresetArea id-ref="gfxBench" class="mt-2" :gfx-handler="gfxHandler" fixed-width />
   </b-collapse>
 
   <!-- Results -->
@@ -131,7 +132,7 @@ export default {
   },
   data: function () {
     return {
-      navModel: {content: false, graphics: false, results: true, benchmark: true},
+      navModel: {content: true, graphics: true, results: true, benchmark: true},
       settings: {},
       benchmarkPresetName: '',
       benchmarkResults: [],
@@ -269,17 +270,15 @@ export default {
       let result = this.currentResult
       if (result === null) { return '' }
       return result.name
-    },
-    benchmarkPresetList() {
-      let presets = this.gfxHandler.presets.slice(1)
-      presets.unshift(this.nonePreset)
-      return presets
-    },
+    }
   },
   async created() {
     this.setNav('results') // Display results
     await this.getResults()
     await this.getSettings()
+  },
+  mounted() {
+    this.navModel.benchmark = true
   }
 }
 </script>
