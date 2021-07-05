@@ -59,7 +59,7 @@ class SimInfoAPI(rF2data.SimInfo):
             versionPart = 0
             try:
                 versionPart = int(versionParts[i])
-            except BaseException:  # pylint: disable=bare-except
+            except BaseException:
                 msg = "Corrupt or leaked rFactor 2 Shared Memory version.  Version string: " \
                     + versionStr + self.__HELP
                 return msg
@@ -97,12 +97,13 @@ class SimInfoAPI(rF2data.SimInfo):
                 p = psutil.Process(pid)
             except psutil.NoSuchProcess:
                 continue
-            if p.name().lower().startswith('rfactor2.exe') or p.name().lower().startswith('rfactor2 Mod Mode.exe'):
+            if p.name().lower().startswith('rfactor2.exe'):
                 self.rf2_pid = pid
                 break
 
     def __playersDriverNum(self):
         """ Find the player's driver number """
+        _player = 0
         for _player in range(50):  # self.Rf2Tele.mVehicles[0].mNumVehicles:
             if self.Rf2Scor.mVehicles[_player].mIsPlayer:
                 break
@@ -181,12 +182,6 @@ class SimInfoAPI(rF2data.SimInfo):
         return Cbytestring2Python(
             self.Rf2Scor.mVehicles[self.__playersDriverNum()].mDriverName)
 
-    def vehicleName(self):
-        """
-        Get the vehicle's name
-        """
-        return Cbytestring2Python(self.playersVehicleScoring().mVehicleName)
-
     def playersVehicleTelemetry(self):
         """ Get the variable for the player's vehicle """
         self.__playersDriverNum()
@@ -196,6 +191,13 @@ class SimInfoAPI(rF2data.SimInfo):
         """ Get the variable for the player's vehicle """
         self.__playersDriverNum()
         return self.Rf2Scor.mVehicles[self.__playersDriverNum()]
+
+    def vehicleName(self):
+        """
+        Get the vehicle's name
+        """
+        return Cbytestring2Python(
+            self.Rf2Scor.mVehicles[self.__playersDriverNum()].mVehicleName)
 
     def close(self):
         # This didn't help with the errors

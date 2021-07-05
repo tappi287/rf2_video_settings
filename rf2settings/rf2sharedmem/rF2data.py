@@ -505,13 +505,12 @@ class rF2TrackRulesStage(IntEnum):
     def from_param(cls, obj):
         return int(obj)
 
-"""
 # untranslated [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 4)]
 class rF2TrackRules(ctypes.Structure):
     _pack_ = 4
     _fields_ = [
         ('mCurrentET', ctypes.c_double),  # current time
-        ('mStage', rF2TrackRulesStage),  # current stage
+        ('mStage', ctypes.c_int),  # current stage
         ('mPoleColumn', ctypes.c_int),  # column assignment where pole position seems to be located
         ('mNumActions', ctypes.c_int),  # number of recent actions
         ('pointer1', ctypes.c_ubyte * 8),
@@ -550,7 +549,7 @@ class rF2TrackRules(ctypes.Structure):
         ('pointer2', ctypes.c_ubyte * 8),
         ('mInputOutputExpansion', ctypes.c_ubyte * 256),
     ]
-"""
+
 # untranslated [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 4)]
 class rF2PitMenu(ctypes.Structure):
     _pack_ = 4

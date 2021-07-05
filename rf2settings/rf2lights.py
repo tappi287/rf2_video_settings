@@ -97,13 +97,13 @@ class RfactorHeadlight:
         """ Turn them on regardless """
         # status_poker_fn('on')
         if not self.are_headlights_on():
-            self.toggle()
+            self.turn_on()
 
     def off(self) -> None:
         """ Turn them off regardless """
         # status_poker_fn('off')
         if self.are_headlights_on():
-            self.toggle()
+            self.turn_off()
 
     def automatic_headlights(self, on_automatically) -> None:
         """
@@ -149,7 +149,7 @@ class RfactorHeadlight:
         """ Need to retest every time the track is loaded """
         if not self.tested_car_has_headlights:
             _save = self.are_headlights_on()
-            self.toggle(testing_car_has_headlights=True)
+            self.turn_on(testing_car_has_headlights=True)
             if sharedMemoryAPI.Cbytestring2Python(self.info.Rf2Ext.mLastHistoryMessage) == \
                     'Headlights: N/A':
                 self._car_has_headlights = False
@@ -184,16 +184,29 @@ class RfactorHeadlight:
         self._timestamp = self.info.playersVehicleTelemetry().mElapsedTime
         return self.escape_pressed
 
-    def toggle(self, testing_car_has_headlights=False) -> None:
+    def toggle_headlights(self):
+        if self.are_headlights_on():
+            self.turn_off()
+        else:
+            self.turn_on()
+
+    def turn_on(self, testing_car_has_headlights=False) -> None:
         """
         Now this program is controlling the headlights a replacement
         for the headlight control is needed.
+        As of 19/5/2021 version headlight controls are on/off/auto
         """
-        # status_poker_fn('H')
-        # self._info.playersVehicleTelemetry().mHeadlights = not \
-        #    self._info.playersVehicleTelemetry().mHeadlights
         if testing_car_has_headlights or self.car_has_headlights():
-            PressReleaseKey(self.headlight_toggle_dik)
+            retries = 4  # Let's not get stuck here
+            while not self.are_headlights_on() and (retries := retries - 1) >= 0:
+                PressReleaseKey(self.headlight_toggle_dik)
+                gevent.sleep(0.001)  # Let SM get a look in
+
+    def turn_off(self, testing_car_has_headlights=False) -> None:
+        if testing_car_has_headlights or self.car_has_headlights():
+            retries = 4  # Let's not get stuck here
+            while self.are_headlights_on() and (retries := retries - 1) >= 0:
+                PressReleaseKey(self.headlight_toggle_dik)
 
     def start_flashing(self, stopping_callback, flash_timer) -> None:
         """ Start flashing (if not already) """
@@ -249,14 +262,16 @@ class RfactorHeadlight:
         """ docstring """
         if self._flashing:
             # Check that headlights in same start as originally
-            if self.headlight_state != self.are_headlights_on():
-                # toggle the headlights again
-                self.toggle()
+            # Check that headlights in same start as originally
+            if self.headlight_state:
+                self.turn_on()
+            else:
+                self.turn_off()
             self._flashing = False
 
     def are_headlights_on(self) -> bool:
         """ Are they on? """
-        return self.info.playersVehicleTelemetry().mHeadlights != 0
+        return self.info.playersVehicleTelemetry().mHeadlights == 1
 
     def __not_in_pit_lane(self) -> bool:
         """ Used to stop when not in the pit lane """

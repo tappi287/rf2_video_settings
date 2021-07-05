@@ -289,7 +289,7 @@ def headlights_greenlet():
 
         if command_name == con.toggle_hdl:
             logging.info('Toggling headlights %s', rf2_hdl.headlight_toggle_dik)
-            rf2_hdl.toggle(True)
+            rf2_hdl.toggle_headlights()
 
             if rf2_hdl.are_headlights_on():
                 AppAudioFx.play_audio(AppAudioFx.switch_on)

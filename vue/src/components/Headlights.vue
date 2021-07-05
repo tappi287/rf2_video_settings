@@ -89,6 +89,9 @@
                   target="_blank">
             rF2 Shared Memory Tools
           </b-link>
+          <p>It is recommended to turn off the in-game Auto-Headlights(Difficulty>Auto Headlights>Off) for this feature
+          to work flawlessly.
+          </p>
         </div>
       </template>
     </b-card>
@@ -145,8 +148,8 @@ name: "Headlights",
       flashLogo: false,
       flashing: false,
       flashCount: 4, flashOnTime: 80, flashOffTime: 400,
-      showSettingsWiki: false,
-      showAssignWiki: false,
+      showSettingsWiki: true,
+      showAssignWiki: true,
     }
   },
   methods: {
