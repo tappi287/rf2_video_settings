@@ -5,7 +5,6 @@ from subprocess import Popen
 import eel
 
 from rf2settings.app_settings import AppSettings
-from rf2settings.preset.presets_dir import get_user_presets_dir
 from rf2settings.preset.settings_model import BenchmarkSettings
 from rf2settings.rf2benchmark import RfactorBenchmark
 from rf2settings.rf2events import StartBenchmarkEvent
@@ -40,7 +39,7 @@ def get_benchmark_results():
 
 @eel.expose
 def open_result_folder():
-    result_path = get_user_presets_dir() / 'benchmark_results'
+    result_path = RfactorBenchmark.present_mon_result_dir
     if result_path is None:
         return
     logging.info('Opening folder: %s', result_path)
@@ -49,7 +48,14 @@ def open_result_folder():
 
 @eel.expose
 def delete_benchmark_result(name: str):
-    result_path = get_user_presets_dir() / 'benchmark_results' / name
+    p = RfactorBenchmark.present_mon_result_dir
+    result_path = p / name
+
+    # -- Remove Json Preset files
+    for f in p.glob(f'{result_path.stem}*.json'):
+        f.unlink()
+
+    # -- Remove Result CSV
     if result_path.exists():
         result_path.unlink()
 
