@@ -33,8 +33,8 @@
         </div>
       </template>
       <template v-else>
-        <div>
-          rF2 content is unknown. Use the refresh button to acquire rF2 content list.
+        <div class="text-rf-orange">
+          <b>rF2 content is unknown. Use the refresh button to acquire rF2 content list.</b>
         </div>
       </template>
 
@@ -52,7 +52,7 @@
       <!-- Refresh Popover -->
       <b-popover target="content-refresh-button" triggers="click">
         <p>Do you want to <b>start rFactor 2</b> and refresh the list of available content?</p>
-        <p>The game will be quit once the list of content is acquired.</p>
+        <p>The game will be quit once the list of content is acquired. This will take ~8 seconds.</p>
         <div class="text-right">
           <LaunchRfactorBtn @make-toast="makeToast" @launch="refreshContent" text="Refresh" />
           <b-button @click="$root.$emit('bv::hide::popover', 'content-refresh-button')"
@@ -70,7 +70,7 @@ import {getEelJsonObject, setFixedWidth} from "@/main";
 import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 
 export default {
-  name: "RfactorContent",
+  name: "RfactorContentCard",
   components: {LaunchRfactorBtn},
   props: {text: String, fixWidth: Boolean, settings: Array, headerIcon: String },
   data: function () {

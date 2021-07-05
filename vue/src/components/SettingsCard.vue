@@ -1,14 +1,14 @@
 <template>
 <div v-if="current_preset_idx === idx">
   <!-- Content Selection -->
-  <RfactorContent show-launch text="Content Selection" @launched="$emit('content-launched')"
-                  :fix-width="fixedWidth" v-if="contentSelection" :settings="contentSettings"
-                  :header-icon="headerIcon"
-                  @make-toast="makeToast" @set-busy="setBusy" @update-setting="updateSetting">
+  <RfactorContentCard show-launch text="Content Selection" @launched="$emit('content-launched')"
+                      :fix-width="fixedWidth" v-if="contentSelection" :settings="contentSettings"
+                      :header-icon="headerIcon"
+                      @make-toast="makeToast" @set-busy="setBusy" @update-setting="updateSetting">
     <template #footer>
       <slot name="contentFooter"></slot>
     </template>
-  </RfactorContent>
+  </RfactorContentCard>
 
   <!-- Generic Settings -->
   <b-card class="mt-2 setting-card" header-class="m-0 p-2" :id="groupId" v-if="!contentSelection"
@@ -54,7 +54,7 @@
 
 <script>
 import Setting from "./Setting.vue"
-import RfactorContent from "@/components/RfactorContent";
+import RfactorContentCard from "@/components/RfactorContentCard";
 /* import {getEelJsonObject} from "@/main"; */
 
 export default {
@@ -90,7 +90,7 @@ export default {
   },
   components: {
     Setting,
-    RfactorContent
+    RfactorContentCard
   },
   computed: {
     viewMode: function () {
