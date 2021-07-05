@@ -11,6 +11,19 @@ from .rf2connect import RfactorState, RfactorConnect
 from .rf2events import RfactorStatusEvent, RfactorLiveEvent, RfactorQuitEvent, RecordBenchmarkEvent
 
 
+class CommandUrls:
+    series = '/rest/race/series'
+
+    @classmethod
+    def set_series_args(cls, series_id: str):
+        if AppSettings.last_rf_version >= '1.1125':
+            # -- new Protocol from v1125
+            return {'url': f'{cls.series}?signature={series_id}'}
+        else:
+            # -- previous versions
+            return {'url': cls.series, 'json': series_id}
+
+
 class Command:
     """ A command to be held in the CommandQueue and to be send to rF2 if it is in the desired state """
     wait_for_state = 0
@@ -71,7 +84,10 @@ class Command:
     def _get_all_tracks_cars_series(selected):
         for series in AppSettings.content.get('series', list()):
             if series and series['shortName'] == 'All Tracks & Cars':
-                selected['series'] = series['id']
+                if AppSettings.last_rf_version >= '1.1125':
+                    selected['series'] = series['signature']
+                else:
+                    selected['series'] = series['id']
                 break
         return selected
 
@@ -134,6 +150,11 @@ class Command:
         RfactorConnect.post_request('/navigation/action/NAV_TO_FULL_EVENT_MONITOR')
         self.finished = True
 
+    @staticmethod
+    def trigger_app_save_method():
+        logging.debug('Executing command App-Settings save.')
+        AppSettings.save()
+
     def get_content_method(self):
         logging.debug('Executing command get available rF Series/Cars/Tracks content.')
         RfactorStatusEvent.set('Getting available content via WebUI')
@@ -142,8 +163,11 @@ class Command:
         c = RfactorConnect.get_request('/rest/race/selection')
         if self._check_request(c):
             current_selection = c.json() or dict()
-            current_series = current_selection.get('series', dict()).get('id')
+            current_series = current_selection.get('series', dict()).get('id') or \
+                             current_selection.get('series', dict()).get('signature')
+
             all_series = self._get_all_tracks_cars_series(dict()).get('series', '')
+
             if current_series and all_series and current_series != all_series:
                 logging.debug('Skipping get content command. All Tracks and Cars series is not active.')
                 self.finished = True
@@ -166,12 +190,7 @@ class Command:
                     AppSettings.content[name] = r.json()
                 except Exception as e:
                     logging.error('Could not decode response to get content request: %s %s', name, e)
-            gevent.sleep(0.1)
-
-        # -- Get Sessions Settings
-        r = RfactorConnect.get_request('/rest/sessions')
-        if self._check_request(r):
-            AppSettings.content['session_settings'] = r.json()
+            gevent.sleep(0.01)
 
         AppSettings.save(save_content=True)
 
@@ -185,51 +204,45 @@ class Command:
         if not selected.get('series'):
             selected = self._get_all_tracks_cars_series(selected)
 
-        current_selection = dict()
         for url, name in zip(AppSettings.content_urls, AppSettings.content_keys):
             content_id, retries = selected.get(name), 3
             if not content_id:
                 continue
 
             # -- Check the current selection
-            if current_selection:
-                # -- Skip selection if selection already matches
-                if current_selection[name].get('id') == content_id:
-                    logging.debug('Skipping already selected: %s %s', name, current_selection[name].get('id'))
-                    continue
-            else:
-                s = RfactorConnect.get_request('/rest/race/selection')
-                if self._check_request(s):
-                    current_selection = s.json() or dict()
-                    if 'car' in current_selection.keys():
-                        current_selection['cars'] = current_selection.pop('car')
-                    if 'track' in current_selection.keys():
-                        current_selection['tracks'] = current_selection.pop('track')
+            s = RfactorConnect.get_request('/rest/race/selection')
+            if self._check_request(s):
+                current_selection = s.json() or dict()
+                if 'car' in current_selection.keys():
+                    current_selection['cars'] = current_selection.pop('car')
+                if 'track' in current_selection.keys():
+                    current_selection['tracks'] = current_selection.pop('track')
 
-                    # -- Skip selection if selection already matches
-                    if current_selection[name].get('id') == content_id:
-                        logging.debug('Skipping already selected: %s %s', name, current_selection[name].get('id'))
-                        continue
-                gevent.sleep(1)
+                current_id = current_selection[name].get('id') or current_selection[name].get('signature')
+
+                # -- Skip selection if selection already matches
+                if current_id == content_id:
+                    logging.debug('Skipping already selected: %s %s', name, current_id)
+                    continue
+
+            # -- Content get request to enumerate content in WebUi
+            c = RfactorConnect.get_request(url=url)
+            if not c:
+                # -- Probably no connection
+                self.finished = True
+                return
 
             # -- Try POST set request
             while (retries := retries - 1) >= 0:
                 logging.debug('Requesting set content: %s %s', url, content_id)
-                r = RfactorConnect.post_request(url, data=content_id)
+                if url == CommandUrls.series:
+                    r = RfactorConnect.post_request(**CommandUrls.set_series_args(content_id))
+                else:
+                    r = RfactorConnect.post_request(url, data=content_id)
 
                 if self._check_request(r):
                     break
                 else:
-                    # -- Try a get content request to workaround internal WebUI error
-                    try:
-                        gevent.sleep(0.5)
-                        c = RfactorConnect.get_request(url=url)
-                        if not c:
-                            # -- Probably no connection
-                            self.finished = True
-                            return
-                    except Exception as e:
-                        logging.error('Error during workaround get content request: %s', e)
                     logging.debug('Re-trying failed set content request #%s', retries)
 
         AppAudioFx.play_audio(AppAudioFx.switch)

@@ -61,8 +61,11 @@ Set Track: POST, data=track_id
 /rest/race/track
 Get Series GET
 /rest/race/series
+v1124
 Set Series POST data=series_id
 /rest/race/series
+v1125
+/rest/race/series?signature=series_id
 Get Cars GET
 /rest/race/car
 Set Cars POST: data=car_id
@@ -224,7 +227,7 @@ class RfactorBenchmark:
         cwd = self.rf.location
 
         if self.present_mon_process is None:
-            logging.info('Starting PresentMon benchmark: %s', cmd)
+            logging.info('Starting PresentMon: %s', cmd)
             self.kill_pm_event.clear()
             self.present_mon_process = RunProcess(cmd, cwd, self.kill_pm_event)
             self.present_mon_process.start()

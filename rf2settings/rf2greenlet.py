@@ -11,11 +11,11 @@ from .preset.preset import PresetType
 from .preset.preset_base import load_presets_from_dir
 from .preset.presets_dir import get_user_presets_dir
 from .rf2benchmark import RfactorBenchmark
-from .rf2events import RfactorLiveEvent, RfactorQuitEvent, RfactorStatusEvent, ReplayPlayEvent
 from .rf2command import Command, CommandQueue
 from .rf2connect import RfactorState, RfactorConnect
+from .rf2events import RfactorLiveEvent, RfactorQuitEvent, RfactorStatusEvent
 from .rfactor import RfactorPlayer
-from .utils import capture_app_exceptions, AppExceptionHook
+from .utils import capture_app_exceptions
 
 
 def _restore_pre_replay_preset():
@@ -58,6 +58,10 @@ def _rfactor_greenlet_loop():
         # -- Report state change to frontend
         RfactorLiveEvent.set(True)
 
+        # -- Get Content
+        if CommandQueue.is_empty():
+            CommandQueue.append(Command(Command.get_content, timeout=10.0))
+
         # -- Set Session Settings if present in AppSettings
         if AppSettings.session_selection and len(CommandQueue.queue) < 2:
             CommandQueue.append(Command(Command.set_session_settings, data=AppSettings.session_selection,
@@ -66,14 +70,11 @@ def _rfactor_greenlet_loop():
             AppSettings.session_selection = dict()
 
         # -- Set Content Selection if present in AppSettings
-        if AppSettings.content_selected and len(CommandQueue.queue) < 2:
+        if AppSettings.content_selected and len(CommandQueue.queue) < 3:
             CommandQueue.append(Command(Command.set_content, data=AppSettings.content_selected, timeout=5.0))
             # -- Reset Content Selection
             AppSettings.content_selected = dict()
 
-        # -- Get Content
-        if CommandQueue.is_empty():
-            CommandQueue.append(Command(Command.get_content, timeout=10.0))
         RfactorConnect.set_to_active_timeout()
     elif RfactorConnect.state == RfactorState.unavailable:
         # -- Report state change to frontend

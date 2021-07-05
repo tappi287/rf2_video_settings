@@ -1,3 +1,4 @@
+import sys
 from subprocess import Popen
 from pathlib import Path
 
@@ -14,6 +15,9 @@ cmd = ['npm', 'run', 'build']
 
 p = Popen(args=cmd, shell=True, cwd=cd.as_posix())
 p.wait()
+if p.returncode != 0:
+    print('Build Web App failed.')
+    sys.exit()
 
 # -- Start app
 start_eel()

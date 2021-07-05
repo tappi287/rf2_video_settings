@@ -19,6 +19,11 @@ def get_content():
                                                    'populate the content list.'})
     content = AppSettings.content
 
+    # -- Handle post v1124 Series entries
+    for series in content.get('series'):
+        if series.get('signature'):
+            series['id'] = series.get('signature')
+
     # -- Group Cars by Manufacturer and Model
     content['manufacturer'], content['model'] = list(), list()
     m_set, c_set = set(), set()
@@ -72,15 +77,3 @@ def refresh_content():
 
     # -- Quit Game
     CommandQueue.append(Command(Command.quit, timeout=30))
-
-
-@eel.expose
-def set_launch_content():
-    logging.info('Queuing Content Selection and Session Settings for rF launch.')
-
-    # -- Wait for Ui
-    CommandQueue.append(Command(Command.wait_for_state, data=RfactorState.ready, timeout=120))
-    # -- Set Content
-    CommandQueue.append(Command(Command.set_content, data=AppSettings.content_selected, timeout=20))
-    # -- Set Session Settings
-    CommandQueue.append(Command(Command.set_session_settings, data=AppSettings.session_selection, timeout=20))
