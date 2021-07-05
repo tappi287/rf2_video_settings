@@ -48,8 +48,8 @@ class Option(JsonRepr):
         :param modules.settings_model.Option other:
         :return: True if self.value if differs
         """
-        # -- Ignore null values
-        if self.value is None or other.value is None:
+        # -- Ignore null values and hidden settings
+        if self.value is None or other.value is None or self.hidden:
             return True
 
         if other.value != self.value or other.key != self.key:
