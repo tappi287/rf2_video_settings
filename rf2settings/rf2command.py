@@ -21,7 +21,7 @@ class CommandUrls:
             return {'url': f'{cls.series}?signature={series_id}'}
         else:
             # -- previous versions
-            return {'url': cls.series, 'json': series_id}
+            return {'url': cls.series, 'data': series_id}
 
 
 class Command:
@@ -243,6 +243,17 @@ class Command:
                 if self._check_request(r):
                     break
                 else:
+                    try:
+                        # -- Try a get content request to workaround internal WebUI error
+                        gevent.sleep(0.1)
+                        c = RfactorConnect.get_request(url=url)
+                        if not c:
+                            # -- Probably no connection
+                            self.finished = True
+                            return
+                        gevent.sleep(0.1)
+                    except Exception as e:
+                        logging.error('Error during workaround get content request: %s', e)
                     logging.debug('Re-trying failed set content request #%s', retries)
 
         AppAudioFx.play_audio(AppAudioFx.switch)
