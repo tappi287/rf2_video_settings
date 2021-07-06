@@ -1,5 +1,5 @@
-from . import app_content, app_controller, app_main, app_presets, app_rfconnect, app_multiplayer, app_dashboard, \
-    app_graphics, app_headlights, app_benchmark
+from . import app_content, app_controller, app_main, app_presets, app_rfconnect, app_multiplayer, \
+    app_dashboard, app_graphics, app_headlights, app_benchmark
 
 
 def expose_app_methods():

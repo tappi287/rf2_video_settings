@@ -270,3 +270,21 @@ def create_js_pygame_event_dict(joy_dict: dict, joy_event) -> dict:
 def percentile(values, percentile_value: int):
     size = len(values)
     return sorted(values)[int(math.ceil((size * percentile_value) / 100)) - 1]
+
+
+class AppAudioFx:
+    confirm = "audioConfirm"
+    ping = "audioPing"
+    indicator = "audioIndicator"
+    select = "audioSelect"
+    cute_select = "audioCuteSelect"
+    switch = "audioSwitch"
+    switch_on = "audioSwitchOn"
+    switch_off = "audioSwitchOff"
+    flash = "audioFlash"
+
+    @classmethod
+    def play_audio(cls, audio_fx_id: str):
+        if not audio_fx_id:
+            return
+        eel.play_audio(audio_fx_id)
