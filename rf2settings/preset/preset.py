@@ -82,14 +82,19 @@ class BasePreset:
         """ Should be overwritten in sub classes """
         pass
 
-    def export(self, unique_name: str = None, export_dir: Optional[Path] = None) -> bool:
+    def export(self, unique_name: str = None, export_dir: Optional[Path] = None,
+               keep_export_data: bool = False) -> bool:
         file_name = create_file_safe_name(unique_name or self.name)
         if export_dir is None:
             file = get_user_export_dir() / f'{file_name}.json'
         else:
             file = export_dir / f'{file_name}.json'
         self.name = unique_name or self.name
-        self.additional_export_operations()
+
+        # -- Weather to export unsafe data like e.g. video mode
+        #    Default is False
+        if not keep_export_data:
+            self.additional_export_operations()
 
         return self._save_to_file(file)
 

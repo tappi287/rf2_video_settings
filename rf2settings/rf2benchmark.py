@@ -1,24 +1,20 @@
-import csv
 import logging
-import statistics
-import sys
 import threading
 import time
-from datetime import datetime
 from pathlib import Path, WindowsPath
-from typing import Optional, Iterator, Tuple, Any, List
+from typing import Optional
 
-from rf2settings.app_settings import AppSettings
-from rf2settings.globals import get_present_mon_bin
-from rf2settings.preset.preset_base import PRESET_TYPES, load_presets_from_dir
-from rf2settings.rf2command import Command, CommandQueue
-from rf2settings.utils import percentile
+import gevent
+
+from .app_settings import AppSettings
 from .directInputKeySend import rfKeycodeToDIK
-from .preset.preset import GraphicsPreset, SessionPreset, PresetType
+from .preset.preset import PresetType
+from .preset.preset_base import PRESET_TYPES, load_presets_from_dir
 from .preset.presets_dir import get_user_presets_dir
-from .preset.settings_model import BaseOptions, BenchmarkControllerJsonSettings, BenchmarkSettings
+from .preset.settings_model import BenchmarkControllerJsonSettings
 from .process import RunProcess
-from .rf2connect import RfactorState
+from .rf2benchmarkutils import create_benchmark_commands, BenchmarkRun, BenchmarkQueue
+from .rf2connect import RfactorConnect, RfactorState
 from .rf2events import StartBenchmarkEvent, RecordBenchmarkEvent, RfactorQuitEvent, RfactorStatusEvent
 from .rfactor import RfactorPlayer
 
@@ -86,46 +82,6 @@ Get Profile
 """
 
 
-def _create_benchmark_commands(ai_key, fps_key):
-    # Wait for UI
-    CommandQueue.append(Command(Command.wait_for_state, data=RfactorState.ready, timeout=120.0))
-
-    # -- Set session settings
-    CommandQueue.append(Command(Command.set_session_settings, data=AppSettings.session_selection, timeout=5.0))
-    # -- Reset Session Settings
-    AppSettings.session_selection = dict()
-
-    # -- Set Content
-    CommandQueue.append(Command(Command.set_content, data=AppSettings.content_selected, timeout=5.0))
-    # -- Reset Content Selection
-    AppSettings.content_selected = dict()
-
-    # Start Race Session
-    CommandQueue.append(Command(Command.start_race, timeout=10.0))
-    # Wait UI Loading State
-    CommandQueue.append(Command(Command.wait_for_state, data=RfactorState.loading, timeout=90.0))
-    # Wait UI Ready State
-    CommandQueue.append(Command(Command.wait_for_state, data=RfactorState.ready, timeout=800.0))
-    # Drive
-    CommandQueue.append(Command(Command.drive, timeout=10.0))
-    # Timeout
-    CommandQueue.append(Command(Command.timeout_command, data=2, timeout=10.0))
-    # Ai Control
-    CommandQueue.append(Command(Command.press_key, data=ai_key, timeout=12.0))
-    # Timeout
-    CommandQueue.append(Command(Command.timeout_command, data=5, timeout=12.0))
-    # Present mon record
-    CommandQueue.append(Command(Command.record_benchmark, timeout=20.0))
-    """
-    # FPS Measure
-    CommandQueue.append(Command(Command.press_ctrl_key, data=fps_key, timeout=12.0))
-    # Timeout
-    CommandQueue.append(Command(Command.timeout_command, data=20, timeout=10.0))
-    # Record Performance
-    CommandQueue.append(Command(Command.press_shift_key, data='DIK_SPACE', timeout=10.0))
-    """
-
-
 class RfactorBenchmark:
     running = False
     recording = False
@@ -136,17 +92,14 @@ class RfactorBenchmark:
     fps_key = 'Control - Framerate'
     fps_dik = ''
 
-    present_mon_bin = get_present_mon_bin()
-    present_mon_result_dir: Path = get_user_presets_dir() / 'benchmark_results'
     default_benchmark_length = 50
+    default_timeout = 12
 
-    def __init__(self, rf: Optional[RfactorPlayer] = None, setting_name: str = None, setting_value: str = None):
+    def __init__(self, rf: Optional[RfactorPlayer] = None):
         """ Helper to run the rFactor 2 DEV executable with the current Session Settings,
             most likely rF Trainer @ Loch Drummond, for a fixed amount of time in a quick race with AI control.
 
             :param rf: RfactorPlayer instance to use
-            :param setting_name: optional setting name to name the result file "rf2_settingName_settingValue"
-            :param setting_value: optional setting value to name result file "rf2_settingName_settingValue"
         """
         self.kill_pm_event = threading.Event()
         self.kill_event = threading.Event()
@@ -154,19 +107,18 @@ class RfactorBenchmark:
 
         self.rf = rf or RfactorPlayer()
 
-        # Prepare settings to be applied
-        self.current_session_preset = SessionPreset()
-        self.setting_name, self.setting_value = setting_name, setting_value
+        self.current_run: BenchmarkRun = BenchmarkRun()
 
         self.result_file: Optional[Path] = None
         self.benchmark_length = self.default_benchmark_length
+        self.recording_timeout = self.default_timeout
         self.start_time = 0.0
 
         self._timestamp = 0
 
     def event_loop(self):
-        # -- Receive Start Benchmark Event from FrontEnd
-        if StartBenchmarkEvent.event.is_set() and not self.running:
+        # -- Receive Start Benchmark Event from FrontEnd or Queue
+        if StartBenchmarkEvent.event.is_set() and not self.running and RfactorConnect.state == RfactorState.unavailable:
             StartBenchmarkEvent.reset()
             self.run()
 
@@ -179,10 +131,11 @@ class RfactorBenchmark:
 
         # -- End Benchmark after benchmark length
         if self.recording and self.start_time > 0.0:
-            remaining = (self.benchmark_length + 1) - (time.time() - self.start_time)
+            remaining = self.benchmark_length - (time.time() - self.start_time)
             RfactorStatusEvent.set(f'Recording Benchmark: {remaining:.0f}s remaining.')
 
             if remaining <= 0.0:
+                logging.info('Detected end of Benchmark Recording Time.')
                 self.start_time = 0.0
                 self.finish()
 
@@ -206,16 +159,15 @@ class RfactorBenchmark:
             self.finish()
             return
 
-        _create_benchmark_commands(self.ai_dik, self.fps_dik)
+        create_benchmark_commands(self.ai_dik, self.fps_dik, self.recording_timeout)
         self.running = True
 
     def start_present_mon_logging(self) -> bool:
-        new_name = f'{datetime.now().strftime("%Y%m%d-%H-%M")}_rF2_benchmark.csv'
-        self.result_file = self.present_mon_result_dir / new_name
-        if not self.present_mon_result_dir.exists():
-            self.present_mon_result_dir.mkdir(exist_ok=True)
+        self.result_file = AppSettings.present_mon_result_dir / f'{self.current_run.name}.csv'
+        if not AppSettings.present_mon_result_dir.exists():
+            AppSettings.present_mon_result_dir.mkdir()
 
-        cmd = [self.present_mon_bin.as_posix(),
+        cmd = [AppSettings.present_mon_bin.as_posix(),
                '-process_name', 'rFactor2.exe', '-output_file', str(WindowsPath(self.result_file)),
                '-timed', str(int(self.benchmark_length)), '-no_top', '-qpc_time',
                '-terminate_after_timed', '-stop_existing_session']  # '-no_track_display'
@@ -247,6 +199,11 @@ class RfactorBenchmark:
         self.running = False
         self.recording = False
 
+        if not BenchmarkQueue.is_empty():
+            logging.info('Found items in Benchmark Queue. Triggering StartBenchmark event.')
+            StartBenchmarkEvent.set(True)
+            gevent.sleep(2)
+
     def abort(self):
         logging.info('Benchmark is requesting rF2 quit.')
         RfactorQuitEvent.set(True)
@@ -260,17 +217,38 @@ class RfactorBenchmark:
         logging.info('rF2 Benchmark aborted. Kill event send.')
 
     def _prepare_benchmark_run(self) -> bool:
-        """ Prepare rF settings and read keyboard assignments """
+        """ Prepare rF settings, apply presets and read keyboard assignments """
         result = True
 
         self.recording = False
         self.running = False
 
-        # -- Read Benchmark App Settings
-        benchmark_settings = BenchmarkSettings()
-        benchmark_settings.from_js_dict(AppSettings.benchmark_settings)
-        length = getattr(benchmark_settings.get_option('Length'), 'value', None)
+        # -- Get next run from the queue
+        self.current_run = BenchmarkQueue.next()
+        if not self.current_run:
+            logging.error('No more Benchmark runs in the queue!')
+            return False
+
+        # -- Apply current presets
+        preset_names = list()
+        for preset in self.current_run.presets:
+            if self.rf.is_valid:
+                logging.info('Applying benchmark preset: %s', preset.name)
+                if not self.rf.write_settings(preset):
+                    logging.error('Could not write current Preset settings to rFactor %s', self.rf.error)
+                    return False
+                # -- Update WebUi Session Settings from current preset
+                AppSettings.update_webui_settings(self.rf)
+                preset_names.append(preset.name)
+
+        # -- Apply Benchmark Settings
+        length = getattr(self.current_run.settings.get_option('Length'), 'value', None)
+        timeout = getattr(self.current_run.settings.get_option('TimeOut'), 'value', None)
         self.benchmark_length = int(length or self.default_benchmark_length)
+        self.recording_timeout = int(timeout or self.default_timeout)
+
+        logging.info('Prepared Benchmark Run: %s length %s recording delay %s with Presets: %s',
+                     self.current_run.name, self.benchmark_length, self.recording_timeout, preset_names)
 
         # -- Get Keyboard Assignments for AI Control and FPS View
         return self._update_controller_assignment() and result
@@ -298,6 +276,10 @@ class RfactorBenchmark:
         return False
     
     def _create_result(self):
+        if not self.result_file.exists():
+            logging.info('Could not locate PresentMon result file. Skipping creation of result Preset files.')
+            return
+
         for preset_type in (PresetType.session, PresetType.graphics):
             current_preset = PRESET_TYPES.get(preset_type)()
             selected_preset_name = AppSettings.selected_presets.get(str(preset_type)) or current_preset.name
@@ -306,118 +288,11 @@ class RfactorBenchmark:
             
             # -- Write preset next to result
             if selected_preset:
-                file_name = f'{self.result_file.stem}_{selected_preset.prefix}_preset'
-                if selected_preset.export(file_name, self.result_file.parent):
+                file_name = f'{self.result_file.stem}_{selected_preset.prefix}'
+                if selected_preset.export(file_name, self.result_file.parent, keep_export_data=True):
                     logging.debug('Exporting benchmark result preset: %s', file_name)
                 else:
                     logging.error('Could not export benchmark result preset.')
             else:
                 logging.error('Could not export benchmark result preset.')
 
-    @staticmethod
-    def iterate_preset_options(preset: GraphicsPreset) -> Iterator[Tuple[str, BaseOptions]]:
-        for key in preset.option_class_keys:
-            yield key, getattr(preset, key)
-
-    @classmethod
-    def edit_preset_option(cls, preset, setting_key: str, value: Any):
-        for (option_cls_key, option_cls) in cls.iterate_preset_options(preset):
-            o = [o for o in option_cls.options if o.key == setting_key]
-            if len(o):
-                o = o[0]
-                o.value = value
-
-    @staticmethod
-    def read_present_mon_result(file: Path):
-        required_fields = {'msUntilDisplayed', 'QPCTime', 'msUntilRenderComplete', 'msBetweenDisplayChange',
-                           'Dropped', 'msInPresentAPI', 'TimeInSeconds', 'msBetweenPresents'}
-
-        data = dict()
-        with open(file, newline='') as f:
-            csv_reader = csv.reader(f)
-            for row in csv_reader:
-                if row[0].startswith('//'):
-                    # -- Skip comment rows
-                    continue
-                if not data:
-                    # -- Assume first line as Header with column names
-                    for field_name in row:
-                        data[field_name] = list()
-                    continue
-
-                # -- Collect data for every row
-                for field_value, field_name in zip(row, data.keys()):
-                    if field_value.replace('.', '', 1).isdigit():
-                        field_value = float(field_value)
-                    if field_name in required_fields:
-                        data[field_name].append(field_value)
-
-        # -- Remove unnecessary fields
-        for key in set(data.keys()):
-            if key not in required_fields:
-                data.pop(key)
-
-        # -- FPS
-        data['fps'] = [1000 / i for i in data['msBetweenPresents']]
-
-        # -- Statistics
-        p99 = percentile(sorted(data['fps']), 99)
-        p98 = percentile(sorted(data['fps']), 98)
-        avg_fps, median_fps = statistics.mean(data['fps']), statistics.median(data['fps'])
-
-        data['fps99'], data['fps98'] = p99, p98
-        data['fpsmedian'] = median_fps
-        data['fpsmean'] = avg_fps
-        return data
-
-
-# Set of settings to benchmark
-# List[Tuple[str, str, Any, Optional[str]]]
-# Do not use _ in names! Result printer will split result.csv file names at _
-pp_set = [('EPostProcessingSettings', 'Post-Effects', 1, '0'),
-          ('EPostProcessingSettings', 'Post-Effects', 2, '1'),
-          ('EPostProcessingSettings', 'Post-Effects', 3, '2'),
-          ('EPostProcessingSettings', 'Post-Effects', 4, '3'),
-          ('EPostProcessingSettings', 'Post-Effects', 5, '4')]
-shadow_set = [('Shadows', 'Shadows', 0, None),
-              ('Shadows', 'Shadows', 1, None),
-              ('Shadows', 'Shadows', 2, None),
-              ('Shadows', 'Shadows', 3, None),
-              ('Shadows', 'Shadows', 4, None), ]
-shadow_blur_set = [('Shadow Blur', 'Shadow-Blur', 2, None), ('Shadow Blur', 'Shadow-Blur', 3, None), ]
-msaa_set = [('FSAA', 'MSAA', 0, '0'), ('FSAA', 'MSAA', 32, '1'),
-            ('FSAA', 'MSAA', 33, '2'), ('FSAA', 'MSAA', 34, '3'),
-            ('FSAA', 'MSAA', 35, '4'), ('FSAA', 'MSAA', 36, '5')]
-
-
-def _test_benchmark(settings: List[Tuple[str, str, Any, Optional[str]]]):
-    from rf2settings.preset.preset_base import load_preset
-    bench_preset = load_preset(Path('./default_presets/gfx_VR-Low.json'), GraphicsPreset.preset_type)
-
-    RfactorBenchmark.edit_preset_option(bench_preset, 'EPostProcessingSettings', 2)
-    RfactorBenchmark.edit_preset_option(bench_preset, 'Shadows', 3)
-
-    for setting in settings:
-        key, name, value, value_name = setting
-
-        # Adjust rF2 settings
-        RfactorBenchmark.edit_preset_option(bench_preset, key, value)
-
-        # Run the benchmark
-        rb = RfactorBenchmark(preset=bench_preset, setting_name=name, setting_value=value_name or str(value))
-        rb.run()
-
-
-if __name__ == '__main__':
-    """
-        THIS WILL DISABLE ctypes support! But it will make sure "Launch rFactor2" 
-        or basically any executable that is loading DLLs will work.
-    """
-    if sys.platform == "win32":
-        import ctypes
-        ctypes.windll.kernel32.SetDllDirectoryA(None)
-    """
-        //
-    """
-    test_settings = pp_set[0:3] + shadow_set[0:3] + msaa_set[2:]
-    _test_benchmark(test_settings)

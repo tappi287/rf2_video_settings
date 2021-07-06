@@ -4,7 +4,8 @@ from pathlib import Path, WindowsPath
 from shutil import copyfile
 from typing import Iterator, Union, Dict
 
-from .globals import get_settings_dir, SETTINGS_FILE_NAME, SETTINGS_CONTENT_FILE_NAME, get_default_presets_dir
+from .globals import get_settings_dir, SETTINGS_FILE_NAME, SETTINGS_CONTENT_FILE_NAME, get_default_presets_dir, \
+    get_present_mon_bin
 from .preset.preset_base import PRESET_TYPES
 from .preset.presets_dir import PresetDir, get_user_presets_dir
 from .rfactor import RfactorPlayer, RfactorLocation
@@ -33,7 +34,11 @@ class AppSettings(JsonRepr):
 
     # -- Won't be saved to file:
     skip_keys = ['first_load_complete', 'session_selection', 'replay_playing',
+                 'present_mon_bin', 'present_mon_result_dir',
                  'content_selected', 'content_keys', 'content_urls', 'content', 'content_saved']
+
+    present_mon_bin: Path = get_present_mon_bin()
+    present_mon_result_dir: Path = get_user_presets_dir() / 'benchmark_results'
 
     first_load_complete = False
     replay_playing = False
@@ -296,3 +301,12 @@ class AppSettings(JsonRepr):
         cls._first_load()
 
         return True
+
+    @classmethod
+    def update_webui_settings(cls, rf: RfactorPlayer):
+        # -- Update WebUi Session Settings for next run
+        if rf.webui_session_settings:
+            cls.session_selection = rf.webui_session_settings
+        # -- Update WebUi Content Selection Settings for next run
+        if rf.webui_content_selection:
+            cls.content_selected = rf.webui_content_selection

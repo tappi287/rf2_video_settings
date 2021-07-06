@@ -19,12 +19,26 @@
           <li>Record frame times for Benchmark Length seconds</li>
         </ul>
         <h6 class="text-rf-orange">Attention</h6>
-        This will start an actual race session. Make sure everyone is <b>in safe distance</b> of your
+        This will start an actual race session. Make sure everyone is <b>in safe distance</b> to your
         Steering Wheel, Bass Shakers and Head Cutter equipment during the benchmark.
       </b-card-text>
       <Setting v-for="setting in settings.options" :key="setting.key"
                :setting="setting" variant="rf-orange" class="mr-3 mb-3"
-               @setting-changed="updateSetting">></Setting>
+               @setting-changed="updateSetting"></Setting>
+      <div class="mt-2">
+        <b-button variant="rf-orange" @click="queueBenchmark"
+            v-b-popover.hover.top="'Add current Session and Graphics Preset settings to the benchmark queue.'">
+          <b-icon icon="plus" /><span class="ml-2" >Add Benchmark Run</span>
+        </b-button>
+      </div>
+      <b-button-group class="mt-3">
+        <b-button variant="rf-blue" @click="start" :disabled="queueLength === 0">
+          <b-icon icon="play-btn" /><span class="ml-2">Start Benchmark Queue [{{ queueLength }}]</span>
+        </b-button>
+        <b-button variant="rf-red" @click="resetBenchmarkQueue" :disabled="queueLength === 0">
+          <b-icon icon="trash" />
+        </b-button>
+      </b-button-group>
     </b-card>
   </b-collapse>
 
@@ -110,8 +124,6 @@
       </b-button>
     </b-card>
   </b-collapse>
-
-  <b-button block variant="primary" class="mt-2" @click="start">Run Benchmark</b-button>
 </div>
 </template>
 
@@ -136,6 +148,7 @@ export default {
       settings: {},
       benchmarkPresetName: '',
       benchmarkResults: [],
+      queueLength: 0,
       nonePreset: {name: 'None', isNonePreset: true},
       chartCloseBtn: false,
       chartData: {
@@ -166,6 +179,27 @@ export default {
     setBusy: function (busy) {this.$emit('set-busy', busy) },
     setNav: function (nav) { this.navModel[nav] = !this.navModel[nav] },
     refresh: async function() { await this.getResults() },
+    resetBenchmarkQueue: async function() {
+      await getEelJsonObject(window.eel.reset_benchmark_queue()())
+      this.queueLength = 0
+    },
+    queueBenchmark: async function() {
+      this.setBusy(true)
+      const gfxPreset = this.gfxHandler.getSelectedPreset()
+      const sesPreset = this.sesHandler.getSelectedPreset()
+
+      const r = await getEelJsonObject(window.eel.queue_benchmark_run([gfxPreset, sesPreset], this.settings)())
+
+      if (!r.result) {
+        this.makeToast(r.msg, 'danger')
+        console.error('Error queuing Benchmark run!', r.msg)
+        console.log(r)
+      } else {
+        this.queueLength += 1
+        console.log('Queue Benchmark run with Presets:', gfxPreset.name, sesPreset.name)
+      }
+      this.setBusy(false)
+    },
     selectResult: function (r) {
       this.setBusy(true)
       this.selectedResult = r.id
@@ -183,6 +217,7 @@ export default {
     },
     start: async function () {
       this.setBusy(true)
+      this.queueLength = 0
       // Save Session and Content Settings
       await this.sesHandler.update()
       // Save Benchmark settings

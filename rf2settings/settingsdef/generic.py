@@ -73,8 +73,14 @@ app_controller_assignments = {
 benchmark_settings = {
     'Length': {'key': 'BenchmarkLength', 'name': 'Benchmark Length', 'value': 50,
                'settings': ({'settingType': 'range', 'min': 10, 'max': 200, 'step': 1,
-                             'desc': 'Recording Length in Seconds'}, )},
+                             'desc': 'Recording length in seconds'}, )},
+    'TimeOut': {'key': 'RecordingTimeOut', 'name': 'Recording Delay', 'value': 12,
+                'settings': ({'settingType': 'range', 'min': 0, 'max': 200, 'step': 1,
+                              'desc': 'Time in seconds until the frame recording starts '
+                                      'after the race session has started.'},
+                             )},
 }
+
 # Settings set via WebUI
 session_ui_settings = {
     'SESSSET_Grid_Position': {'name': 'Grid Position', 'value': 15,
