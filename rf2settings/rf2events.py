@@ -108,3 +108,13 @@ class RecordBenchmarkEvent(RfactorBaseEvent):
     def set(cls, value):
         cls.result.set(value)
         cls.event.set()
+
+
+class BenchmarkProgressEvent(RfactorBaseEvent):
+    event = gevent.event.Event()
+    result = gevent.event.AsyncResult()
+
+    @classmethod
+    def set(cls, value):
+        cls.result.set(value)
+        cls.event.set()

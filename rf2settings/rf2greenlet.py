@@ -13,7 +13,7 @@ from .preset.presets_dir import get_user_presets_dir
 from .rf2benchmark import RfactorBenchmark
 from .rf2command import Command, CommandQueue
 from .rf2connect import RfactorState, RfactorConnect
-from .rf2events import RfactorLiveEvent, RfactorQuitEvent, RfactorStatusEvent
+from .rf2events import RfactorLiveEvent, RfactorQuitEvent, RfactorStatusEvent, BenchmarkProgressEvent
 from .rfactor import RfactorPlayer
 from .utils import capture_app_exceptions
 
@@ -122,3 +122,9 @@ def rfactor_event_loop():
             eel.rfactor_status(status)
 
         RfactorStatusEvent.reset()
+
+    if BenchmarkProgressEvent.event.is_set():
+        progress = BenchmarkProgressEvent.get_nowait()
+        if progress is not None:
+            eel.benchmark_progress(progress)
+        BenchmarkProgressEvent.reset()

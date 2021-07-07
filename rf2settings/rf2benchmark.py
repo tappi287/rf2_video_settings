@@ -15,7 +15,8 @@ from .preset.settings_model import BenchmarkControllerJsonSettings
 from .process import RunProcess
 from .rf2benchmarkutils import create_benchmark_commands, BenchmarkRun, BenchmarkQueue
 from .rf2connect import RfactorConnect, RfactorState
-from .rf2events import StartBenchmarkEvent, RecordBenchmarkEvent, RfactorQuitEvent, RfactorStatusEvent
+from .rf2events import StartBenchmarkEvent, RecordBenchmarkEvent, RfactorQuitEvent, RfactorStatusEvent, \
+    BenchmarkProgressEvent
 from .rfactor import RfactorPlayer
 
 """
@@ -120,6 +121,7 @@ class RfactorBenchmark:
         # -- Receive Start Benchmark Event from FrontEnd or Queue
         if StartBenchmarkEvent.event.is_set() and not self.running and RfactorConnect.state == RfactorState.unavailable:
             StartBenchmarkEvent.reset()
+            BenchmarkProgressEvent.set({'progress': 10, 'size': len(BenchmarkQueue.queue)})
             self.run()
 
         # -- Receive Recording Event
@@ -133,6 +135,10 @@ class RfactorBenchmark:
         if self.recording and self.start_time > 0.0:
             remaining = self.benchmark_length - (time.time() - self.start_time)
             RfactorStatusEvent.set(f'Recording Benchmark: {remaining:.0f}s remaining.')
+
+            percent = round(max(0.0, self.benchmark_length + 10.0 - remaining) * 100 /
+                            max(1.0, self.benchmark_length + 10.0))
+            BenchmarkProgressEvent.set({'progress': min(100, percent), 'size': len(BenchmarkQueue.queue)})
 
             if remaining <= 0.0:
                 logging.info('Detected end of Benchmark Recording Time.')
@@ -203,6 +209,8 @@ class RfactorBenchmark:
             logging.info('Found items in Benchmark Queue. Triggering StartBenchmark event.')
             StartBenchmarkEvent.set(True)
             gevent.sleep(2)
+        else:
+            BenchmarkProgressEvent.set({'progress': 0, 'size': 0})
 
     def abort(self):
         logging.info('Benchmark is requesting rF2 quit.')
