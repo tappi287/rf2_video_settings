@@ -110,7 +110,7 @@
           </b-link>
         </b-list-group-item>
         <b-list-group-item variant="dark">
-          <b-link target="_blank" href="github.com/CXWorld/CapFrameX/releases/latest" class="text-rf-orange">
+          <b-link target="_blank" href="https://github.com/CXWorld/CapFrameX/releases/latest" class="text-rf-orange">
             CapFrameX
           </b-link>
           <span> - use this to further analyse benchmark capture data!</span>
@@ -170,6 +170,8 @@
         <b-button @click="$eventHub.$emit('play-audio', 'audioIndicator')">audioIndicator</b-button>
         <b-button @click="$eventHub.$emit('play-audio', 'audioSelect')">audioSelect</b-button>
         <b-button @click="$eventHub.$emit('play-audio', 'audioCuteSelect')">audioCuteSelect</b-button>
+      </b-button-group>
+      <b-button-group size="sm">
         <b-button @click="$eventHub.$emit('play-audio', 'audioSwitch')">audioSwitch</b-button>
         <b-button @click="$eventHub.$emit('play-audio', 'audioSwitchOn')">audioSwitchOn</b-button>
         <b-button @click="$eventHub.$emit('play-audio', 'audioSwitchOff')">audioSwitchOff</b-button>
