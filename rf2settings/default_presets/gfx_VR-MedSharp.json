@@ -49,7 +49,7 @@
     ],
     "title": "Advanced Display Settings"
   },
-  "desc": "Based on VR-Medium but with negative Mipmap LOD bias to increase sharpness quite a bit",
+  "desc": "Based on VR-Medium but with negative Mipmap LOD bias and VRToolkit ReShade to increase sharpness quite a bit",
   "graphic_options": {
     "key": "Graphic Options",
     "options": [
@@ -75,7 +75,7 @@
       },
       {
         "key": "Special FX",
-        "value": 1
+        "value": 3
       },
       {
         "key": "Shadows",
@@ -110,8 +110,12 @@
         "value": 1
       },
       {
-        "key": "Steering Wheel",
+        "key": "Head Physics",
         "value": 0
+      },
+      {
+        "key": "Steering Wheel",
+        "value": 3
       },
       {
         "key": "Max Visible Vehicles",

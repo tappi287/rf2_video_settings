@@ -28,11 +28,11 @@
       },
       {
         "key": "Rearview Onboard",
-        "value": 0
+        "value": 1
       },
       {
         "key": "Rearview Swingman",
-        "value": 0
+        "value": 1
       },
       {
         "key": "Screenshot Format",
@@ -110,6 +110,10 @@
         "value": 1
       },
       {
+        "key": "Head Physics",
+        "value": 0
+      },
+      {
         "key": "Steering Wheel",
         "value": 0
       },
@@ -122,6 +126,20 @@
   },
   "name": "VR-High",
   "preset_type": 0,
+  "reshade_settings": {
+    "key": "Base Options",
+    "options": [
+      {
+        "key": "use_reshade",
+        "value": false
+      },
+      {
+        "key": "preset_name",
+        "value": "ReShadePreset_Sharpen.ini"
+      }
+    ],
+    "title": "Reshade"
+  },
   "resolution_settings": {
     "key": "Resolution Settings",
     "options": [

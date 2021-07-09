@@ -101,6 +101,12 @@ adjustable_graphics_settings = {
                               {'value': 0, 'name': 'Off'}, {'value': 1, 'name': 'Low'},
                               {'value': 2, 'name': 'Medium'}, {'value': 3, 'name': 'High'}),
                           },
+    'Head Physics': {'name': 'Head Physics', 'value': 1.0,
+                     'settings': ({'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.01,
+                                   'display': 'floatpercent',
+                                   'desc': 'Fraction of head physics movement applied to '
+                                           'cockpit view (position AND rotation)'},)
+                     },
     'Steering Wheel': {'name': 'Steering Wheel', 'value': 0,
                        'settings': (
                            {'value': 0, 'name': 'On [Default]', 'desc': 'Moving steering wheel and arms'},

@@ -31,7 +31,9 @@ class AppSettings(JsonRepr):
     headlight_controller_assignments = dict()
     headlight_rf_key = 'DIK_H'
     server_passwords = dict()
+    apply_webui_settings = False
 
+    # -----------------------------------
     # -- Won't be saved to file:
     skip_keys = ['first_load_complete', 'session_selection', 'replay_playing',
                  'present_mon_bin', 'present_mon_result_dir',
