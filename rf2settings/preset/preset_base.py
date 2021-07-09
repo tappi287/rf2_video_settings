@@ -74,7 +74,7 @@ def load_preset(file: Path, load_preset_type: int) -> Optional[preset.BasePreset
         preset_type = preset.PresetType.graphics
 
     # -- Skip Presets that are not of the desired type
-    if load_preset_type != preset_type:
+    if load_preset_type is not None and load_preset_type != preset_type:
         return
 
     # -- Create new preset instance based on type
