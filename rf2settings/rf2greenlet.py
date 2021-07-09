@@ -62,14 +62,14 @@ def _rfactor_greenlet_loop():
             CommandQueue.append(Command(Command.get_content, timeout=10.0))
 
         # -- Set Session Settings if present in AppSettings
-        if AppSettings.session_selection and len(CommandQueue.queue) < 2:
+        if AppSettings.session_selection and len(CommandQueue.queue) < 2 and AppSettings.apply_webui_settings:
             CommandQueue.append(Command(Command.set_session_settings, data=AppSettings.session_selection,
                                         timeout=5.0))
             # -- Reset Session Settings
             AppSettings.session_selection = dict()
 
         # -- Set Content Selection if present in AppSettings
-        if AppSettings.content_selected and len(CommandQueue.queue) < 3:
+        if AppSettings.content_selected and len(CommandQueue.queue) < 3 and AppSettings.apply_webui_settings:
             CommandQueue.append(Command(Command.set_content, data=AppSettings.content_selected, timeout=5.0))
             # -- Reset Content Selection
             AppSettings.content_selected = dict()
