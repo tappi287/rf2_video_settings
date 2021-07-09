@@ -1,7 +1,8 @@
 <template>
 <div v-if="current_preset_idx === idx">
   <!-- Video Settings -->
-  <SettingsCard :preset="preset" :idx="idx" settings-key="video_settings" :fixed-width="fixedWidth"
+  <SettingsCard :preset="preset" :idx="idx" settings-key="video_settings"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
                 :current_preset_idx="current_preset_idx"
                 :previous-preset-name="previousPresetName"
                 :setting-disabled="settingDisabled"
@@ -10,7 +11,7 @@
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
                 @make-toast="makeToast">
-    <template #footer>
+    <template #footer v-if="!compact">
       <div class="float-left video-indicator">
         <template v-if="preset.resolution_settings.options[0].value !== null">
           <b-iconstack>
@@ -33,7 +34,8 @@
   </SettingsCard>
 
   <!-- Display Settings -->
-  <SettingsCard :preset="preset" :idx="idx" settings-key="graphic_options" :fixed-width="fixedWidth"
+  <SettingsCard :preset="preset" :idx="idx" settings-key="graphic_options"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
                 :current_preset_idx="current_preset_idx"
                 :previous-preset-name="previousPresetName"
                 :show-performance="showPerformance"
@@ -42,7 +44,7 @@
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
                 @make-toast="makeToast">
-    <template #footer>
+    <template #footer v-if="!compact">
       <div class="float-right">
         <b-button size="sm" @click="showPerformance = !showPerformance"
                   v-b-popover.lefttop.hover="'Show performance data next to supported settings in ' +
@@ -55,7 +57,8 @@
   </SettingsCard>
 
   <!-- Advanced Display Settings -->
-  <SettingsCard :preset="preset" :idx="idx" settings-key="advanced_graphic_options" :fixed-width="fixedWidth"
+  <SettingsCard :preset="preset" :idx="idx" settings-key="advanced_graphic_options"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
                 :current_preset_idx="current_preset_idx"
                 :previous-preset-name="previousPresetName"
                 :show_performance="showPerformance"
@@ -67,7 +70,8 @@
   </SettingsCard>
 
   <!-- ReShade Settings -->
-  <SettingsCard :preset="preset" :idx="idx" settings-key="reshade_settings" :fixed-width="fixedWidth"
+  <SettingsCard :preset="preset" :idx="idx" settings-key="reshade_settings"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
                 :current_preset_idx="current_preset_idx"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode"
@@ -75,7 +79,7 @@
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
                 @make-toast="makeToast">
-    <template #footer>
+    <template #footer v-if="!compact">
       <div style="font-size: small;">
         Visit
         <b-link class="text-rf-orange" target="_blank" href="https://vrtoolkit.retrolux.de/">
@@ -131,7 +135,7 @@ export default {
     }
   },
   props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number, search: String,
-          previousPresetName: String, fixedWidth: Boolean },
+          previousPresetName: String, fixedWidth: Boolean, compact: Boolean, frozen: Boolean },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)

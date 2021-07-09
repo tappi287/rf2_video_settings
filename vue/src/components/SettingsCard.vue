@@ -1,8 +1,10 @@
 <template>
 <div v-if="current_preset_idx === idx">
   <!-- Content Selection -->
-  <RfactorContentCard show-launch text="Content Selection" @launched="$emit('content-launched')"
-                      :fixed-width="fixedWidth" v-if="contentSelection" :settings="contentSettings"
+  <RfactorContentCard v-if="contentSelection"
+                      show-launch text="Content Selection" @launched="$emit('content-launched')"
+                      :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
+                      :settings="contentSettings"
                       :header-icon="headerIcon"
                       @make-toast="makeToast" @set-busy="setBusy" @update-setting="updateSetting">
     <template #footer>
@@ -12,7 +14,7 @@
 
   <!-- Generic Settings -->
   <b-card class="mt-2 setting-card" header-class="m-0 p-2" :id="groupId" v-if="!contentSelection"
-          bg-variant="dark" text-variant="white">
+          bg-variant="dark" text-variant="white" :footer-class="compact ? 'd-none' : ''">
     <!-- Header -->
     <template #header>
         <b-icon v-if="headerIcon" :icon="headerIcon"></b-icon>
@@ -22,7 +24,7 @@
     <template v-if="!viewMode">
       <!-- View Mode Grid -->
       <Setting v-for="setting in searchedOptions" :key="setting.key"
-               :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixedWidth="fixedWidth"
+               :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixedWidth="fixedWidth" :frozen="frozen"
                :show_performance="showPerformance"
                :disabled="settingDisabledLocal(setting)"
                :group-id="groupId"
@@ -35,7 +37,7 @@
       <b-list-group class="text-left">
         <b-list-group-item class="bg-transparent" v-for="setting in searchedOptions"
                            :key="setting.key">
-          <Setting :setting="setting" variant="rf-orange" :fixedWidth="fixedWidth"
+          <Setting :setting="setting" variant="rf-orange" :fixedWidth="fixedWidth" :frozen="frozen"
                    :show_performance="showPerformance"
                    :disabled="settingDisabledLocal(setting)"
                    :group-id="groupId"
@@ -61,7 +63,8 @@ export default {
   name: "SettingsCard",
   props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number, settingsKey: String,
           settingDisabled: Function, showPerformance: Boolean, search: String, previousPresetName: String,
-          fixedWidth: Boolean, contentSelection: Boolean, headerIcon: String },
+          fixedWidth: Boolean, contentSelection: Boolean, headerIcon: String,
+          compact: Boolean, frozen: Boolean },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
@@ -71,6 +74,7 @@ export default {
       this.$emit('update-setting', setting, value)
     },
     settingDisabledLocal: function (setting) {
+      if (this.frozen) { return true }
       if (this.settingDisabled !== undefined) {
         return this.settingDisabled(setting)
       }

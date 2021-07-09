@@ -36,6 +36,7 @@
           <div :id="elemId" class="fixed-width-setting position-relative">
             <b-form-spinbutton v-model="rangeValue" :min="rangeMin" :max="rangeMax" :step="rangeStep" inline
                                :class="'spinner-setting no-border btn-' + variant"
+                               :disabled="disabled"
                                @change="spinnerSettingUpdated" :formatter-fn="spinnerDisplay">
             </b-form-spinbutton>
           </div>
@@ -47,7 +48,7 @@
                   Manually enter a value between {{ rangeMin }} and {{ rangeMax }}:
                 </label>
                 <b-form-input
-                    :id="'input-' + elemId" size="sm" debounce="100"
+                    :id="'input-' + elemId" size="sm" debounce="100" :disabled="disabled"
                     v-model="spinnerInputValue" type="number"
                     :max="rangeMax" :min="rangeMin" :step="rangeStep"
                     :state="spinnerInputState" number />
@@ -56,7 +57,7 @@
                 </b-form-invalid-feedback>
               </div>
               <div class="text-right mt-2">
-                <b-button @click="confirmSpinnerPopover"
+                <b-button @click="confirmSpinnerPopover" :disabled="disabled"
                           size="sm" variant="success" aria-label="Confirm">
                   Confirm
                 </b-button>
@@ -189,6 +190,7 @@ export default {
     this.$nextTick(() => {
       this.setFixedWidth()
     })
+    this.$emit('setting-ready', this)
   },
   computed: {
     currentSettingName: function () {
