@@ -204,6 +204,7 @@ class Command:
         if not selected.get('series'):
             selected = self._get_all_tracks_cars_series(selected)
 
+        content_updated = False
         for url, name in zip(AppSettings.content_urls, AppSettings.content_keys):
             content_id, retries = selected.get(name), 3
             if not content_id:
@@ -239,22 +240,37 @@ class Command:
                     r = RfactorConnect.post_request(**CommandUrls.set_series_args(content_id))
                 else:
                     r = RfactorConnect.post_request(url, data=content_id)
-
                 if self._check_request(r):
                     break
                 else:
                     try:
                         # -- Try a get content request to workaround internal WebUI error
                         gevent.sleep(0.1)
+                        logging.debug('Trying workaround get content request to %s', url)
                         c = RfactorConnect.get_request(url=url)
                         if not c:
                             # -- Probably no connection
                             self.finished = True
                             return
+
+                        # -- Try to update the content list
+                        if self._check_request(c):
+                            AppSettings.content[name] = c.json()
+                            # -- Try to get an updated signature of the All Tracks & Cars Series
+                            if url == CommandUrls.series:
+                                selected = self._get_all_tracks_cars_series(selected)
+                                content_id = selected['series']
+                                logging.debug('Updated All Tracks & Cars Series to: %s', content_id)
+                            content_updated = True
+
                         gevent.sleep(0.1)
                     except Exception as e:
                         logging.error('Error during workaround get content request: %s', e)
                     logging.debug('Re-trying failed set content request #%s', retries)
+
+        if content_updated:
+            logging.debug('Updated content during Set Content Command. Saving updated content list.')
+            AppSettings.save(save_content=True)
 
         AppAudioFx.play_audio(AppAudioFx.switch)
         # -- Navigate to Main Menu
