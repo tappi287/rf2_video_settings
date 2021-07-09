@@ -43,6 +43,8 @@ class _RfactorConnectRequestThread:
             if r.get('method') == 'GET':
                 try:
                     response = RfactorConnect.get_request(r.get('url'))
+                except WindowsError:
+                    continue
                 except Exception as e:
                     logging.error('Error during GET request: %s', e)
                     continue
@@ -52,9 +54,10 @@ class _RfactorConnectRequestThread:
                     if response.status_code in (200, 201, 202, 203, 204):
                         response_json = response.json()
                     else:
+                        logging.debug('Request Thread received error response for GET request to %s %s %s',
+                                      r.get('url'), response.status_code, response.text)
                         response_json = {'status_code': response.status_code}
 
-                logging.debug('Request Thread received response for GET request to %s', r.get('url'))
                 response_queue.put(response_json)
             elif r.get('method') == 'POST':
                 try:
@@ -63,7 +66,9 @@ class _RfactorConnectRequestThread:
                     logging.error('Error during POST request: %s', e)
                     continue
 
-                logging.debug('Request Thread received response for POST request to %s', r.get('url'))
+                if response.status_code not in (200, 201, 202, 203, 204):
+                    logging.debug('Request Thread received error response for POST request to %s %s %s',
+                                  r.get('url'), response.status_code, response.text)
                 response_queue.put(response or False)  # Make sure we do not put None in the queue
 
         logging.debug('RfactorConnect request thread exiting.')
@@ -159,7 +164,7 @@ class RfactorConnect:
 
         # -- Check navigation state in http request thread
         if _RfactorConnectRequestThread.request_queue.empty():
-            logging.debug('Checking for rFactor 2 http connection. Interval: %.2f', timeout)
+            # logging.debug('Checking for rFactor 2 http connection. Interval: %.2f', timeout)
             cls.last_connection_check = time.time()  # Update TimeOut
             _RfactorConnectRequestThread.request_queue.put({'method': 'GET', 'url': '/navigation/state'})
 
