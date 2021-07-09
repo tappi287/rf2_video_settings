@@ -79,6 +79,9 @@ benchmark_settings = {
                               'desc': 'Time in seconds until the frame recording starts '
                                       'after the race session has started.'},
                              )},
+    'Replay': {'key': 'Replay', 'name': 'Replay [optional]', 'value': None,
+               'settings': ({'value': None, 'name': 'Select a Replay in the Replay List'},)
+               },
 }
 
 # Settings set via WebUI

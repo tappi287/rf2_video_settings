@@ -165,6 +165,21 @@ def open_log_folder():
     log_dir = str(WindowsPath(get_log_dir()))
     logging.info('Opening folder: %s', log_dir)
     Popen(f'explorer /n,"{log_dir}"')
+    return json.dumps({'result': True, })
+
+
+@eel.expose
+def set_apply_webui_settings(setting: bool):
+    AppSettings.apply_webui_settings = setting
+    AppSettings.save()
+    logging.debug('Updated apply_webui_settings: %s', AppSettings.apply_webui_settings)
+    return json.dumps({'result': True, })
+
+
+@eel.expose
+def get_apply_webui_settings():
+    logging.debug('Providing Ui with apply_webui_settings: %s', AppSettings.apply_webui_settings)
+    return json.dumps({'result': True, 'setting': AppSettings.apply_webui_settings})
 
 
 def expose_main_methods():

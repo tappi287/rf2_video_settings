@@ -1,44 +1,5 @@
 <template>
-  <div id="replays">
-    <b-input-group>
-      <b-input-group-prepend>
-        <div class="pl-0 pr-1 rpl-con position-relative bg-transparent rounded-left">
-          <b-img width=".3rem" class="rpl-icon" src="@/assets/rfW_logo_color.svg"></b-img>
-        </div>
-        <!-- Title -->
-        <b-input-group-text class="bg-transparent no-border section-title text-white pl-0">
-          Replay Manager
-        </b-input-group-text>
-      </b-input-group-prepend>
-
-      <!-- Spacer -->
-      <div class="form-control bg-transparent no-border">
-        <span v-if="!watchEnabled">Watching replays is not supported with your rFactor version</span>
-      </div>
-
-      <!-- Preset Selection -->
-      <div class="mt-1">
-        <b-input-group size="sm" class="setting-field">
-          <b-input-group-prepend>
-            <b-input-group-text class="info-field fixed-width-name">
-              Replay Graphics Preset
-            </b-input-group-text>
-          </b-input-group-prepend>
-          <b-input-group-append>
-              <b-dropdown size="sm" :text="currentPresetName" right
-                          class="setting-item fixed-width-setting no-border"
-                          v-b-popover.auto.hover="'Select a Graphics Preset you want to use when watching a Replay.'"
-                          :variant="currentPresetName !== nonePreset.name ? 'rf-orange' : 'rf-blue'">
-                <b-dropdown-item v-for="(preset, idx) in replayPresetList" :key="idx"
-                                 @click="setReplayPreset(preset)">
-                  {{ preset.name }}
-                </b-dropdown-item>
-              </b-dropdown>
-            </b-input-group-append>
-          </b-input-group>
-      </div>
-    </b-input-group>
-
+  <div>
     <!-- Filter -->
     <b-input-group size="md" class="mt-2">
       <b-input-group-prepend>
@@ -77,7 +38,7 @@
             <b-icon icon="filter" :variant="filterR ? 'secondary' : 'success'"/>
             <span class="ml-2">R</span>
           </b-button>
-          <b-button variant="danger" :id="'delete-replays-btn' + _uid"
+          <b-button variant="danger" :id="'delete-replays-btn' + _uid" v-if="editing"
                     v-b-popover.auto.hover="'Delete selected Replay files.'">
             <b-icon class="mr-2 ml-1" icon="trash-fill" aria-hidden="true"></b-icon>
           </b-button>
@@ -105,45 +66,53 @@
 
     <b-table :items="computedReplayList" :fields="replayFields" table-variant="dark" small borderless
              primary-key="id" class="server-list" thead-class="bg-dark text-white"
-             selectable select-mode="range" selected-variant="primary"
+             ref="replayTable"
+             selectable selected-variant="primary"
+             :select-mode="editing ? 'range' : 'single'"
              @row-selected="selectRows">
       <!-- Name -->
       <template v-slot:cell(name)="replay">
         <!-- Name Link -->
-        <b-link  :class="'replay-link text-' + replayTypeText(replay.item).var"
-                 :id="'replay-action-btn-' + replay.item.id + _uid"
-                 @click="setActionReplay(replay.item)">
-          <b-icon shift-v="-0.5" icon="play-circle-fill"></b-icon>
-          <span :class="replay.rowSelected ? 'ml-2' : 'ml-2 text-white'">{{ replay.item.name }}</span>
-        </b-link>
+        <template v-if="editing">
+          <b-link  :class="'replay-link text-' + replayTypeText(replay.item).var"
+                   :id="'replay-action-btn-' + replay.item.id + _uid"
+                   @click="setActionReplay(replay.item)">
+            <b-icon shift-v="-0.5" icon="play-circle-fill"></b-icon>
+            <span :class="replay.rowSelected ? 'ml-2' : 'ml-2 text-white'">{{ replay.item.name }}</span>
+          </b-link>
 
-        <!-- Play/Rename Popover -->
-        <b-popover :target="'replay-action-btn-' + replay.item.id + _uid" triggers="click">
-          <template #title>
-            {{ replay.item.name }}
-          </template>
-          <div>
-            <p>Rename or watch this replay.</p>
-            <b-form-input title="Rename" size="sm" class="mb-2" v-model="newReplayName" @submit.prevent></b-form-input>
-          </div>
-          <div class="text-right">
-            <b-button @click="playReplay(replay.item); $root.$emit('bv::hide::popover', 'replay-action-btn-' + replay.item.id + _uid)"
-                      size="sm" variant="primary"
-                      v-if="watchEnabled"
-                      aria-label="Watch" class="mr-2">
-              Watch
-            </b-button>
-            <b-button @click="renameReplay(replay.item); $root.$emit('bv::hide::popover', 'replay-action-btn-' + replay.item.id + _uid)"
-                      size="sm" variant="warning"
-                      aria-label="Rename" class="mr-2">
-              Rename
-            </b-button>
-            <b-button @click="$root.$emit('bv::hide::popover', 'replay-action-btn-' + replay.item.id + _uid)"
-                      size="sm" aria-label="Close">
-              Close
-            </b-button>
-          </div>
-        </b-popover>
+          <!-- Play/Rename Popover -->
+          <b-popover :target="'replay-action-btn-' + replay.item.id + _uid" triggers="click">
+            <template #title>
+              {{ replay.item.name }}
+            </template>
+            <div>
+              <p>Rename or watch this replay.</p>
+              <b-form-input title="Rename" size="sm" class="mb-2" v-model="newReplayName" @submit.prevent></b-form-input>
+            </div>
+            <div class="text-right">
+              <b-button @click="playReplay(replay.item); $root.$emit('bv::hide::popover', 'replay-action-btn-' + replay.item.id + _uid)"
+                        size="sm" variant="primary"
+                        v-if="watchEnabled"
+                        aria-label="Watch" class="mr-2">
+                Watch
+              </b-button>
+              <b-button @click="renameReplay(replay.item); $root.$emit('bv::hide::popover', 'replay-action-btn-' + replay.item.id + _uid)"
+                        size="sm" variant="warning"
+                        aria-label="Rename" class="mr-2">
+                Rename
+              </b-button>
+              <b-button @click="$root.$emit('bv::hide::popover', 'replay-action-btn-' + replay.item.id + _uid)"
+                        size="sm" aria-label="Close">
+                Close
+              </b-button>
+            </div>
+          </b-popover>
+        </template>
+        <template v-else>
+          <b-icon shift-v="-0.5" icon="play-circle-fill" class="mr-2"></b-icon>
+          <span :class="'replay-link text-' + replayTypeText(replay.item).var">{{ replay.item.name }}</span>
+        </template>
       </template>
       <!-- Replay Type -->
       <template v-slot:cell(type)="replay">
@@ -157,7 +126,7 @@
 import {getEelJsonObject} from "@/main";
 
 export default {
-  name: "Replays",
+  name: "ReplayList",
   data: function () {
     return {
       replays: [],
@@ -167,22 +136,46 @@ export default {
         { key: 'size', label: 'Size', sortable: true, class: 'text-right' },
         { key: 'date', label: 'Last modified', sortable: true, class: 'text-right' },
       ],
+      newReplayName: '',
       currentSelection: [],
       replayTextFilter: null,
-      newReplayName: '',
-      nonePreset: {name: 'None', isNonePreset: true},
       filterQ: false, filterR: false, filterP: false, filterH: false, filterW: false,
-      replayPreset: '',
-      watchEnabled: false,
       isBusy: false,
     }
   },
-  props: {rfactorVersion: String, gfxHandler: Object },
+  props: { watchEnabled: Boolean, editing: Boolean },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
     },
     setBusy: function (busy) { this.isBusy = busy; this.$emit('set-busy', busy) },
+    getReplays: async function() {
+      this.setBusy(true)
+      const r = await getEelJsonObject(window.eel.get_replays()())
+      if (r.result) { this.replays = r.replays }
+      if (!r.result) { this.makeToast(r.msg, 'danger', 'Get Replays Error') }
+      this.setBusy(false)
+    },
+    setActionReplay(replay) { this.newReplayName = replay.name },
+    renameReplay: async function(replay) {
+      this.setBusy(true)
+      const r = await getEelJsonObject(window.eel.rename_replay(replay, this.newReplayName)())
+      if (r.result) {
+        this.makeToast(r.msg, 'success', 'Replay renamed to: ' + this.newReplayName)
+        await this.getReplays()
+      }
+      if (!r.result) { this.makeToast(r.msg, 'danger', 'Replay Rename Error') }
+      this.setBusy(false)
+    },
+    playReplay: async function (replay) {
+      const r = await getEelJsonObject(window.eel.play_replay(replay.name)())
+      if (r.result) {
+        this.makeToast(r.msg, 'success', 'Playing replay')
+        this.setBusy(true)
+        this.$eventHub.$emit('play-audio', 'audioConfirm')
+      }
+      if (!r.result) { this.makeToast(r.msg, 'danger', 'Replay Play Error') }
+    },
     replayTypeText(replay) {
       if (replay.type === 1) {
         return {text: 'Q', var: 'primary'}
@@ -196,10 +189,6 @@ export default {
         return {text: 'W', var: 'info'}
       }
       return {text: '', var: ''}
-    },
-    selectRows: function (selection) {
-      this.currentSelection = selection
-      console.log('Selection:', selection)
     },
     resetFilter() {
       this.replayTextFilter = ''
@@ -230,31 +219,11 @@ export default {
 
       return filteredList
     },
-    getReplayPreset: async function() {
-      this.replayPreset = await window.eel.get_replay_preset()()
-      if (this.replayPreset === '') { return }
-      let presets = this.gfxHandler.presets.slice(1)
-
-      // Check if preset is in Graphics preset list
-      let match = false
-      presets.forEach(p => { if(this.replayPreset === p.name) { match = true }})
-      // Reset Preset if not in current graphics presets
-      if (!match) { await this.setReplayPreset(this.nonePreset) }
+    selectRows: function (selection) {
+      this.currentSelection = selection
+      this.$emit('row-selected', selection)
+      console.log('Selection:', selection)
     },
-    setReplayPreset: async function(preset) {
-      let name = preset.name
-      if (preset.isNonePreset !== undefined) { name = '' }
-      await window.eel.set_replay_preset(name)()
-      await this.getReplayPreset()
-    },
-    getReplays: async function() {
-      this.setBusy(true)
-      const r = await getEelJsonObject(window.eel.get_replays()())
-      if (r.result) { this.replays = r.replays }
-      if (!r.result) { this.makeToast(r.msg, 'danger', 'Get Replays Error') }
-      this.setBusy(false)
-    },
-    setActionReplay(replay) { this.newReplayName = replay.name },
     deleteReplays: async function() {
       if (this.currentSelection.length <= 0) { return }
       this.setBusy(true)
@@ -268,27 +237,6 @@ export default {
 
       this.setBusy(false)
     },
-    renameReplay: async function(replay) {
-      this.setBusy(true)
-      const r = await getEelJsonObject(window.eel.rename_replay(replay, this.newReplayName)())
-      if (r.result) {
-        this.makeToast(r.msg, 'success', 'Replay renamed to: ' + this.newReplayName)
-        await this.getReplays()
-      }
-      if (!r.result) { this.makeToast(r.msg, 'danger', 'Replay Rename Error') }
-      this.setBusy(false)
-    },
-    playReplay: async function (replay) {
-      const r = await getEelJsonObject(window.eel.play_replay(replay.name)())
-      if (r.result) {
-        this.makeToast(r.msg, 'success', 'Playing replay')
-        this.setBusy(true)
-        this.$eventHub.$emit('play-audio', 'audioConfirm')
-      }
-      if (!r.result) { this.makeToast(r.msg, 'danger', 'Replay Play Error') }
-    },
-  },
-  components: {
   },
   computed: {
     computedReplayList() {
@@ -298,27 +246,14 @@ export default {
         return []
       }
     },
-    currentPresetName() {
-      if (this.replayPreset === '') { return this.nonePreset.name }
-      return this.replayPreset
-    },
-    replayPresetList() {
-      let presets = this.gfxHandler.presets.slice(1)
-      presets.unshift(this.nonePreset)
-      return presets
-    },
   },
-  created() {
-    if (this.rfactorVersion >= '1.1122') { this.watchEnabled = true }
-    this.getReplays()
-    this.getReplayPreset()
+  async created() {
+    await this.getReplays()
+    this.$emit('replays-ready')
   }
 }
 </script>
 
 <style scoped>
-.section-title { font-family: Ubuntu, sans-serif; }
 .replay-link { cursor: alias; }
-.rpl-icon { width: 2.075rem; }
-.rpl-con { margin-top: .1rem; }
 </style>

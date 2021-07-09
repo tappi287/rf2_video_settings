@@ -1,3 +1,4 @@
+import json
 import logging
 import threading
 import time
@@ -18,6 +19,8 @@ from .rf2connect import RfactorConnect, RfactorState
 from .rf2events import StartBenchmarkEvent, RecordBenchmarkEvent, RfactorQuitEvent, RfactorStatusEvent, \
     BenchmarkProgressEvent
 from .rfactor import RfactorPlayer
+
+# TODO: Abort button
 
 """
 base_url = 'localhost'
@@ -113,6 +116,7 @@ class RfactorBenchmark:
         self.result_file: Optional[Path] = None
         self.benchmark_length = self.default_benchmark_length
         self.recording_timeout = self.default_timeout
+        self.replay: Optional[str] = None
         self.start_time = 0.0
 
         self._timestamp = 0
@@ -165,7 +169,7 @@ class RfactorBenchmark:
             self.finish()
             return
 
-        create_benchmark_commands(self.ai_dik, self.fps_dik, self.recording_timeout)
+        create_benchmark_commands(self.ai_dik, self.fps_dik, self.recording_timeout, self.replay)
         self.running = True
 
     def start_present_mon_logging(self) -> bool:
@@ -234,7 +238,7 @@ class RfactorBenchmark:
         # -- Get next run from the queue
         self.current_run = BenchmarkQueue.next()
         if not self.current_run:
-            logging.error('No more Benchmark runs in the queue!')
+            logging.info('No more Benchmark runs in the queue!')
             return False
 
         # -- Apply current presets
@@ -252,11 +256,13 @@ class RfactorBenchmark:
         # -- Apply Benchmark Settings
         length = getattr(self.current_run.settings.get_option('Length'), 'value', None)
         timeout = getattr(self.current_run.settings.get_option('TimeOut'), 'value', None)
+        self.replay = getattr(self.current_run.settings.get_option('Replay'), 'value', None)
         self.benchmark_length = int(length or self.default_benchmark_length)
         self.recording_timeout = int(timeout or self.default_timeout)
 
-        logging.info('Prepared Benchmark Run: %s length %s recording delay %s with Presets: %s',
-                     self.current_run.name, self.benchmark_length, self.recording_timeout, preset_names)
+        logging.info('Prepared Benchmark Run: %s length %s recording delay %s replay %s with Presets: %s',
+                     self.current_run.name, self.benchmark_length, self.recording_timeout, self.replay,
+                     preset_names)
 
         # -- Get Keyboard Assignments for AI Control and FPS View
         return self._update_controller_assignment() and result
@@ -288,12 +294,14 @@ class RfactorBenchmark:
             logging.info('Could not locate PresentMon result file. Skipping creation of result Preset files.')
             return
 
+        preset_names = []
         for preset_type in (PresetType.session, PresetType.graphics):
             current_preset = PRESET_TYPES.get(preset_type)()
             selected_preset_name = AppSettings.selected_presets.get(str(preset_type)) or current_preset.name
             _, selected_preset = load_presets_from_dir(get_user_presets_dir(), preset_type,
                                                        selected_preset_name=selected_preset_name)
-            
+            preset_names.append(selected_preset_name)
+
             # -- Write preset next to result
             if selected_preset:
                 file_name = f'{self.result_file.stem}_{selected_preset.prefix}'
@@ -304,3 +312,19 @@ class RfactorBenchmark:
             else:
                 logging.error('Could not export benchmark result preset.')
 
+        # -- Export Benchmark Settings
+        options = list()
+        options.append({'name': 'rF2 Version', 'value': AppSettings.last_rf_version})
+        options.append({'name': 'Benchmark Length', 'value': f'{self.benchmark_length}s'})
+        options.append({'name': 'Recording Delay', 'value': f'{self.recording_timeout}s'})
+        options.append({'name': 'Replay', 'value': f'{self.replay or "None"}'})
+        options.append({'name': 'Original Session Preset Name', 'value': preset_names[0]})
+        options.append({'name': 'Original Gfx Preset Name', 'value': preset_names[1]})
+
+        file = self.result_file.parent / f'{self.result_file.stem}_settings.json'
+        try:
+            with open(file, 'w') as f:
+                json.dump(options, f, indent=2, sort_keys=True)
+                logging.debug('Exporting benchmark result settings: %s', file.name)
+        except Exception as e:
+            logging.error('Could not write benchmark result settings: %s', e)
