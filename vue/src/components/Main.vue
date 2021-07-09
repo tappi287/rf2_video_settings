@@ -197,8 +197,8 @@
                 @make-toast="makeToast" />
 
     <!-- Replays -->
-    <Replays ref="replays" v-if="navActive === 5" @make-toast="makeToast" @set-busy="setBusy"
-             :rfactor-version="rfactorVersion" :gfx-handler="$refs.gfx"/>
+    <ReplayArea ref="replays" v-if="navActive === 5" @make-toast="makeToast" @set-busy="setBusy"
+                :rfactor-version="rfactorVersion" :gfx-handler="$refs.gfx"/>
 
     <!-- Server Browser -->
     <keep-alive>
@@ -222,9 +222,9 @@
     </template>
 
     <!-- Session Settings and Content Selection -->
-    <SessionSettingArea v-if="navActive === 10" fixed-width
-                        @content-launched="navActive = 0" :ses-handler="$refs.ses" :search="search"
-                        @make-toast="makeToast" @set-busy="setBusy"/>
+    <SessionPresetArea v-if="navActive === 10" fixed-width
+                       @content-launched="navActive = 0" :ses-handler="$refs.ses" :search="search"
+                       @make-toast="makeToast" @set-busy="setBusy"/>
 
     <!-- rFactor Actions -->
     <b-container fluid class="mt-3 p-0">
@@ -333,12 +333,12 @@ import SettingsCard from "@/components/SettingsCard";
 import Wiki from "@/components/Wiki";
 import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 import Headlights from "@/components/Headlights";
-import Replays from "@/components/Replays";
+import ReplayArea from "@/components/ReplayArea";
 import Log from "@/components/Log";
 import {getEelJsonObject} from "@/main";
 import Benchmark from "@/components/Benchmark";
 import GraphicsPresetArea from "@/components/GraphicsPresetArea";
-import SessionSettingArea from "@/components/SessionSettingArea";
+import SessionPresetArea from "@/components/SessionPresetArea";
 // --- </ Prepare receiving rfactor live events
 window.eel.expose(rfactorLiveFunc, 'rfactor_live')
 async function rfactorLiveFunc (event) {
@@ -436,6 +436,7 @@ export default {
         if (this.$refs.gfx !== undefined) { this.$refs.gfx.getPresets() }
         if (this.$refs.con !== undefined) { this.$refs.con.getPresets() }
         if (this.$refs.gen !== undefined) { this.$refs.gen.getPresets() }
+        if (this.$refs.ses !== undefined) { this.$refs.ses.getPresets() }
       })
       this.$refs.Benchmark.refresh()
     },
@@ -515,10 +516,10 @@ export default {
     window.removeEventListener('play-audio-event', this.externalPlayAudioEvent)
   },
   components: {
-    SessionSettingArea,
+    SessionPresetArea,
     GraphicsPresetArea,
     Benchmark,
-    Replays,
+    ReplayArea,
     Headlights,
     LaunchRfactorBtn,
     SettingsCard,

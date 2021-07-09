@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-card class="mt-2 setting-card text-center" header-class="m-0 p-2"
-            bg-variant="dark" text-variant="white" :id="groupId">
+            bg-variant="dark" text-variant="white" :id="groupId" :footer-class="compact ? 'd-none' : ''">
       <template #header v-if="displayText">
         <b-icon v-if="headerIcon" :icon="headerIcon"></b-icon>
         <span :class="headerIcon ? 'ml-2' : ''">{{ displayText }}</span>
@@ -21,7 +21,7 @@
             <b-input-group-append>
               <!-- Dropdown Menu -->
               <b-dropdown :text="currentContentName[contentType]" class="setting-item fixed-width-setting no-border"
-                          :id="elemId + contentType"
+                          :id="elemId + contentType" :disabled="frozen"
                           :variant="currentContentName[contentType] === 'None' ? 'rf-blue' : 'rf-orange'">
                 <b-dropdown-item v-for="item in displayContent[contentType]" :key="item.id"
                                  @click="selectItem(contentType, item)">
@@ -32,13 +32,21 @@
           </b-input-group>
         </div>
       </template>
-      <template v-else>
+      <template v-if="content.series.length === 0 && !frozen">
         <div class="text-rf-orange">
           <b>rF2 content is unknown. Use the refresh button to acquire rF2 content list.</b>
         </div>
       </template>
+      <template v-if="content.series.length === 0 && frozen">
+        <div v-for="contentType in contentTypes" :key="contentType"
+             class="setting mr-3 mb-3 input-group-text info-field fixed-width-name">
+          <template v-if="selected[contentType] !== null">
+            {{ contentType.charAt(0).toUpperCase() + contentType.slice(1) }}: {{ selected[contentType] }}
+          </template>
+        </div>
+      </template>
 
-      <template #footer>
+      <template #footer v-if="!compact">
         <slot name="footer"></slot>
 
         <!-- Refresh Button -->
@@ -72,7 +80,7 @@ import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 export default {
   name: "RfactorContentCard",
   components: {LaunchRfactorBtn},
-  props: {text: String, fixedWidth: Boolean, settings: Array, headerIcon: String },
+  props: {text: String, fixedWidth: Boolean, settings: Array, headerIcon: String, frozen: Boolean, compact: Boolean },
   data: function () {
     return {
       groupId: 'contentarea' + this._uid,
@@ -120,6 +128,7 @@ export default {
       items.forEach(item => {
         if (item.id === id) { result_item = item }
       })
+
       if (result_item === undefined && items.length > 0) {
         if (this.selected[contentType] === null) { this.selected[contentType] = items[0].id }
         if (contentType === 'layout') {
@@ -193,10 +202,6 @@ export default {
 
       // Update Content
       await this.getContent()
-
-      // Update fixed width
-      // Access after rendering finished
-      setTimeout(() => { this.setFixedWidth() }, 0)
     },
     setFixedWidth: function () {
       if (!this.fixedWidth) { return }
@@ -260,6 +265,11 @@ export default {
   async created() {
     await this.startUp()
   },
+  mounted() {
+    // Update fixed width
+    // Access after rendering finished
+    this.$nextTick(() => { this.setFixedWidth() })
+  }
 }
 </script>
 
