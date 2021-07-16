@@ -46,9 +46,9 @@ adjustable_graphics_settings = {
                     },
     'Soft Particles': {'name': 'Soft Particles', 'value': 1,
                        'settings':
-                            ({'value': 0, 'name': 'Off'}, {'value': 1, 'name': 'Low', 'desc': 'Cheap soft edges'},
-                             {'value': 2, 'name': 'High', 'desc': 'Depth buffered soft edges',
-                              'perf': 'G+0,57% C+2,57%'}),
+                           ({'value': 0, 'name': 'Off'}, {'value': 1, 'name': 'Low', 'desc': 'Cheap soft edges'},
+                            {'value': 2, 'name': 'High', 'desc': 'Depth buffered soft edges',
+                             'perf': 'G+0,57% C+2,57%'}),
                        },
     'Rain FX Quality': {'name': 'Rain Drops', 'value': 3,
                         'settings':
@@ -60,18 +60,18 @@ adjustable_graphics_settings = {
                         },
     'Road Reflections': {'name': 'Road Reflection', 'value': 2,
                          'settings':
-                            ({'value': 0, 'name': 'Off',
-                              'desc': 'It will be hard to spot wet track areas! '
-                                      'The Low setting is free on GPU but CPU heavy'},
-                             {'value': 1, 'name': 'Low',
-                              'desc': 'Reflected objects are generated '
-                                      'for wet road and heat mirage',
-                              'perf': 'G+0,33% C+5,39%'},
-                             {'value': 2, 'name': 'High',
-                              'desc': 'Reflected objects are generated for wet road and heat mirage'},
-                             {'value': 3, 'name': 'Ultra',
-                              'desc': 'Adds reflection blurring',
-                              'perf': 'G+6,40% C+9,40%'}),
+                             ({'value': 0, 'name': 'Off',
+                               'desc': 'It will be hard to spot wet track areas! '
+                                       'The Low setting is free on GPU but CPU heavy'},
+                              {'value': 1, 'name': 'Low',
+                               'desc': 'Reflected objects are generated '
+                                       'for wet road and heat mirage',
+                               'perf': 'G+0,33% C+5,39%'},
+                              {'value': 2, 'name': 'High',
+                               'desc': 'Reflected objects are generated for wet road and heat mirage'},
+                              {'value': 3, 'name': 'Ultra',
+                               'desc': 'Adds reflection blurring',
+                               'perf': 'G+6,40% C+9,40%'}),
                          },
     'Environment Reflections': {'name': 'Environment Reflection', 'value': 2,
                                 'settings':
@@ -127,12 +127,13 @@ advanced_settings = {
                         },
     'Texture Sharpening': {'name': 'Texture Sharpening', 'value': 5,
                            'settings': (
-                              {'value': 0, 'name': 'Off', },
-                              {'value': 1, 'name': '+2.0', 'desc': 'Sharpen textures using MIP LOD bias (very blurry)'},
-                              {'value': 2, 'name': '+1.0', 'desc': 'Sharpen textures using MIP LOD bias (blurry)'},
-                              {'value': 3, 'name': '-1.0', 'desc': 'Sharpen textures using MIP LOD bias (sharp)'},
-                              {'value': 4, 'name': '-2.0', 'desc': 'Sharpen textures using MIP LOD bias (very sharp)'},
-                              {'value': 5, 'name': 'Auto [Default]'},
+                               {'value': 0, 'name': 'Off', },
+                               {'value': 1, 'name': '+2.0',
+                                'desc': 'Sharpen textures using MIP LOD bias (very blurry)'},
+                               {'value': 2, 'name': '+1.0', 'desc': 'Sharpen textures using MIP LOD bias (blurry)'},
+                               {'value': 3, 'name': '-1.0', 'desc': 'Sharpen textures using MIP LOD bias (sharp)'},
+                               {'value': 4, 'name': '-2.0', 'desc': 'Sharpen textures using MIP LOD bias (very sharp)'},
+                               {'value': 5, 'name': 'Auto [Default]'},
                            ), },
     'Heat FX Fade Speed': {'name': 'Heat FX Fade Speed', 'value': 30,
                            'settings': ({'value': 30, 'name': '30 [Default]',
@@ -150,7 +151,7 @@ advanced_settings = {
     'Rearview_Back_Clip': {'name': 'Rearview Back Clip', 'value': 0,
                            'settings': ({'settingType': 'range', 'min': 0, 'max': 250, 'step': 20,
                                          'desc': 'Back plane distance(view distance) for mirror '
-                                                 '(0.0 = use default for scene)'}, )},
+                                                 '(0.0 = use default for scene)'},)},
     'Rearview Driving': {'name': 'Rearview Driving', 'value': 1,
                          'settings': (
                              {'value': 0, 'name': 'Off', 'desc': 'Applies to in-game nosecam, '
@@ -167,10 +168,11 @@ advanced_settings = {
                          ), },
     'Rearview Swingman': {'name': 'Rearview Swingman', 'value': 0,
                           'settings': (
-                             {'value': 0, 'name': 'Off', 'desc': 'Applies to in-game Swingman Cam'},
-                             {'value': 1, 'name': 'Center+Sides'}, {'value': 2, 'name': 'Center'},
-                             {'value': 3, 'name': 'Sides', 'desc': '(virtual mirrors only, in-car mirrors are on/off)'},
-                         ), },
+                              {'value': 0, 'name': 'Off', 'desc': 'Applies to in-game Swingman Cam'},
+                              {'value': 1, 'name': 'Center+Sides'}, {'value': 2, 'name': 'Center'},
+                              {'value': 3, 'name': 'Sides',
+                               'desc': '(virtual mirrors only, in-car mirrors are on/off)'},
+                          ), },
     'Screenshot Format': {'name': 'Screenshot Format', 'value': 0,
                           'settings': (
                               {'value': 0, 'name': 'default (jpg)'}, {'value': 1, 'name': 'bmp'},
@@ -215,7 +217,7 @@ adjustable_video_settings = {
                           )
              },
     'EPostProcessingSettings': {'name': 'Post Effects', 'value': 1, '_type': int,
-                                'settings': ({'value': 1, 'name': 'Off',},
+                                'settings': ({'value': 1, 'name': 'Off', },
                                              {'value': 2, 'name': 'Low', 'desc': 'Glare Effects',
                                               'perf': 'G+0,5% C+0,59%'},
                                              {'value': 3, 'name': 'Medium', 'desc': 'Glare Effects and Depth of Field',
@@ -224,13 +226,13 @@ adjustable_video_settings = {
                                               'perf': 'G+15,0% C+5,0%'},
                                              {'value': 5, 'name': 'Ultra', 'desc': 'All Effects at Ultra Quality',
                                               'perf': 'G+25,0% C+5,0%'},
-                                )},
+                                             )},
     'UseFXAA': {'name': 'FXAA', 'value': 0, '_type': int, 'desc': 'Can not be used with FSAA. You should prefer FSAA '
                                                                   'whenever possible.',
                 'settings': ({'value': 0, 'name': 'Off'},
                              {'value': 1, 'name': 'On', 'desc': 'Cheap post processing filter to smooth '
                                                                 'high contrast edges.'})},
-    }
+}
 resolution_video_settings = {
     'WindowedMode': {'name': 'Windowed Mode', 'value': None, 'hidden': True,
                      'settings': ({'value': 0, 'name': 'Fullscreen'}, {'value': 1, 'name': 'Windowed'})
@@ -239,30 +241,173 @@ resolution_video_settings = {
                    'settings': ({'value': 0, 'name': 'Windowed'}, {'value': 1, 'name': 'Borderless'})
                    },
     'VideoMode': {'name': 'Resolution', 'value': None, 'hidden': True,
-                  'settings': ({'value': 125, 'name': 'FullHD'}, )
+                  'settings': ({'value': 125, 'name': 'FullHD'},)
                   },
     'VideoRefresh': {'name': 'Refresh Rate', 'value': None, 'hidden': True,
-                     'settings': ({'value': 1, 'name': '60Hz'}, )
+                     'settings': ({'value': 1, 'name': '60Hz'},)
                      },
-    }
+}
+
 reshade_settings = {
-    'use_reshade': {'name': 'Use Reshade', 'value': False,
-                    'desc': 'Experimental ReShade preset with OpenVR support that applies sharpening. '
-                            'Open Reshade Config Menu in SteamVR (circle Reshade icon in the bottom of the dashboard) '
-                            'Untick "Peformance Mode" checkbox and go to the VRToolkit tab',
+    'use_reshade': {'name': 'Use VRToolkit', 'value': False,
+                    'desc': 'The VRToolkit is a modular shader created for ReShade to enhance the clarity & sharpness '
+                            'in VR to get most out of your HMD while keeping the performance impact minimal.',
                     'settings': (
-                          {'value': False, 'name': 'Off'},
-                          {'value': True, 'name': 'On'},
-                      ),
+                        {'value': False, 'name': 'Disabled'},
+                        {'value': True, 'name': 'Enabled'},
+                    ),
                     },
-    'preset_name': {'name': 'Preset', 'value': 'ReShadePreset_Sharpen.ini',
-                    'settings': (
-                        {'value': 'generic_vr.ini', 'name': 'Valve Index',
-                         'desc': 'rFactor 2 preset which applies sharpening with Circle Radius '
-                                 'optimized for Valve Index 0.30'},
-                        {'value': 'generic_vr_hp.ini', 'name': 'HP Reverb G1/G2',
-                         'desc': 'rFactor 2 preset which applies sharpening with Circle Radius '
-                                 'optimized for HP Reverb G1 or G2 0.43'},
-                     ),
-                    }
+    'VRT_SHARPENING_MODE': {'name': 'Sharpening Mode', 'value': 1, 'desc': 'Configures the sharpening/clarity modes',
+                            'settings': (
+                                {'value': 0, 'name': 'Disabled'},
+                                {'value': 1, 'name': 'FAS',
+                                 'desc': 'Use Filmic anamorph sharpening'},
+                                {'value': 2, 'name': 'AMD CAS',
+                                 'desc': 'Use AMD Fidelity FX contrast adaptive sharpening (CAS)'},
+                            ),
+                            },
+    'VRT_ANTIALIASING_MODE': {'name': 'Anti Aliasing Mode', 'value': 0,
+                              'desc': 'Anti aliasing to reduce aliasing/shimmering. This helps to further smoothen out '
+                                      'the image after MSAA has done most of the work',
+                              'settings': (
+                                  {'value': 0, 'name': 'Disabled [Default]'},
+                                  {'value': 1, 'name': 'FXAA', 'desc': 'Experimental'},
+                              ),
+                              },
+    'VRT_COLOR_CORRECTION_MODE': {'name': 'Color Correction Mode', 'value': 0,
+                                  'desc': 'Configures the color correction modes',
+                                  'settings': (
+                                      {'value': 0, 'name': 'Disabled'},
+                                      # {'value': 1, 'name': 'LUT',
+                                      # 'desc': 'Do not use this. It will not work without a LUT file. Uses a LUT '
+                                      #         '(Look up table) for specialized and complex corrections.'},
+                                      {'value': 2, 'name': 'Tonemapped',
+                                       'desc': 'Tonemapping to correct, gamma, exposure and color saturation.'},
+                                  ),
+                                  },
+    'VRT_DITHERING': {'name': 'Use Dithering', 'value': 0,
+                      'desc': 'Dithering Noise to reduce color banding on gradients ',
+                      'settings': (
+                          {'value': 0, 'name': 'Disabled [Default]'},
+                          {'value': 1, 'name': 'Enabled',
+                           'desc': 'Enable dithering that adds noise to the image to smoothen out gradients'},
+                      ),
+                      },
+    'iDitheringStrength': {'name': 'Dithering Strength', 'value': 0.375,
+                           'settings': ({'settingType': 'range', 'min': 0.005, 'max': 1.0, 'step': 0.005, },)
+                           },
+    'VRT_USE_CENTER_MASK': {'name': 'Use Center Mask', 'value': 1,
+                            'desc': 'Masks the center of the screen with a circle to reduce pixel count that '
+                                    'is processed by the shaders [DX10 or higher]',
+                            'settings': (
+                                {'value': 0, 'name': 'Disabled'},
+                                {'value': 1, 'name': 'Enabled [Default]',
+                                 'desc': 'Uses circular mask to improve shader performance on games rendering on '
+                                         'DX10 or higher'},
+                            ),
+                            },
+    'iCircularMaskSize': {'name': 'Circle Radius', 'value': 0.30,
+                          'settings': (
+                              {'settingType': 'range', 'min': 0.01, 'max': 1.0, 'step': 0.01,
+                               'desc': 'Keep the radius as small as possible to conserve GPU time, but as well not to '
+                                       'small to not loose sharpness. In addition some HMDs need an offset correction '
+                                       'like the Pimax to fit the sweet spot better. Recommended: '
+                                       'Valve Index: 0.30-0.35, Oculus Quest1: 0.30 to 0.35, HP G1 & G2: 0.41 to 0.46, '
+                                       'Pimax 5k Large FOV, No PP: +- 0.75'
+                               },
+                          )
+                          },
+    'iCircularMaskSmoothness': {'name': 'Mask Smoothness', 'value': 5.0,
+                                'settings': (
+                                    {'settingType': 'range', 'min': 1.0, 'max': 10.0, 'step': 0.01,
+                                     'desc': 'Feather radius for mask edges.'
+                                     },
+                                )
+                                },
+    'iCircularMaskHorizontalOffset': {'name': 'Horizontal Offset', 'value': 0.30,
+                                      'settings': (
+                                          {'settingType': 'range', 'min': 0.30, 'max': 0.5, 'step': 0.01,
+                                           'desc': 'Adjusts the mask offset from the center horizontally',
+                                           },
+                                      )
+                                      },
+}
+reshade_fas = {
+    'Strength': {'name': 'Strength', 'value': 300.0,
+                 'settings': (
+                     {'settingType': 'range', 'min': 0.0, 'max': 500.0, 'step': 1.0, },
+                 )
+                 },
+    'Offset': {'name': 'Radius', 'value': 0.10,
+               'settings': (
+                   {'settingType': 'range', 'min': 0.00, 'max': 2.00, 'step': 0.01,
+                    'desc': 'High-pass cross offset in pixels'
+                    },
+               )
+               },
+    'Clamp': {'name': 'Clamping', 'value': 0.525,
+              'settings': (
+                  {'settingType': 'range', 'min': 0.500, 'max': 1.00, 'step': 0.001, },
+              )
+              },
+}
+reshade_cas = {
+    'Contrast': {'name': 'Contrast Adaption', 'value': 0.00,
+                 'settings': (
+                     {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.01,
+                      'desc': 'Adjusts the range the shader adapts to high contrast (0 is not all the way off). '
+                              'Higher values = more high contrast sharpening.'
+                      },
+                 )
+                 },
+    'Sharpening': {'name': 'Sharpening', 'value': 2.5,
+                   'settings': (
+                       {'settingType': 'range', 'min': 0.0, 'max': 5.0, 'step': 0.01,
+                        'desc': 'Adjusts sharpening intensity by averaging the original pixels to the sharpened result.'
+                                ' 1.0 is the unmodified default.'
+                        },
+                   )
+                   },
+}
+reshade_cc = {
+    'Gamma': {'name': 'Gamma', 'value': 1.00,
+              'settings': (
+                  {'settingType': 'range', 'min': 0.00, 'max': 2.00, 'step': 0.01,
+                   'desc': 'Adjust midtones. 1.0 is neutral. This setting does exactly the same as the one in Lift '
+                           'Gamma Gain, only with less control.'
+                   },
+              )
+              },
+    'Exposure': {'name': 'Exposure', 'value': 0.5,
+                 'settings': (
+                     {'settingType': 'range', 'min': -1.0, 'max': 1.0, 'step': 0.01, },
+                 )
+                 },
+    'Saturation': {'name': 'Saturation', 'value': 0.5,
+                   'settings': (
+                       {'settingType': 'range', 'min': -1.0, 'max': 1.0, 'step': 0.01, },
+                   )
+                   },
+}
+reshade_aa = {
+    'Subpix': {'name': 'Subpix', 'value': 1.0,
+               'settings': (
+                   {'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.05,
+                    'desc': 'Amount of sub-pixel aliasing removal. Higher values makes the image '
+                            'softer/blurrier.'},
+               )
+               },
+    'EdgeThreshold': {'name': 'Edge Detection Threshold', 'value': 0.125,
+                      'settings': (
+                          {'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.005,
+                           'desc': 'The minimum amount of local contrast required to apply algorithm.'},
+                      )
+                      },
+    'EdgeThresholdMin': {'name': 'Darkness Threshold', 'value': 0.0,
+                         'settings': (
+                             {'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.01,
+                              'desc': 'Pixels darker than this are not processed in order to '
+                                      'increase performance.'},
+                         )
+                         },
 }

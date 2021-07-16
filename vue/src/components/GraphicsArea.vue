@@ -83,11 +83,23 @@
       <div style="font-size: small;">
         Visit
         <b-link class="text-rf-orange" target="_blank" href="https://vrtoolkit.retrolux.de/">
-        Reshade VRToolkit
+          vrtoolkit.retrolux.de
         </b-link>
         for more information.
       </div>
     </template>
+  </SettingsCard>
+
+  <!-- ReShade Advanced Settings -->
+  <SettingsCard :preset="preset" :idx="idx" settings-key="reshade_fas_settings"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
+                :current_preset_idx="current_preset_idx"
+                :previous-preset-name="previousPresetName"
+                :view_mode="viewMode"
+                :search="search" header-icon="image"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
   </SettingsCard>
 
   <!-- Video Setup Modal -->

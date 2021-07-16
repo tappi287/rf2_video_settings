@@ -101,13 +101,15 @@
         </b-list-group-item>
         <b-list-group-item variant="dark">
           <b-link target="_blank" href="https://reshade.me" class="text-rf-orange">
-            ReShade - Copyright 2014 Patrick Mours. All rights reserved.
+            ReShade
           </b-link>
+          <span> - Copyright 2014 Patrick Mours. All rights reserved.</span>
         </b-list-group-item>
         <b-list-group-item variant="dark">
           <b-link target="_blank" href="https://vrtoolkit.retrolux.de" class="text-rf-orange">
-            ReShade VRToolkit - Copyright 2021 Retrolux. All rights reserved.
+            VRToolkit
           </b-link>
+          <span> - Copyright (c) 2021, Alexandre Miguel Maia. All rights reserved.</span>
         </b-list-group-item>
         <b-list-group-item variant="dark">
           <b-link target="_blank" href="https://github.com/CXWorld/CapFrameX/releases/latest" class="text-rf-orange">
@@ -124,6 +126,8 @@
       </b-list-group>
       <h4 class="mt-5">ReShade - Copyright 2014 Patrick Mours. All rights reserved.</h4>
       <pre class="text-muted">
+        BSD-3-Clause License
+
         THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
         EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
         OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
@@ -135,8 +139,41 @@
         ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
         SUCH DAMAGE.
       </pre>
-      <h4 class="mt-5">PresentMon - Copyright 2017-2020 Intel Corporation</h4>
+      <h4 class="mt-5">VRToolkit - Copyright (c) 2021, Alexandre Miguel Maia. All rights reserved.</h4>
       <pre class="text-muted">
+        BSD 3-Clause License
+
+        Copyright (c) 2021, Alexandre Miguel Maia
+        All rights reserved.
+
+        Redistribution and use in source and binary forms, with or without
+        modification, are permitted provided that the following conditions are met:
+
+        1. Redistributions of source code must retain the above copyright notice, this
+           list of conditions and the following disclaimer.
+
+        2. Redistributions in binary form must reproduce the above copyright notice,
+           this list of conditions and the following disclaimer in the documentation
+           and/or other materials provided with the distribution.
+
+        3. Neither the name of the copyright holder nor the names of its
+           contributors may be used to endorse or promote products derived from
+           this software without specific prior written permission.
+
+        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+        AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+        IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+        DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+        FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+        DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+        SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+        CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+        OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+        OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+      </pre>
+      <h4 class="mt-5">PresentMon - Copyright (C) 2017-2021 Intel Corporation</h4>
+      <pre class="text-muted">
+        MIT License
         Permission is hereby granted, free of charge, to any person obtaining a copy of
         this software and associated documentation files (the "Software"), to deal in
         the Software without restriction, including without limitation the rights to

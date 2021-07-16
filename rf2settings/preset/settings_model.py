@@ -284,7 +284,7 @@ class VideoSettings(BaseOptions):
 
 class ReshadeSettings(BaseOptions):
     app_key = 'reshade_settings'
-    title = 'Reshade'
+    title = 'VRToolkit'
     target = OptionsTarget.reshade
 
     def __init__(self):
@@ -292,6 +292,54 @@ class ReshadeSettings(BaseOptions):
 
         # -- Read Default options
         self.read_from_python_dict(graphics.reshade_settings)
+
+
+class ReshadeFasSettings(BaseOptions):
+    app_key = 'reshade_fas_settings'
+    title = 'Filmic Anamorph Sharpen'
+    target = OptionsTarget.reshade
+
+    def __init__(self):
+        super(ReshadeFasSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(graphics.reshade_fas)
+
+
+class ReshadeCasSettings(BaseOptions):
+    app_key = 'reshade_cas_settings'
+    title = 'AMD Fidelity FX (CAS)'
+    target = OptionsTarget.reshade
+
+    def __init__(self):
+        super(ReshadeCasSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(graphics.reshade_cas)
+
+
+class ReshadeCcSettings(BaseOptions):
+    app_key = 'reshade_cc_settings'
+    title = 'Tonemapping'
+    target = OptionsTarget.reshade
+
+    def __init__(self):
+        super(ReshadeCcSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(graphics.reshade_cc)
+
+
+class ReshadeAaSettings(BaseOptions):
+    app_key = 'reshade_aa_settings'
+    title = 'FXAA'
+    target = OptionsTarget.reshade
+
+    def __init__(self):
+        super(ReshadeAaSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(graphics.reshade_aa)
 
 
 class ResolutionSettings(BaseOptions):
