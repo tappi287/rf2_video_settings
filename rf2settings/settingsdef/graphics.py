@@ -260,7 +260,7 @@ reshade_settings = {
     'VRT_SHARPENING_MODE': {'name': 'Sharpening Mode', 'value': 1, 'desc': 'Configures the sharpening/clarity modes',
                             'settings': (
                                 {'value': 0, 'name': 'Disabled'},
-                                {'value': 1, 'name': 'FAS',
+                                {'value': 1, 'name': 'FAS [Default]',
                                  'desc': 'Use Filmic anamorph sharpening'},
                                 {'value': 2, 'name': 'AMD CAS',
                                  'desc': 'Use AMD Fidelity FX contrast adaptive sharpening (CAS)'},
@@ -313,21 +313,23 @@ reshade_settings = {
                                        'small to not loose sharpness. In addition some HMDs need an offset correction '
                                        'like the Pimax to fit the sweet spot better. Recommended: '
                                        'Valve Index: 0.30-0.35, Oculus Quest1: 0.30 to 0.35, HP G1 & G2: 0.41 to 0.46, '
-                                       'Pimax 5k Large FOV, No PP: +- 0.75'
+                                       'Pimax 5k Large FOV, No PP: +- 0.75 [Default 0.30]'
                                },
                           )
                           },
     'iCircularMaskSmoothness': {'name': 'Mask Smoothness', 'value': 5.0,
                                 'settings': (
                                     {'settingType': 'range', 'min': 1.0, 'max': 10.0, 'step': 0.01,
-                                     'desc': 'Feather radius for mask edges.'
+                                     'desc': 'Increases the smoothness of the circular mask to allow smaller masks '
+                                             'while reducing the prominence of the edge [Default 5.0]'
                                      },
                                 )
                                 },
     'iCircularMaskHorizontalOffset': {'name': 'Horizontal Offset', 'value': 0.30,
                                       'settings': (
                                           {'settingType': 'range', 'min': 0.30, 'max': 0.5, 'step': 0.01,
-                                           'desc': 'Adjusts the mask offset from the center horizontally',
+                                           'desc': 'Adjusts the mask offset from the center horizontally '
+                                                   '[Default 0.30]',
                                            },
                                       )
                                       },
@@ -335,19 +337,19 @@ reshade_settings = {
 reshade_fas = {
     'Strength': {'name': 'Strength', 'value': 300.0,
                  'settings': (
-                     {'settingType': 'range', 'min': 0.0, 'max': 500.0, 'step': 1.0, },
+                     {'settingType': 'range', 'min': 0.0, 'max': 500.0, 'step': 1.0, 'desc': '[Default 300]'},
                  )
                  },
     'Offset': {'name': 'Radius', 'value': 0.10,
                'settings': (
                    {'settingType': 'range', 'min': 0.00, 'max': 2.00, 'step': 0.01,
-                    'desc': 'High-pass cross offset in pixels'
+                    'desc': 'High-pass cross offset in pixels [Default 0.10]'
                     },
                )
                },
     'Clamp': {'name': 'Clamping', 'value': 0.525,
               'settings': (
-                  {'settingType': 'range', 'min': 0.500, 'max': 1.00, 'step': 0.001, },
+                  {'settingType': 'range', 'min': 0.500, 'max': 1.00, 'step': 0.001, 'desc': '[Default 0.525]'},
               )
               },
 }
@@ -356,7 +358,7 @@ reshade_cas = {
                  'settings': (
                      {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.01,
                       'desc': 'Adjusts the range the shader adapts to high contrast (0 is not all the way off). '
-                              'Higher values = more high contrast sharpening.'
+                              'Higher values = more high contrast sharpening. [Default 0.0]'
                       },
                  )
                  },
@@ -364,7 +366,7 @@ reshade_cas = {
                    'settings': (
                        {'settingType': 'range', 'min': 0.0, 'max': 5.0, 'step': 0.01,
                         'desc': 'Adjusts sharpening intensity by averaging the original pixels to the sharpened result.'
-                                ' 1.0 is the unmodified default.'
+                                ' 1.0 is the unmodified default. [Default 2.5]'
                         },
                    )
                    },
@@ -374,18 +376,18 @@ reshade_cc = {
               'settings': (
                   {'settingType': 'range', 'min': 0.00, 'max': 2.00, 'step': 0.01,
                    'desc': 'Adjust midtones. 1.0 is neutral. This setting does exactly the same as the one in Lift '
-                           'Gamma Gain, only with less control.'
+                           'Gamma Gain, only with less control. [Default 1.0]'
                    },
               )
               },
     'Exposure': {'name': 'Exposure', 'value': 0.5,
                  'settings': (
-                     {'settingType': 'range', 'min': -1.0, 'max': 1.0, 'step': 0.01, },
+                     {'settingType': 'range', 'min': -1.0, 'max': 1.0, 'step': 0.01, 'desc': '[Default 0.5]'},
                  )
                  },
     'Saturation': {'name': 'Saturation', 'value': 0.5,
                    'settings': (
-                       {'settingType': 'range', 'min': -1.0, 'max': 1.0, 'step': 0.01, },
+                       {'settingType': 'range', 'min': -1.0, 'max': 1.0, 'step': 0.01, 'desc': '[Default 0.5]'},
                    )
                    },
 }
@@ -394,20 +396,21 @@ reshade_aa = {
                'settings': (
                    {'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.05,
                     'desc': 'Amount of sub-pixel aliasing removal. Higher values makes the image '
-                            'softer/blurrier.'},
+                            'softer/blurrier. [Default 1.0]'},
                )
                },
     'EdgeThreshold': {'name': 'Edge Detection Threshold', 'value': 0.125,
                       'settings': (
                           {'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.005,
-                           'desc': 'The minimum amount of local contrast required to apply algorithm.'},
+                           'desc': 'The minimum amount of local contrast required to apply algorithm. '
+                                   '[Default 0.125]'},
                       )
                       },
     'EdgeThresholdMin': {'name': 'Darkness Threshold', 'value': 0.0,
                          'settings': (
                              {'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.01,
                               'desc': 'Pixels darker than this are not processed in order to '
-                                      'increase performance.'},
+                                      'increase performance. [Default 0.0]'},
                          )
                          },
 }
