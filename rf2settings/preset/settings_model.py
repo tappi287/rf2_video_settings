@@ -65,7 +65,7 @@ class Option(JsonRepr):
 
 class BaseOptions(JsonRepr):
     # Read only options we want to read but never write to rF/save or export eg. Driver Name
-    skip_keys = list()
+    skip_keys = ['title', ]
     # Key representing the category key in player_json
     key = 'Base Options'
     # Key representing the field name for Preset and RfactorPlayer classes
@@ -128,6 +128,8 @@ class BaseOptions(JsonRepr):
                     if opt and _v is not None:
                         opt.value = _v
             else:
+                if k in self.skip_keys:
+                    continue
                 setattr(self, k, v)
 
     def __eq__(self, other):
@@ -235,6 +237,7 @@ class FreelookOptions(BaseOptions):
     app_key = 'freelook_settings'
     title = 'Freelook Settings'
     target = OptionsTarget.controller_json
+    mandatory = False
 
     def __init__(self):
         super(FreelookOptions, self).__init__()
@@ -248,6 +251,7 @@ class GeneralSteeringOptions(BaseOptions):
     app_key = 'general_steering_settings'
     title = 'Steering Wheel Settings'
     target = OptionsTarget.controller_json
+    mandatory = False
 
     def __init__(self):
         super(GeneralSteeringOptions, self).__init__()
@@ -284,6 +288,7 @@ class VideoSettings(BaseOptions):
 
 class ReshadeSettings(BaseOptions):
     app_key = 'reshade_settings'
+    key = app_key
     title = 'VRToolkit'
     target = OptionsTarget.reshade
 
@@ -296,8 +301,10 @@ class ReshadeSettings(BaseOptions):
 
 class ReshadeFasSettings(BaseOptions):
     app_key = 'reshade_fas_settings'
+    key = app_key
     title = 'Filmic Anamorph Sharpen'
     target = OptionsTarget.reshade
+    mandatory = False
 
     def __init__(self):
         super(ReshadeFasSettings, self).__init__()
@@ -308,8 +315,10 @@ class ReshadeFasSettings(BaseOptions):
 
 class ReshadeCasSettings(BaseOptions):
     app_key = 'reshade_cas_settings'
+    key = app_key
     title = 'AMD Fidelity FX (CAS)'
     target = OptionsTarget.reshade
+    mandatory = False
 
     def __init__(self):
         super(ReshadeCasSettings, self).__init__()
@@ -320,8 +329,10 @@ class ReshadeCasSettings(BaseOptions):
 
 class ReshadeCcSettings(BaseOptions):
     app_key = 'reshade_cc_settings'
+    key = app_key
     title = 'Tonemapping'
     target = OptionsTarget.reshade
+    mandatory = False
 
     def __init__(self):
         super(ReshadeCcSettings, self).__init__()
@@ -332,8 +343,10 @@ class ReshadeCcSettings(BaseOptions):
 
 class ReshadeAaSettings(BaseOptions):
     app_key = 'reshade_aa_settings'
+    key = app_key
     title = 'FXAA'
     target = OptionsTarget.reshade
+    mandatory = False
 
     def __init__(self):
         super(ReshadeAaSettings, self).__init__()
@@ -401,6 +414,7 @@ class HeadlightControllerJsonSettings(BaseOptions):
     app_key = 'headlight_controller_json'
     title = 'Headlight rFactor Control Mapping'
     target = OptionsTarget.controller_json
+    mandatory = False
 
     def __init__(self):
         super(HeadlightControllerJsonSettings, self).__init__()
@@ -428,6 +442,7 @@ class BenchmarkControllerJsonSettings(BaseOptions):
     app_key = 'benchmark_controller_json'
     title = 'Benchmark rFactor Control Mapping'
     target = OptionsTarget.controller_json
+    mandatory = False
 
     def __init__(self):
         super(BenchmarkControllerJsonSettings, self).__init__()
