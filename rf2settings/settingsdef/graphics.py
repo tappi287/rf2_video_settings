@@ -277,7 +277,7 @@ reshade_settings = {
     'VRT_COLOR_CORRECTION_MODE': {'name': 'Color Correction Mode', 'value': 0,
                                   'desc': 'Configures the color correction modes',
                                   'settings': (
-                                      {'value': 0, 'name': 'Disabled'},
+                                      {'value': 0, 'name': 'Disabled [Default]'},
                                       # {'value': 1, 'name': 'LUT',
                                       # 'desc': 'Do not use this. It will not work without a LUT file. Uses a LUT '
                                       #         '(Look up table) for specialized and complex corrections.'},
