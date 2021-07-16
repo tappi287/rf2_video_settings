@@ -90,9 +90,46 @@
     </template>
   </SettingsCard>
 
-  <!-- ReShade Advanced Settings -->
-  <SettingsCard :preset="preset" :idx="idx" settings-key="reshade_fas_settings"
-                :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
+  <!-- ReShade FAS Settings -->
+  <SettingsCard v-if="sharpeningFas"
+                :preset="preset" :idx="idx" settings-key="reshade_fas_settings"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
+                :current_preset_idx="current_preset_idx"
+                :previous-preset-name="previousPresetName"
+                :view_mode="viewMode"
+                :search="search" header-icon="image"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
+  </SettingsCard>
+  <!-- ReShade CAS Settings -->
+  <SettingsCard v-if="sharpeningCas"
+                :preset="preset" :idx="idx" settings-key="reshade_cas_settings"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
+                :current_preset_idx="current_preset_idx"
+                :previous-preset-name="previousPresetName"
+                :view_mode="viewMode"
+                :search="search" header-icon="image"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
+  </SettingsCard>
+  <!-- ReShade CC Settings -->
+  <SettingsCard v-if="colorCorrection"
+                :preset="preset" :idx="idx" settings-key="reshade_cc_settings"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
+                :current_preset_idx="current_preset_idx"
+                :previous-preset-name="previousPresetName"
+                :view_mode="viewMode"
+                :search="search" header-icon="image"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
+  </SettingsCard>
+  <!-- ReShade AA Settings -->
+  <SettingsCard v-if="antiAliasing"
+                :preset="preset" :idx="idx" settings-key="reshade_aa_settings"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
                 :current_preset_idx="current_preset_idx"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode"
@@ -190,6 +227,13 @@ export default {
       })
       return result
     },
+    _getReshadeOption(key) {
+      let result = null
+      this.preset.reshade_settings.options.forEach(o => {
+        if (o.key === key) { result = o.value }
+      })
+      return result
+    },
     settingDisabled: function(setting) {
       if (setting.key === 'UseFXAA' && this._getFsaaEnabled()) {
         // Disable FXAA and do not trigger a preset save
@@ -234,6 +278,22 @@ export default {
     viewMode: function () {
       if (this.view_mode !== undefined) { return this.view_mode }
       return 0
+    },
+    sharpeningFas: function () {
+      if (this.preset === undefined) { return false }
+      return this._getReshadeOption('VRT_SHARPENING_MODE') === 1;
+    },
+    sharpeningCas: function () {
+      if (this.preset === undefined) { return false }
+      return this._getReshadeOption('VRT_SHARPENING_MODE') === 2;
+    },
+    colorCorrection: function () {
+      if (this.preset === undefined) { return false }
+      return this._getReshadeOption('VRT_COLOR_CORRECTION_MODE') === 2;
+    },
+    antiAliasing: function () {
+      if (this.preset === undefined) { return false }
+      return this._getReshadeOption('VRT_ANTIALIASING_MODE') === 1;
     },
   }
 }
