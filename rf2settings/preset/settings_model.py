@@ -79,6 +79,8 @@ class BaseOptions(JsonRepr):
     # Set rfactor instance to invalid and block the app with an error
     # if none of these options could be found
     mandatory = True
+    # Ignore comparison with disk settings
+    ignore_equal = False
 
     def __init__(self, options: List[Option] = None):
         if options is None:
@@ -138,6 +140,9 @@ class BaseOptions(JsonRepr):
         :param modules.settings_model.BaseOptions other:
         :return: True if other options differ
         """
+        if self.ignore_equal:
+            return True
+
         if other.key != self.key:
             return False
 
@@ -291,6 +296,8 @@ class ReshadeSettings(BaseOptions):
     key = app_key
     title = 'VRToolkit'
     target = OptionsTarget.reshade
+    mandatory = False
+    ignore_equal = True
 
     def __init__(self):
         super(ReshadeSettings, self).__init__()
@@ -305,6 +312,7 @@ class ReshadeFasSettings(BaseOptions):
     title = 'Filmic Anamorph Sharpen'
     target = OptionsTarget.reshade
     mandatory = False
+    ignore_equal = True
 
     def __init__(self):
         super(ReshadeFasSettings, self).__init__()
@@ -319,6 +327,7 @@ class ReshadeCasSettings(BaseOptions):
     title = 'AMD Fidelity FX (CAS)'
     target = OptionsTarget.reshade
     mandatory = False
+    ignore_equal = True
 
     def __init__(self):
         super(ReshadeCasSettings, self).__init__()
@@ -333,6 +342,7 @@ class ReshadeCcSettings(BaseOptions):
     title = 'Tonemapping'
     target = OptionsTarget.reshade
     mandatory = False
+    ignore_equal = True
 
     def __init__(self):
         super(ReshadeCcSettings, self).__init__()
@@ -347,6 +357,7 @@ class ReshadeAaSettings(BaseOptions):
     title = 'FXAA'
     target = OptionsTarget.reshade
     mandatory = False
+    ignore_equal = True
 
     def __init__(self):
         super(ReshadeAaSettings, self).__init__()
