@@ -86,6 +86,10 @@
           vrtoolkit.retrolux.de
         </b-link>
         for more information.
+        <p>
+          If you want to adjust settings in-game: create a new preset inside the ReShade UI.
+          The settings you adjust here will override the default "generic_vr.ini" settings.
+        </p>
       </div>
     </template>
   </SettingsCard>
