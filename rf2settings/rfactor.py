@@ -219,7 +219,7 @@ class RfactorPlayer:
     def write_json(self, json_dict: dict, file: Path, encoding: str = 'UTF-8') -> bool:
         try:
             with open(file, 'w', encoding=encoding) as f:
-                json.dump(json_dict, f, indent=4, ensure_ascii=False)
+                json.dump(json_dict, f, indent=2, ensure_ascii=False)
         except Exception as e:
             self.error += f'Error while writing file! {e}\n'
             logging.fatal(self.error)
