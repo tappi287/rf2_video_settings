@@ -76,8 +76,9 @@
 
           Fps Avg: <span class="text-rf-orange">{{ fNum(r.data['fpsmean']) }}</span>
           Fps Median: <span class="text-rf-orange">{{ fNum( r.data['fpsmedian']) }}</span>
-          Fps 99th Percentile: <span class="text-rf-orange">{{ fNum(r.data['fps99']) }}</span>
-          Fps 98th Percentile: <span class="text-rf-orange">{{ fNum(r.data['fps98']) }}</span>
+          Fps 99% Percentile: <span class="text-rf-orange">{{ fNum(r.data['fps99']) }}</span>
+          Fps 98% Percentile: <span class="text-rf-orange">{{ fNum(r.data['fps98']) }}</span>
+          Fps 0.2% Percentile: <span class="text-rf-orange">{{ fNum(r.data['fps002']) }}</span>
 
           <!-- Delete Popover -->
           <b-popover :target="'delete-result-btn' + r.id" triggers="hover">
@@ -176,10 +177,10 @@ export default {
     },
     clearResultDetails: async function () {
       this.benchmarkResults.forEach(r => {
-        const fps98 = r.data['fps98']; const fps99 = r.data['fps99']
+        const fps98 = r.data['fps98']; const fps99 = r.data['fps99']; const fps002 = r.data['fps002']
         const fpsmean = r.data['fpsmean']; const fpsmedian = r.data['fpsmedian']
         r.data = {}  // Clear
-        r.data['fps98'] = fps98; r.data['fps99'] = fps99
+        r.data['fps98'] = fps98; r.data['fps99'] = fps99; r.data['fps002'] = fps002
         r.data['fpsmean'] = fpsmean; r.data['fpsmedian'] = fpsmedian
         r.data['msBetweenPresents'] = []
         r.data['fps'] = []

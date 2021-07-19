@@ -144,13 +144,11 @@ def read_present_mon_result(file: Path, details: bool = False):
     data['fps'] = [1000 / i for i in data['msBetweenPresents']]
 
     # -- Statistics
-    p99 = percentile(sorted(data['fps']), 99)
-    p98 = percentile(sorted(data['fps']), 98)
-    avg_fps, median_fps = statistics.mean(data['fps']), statistics.median(data['fps'])
-
-    data['fps99'], data['fps98'] = p99, p98
-    data['fpsmedian'] = median_fps
-    data['fpsmean'] = avg_fps
+    sorted_fps = sorted(data['fps'])
+    data['fps99'] = percentile(sorted_fps, 99)
+    data['fps98'] = percentile(sorted_fps, 98)
+    data['fps002'] = percentile(sorted_fps, 0.2)
+    data['fpsmean'], data['fpsmedian'] = statistics.mean(sorted_fps), statistics.median(sorted_fps)
 
     if not details:
         data.pop('msBetweenPresents')

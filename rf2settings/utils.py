@@ -267,9 +267,9 @@ def create_js_pygame_event_dict(joy_dict: dict, joy_event) -> dict:
             'hat': hat, 'axis': axis, 'value': value, 'type': joy_event.type}
 
 
-def percentile(values, percentile_value: int):
-    size = len(values)
-    return sorted(values)[int(math.ceil((size * percentile_value) / 100)) - 1]
+def percentile(data, percent: Union[int, float]):
+    size = len(data)
+    return data[int(math.ceil((size * percent) / 100)) - 1]
 
 
 class AppAudioFx:
