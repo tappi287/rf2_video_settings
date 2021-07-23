@@ -157,6 +157,13 @@ class RfactorPlayer:
                 self.is_valid = False
                 return
 
+        # -- Get ReShade Options
+        vr_toolkit = VrToolKit(self._get_target_options(OptionsTarget.reshade), self.location)
+
+        result = vr_toolkit.read()
+        if not result:
+            self.error = vr_toolkit.error
+
         self.is_valid = True
 
     def _get_target_options(self, target: OptionsTarget, options=None) -> Iterator[BaseOptions]:

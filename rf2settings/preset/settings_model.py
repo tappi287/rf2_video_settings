@@ -65,7 +65,7 @@ class Option(JsonRepr):
 
 class BaseOptions(JsonRepr):
     # Read only options we want to read but never write to rF/save or export eg. Driver Name
-    skip_keys = ['title', ]
+    skip_keys = ['title', 'ignore_equal', 'mandatory', 'key']
     # Key representing the category key in player_json
     key = 'Base Options'
     # Key representing the field name for Preset and RfactorPlayer classes
@@ -144,11 +144,8 @@ class BaseOptions(JsonRepr):
             return True
 
         if other.key != self.key:
+            logging.info('Options key difference: %s != %s', other.key, self.key)
             return False
-
-        # -- Ignore WebUi Settings not readable from disk
-        if self.target == OptionsTarget.webui_session:
-            return True
 
         # -- Compare every Option
         #    sort both .options by their keys
@@ -292,12 +289,11 @@ class VideoSettings(BaseOptions):
 
 
 class ReshadeSettings(BaseOptions):
+    key = 'reshade_settings'
     app_key = 'reshade_settings'
-    key = app_key
     title = 'VRToolkit'
     target = OptionsTarget.reshade
     mandatory = False
-    ignore_equal = True
 
     def __init__(self):
         super(ReshadeSettings, self).__init__()
@@ -307,12 +303,11 @@ class ReshadeSettings(BaseOptions):
 
 
 class ReshadeFasSettings(BaseOptions):
+    key = 'reshade_fas_settings'
     app_key = 'reshade_fas_settings'
-    key = app_key
     title = 'Filmic Anamorph Sharpen'
     target = OptionsTarget.reshade
     mandatory = False
-    ignore_equal = True
 
     def __init__(self):
         super(ReshadeFasSettings, self).__init__()
@@ -322,12 +317,11 @@ class ReshadeFasSettings(BaseOptions):
 
 
 class ReshadeCasSettings(BaseOptions):
+    key = 'reshade_cas_settings'
     app_key = 'reshade_cas_settings'
-    key = app_key
     title = 'AMD Fidelity FX (CAS)'
     target = OptionsTarget.reshade
     mandatory = False
-    ignore_equal = True
 
     def __init__(self):
         super(ReshadeCasSettings, self).__init__()
@@ -337,12 +331,11 @@ class ReshadeCasSettings(BaseOptions):
 
 
 class ReshadeCcSettings(BaseOptions):
+    key = 'reshade_cc_settings'
     app_key = 'reshade_cc_settings'
-    key = app_key
     title = 'Tonemapping'
     target = OptionsTarget.reshade
     mandatory = False
-    ignore_equal = True
 
     def __init__(self):
         super(ReshadeCcSettings, self).__init__()
@@ -352,12 +345,11 @@ class ReshadeCcSettings(BaseOptions):
 
 
 class ReshadeAaSettings(BaseOptions):
+    key = 'reshade_aa_settings'
     app_key = 'reshade_aa_settings'
-    key = app_key
     title = 'FXAA'
     target = OptionsTarget.reshade
     mandatory = False
-    ignore_equal = True
 
     def __init__(self):
         super(ReshadeAaSettings, self).__init__()
@@ -467,6 +459,7 @@ class SessionUiSettings(BaseOptions):
     app_key = 'session_ui_settings'
     title = 'Session Ui Settings'
     target = OptionsTarget.webui_session
+    ignore_equal = True
 
     def __init__(self):
         super(SessionUiSettings, self).__init__()

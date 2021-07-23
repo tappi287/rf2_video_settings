@@ -25,18 +25,31 @@ class VrToolKit:
 
         self.error = str()
 
-    def _update_options(self) -> bool:
+    def _update_options(self, update_from_disk: bool = False) -> bool:
         use_reshade = False
 
-        # -- Read Preset options
+        # -- Iterate Preset options
         for preset_options in self.options:
             for option in preset_options.options:
-                if option.key == 'use_reshade':
-                    use_reshade = option.value
-                elif option.key in self.preprocessor:
-                    self.preprocessor[option.key] = option.value
-                elif option.key in self.ini_settings:
-                    self.ini_settings[option.key] = option.value
+                # -- Read from Preset options
+                if not update_from_disk:
+                    if option.key == 'use_reshade':
+                        use_reshade = option.value
+                    elif option.key in self.preprocessor:
+                        self.preprocessor[option.key] = option.value
+                    elif option.key in self.ini_settings:
+                        self.ini_settings[option.key] = option.value
+                # -- Write to Preset options
+                else:
+                    if option.key == 'use_reshade':
+                        option.value = True
+                        option.exists_in_rf = True
+                    elif option.key in self.preprocessor:
+                        option.value = self.preprocessor[option.key]
+                        option.exists_in_rf = True
+                    elif option.key in self.ini_settings:
+                        option.value = self.ini_settings[option.key]
+                        option.exists_in_rf = True
 
         return use_reshade
 
@@ -157,3 +170,42 @@ class VrToolKit:
 
         # -- Prepare writing of ReShade Preset file
         return self._update_preset_ini(reshade_preset)
+
+    def _read_preset_ini(self, reshade_preset: Path) -> bool:
+        """ Lookup current VRToolkit Settings on disk """
+        if not reshade_preset.exists():
+            return False
+
+        try:
+            # - Read Preset Ini file
+            with open(reshade_preset, 'r') as f:
+                preset_lines = f.readlines()
+
+            # - Read settings from Preset Ini file lines
+            for line in preset_lines:
+                if line.startswith(self.preprocessor_name):
+                    p_str = line.replace(f'{self.preprocessor_name}=', '').replace('\n', '')
+                    for p_def in p_str.split(','):
+                        key, value = p_def.split('=', 2)
+                        if key in self.preprocessor:
+                            self.preprocessor[key] = int(value)
+
+                for k, v in self.ini_settings.items():
+                    if line.startswith(k):
+                        value = line.replace(f'{k}=', '').replace('\n', '')
+                        self.ini_settings[k] = float(value)
+
+            # -- Update RfactorPlayer VRToolkit Settings
+            self._update_options(update_from_disk=True)
+        except Exception as e:
+            msg = f'Error reading Reshade Preset Ini file: {e}'
+            logging.error(msg)
+            self.error = msg
+            return False
+        return True
+
+    def read(self) -> bool:
+        bin_dir = self.location / 'Bin64'
+        reshade_preset = bin_dir / RESHADE_PRESET_DIR / RESHADE_TARGET_PRESET_NAME
+
+        return self._read_preset_ini(reshade_preset)

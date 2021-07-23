@@ -103,8 +103,11 @@
       <b-alert :show="previousPresetName !== ''" dismissible variant="warning" class="mt-3">
         <h5><b-icon class="mr-1" icon="exclamation-triangle-fill"></b-icon>Settings difference on disk</h5>
         The previously selected Preset <i>{{ previousPresetName }}</i> has different settings than the current
-        rFactor 2 settings on disk. Select your previous Preset <i>{{ previousPresetName }}</i> to restore it's
-        settings and overwrite the current settings on disk.
+        rFactor 2 settings on disk.
+        <b-link @click="restorePreviousPreset" class="text-rf-orange">
+          Click here to select your previous Preset <i>{{ previousPresetName }}</i> and restore it's
+          settings.
+        </b-link>
       </b-alert>
     </template>
   </div>
@@ -130,6 +133,11 @@ export default {
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
+    },
+    restorePreviousPreset: async function () {
+      this.presets.forEach(preset => {
+        if (preset.name === this.previousPresetName) { this.selectPreset(preset) }
+      })
     },
     getSelectedPreset: function () {
       if (this.presets.length === 0) { return {} }
