@@ -330,6 +330,20 @@ class ReshadeCasSettings(BaseOptions):
         self.read_from_python_dict(graphics.reshade_cas)
 
 
+class ReshadeLutSettings(BaseOptions):
+    key = 'reshade_lut_settings'
+    app_key = 'reshade_lut_settings'
+    title = 'Look Up Table'
+    target = OptionsTarget.reshade
+    mandatory = False
+
+    def __init__(self):
+        super(ReshadeLutSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(graphics.reshade_lut)
+
+
 class ReshadeCcSettings(BaseOptions):
     key = 'reshade_cc_settings'
     app_key = 'reshade_cc_settings'

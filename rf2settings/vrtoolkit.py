@@ -1,4 +1,5 @@
 import logging
+import shutil
 from pathlib import Path
 from typing import Iterator
 from zipfile import ZipFile
@@ -9,14 +10,22 @@ from rf2settings.preset.settings_model import BaseOptions
 
 class VrToolKit:
     dll_tgt = ('ReShade64.dll', 'dxgi.dll')
+    extra_files = [
+        ('rF2_nonPBRmodDay1.png', 'ReShade/Textures'),
+        ('rF2_nonPBRmodDay2.png', 'ReShade/Textures'),
+        ('lut_ams.png', 'ReShade/Textures'),
+        ('lut_gtr2.png', 'ReShade/Textures'),
+        ('lut_rbr.png', 'ReShade/Textures'),
+    ]
     preprocessor_name = 'PreprocessorDefinitions'
     preprocessor = {'VRT_SHARPENING_MODE': 0, 'VRT_USE_CENTER_MASK': 0, 'VRT_DITHERING': 0,
-                    'VRT_COLOR_CORRECTION_MODE': 0, 'VRT_ANTIALIASING_MODE': 0}
+                    'VRT_COLOR_CORRECTION_MODE': 0, 'VRT_ANTIALIASING_MODE': 0, 'fLUT_TextureName': '"lut.png"'}
     ini_settings = {'iCircularMaskSize': None, 'iCircularMaskSmoothness': None, 'iCircularMaskHorizontalOffset': None,
                     'iDitheringStrength': None,
                     'Strength': None, 'Offset': None, 'Clamp': None,
                     'Contrast': None, 'Sharpening': None,
                     'Gamma': None, 'Exposure': None, 'Saturation': None,
+                    'fLUT_AmountChroma': None, 'fLUT_AmountLuma': None,
                     'Subpix': None, 'EdgeThreshold': None, 'EdgeThresholdMin': None, }
 
     def __init__(self, options: Iterator[BaseOptions], location: Path):
@@ -85,22 +94,41 @@ class VrToolKit:
                     if dll_file.is_file():
                         dll_file.unlink(missing_ok=True)
                         logging.info('Removing ReShade file %s from rF2 bin dir.', dll_file)
-                        reshade_removed = True
 
                     # - Remove files matching zip file
                     if file.is_file():
                         logging.info('Removing ReShade file %s from rF2 bin dir.', file)
                         file.unlink(missing_ok=True)
-                        reshade_removed = True
                     else:
                         if file.exists():
                             remove_dirs.append(file)
 
+        # -- Copy/Remove extra files
+        for (file_name, file_target_dir) in self.extra_files:
+            src_file = get_data_dir() / file_name
+            target_file = bin_dir / file_target_dir / file_name
+
+            try:
+                # -- Copy file
+                if use_reshade:
+                    shutil.copyfile(src_file, target_file)
+                # -- Remove file
+                else:
+                    target_file.unlink(missing_ok=True)
+            except Exception as e:
+                logging.error('Could not process extra file %s: %s', file_name, e)
+
         return remove_dirs
 
     def _update_preset_ini(self, reshade_preset: Path):
-        preprocessor_values = ''
-        for k, v in self.preprocessor.items():
+        """ Write updated values to Generic VRToolKit Preset """
+        p_dict, preprocessor_values = self.preprocessor.copy(), ''
+        # -- Remove fLUT_TextureName if Color Correction Mode != LUT
+        if p_dict['VRT_COLOR_CORRECTION_MODE'] != 1:
+            p_dict.pop('fLUT_TextureName')
+
+        # -- Prepare Preprocessor values
+        for k, v in p_dict.items():
             preprocessor_values += f'{"," if preprocessor_values else ""}{k}={v}'
 
         # -- Update Preset Ini file
@@ -188,8 +216,10 @@ class VrToolKit:
                     for p_def in p_str.split(','):
                         key, value = p_def.split('=', 2)
                         if key in self.preprocessor:
-                            self.preprocessor[key] = int(value)
-
+                            if value.isnumeric():
+                                self.preprocessor[key] = int(value)
+                            else:
+                                self.preprocessor[key] = value
                 for k, v in self.ini_settings.items():
                     if line.startswith(k):
                         value = line.replace(f'{k}=', '').replace('\n', '')

@@ -278,9 +278,8 @@ reshade_settings = {
                                   'desc': 'Configures the color correction modes',
                                   'settings': (
                                       {'value': 0, 'name': 'Disabled [Default]'},
-                                      # {'value': 1, 'name': 'LUT',
-                                      # 'desc': 'Do not use this. It will not work without a LUT file. Uses a LUT '
-                                      #         '(Look up table) for specialized and complex corrections.'},
+                                      {'value': 1, 'name': 'LUT',
+                                       'desc': 'Uses a LUT (Look up table) for specialized and complex corrections.'},
                                       {'value': 2, 'name': 'Tonemapped',
                                        'desc': 'Tonemapping to correct, gamma, exposure and color saturation.'},
                                   ),
@@ -370,6 +369,37 @@ reshade_cas = {
                         },
                    )
                    },
+}
+reshade_lut = {
+    'fLUT_AmountChroma': {'name': 'Chroma', 'value': 1.0,
+                          'settings': (
+                              {'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.01,
+                               'desc': 'Intensity of color/chroma change of the LUT. [Default 1.0]'},
+                          )
+                          },
+    'fLUT_AmountLuma': {'name': 'Exposure', 'value': 1.0,
+                        'settings': (
+                            {'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.01,
+                             'desc': 'Intensity of luma change of the LUT. [Default 1.0]'},
+                        )
+                        },
+    'fLUT_TextureName': {'name': 'LUT', 'value': '"lut.png"',
+                         'settings': (
+                             {'value': '"lut.png"', 'name': 'No Correction [Default]'},
+                             {'value': '"rF2_nonPBRmodDay1.png"', 'name': 'Non PBR Mod 1',
+                              'desc': 'LUT trying to restore some highlights from super bright specular road '
+                                      'reflections on non-PBR mod tracks at daylight. '
+                                      'Also desaturates reds and greens. Lower Contrast.'},
+                             {'value': '"rF2_nonPBRmodDay2.png"', 'name': 'Non PBR Mod 2',
+                              'desc': 'LUT trying to restore some highlights from super bright specular road '
+                                      'reflections on non-PBR mod tracks at daylight. '
+                                      'Also desaturates reds and greens. Medium Contrast.'},
+                             {'value': '"lut_ams.png"', 'name': 'Retrolux AMS',
+                              'desc': 'LUT Preset from Retrolux Reshade Automobilista'},
+                             {'value': '"lut_gtr2.png"', 'name': 'Retrolux GTR2', },
+                             {'value': '"lut_rbr.png"', 'name': 'Retrolux RBR', },
+                         ),
+                         },
 }
 reshade_cc = {
     'Gamma': {'name': 'Gamma', 'value': 1.00,
