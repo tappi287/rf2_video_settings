@@ -72,7 +72,7 @@
   <!-- VRToolKit Settings -->
   <SettingsCard :preset="preset" :idx="idx" settings-key="reshade_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
-                :current_preset_idx="current_preset_idx"
+                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode"
                 :search="search" header-icon="image"
@@ -89,6 +89,8 @@
         <br /><br />
         If you want to adjust settings in-game: create a new preset inside the ReShade UI.
         The settings you adjust here will override the default "generic_vr.ini" settings.
+        <br />
+        Use these enhancements in PanCake mode: set the <i>"Use Center Mask"</i> setting to <i>Disabled</i>
         <div class="float-right">
           <b-button size="sm" @click="showAllReshade = !showAllReshade"
                     v-b-popover.lefttop.hover="'Show all VRToolKit setting details even if they are not activated.'">
@@ -103,7 +105,7 @@
   <SettingsCard v-if="sharpeningFas"
                 :preset="preset" :idx="idx" settings-key="reshade_fas_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
-                :current_preset_idx="current_preset_idx"
+                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode"
                 :search="search" header-icon="image"
@@ -115,7 +117,7 @@
   <SettingsCard v-if="sharpeningCas"
                 :preset="preset" :idx="idx" settings-key="reshade_cas_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
-                :current_preset_idx="current_preset_idx"
+                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode"
                 :search="search" header-icon="image"
@@ -127,7 +129,7 @@
   <SettingsCard v-if="applyLUT"
                 :preset="preset" :idx="idx" settings-key="reshade_lut_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
-                :current_preset_idx="current_preset_idx"
+                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode"
                 :search="search" header-icon="image"
@@ -139,7 +141,7 @@
   <SettingsCard v-if="colorCorrection"
                 :preset="preset" :idx="idx" settings-key="reshade_cc_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
-                :current_preset_idx="current_preset_idx"
+                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode"
                 :search="search" header-icon="image"
@@ -151,7 +153,7 @@
   <SettingsCard v-if="antiAliasing"
                 :preset="preset" :idx="idx" settings-key="reshade_aa_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
-                :current_preset_idx="current_preset_idx"
+                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode"
                 :search="search" header-icon="image"
@@ -255,6 +257,10 @@ export default {
       })
       return result
     },
+    reshadeSettingEnabled(setting) {
+      if (setting.key === 'use_reshade') { return false }
+      return !this.reshadeEnabled
+    },
     settingDisabled: function(setting) {
       if (setting.key === 'UseFXAA' && this._getFsaaEnabled()) {
         // Disable FXAA and do not trigger a preset save
@@ -299,6 +305,10 @@ export default {
     viewMode: function () {
       if (this.view_mode !== undefined) { return this.view_mode }
       return 0
+    },
+    reshadeEnabled: function () {
+      if (this.preset === undefined) { return false }
+      return this._getReshadeOption('use_reshade')
     },
     // Display Reshade Setting Details if setting active
     sharpeningFas: function () {
