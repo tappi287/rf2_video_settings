@@ -270,6 +270,7 @@ html {
   color: #161616;
   background-color: #FF9900;
 }
+.btn-rf-yellow.disabled { opacity: 0.65; }
 
 .b-popover-rf-yellow .popover-header {
   color: #161616;
@@ -280,6 +281,7 @@ html {
   color: #efefef;
   background-color: #FF3000;
 }
+.btn-rf-orange-light.disabled { opacity: 0.65; }
 
 .b-popover-rf-orange-light .popover-header, .badge-rf-orange-light {
   color: #efefef;
@@ -294,6 +296,7 @@ html {
   background: -webkit-linear-gradient(to left, #cf4947, #ab6942); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to left, #cf4947, #ab6942); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
+.btn-rf-orange.disabled { opacity: 0.65; }
 
 .b-popover-rf-orange .popover-header, .badge-rf-orange {
   color: #efefef;
@@ -311,6 +314,7 @@ html {
   background: -webkit-linear-gradient(to left, #463ea6, #745ac4); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to left, #463ea6, #745ac4); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
+.btn-rf-blue.disabled { opacity: 0.65; }
 
 .b-popover-rf-blue .popover-header {
   color: #161616;
@@ -324,6 +328,7 @@ html {
   background: -webkit-linear-gradient(to left, #fa523c, #fa7c56); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to left, #fa523c, #fa7c56); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
+.btn-rf-red.disabled { opacity: 0.65; }
 
 .btn:focus,.btn:active:focus,.btn.active:focus,
 .btn.focus,.btn:active.focus,.btn.active.focus {
