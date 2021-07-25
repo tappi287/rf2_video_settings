@@ -69,7 +69,7 @@
                 @make-toast="makeToast">
   </SettingsCard>
 
-  <!-- ReShade Settings -->
+  <!-- VRToolKit Settings -->
   <SettingsCard :preset="preset" :idx="idx" settings-key="reshade_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
                 :current_preset_idx="current_preset_idx"
@@ -86,10 +86,15 @@
           vrtoolkit.retrolux.de
         </b-link>
         for more information.
-        <p>
-          If you want to adjust settings in-game: create a new preset inside the ReShade UI.
-          The settings you adjust here will override the default "generic_vr.ini" settings.
-        </p>
+        <br /><br />
+        If you want to adjust settings in-game: create a new preset inside the ReShade UI.
+        The settings you adjust here will override the default "generic_vr.ini" settings.
+        <div class="float-right">
+          <b-button size="sm" @click="showAllReshade = !showAllReshade"
+                    v-b-popover.lefttop.hover="'Show all VRToolKit setting details even if they are not activated.'">
+            <b-icon :icon="showAllReshade ? 'chevron-double-up' : 'chevron-double-down'"></b-icon>
+          </b-button>
+        </div>
       </div>
     </template>
   </SettingsCard>
@@ -109,6 +114,18 @@
   <!-- ReShade CAS Settings -->
   <SettingsCard v-if="sharpeningCas"
                 :preset="preset" :idx="idx" settings-key="reshade_cas_settings"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
+                :current_preset_idx="current_preset_idx"
+                :previous-preset-name="previousPresetName"
+                :view_mode="viewMode"
+                :search="search" header-icon="image"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
+  </SettingsCard>
+  <!-- ReShade LUT Settings -->
+  <SettingsCard v-if="applyLUT"
+                :preset="preset" :idx="idx" settings-key="reshade_lut_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
                 :current_preset_idx="current_preset_idx"
                 :previous-preset-name="previousPresetName"
@@ -183,7 +200,7 @@ export default {
   name: "GraphicsArea",
   data: function () {
     return {
-      showPerformance: true,
+      showPerformance: true, showAllReshade: false,
       abortResolutionUpdate: false,
     }
   },
@@ -283,22 +300,31 @@ export default {
       if (this.view_mode !== undefined) { return this.view_mode }
       return 0
     },
+    // Display Reshade Setting Details if setting active
     sharpeningFas: function () {
-      if (this.preset === undefined) { return false }
+      if (this.preset === undefined) { return false } if (this.showAllReshade) { return true }
       return this._getReshadeOption('VRT_SHARPENING_MODE') === 1;
     },
     sharpeningCas: function () {
-      if (this.preset === undefined) { return false }
+      if (this.preset === undefined) { return false } if (this.showAllReshade) { return true }
       return this._getReshadeOption('VRT_SHARPENING_MODE') === 2;
     },
+    applyLUT: function () {
+      if (this.preset === undefined) { return false } if (this.showAllReshade) { return true }
+      return this._getReshadeOption('VRT_COLOR_CORRECTION_MODE') === 1;
+    },
     colorCorrection: function () {
-      if (this.preset === undefined) { return false }
+      if (this.preset === undefined) { return false } if (this.showAllReshade) { return true }
       return this._getReshadeOption('VRT_COLOR_CORRECTION_MODE') === 2;
     },
     antiAliasing: function () {
-      if (this.preset === undefined) { return false }
+      if (this.preset === undefined) { return false } if (this.showAllReshade) { return true }
       return this._getReshadeOption('VRT_ANTIALIASING_MODE') === 1;
     },
+  },
+  created() {
+    // Show detailed VRToolKit settings if there are settings differences
+    if (this.previousPresetName !== '') { this.showAllReshade = true }
   }
 }
 </script>
