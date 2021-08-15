@@ -126,19 +126,137 @@
   },
   "name": "VR-High",
   "preset_type": 0,
+  "reshade_aa_settings": {
+    "key": "reshade_aa_settings",
+    "options": [
+      {
+        "key": "Subpix",
+        "value": 1
+      },
+      {
+        "key": "EdgeThreshold",
+        "value": 0.125
+      },
+      {
+        "key": "EdgeThresholdMin",
+        "value": 0
+      }
+    ],
+    "title": "FXAA"
+  },
+  "reshade_cas_settings": {
+    "key": "reshade_cas_settings",
+    "options": [
+      {
+        "key": "CAS_Contrast",
+        "value": 0
+      },
+      {
+        "key": "CAS_Sharpening",
+        "value": 2.5
+      },
+      {
+        "key": "CAS_Contrast_Clamp",
+        "value": 0.1
+      }
+    ],
+    "title": "AMD Fidelity FX (CAS)"
+  },
+  "reshade_cc_settings": {
+    "key": "reshade_cc_settings",
+    "options": [
+      {
+        "key": "CS_Contrast",
+        "value": 0
+      },
+      {
+        "key": "CS_Saturation",
+        "value": 1
+      }
+    ],
+    "title": "Basic Color Correction"
+  },
+  "reshade_fas_settings": {
+    "key": "reshade_fas_settings",
+    "options": [
+      {
+        "key": "FAS_Strength",
+        "value": 125
+      },
+      {
+        "key": "FAS_Radius",
+        "value": 0.1
+      },
+      {
+        "key": "FAS_Clamp",
+        "value": 0.535
+      }
+    ],
+    "title": "Filmic Anamorph Sharpen"
+  },
+  "reshade_lut_settings": {
+    "key": "reshade_lut_settings",
+    "options": [
+      {
+        "key": "LUT_AmountChroma",
+        "value": 1
+      },
+      {
+        "key": "LUT_AmountLuma",
+        "value": 1
+      },
+      {
+        "key": "LUT_TextureName",
+        "value": "\"lut.png\""
+      }
+    ],
+    "title": "Look Up Table"
+  },
   "reshade_settings": {
-    "key": "Base Options",
+    "key": "reshade_settings",
     "options": [
       {
         "key": "use_reshade",
-        "value": false
+        "value": true
       },
       {
-        "key": "preset_name",
-        "value": "ReShadePreset_Sharpen.ini"
+        "key": "VRT_SHARPENING_MODE",
+        "value": 1
+      },
+      {
+        "key": "VRT_ANTIALIASING_MODE",
+        "value": 0
+      },
+      {
+        "key": "VRT_COLOR_CORRECTION_MODE",
+        "value": 0
+      },
+      {
+        "key": "VRT_DITHERING",
+        "value": 0
+      },
+      {
+        "key": "VRT_USE_CENTER_MASK",
+        "value": 1
+      },
+      {
+        "key": "DitheringStrength",
+        "value": 0.375
+      },
+      {
+        "key": "CircularMaskSize",
+        "value": 0.41
+      },
+      {
+        "key": "CircularMaskSmoothness",
+        "value": 5
+      },
+      {
+        "key": "CircularMaskHorizontalOffset",
+        "value": 0.3
       }
     ],
-    "title": "Reshade"
+    "title": "VRToolkit"
   },
   "resolution_settings": {
     "key": "Resolution Settings",
@@ -179,7 +297,7 @@
       },
       {
         "key": "EPostProcessingSettings",
-        "value": 2
+        "value": 1
       },
       {
         "key": "UseFXAA",
