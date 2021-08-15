@@ -299,7 +299,11 @@ class ReshadeSettings(BaseOptions):
         super(ReshadeSettings, self).__init__()
 
         # -- Read Default options
-        self.read_from_python_dict(graphics.reshade_settings)
+        settings_dict = dict()
+        settings_dict.update(graphics.reshade_settings)
+        settings_dict.update(graphics.reshade_dither)
+        settings_dict.update(graphics.reshade_mask)
+        self.read_from_python_dict(settings_dict)
 
 
 class ReshadeFasSettings(BaseOptions):
@@ -347,7 +351,7 @@ class ReshadeLutSettings(BaseOptions):
 class ReshadeCcSettings(BaseOptions):
     key = 'reshade_cc_settings'
     app_key = 'reshade_cc_settings'
-    title = 'Tonemapping'
+    title = 'Basic Color Correction'
     target = OptionsTarget.reshade
     mandatory = False
 

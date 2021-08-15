@@ -6,6 +6,7 @@ from zipfile import ZipFile
 
 from rf2settings.globals import get_data_dir, RESHADE_ZIP, RESHADE_PRESET_DIR, RESHADE_TARGET_PRESET_NAME
 from rf2settings.preset.settings_model import BaseOptions
+from rf2settings.settingsdef import graphics
 
 
 class VrToolKit:
@@ -16,23 +17,36 @@ class VrToolKit:
         ('lut_ams.png', 'ReShade/Textures'),
         ('lut_gtr2.png', 'ReShade/Textures'),
         ('lut_rbr.png', 'ReShade/Textures'),
+        ('lut_filmic_basic.png', 'ReShade/Textures'),
+        ('lut_provia.png', 'ReShade/Textures'),
+        ('lut_technicolor.png', 'ReShade/Textures'),
     ]
     preprocessor_name = 'PreprocessorDefinitions'
     preprocessor = {'VRT_SHARPENING_MODE': 0, 'VRT_USE_CENTER_MASK': 0, 'VRT_DITHERING': 0,
                     'VRT_COLOR_CORRECTION_MODE': 0, 'VRT_ANTIALIASING_MODE': 0, 'fLUT_TextureName': '"lut.png"'}
-    ini_settings = {'iCircularMaskSize': None, 'iCircularMaskSmoothness': None, 'iCircularMaskHorizontalOffset': None,
-                    'iDitheringStrength': None,
-                    'Strength': None, 'Offset': None, 'Clamp': None,
-                    'Contrast': None, 'Sharpening': None,
-                    'Gamma': None, 'Exposure': None, 'Saturation': None,
-                    'fLUT_AmountChroma': None, 'fLUT_AmountLuma': None,
-                    'Subpix': None, 'EdgeThreshold': None, 'EdgeThresholdMin': None, }
 
     def __init__(self, options: Iterator[BaseOptions], location: Path):
         self.options = options
         self.location = location
 
         self.error = str()
+        self.ini_settings = dict()
+        self.ini_default_settings = dict()
+        self._read_setting_defaults()
+
+    def _read_setting_defaults(self):
+        settings_dict = dict()
+        settings_dict.update(graphics.reshade_fas)
+        settings_dict.update(graphics.reshade_dither)
+        settings_dict.update(graphics.reshade_mask)
+        settings_dict.update(graphics.reshade_aa)
+        settings_dict.update(graphics.reshade_cas)
+        settings_dict.update(graphics.reshade_cc)
+        settings_dict.update(graphics.reshade_lut)
+
+        for key, setting in settings_dict.items():
+            self.ini_settings[key] = setting.get('value')
+            self.ini_default_settings[key] = setting.get('value')
 
     def _update_options(self, update_from_disk: bool = False) -> bool:
         use_reshade = False
@@ -120,6 +134,13 @@ class VrToolKit:
 
         return remove_dirs
 
+    @staticmethod
+    def _add_ini_value_line(key, value):
+        if isinstance(value, (str, int)):
+            return f'{key}={value}\n'
+        else:
+            return f'{key}={value:.6f}\n'
+
     def _update_preset_ini(self, reshade_preset: Path):
         """ Write updated values to Generic VRToolKit Preset """
         p_dict, preprocessor_values = self.preprocessor.copy(), ''
@@ -133,7 +154,7 @@ class VrToolKit:
 
         # -- Update Preset Ini file
         try:
-            # - Read Preset Ini file
+            # -- Read Preset Ini file
             with open(reshade_preset, 'r') as f:
                 preset_lines = f.readlines()
 
@@ -142,10 +163,16 @@ class VrToolKit:
             for line in preset_lines:
                 if line.startswith(self.preprocessor_name) and preprocessor_values:
                     line = f'{self.preprocessor_name}={preprocessor_values}\n'
-                for k, v in self.ini_settings.items():
-                    if line.startswith(k):
-                        line = f'{k}={v:.6f}\n'
                 configured_preset_lines.append(line)
+
+                if line.replace('\r', '').replace('\n', '') == '[VRToolkit.fx]':
+                    break
+
+            # -- Add Ini Settings
+            for k, v in self.ini_settings.items():
+                if v == self.ini_default_settings[k]:
+                    continue
+                configured_preset_lines.append(self._add_ini_value_line(k, v))
 
             # - Write Preset Ini file
             logging.info('Updating ReShade Preset file: %s', reshade_preset)
@@ -223,7 +250,16 @@ class VrToolKit:
                 for k, v in self.ini_settings.items():
                     if line.startswith(k):
                         value = line.replace(f'{k}=', '').replace('\n', '')
-                        self.ini_settings[k] = float(value)
+                        if isinstance(value, str) and value.split('.')[0].isnumeric():
+                            # -- Read int
+                            if value.isdigit():
+                                self.ini_settings[k] = int(value)
+                            # -- Read float
+                            else:
+                                self.ini_settings[k] = float(value)
+                        else:
+                            # -- Read str
+                            self.ini_settings[k] = value
 
             # -- Update RfactorPlayer VRToolkit Settings
             self._update_options(update_from_disk=True)

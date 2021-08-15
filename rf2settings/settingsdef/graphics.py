@@ -280,8 +280,8 @@ reshade_settings = {
                                       {'value': 0, 'name': 'Disabled [Default]'},
                                       {'value': 1, 'name': 'LUT',
                                        'desc': 'Uses a LUT (Look up table) for specialized and complex corrections.'},
-                                      {'value': 2, 'name': 'Tonemapped',
-                                       'desc': 'Tonemapping to correct, gamma, exposure and color saturation.'},
+                                      {'value': 2, 'name': 'Contrast & Saturation',
+                                       'desc': 'Adjust Contrast and Saturation'},
                                   ),
                                   },
     'VRT_DITHERING': {'name': 'Use Dithering', 'value': 0,
@@ -292,9 +292,6 @@ reshade_settings = {
                            'desc': 'Enable dithering that adds noise to the image to smoothen out gradients'},
                       ),
                       },
-    'iDitheringStrength': {'name': 'Dithering Strength', 'value': 0.375,
-                           'settings': ({'settingType': 'range', 'min': 0.005, 'max': 1.0, 'step': 0.005, },)
-                           },
     'VRT_USE_CENTER_MASK': {'name': 'Use Center Mask', 'value': 1,
                             'desc': 'Masks the center of the screen with a circle to reduce pixel count that '
                                     'is processed by the shaders [DX10 or higher]',
@@ -305,121 +302,134 @@ reshade_settings = {
                                          'DX10 or higher'},
                             ),
                             },
-    'iCircularMaskSize': {'name': 'Circle Radius', 'value': 0.30,
-                          'settings': (
-                              {'settingType': 'range', 'min': 0.01, 'max': 1.0, 'step': 0.01,
-                               'desc': 'Keep the radius as small as possible to conserve GPU time, but as well not to '
-                                       'small to not loose sharpness. In addition some HMDs need an offset correction '
-                                       'like the Pimax to fit the sweet spot better. Recommended: '
-                                       'Valve Index: 0.30-0.35, Oculus Quest1: 0.30 to 0.35, HP G1 & G2: 0.41 to 0.46, '
-                                       'Pimax 5k Large FOV, No PP: +- 0.75 [Default 0.30]'
+}
+reshade_mask = {
+    'CircularMaskSize': {'name': 'Circle Radius', 'value': 0.30,
+                         'settings': (
+                             {'settingType': 'range', 'min': 0.01, 'max': 1.0, 'step': 0.01,
+                              'desc': 'Keep the radius as small as possible to conserve GPU time, but as well not to '
+                                      'small to not loose sharpness. In addition some HMDs need an offset correction '
+                                      'like the Pimax to fit the sweet spot better. Recommended: '
+                                      'Valve Index: 0.30-0.35, Oculus Quest1: 0.30 to 0.35, HP G1 & G2: 0.41 to 0.46, '
+                                      'Pimax 5k Large FOV, No PP: +- 0.75 [Default 0.30]'
+                              },
+                         )
+                         },
+    'CircularMaskSmoothness': {'name': 'Mask Smoothness', 'value': 5.0,
+                               'settings': (
+                                   {'settingType': 'range', 'min': 1.0, 'max': 10.0, 'step': 0.01,
+                                    'desc': 'Increases the smoothness of the circular mask to allow smaller masks '
+                                            'while reducing the prominence of the edge [Default 5.0]'
+                                    },
+                               )
                                },
-                          )
-                          },
-    'iCircularMaskSmoothness': {'name': 'Mask Smoothness', 'value': 5.0,
-                                'settings': (
-                                    {'settingType': 'range', 'min': 1.0, 'max': 10.0, 'step': 0.01,
-                                     'desc': 'Increases the smoothness of the circular mask to allow smaller masks '
-                                             'while reducing the prominence of the edge [Default 5.0]'
+    'CircularMaskHorizontalOffset': {'name': 'Horizontal Offset', 'value': 0.30,
+                                     'settings': (
+                                         {'settingType': 'range', 'min': 0.30, 'max': 0.5, 'step': 0.01,
+                                          'desc': 'Adjusts the mask offset from the center horizontally '
+                                                  '[Default 0.30]',
+                                          },
+                                     )
                                      },
-                                )
-                                },
-    'iCircularMaskHorizontalOffset': {'name': 'Horizontal Offset', 'value': 0.30,
-                                      'settings': (
-                                          {'settingType': 'range', 'min': 0.30, 'max': 0.5, 'step': 0.01,
-                                           'desc': 'Adjusts the mask offset from the center horizontally '
-                                                   '[Default 0.30]',
-                                           },
-                                      )
-                                      },
+}
+reshade_dither = {
+    'DitheringStrength': {'name': 'Dithering Strength', 'value': 0.375,
+                          'settings': ({'settingType': 'range', 'min': 0.00, 'max': 1.0, 'step': 0.001, },)
+                          },
 }
 reshade_fas = {
-    'Strength': {'name': 'Strength', 'value': 300.0,
-                 'settings': (
-                     {'settingType': 'range', 'min': 0.0, 'max': 500.0, 'step': 1.0, 'desc': '[Default 300]'},
-                 )
-                 },
-    'Offset': {'name': 'Radius', 'value': 0.10,
-               'settings': (
-                   {'settingType': 'range', 'min': 0.00, 'max': 2.00, 'step': 0.01,
-                    'desc': 'High-pass cross offset in pixels [Default 0.10]'
-                    },
-               )
-               },
-    'Clamp': {'name': 'Clamping', 'value': 0.525,
-              'settings': (
-                  {'settingType': 'range', 'min': 0.500, 'max': 1.00, 'step': 0.001, 'desc': '[Default 0.525]'},
-              )
-              },
+    'FAS_Strength': {'name': 'Strength', 'value': 300.0,
+                     'settings': (
+                         {'settingType': 'range', 'min': 0.0, 'max': 250.0, 'step': 1.0, 'desc': '[Default 125]'},
+                     )
+                     },
+    'FAS_Radius': {'name': 'Radius', 'value': 0.10,
+                   'settings': (
+                       {'settingType': 'range', 'min': 0.00, 'max': 2.00, 'step': 0.01,
+                        'desc': 'High-pass cross offset in pixels [Default 0.10]'
+                        },
+                   )
+                   },
+    'FAS_Clamp': {'name': 'Clamping', 'value': 0.525,
+                  'settings': (
+                      {'settingType': 'range', 'min': 0.500, 'max': 1.00, 'step': 0.001, 'desc': '[Default 0.525]'},
+                  )
+                  },
 }
 reshade_cas = {
-    'Contrast': {'name': 'Contrast Adaption', 'value': 0.00,
-                 'settings': (
-                     {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.01,
-                      'desc': 'Adjusts the range the shader adapts to high contrast (0 is not all the way off). '
-                              'Higher values = more high contrast sharpening. [Default 0.0]'
-                      },
-                 )
-                 },
-    'Sharpening': {'name': 'Sharpening', 'value': 2.5,
-                   'settings': (
-                       {'settingType': 'range', 'min': 0.0, 'max': 5.0, 'step': 0.01,
-                        'desc': 'Adjusts sharpening intensity by averaging the original pixels to the sharpened result.'
-                                ' 1.0 is the unmodified default. [Default 2.5]'
-                        },
-                   )
-                   },
+    'CAS_Contrast': {'name': 'Contrast Adaption', 'value': 0.00,
+                     'settings': (
+                         {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.01,
+                          'desc': 'Adjusts the range the shader adapts to high contrast (0 is not all the way off). '
+                                  'Higher values = more high contrast sharpening. [Default 0.0]'
+                          },
+                     )
+                     },
+    'CAS_Sharpening': {'name': 'Sharpening', 'value': 2.5,
+                       'settings': (
+                           {'settingType': 'range', 'min': 0.0, 'max': 5.0, 'step': 0.01,
+                            'desc': 'Adjusts sharpening intensity by averaging the original pixels to the sharpened '
+                                    'result. 1.0 is the unmodified default. [Default 2.5]'
+                            },
+                       )
+                       },
+    'CAS_Contrast_Clamp': {'name': 'Contrast Clamping', 'value': 0.10,
+                           'settings': (
+                               {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.01,
+                                'desc': 'Limits the bright & contrasty parts from being sharpened. Lower the value to '
+                                        'reduce shimmering on bright lines'
+                                },
+                           )
+                           },
 }
 reshade_lut = {
-    'fLUT_AmountChroma': {'name': 'Chroma', 'value': 1.0,
-                          'settings': (
-                              {'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.01,
-                               'desc': 'Intensity of color/chroma change of the LUT. [Default 1.0]'},
-                          )
-                          },
-    'fLUT_AmountLuma': {'name': 'Exposure', 'value': 1.0,
-                        'settings': (
-                            {'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.01,
-                             'desc': 'Intensity of luma change of the LUT. [Default 1.0]'},
-                        )
-                        },
-    'fLUT_TextureName': {'name': 'LUT', 'value': '"lut.png"',
+    'LUT_AmountChroma': {'name': 'LUT chroma amount', 'value': 1.0,
                          'settings': (
-                             {'value': '"lut.png"', 'name': 'No Correction [Default]'},
-                             {'value': '"rF2_nonPBRmodDay1.png"', 'name': 'Non PBR Mod 1',
-                              'desc': 'LUT trying to restore some highlights from super bright specular road '
-                                      'reflections on non-PBR mod tracks at daylight. '
-                                      'Also desaturates reds and greens. Lower Contrast.'},
-                             {'value': '"rF2_nonPBRmodDay2.png"', 'name': 'Non PBR Mod 2',
-                              'desc': 'LUT trying to restore some highlights from super bright specular road '
-                                      'reflections on non-PBR mod tracks at daylight. '
-                                      'Also desaturates reds and greens. Medium Contrast.'},
-                             {'value': '"lut_ams.png"', 'name': 'Retrolux AMS',
-                              'desc': 'LUT Preset from Retrolux Reshade Automobilista'},
-                             {'value': '"lut_gtr2.png"', 'name': 'Retrolux GTR2', },
-                             {'value': '"lut_rbr.png"', 'name': 'Retrolux RBR', },
-                         ),
+                             {'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.01,
+                              'desc': 'Intensity of color/chroma change of the LUT. [Default 1.0]'},
+                         )
                          },
+    'LUT_AmountLuma': {'name': 'LUT luma amount', 'value': 1.0,
+                       'settings': (
+                           {'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.01,
+                            'desc': 'Intensity of luma change of the LUT. [Default 1.0]'},
+                       )
+                       },
+    'LUT_TextureName': {'name': 'LUT', 'value': '"lut.png"',
+                        'settings': (
+                            {'value': '"lut.png"', 'name': 'No Correction [Default]'},
+                            {'value': '"rF2_nonPBRmodDay1.png"', 'name': 'Non PBR Mod 1',
+                             'desc': 'LUT trying to restore some highlights from super bright specular road '
+                                     'reflections on non-PBR mod tracks at daylight. '
+                                     'Also desaturates reds and greens. Lower Contrast.'},
+                            {'value': '"rF2_nonPBRmodDay2.png"', 'name': 'Non PBR Mod 2',
+                             'desc': 'LUT trying to restore some highlights from super bright specular road '
+                                     'reflections on non-PBR mod tracks at daylight. '
+                                     'Also desaturates reds and greens. Medium Contrast.'},
+                            {'value': '"lut_ams.png"', 'name': 'Retrolux AMS',
+                             'desc': 'LUT Preset from Retrolux Reshade Automobilista'},
+                            {'value': '"lut_gtr2.png"', 'name': 'Retrolux GTR2', },
+                            {'value': '"lut_rbr.png"', 'name': 'Retrolux RBR', },
+                            {'value': '"lut_filmic_basic.png"', 'name': 'Retrolux Filmic Basic', },
+                            {'value': '"lut_provia.png"', 'name': 'Retrolux Provia', },
+                            {'value': '"lut_technicolor.png"', 'name': 'Retrolux Technicolor', },
+                        ),
+                        },
 }
 reshade_cc = {
-    'Gamma': {'name': 'Gamma', 'value': 1.00,
-              'settings': (
-                  {'settingType': 'range', 'min': 0.00, 'max': 2.00, 'step': 0.01,
-                   'desc': 'Adjust midtones. 1.0 is neutral. This setting does exactly the same as the one in Lift '
-                           'Gamma Gain, only with less control. [Default 1.0]'
-                   },
-              )
-              },
-    'Exposure': {'name': 'Exposure', 'value': 0.5,
-                 'settings': (
-                     {'settingType': 'range', 'min': -1.0, 'max': 1.0, 'step': 0.01, 'desc': '[Default 0.5]'},
-                 )
-                 },
-    'Saturation': {'name': 'Saturation', 'value': 0.5,
-                   'settings': (
-                       {'settingType': 'range', 'min': -1.0, 'max': 1.0, 'step': 0.01, 'desc': '[Default 0.5]'},
-                   )
-                   },
+    'CS_Contrast': {'name': 'Contrast', 'value': 0.00,
+                    'settings': (
+                        {'settingType': 'range', 'min': -1.00, 'max': 1.00, 'step': 0.01,
+                         'desc': 'The amount of contrast you want.'
+                         },
+                    )
+                    },
+    'CS_Saturation': {'name': 'Saturation', 'value': 1.0,
+                      'settings': (
+                          {'settingType': 'range', 'min': 0.0, 'max': 2.0, 'step': 0.01,
+                           'desc': 'Adjust saturation [Default 1.0]'},
+                      )
+                      },
 }
 reshade_aa = {
     'Subpix': {'name': 'Subpix', 'value': 1.0,
