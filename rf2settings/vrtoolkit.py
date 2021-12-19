@@ -4,7 +4,8 @@ from pathlib import Path
 from typing import Iterator
 from zipfile import ZipFile
 
-from rf2settings.globals import get_data_dir, RESHADE_ZIP, RESHADE_PRESET_DIR, RESHADE_TARGET_PRESET_NAME
+from rf2settings.globals import get_data_dir, RESHADE_ZIP, RESHADE_PRESET_DIR, RESHADE_TARGET_PRESET_NAME, \
+    RESHADE_INI_NAME
 from rf2settings.preset.settings_model import BaseOptions
 from rf2settings.settingsdef import graphics
 
@@ -186,6 +187,32 @@ class VrToolKit:
             return False
         return True
 
+    @staticmethod
+    def _update_reshade_ini(base_dir: Path):
+        """ update the global reshade preset ini to update preset path """
+        reshade_preset_dir_str = RESHADE_PRESET_DIR.replace('/', '\\')
+        reshade_preset_path = f".\\{reshade_preset_dir_str}{RESHADE_TARGET_PRESET_NAME}"
+        reshade_ini = base_dir / RESHADE_INI_NAME
+
+        reshade_ini_lines, updated_ini_lines = list(), list()
+
+        # -- Read current ReShade.ini
+        with open(reshade_ini, 'r') as f:
+            reshade_ini_lines = f.readlines()
+
+        for line in reshade_ini_lines:
+            if line.startswith('PresetPath='):
+                line = f'PresetPath={reshade_preset_path}\n'
+            # -- VRToolkit default setting seems to set this to 1 which results in
+            #    settings updates not being applied on start up
+            if line.startswith('NoReloadOnInitForNonVR'):
+                line = 'NoReloadOnInitForNonVR=0\n'
+            updated_ini_lines.append(line)
+
+        # -- Write updated ReShade.ini
+        with open(reshade_ini, 'w') as f:
+            f.writelines(updated_ini_lines)
+
     def write(self):
         use_reshade = self._update_options()
 
@@ -220,6 +247,9 @@ class VrToolKit:
                         self.error += msg
 
             return reshade_removed
+
+        # -- Update global ReShade.ini
+        self._update_reshade_ini(bin_dir)
 
         # -- Prepare writing of ReShade Preset file
         return self._update_preset_ini(reshade_preset)
