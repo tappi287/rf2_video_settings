@@ -13,10 +13,9 @@ from rf2settings.gamecontroller import controller_greenlet, controller_event_loo
 from rf2settings.globals import FROZEN
 from rf2settings.headlights import headlights_greenlet
 from rf2settings.log import setup_logging
-from rf2settings.rf2connect import RfactorConnect
 from rf2settings.rf2greenlet import rfactor_greenlet, rfactor_event_loop
 from rf2settings.runasadmin import run_as_admin
-from rf2settings.utils import AppExceptionHook, capture_app_exceptions
+from rf2settings.utils import AppExceptionHook
 
 # -- Make sure eel methods are exposed at start-up
 expose_app_methods()
