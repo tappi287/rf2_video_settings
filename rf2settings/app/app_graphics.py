@@ -1,9 +1,6 @@
-import json
-
 import eel
 
-from rf2settings.preset.preset import GraphicsPreset
-from rf2settings.rfactor import RfactorPlayer
+from . import app_graphics_fn
 
 
 def expose_graphics_methods():
@@ -13,19 +10,9 @@ def expose_graphics_methods():
 
 @eel.expose
 def get_current_dx_config():
-    rf = RfactorPlayer()
-    if not rf.is_valid:
-        return json.dumps({'result': False})
-
-    rp = GraphicsPreset()
-    rp.update(rf)
-    return json.dumps({'result': True, 'preset': rp.to_js()})
+    return app_graphics_fn.get_current_dx_config()
 
 
 @eel.expose
 def run_rfactor_config():
-    rf, result = RfactorPlayer(), False
-    if rf.is_valid:
-        result = rf.run_config()
-
-    return json.dumps({'result': result, 'msg': rf.error})
+    return app_graphics_fn.run_rfactor_config()
