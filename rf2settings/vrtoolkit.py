@@ -24,7 +24,7 @@ class VrToolKit:
     ]
     preprocessor_name = 'PreprocessorDefinitions'
     preprocessor = {'VRT_SHARPENING_MODE': 0, 'VRT_USE_CENTER_MASK': 0, 'VRT_DITHERING': 0,
-                    'VRT_COLOR_CORRECTION_MODE': 0, 'VRT_ANTIALIASING_MODE': 0, 'fLUT_TextureName': '"lut.png"'}
+                    'VRT_COLOR_CORRECTION_MODE': 0, 'VRT_ANTIALIASING_MODE': 0, 'LUT_TextureName': '"lut.png"'}
 
     def __init__(self, options: Iterator[BaseOptions], location: Path):
         self.options = options
@@ -145,9 +145,6 @@ class VrToolKit:
     def _update_preset_ini(self, reshade_preset: Path):
         """ Write updated values to Generic VRToolKit Preset """
         p_dict, preprocessor_values = self.preprocessor.copy(), ''
-        # -- Remove fLUT_TextureName if Color Correction Mode != LUT
-        if p_dict['VRT_COLOR_CORRECTION_MODE'] != 1:
-            p_dict.pop('fLUT_TextureName')
 
         # -- Prepare Preprocessor values
         for k, v in p_dict.items():
