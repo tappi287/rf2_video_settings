@@ -124,6 +124,14 @@ class AppExceptionHook:
 
     @staticmethod
     def exception_event_loop():
+        if AppExceptionHook.produce_exception:
+            AppExceptionHook.produce_exception = False
+
+            @capture_app_exceptions
+            def test_exception():
+                AppExceptionHook.test_exception()
+            test_exception()
+
         if AppExceptionHook.event.is_set():
             logging.debug('Reporting App exception to front end')
             eel.app_exception(AppExceptionHook.gui_msg)

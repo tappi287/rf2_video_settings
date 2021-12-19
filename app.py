@@ -25,13 +25,6 @@ expose_app_methods()
 setup_logging()
 
 
-@capture_app_exceptions
-def test_exception():
-    if AppExceptionHook.produce_exception:
-        AppExceptionHook.produce_exception = False
-        AppExceptionHook.test_exception()
-
-
 def start_eel():
     logging.info('\n\n\n')
     logging.info('#######################################################')
@@ -96,8 +89,6 @@ def start_eel():
         rfactor_event_loop()
         # Capture exception events
         AppExceptionHook.exception_event_loop()
-        # -- Test App Exception
-        test_exception()
 
     # -- Shutdown Greenlets
     logging.debug('Shutting down Greenlets.')
