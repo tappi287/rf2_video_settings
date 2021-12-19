@@ -1,8 +1,6 @@
-import logging
-
 import eel
 
-from rf2settings.gamecontroller import ControllerEvents
+from . import app_controller_fn
 
 
 def expose_controller_methods():
@@ -12,14 +10,9 @@ def expose_controller_methods():
 
 @eel.expose
 def start_controller_capture():
-    # Start receiving Controller Events including axis events for input mapping
-    ControllerEvents.capturing = True
-
-    logging.debug('Started capturing game controller events for input mapping')
+    return app_controller_fn.start_controller_capture()
 
 
 @eel.expose
 def stop_controller_capture():
-    ControllerEvents.capturing = False
-
-    logging.debug('Stopped capturing game controller events for input mapping')
+    return app_controller_fn.stop_controller_capture()
