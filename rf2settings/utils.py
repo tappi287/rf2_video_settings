@@ -142,7 +142,7 @@ def capture_app_exceptions(func):
     """ Decorator to capture exceptions at app level """
     def func_wrapper(*args, **kwargs):
         try:
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
         except Exception as e:
             AppExceptionHook.set_exception(e)
 
