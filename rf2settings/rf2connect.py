@@ -110,8 +110,8 @@ class RfactorConnect:
     get_request_time = 0.5  # float seconds timeout for get requests
 
     long_timeout = 120.0    # Maximum connection check timeout
-    idle_timeout = 20.0     # Start with this time out after an active connection
-    active_timeout = 1.5    # Check connection timeout while eg. loading
+    idle_timeout = 15.0     # Start with this time out after an active connection
+    active_timeout = 1.0    # Check connection timeout while eg. loading
 
     last_connection_check = time.time()
     connection_check_interval = idle_timeout  # Revalidate connection every float seconds

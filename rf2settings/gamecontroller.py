@@ -36,7 +36,7 @@ class ControllerEvents:
 def controller_event_loop():
     """ Will be run in main eel greenlet to be able to post events to JS frontend """
     # -- Block for timeout until event is set
-    event_found = ControllerEvents.event.wait(timeout=2.0)
+    event_found = ControllerEvents.event.wait(timeout=1.0)
 
     if event_found:
         ControllerEvents.event.clear()
