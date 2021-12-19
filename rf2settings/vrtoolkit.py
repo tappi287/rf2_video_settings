@@ -14,6 +14,7 @@ class VrToolKit:
     extra_files = [
         ('rF2_nonPBRmodDay1.png', 'ReShade/Textures'),
         ('rF2_nonPBRmodDay2.png', 'ReShade/Textures'),
+        ('rF2_ToneDownDay.png', 'ReShade/Textures'),
         ('lut_ams.png', 'ReShade/Textures'),
         ('lut_gtr2.png', 'ReShade/Textures'),
         ('lut_rbr.png', 'ReShade/Textures'),

@@ -406,6 +406,9 @@ reshade_lut = {
                              'desc': 'LUT trying to restore some highlights from super bright specular road '
                                      'reflections on non-PBR mod tracks at daylight. '
                                      'Also desaturates reds and greens. Medium Contrast.'},
+                            {'value': '"rF2_ToneDownDay.png"', 'name': 'Tone Down Day',
+                             'desc': 'LUT trying to restore some highlights from super bright specular road '
+                                     'reflections on PBR tracks at daylight. '},
                             {'value': '"lut_ams.png"', 'name': 'Retrolux AMS',
                              'desc': 'LUT Preset from Retrolux Reshade Automobilista'},
                             {'value': '"lut_gtr2.png"', 'name': 'Retrolux GTR2', },
