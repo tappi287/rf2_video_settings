@@ -1,10 +1,10 @@
 import json
 import logging
 
-from rf2settings.app_settings import AppSettings
-from rf2settings.rf2command import CommandQueue, Command
-from rf2settings.rf2connect import RfactorState
-from rf2settings.utils import capture_app_exceptions
+from ..app_settings import AppSettings
+from ..rf2command import CommandQueue, Command
+from ..rf2connect import RfactorState
+from ..utils import capture_app_exceptions
 
 
 @capture_app_exceptions

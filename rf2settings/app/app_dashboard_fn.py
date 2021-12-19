@@ -1,7 +1,7 @@
 import json
 
-from rf2settings.rfactor import RfactorPlayer
-from rf2settings.utils import capture_app_exceptions
+from ..rfactor import RfactorPlayer
+from ..utils import capture_app_exceptions
 
 
 @capture_app_exceptions

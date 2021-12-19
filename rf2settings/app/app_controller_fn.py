@@ -1,7 +1,7 @@
 import logging
 
-from rf2settings.gamecontroller import ControllerEvents
-from rf2settings.utils import capture_app_exceptions
+from ..gamecontroller import ControllerEvents
+from ..utils import capture_app_exceptions
 
 
 @capture_app_exceptions

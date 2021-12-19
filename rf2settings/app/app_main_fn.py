@@ -4,12 +4,12 @@ from pathlib import WindowsPath, Path
 from subprocess import Popen
 from typing import Optional
 
-from rf2settings.app_settings import AppSettings
-from rf2settings.globals import RFACTOR_SETUPS, RFACTOR_MODMGR, get_log_file, get_log_dir
-from rf2settings.rf2command import CommandQueue, Command
-from rf2settings.rf2connect import RfactorState
-from rf2settings.rfactor import RfactorPlayer, RfactorLocation
-from rf2settings.utils import capture_app_exceptions
+from ..app_settings import AppSettings
+from ..globals import RFACTOR_SETUPS, RFACTOR_MODMGR, get_log_file, get_log_dir
+from ..rf2command import CommandQueue, Command
+from ..rf2connect import RfactorState
+from ..rfactor import RfactorPlayer, RfactorLocation
+from ..utils import capture_app_exceptions
 
 
 def _get_rf_location(sub_path):

@@ -3,9 +3,9 @@ import logging
 
 import eel
 
-from rf2settings.app_settings import AppSettings
-from rf2settings.serverlist import ServerList
-from rf2settings.utils import capture_app_exceptions
+from ..app_settings import AppSettings
+from ..serverlist import ServerList
+from ..utils import capture_app_exceptions
 
 
 @capture_app_exceptions
