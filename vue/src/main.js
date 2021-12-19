@@ -87,7 +87,13 @@ export const userScreenShots =
 ['https://forum.studio-397.com/index.php?attachments/2021-08-05-13-27-png.40114/', 'MiguelVallejo',
 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-371#post-1076166'],
 ['https://forum.studio-397.com/index.php?attachments/20210814130620_1-jpg.40163/', 'Remco Majoor',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-372#post-1076335']
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-372#post-1076335'],
+['https://forum.studio-397.com/index.php?attachments/365960_screenshots_20210523174938_1-jpg.41232/', 'vava74',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-378#post-1081269'],
+['https://forum.studio-397.com/index.php?attachments/20211105211801_1-jpg.41336/', 'yashiman',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-378#post-1081786'],
+['https://live.staticflickr.com/65535/51663639097_93d481cedc_o_d.jpg', 'Franck',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-379#post-1083552']
 ]
 
 Vue.prototype.$eventHub = new Vue(); // Global event bus
