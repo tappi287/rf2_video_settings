@@ -49,6 +49,7 @@ class RfactorLocation:
     def get_location(cls, dev: Optional[bool] = False):
         try:
             s = SteamApps()
+            s.read_steam_library()
         except Exception as e:
             logging.error('Error getting rFactor location: %s', e)
             return

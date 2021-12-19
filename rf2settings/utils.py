@@ -1,3 +1,4 @@
+import enum
 import logging
 import math
 import os
@@ -296,3 +297,23 @@ class AppAudioFx:
         if not audio_fx_id:
             return
         eel.play_audio(audio_fx_id)
+
+
+class SizeUnit(enum.Enum):
+    BYTES = 1
+    KB = 2
+    MB = 3
+    GB = 4
+
+
+def convert_unit(size_in_bytes, unit):
+    """ Convert the size from bytes to other units like KB, MB or GB"""
+    size_in_bytes = int(size_in_bytes)
+    if unit == SizeUnit.KB:
+        return size_in_bytes / 1024
+    elif unit == SizeUnit.MB:
+        return size_in_bytes / (1024 * 1024)
+    elif unit == SizeUnit.GB:
+        return size_in_bytes / (1024 * 1024 * 1024)
+    else:
+        return size_in_bytes

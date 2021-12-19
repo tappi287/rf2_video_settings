@@ -8,6 +8,7 @@ from typing import Iterable, List, Optional, Tuple
 
 from . import acf
 from ..globals import KNOWN_APPS
+from ..utils import convert_unit, SizeUnit
 
 STEAM_LIBRARY_FOLDERS = 'LibraryFolders'
 STEAM_LIBRARY_FILE = 'libraryfolders.vdf'
@@ -17,8 +18,11 @@ STEAM_APPS_INSTALL_FOLDER = 'common'
 
 class SteamApps:
     def __init__(self):
-        self.steam_apps, self.known_apps = self.find_installed_steam_games()
+        self.steam_apps, self.known_apps = dict(), dict()
         self.steam_app_names = {m.get('name'): app_id for app_id, m in self.steam_apps.items() if isinstance(m, dict)}
+
+    def read_steam_library(self, find_open_vr: bool = False):
+        self.steam_apps, self.known_apps = self.find_installed_steam_games(find_open_vr)
 
     def find_game_location(self, app_id: int = 0, app_name: str = '') -> Optional[Path]:
         """ Shorthand method to search installed apps via either id or name """
@@ -87,6 +91,8 @@ class SteamApps:
     def _add_path(manifest: dict, lib_folders):
         """ Create an 'path' key with an absolute path to the installation directory """
         p = manifest.get('installdir')
+        manifest['path'] = ''
+
         for lib_folder in lib_folders:
             if not p:
                 break
@@ -105,7 +111,7 @@ class SteamApps:
             else:
                 manifest['path'] = abs_p.as_posix()
 
-    def find_installed_steam_games(self) -> Tuple[dict, dict]:
+    def find_installed_steam_games(self, find_open_vr: bool = False) -> Tuple[dict, dict]:
         steam_apps, _known_apps = dict(), KNOWN_APPS
         lib_folders = self.find_steam_libraries()
         if not lib_folders:
@@ -114,12 +120,36 @@ class SteamApps:
         for lib in lib_folders:
             for manifest_file in lib.glob('appmanifest*.acf'):
                 try:
-                    with open(manifest_file.as_posix(), 'r') as f:
+                    with open(manifest_file.as_posix(), 'r', encoding='utf-8') as f:
                         manifest = acf.load(f)
                         if manifest is not None:
                             manifest = manifest.get('AppState')
-                            steam_apps[manifest.get('appid')] = manifest
+
+                            # -- Skip invalid manifests
+                            if manifest is None:
+                                logging.warning('Skipping invalid App entry: %s', manifest_file.as_posix())
+                                continue
+
+                            # -- Add human readable size
+                            manifest['sizeGb'] = f"{convert_unit(manifest.get('SizeOnDisk', 0), SizeUnit.GB):.0f} GB"
+
+                            # -- Add Path information
                             self._add_path(manifest, lib_folders)
+
+                            # -- Add known apps entries data
+                            app_id = manifest.get('appid')
+
+                            # -- Skip invalid IDs
+                            if app_id is None:
+                                logging.warning('Skipping App entry without id: %s', manifest_file.as_posix())
+                                continue
+
+                            if app_id in _known_apps:
+                                for k, v in _known_apps[app_id].items():
+                                    manifest[k] = v
+
+                            # -- Store Entry
+                            steam_apps[app_id] = manifest
                 except Exception as e:
                     logging.error('Error reading Steam App manifest: %s %s', manifest_file, e)
 
