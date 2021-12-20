@@ -16,10 +16,11 @@ SPEC_FILE = "app.spec"
 ISS_FILE = "rf2_settings_wizard_win64_setup.iss"
 ISS_VER_LINE = '#define MyAppVersion'
 ISS_SETUP_EXE_FILE = UPDATE_INSTALL_FILE.format(version=VERSION)
+PORTABLE_ZIP_NAME = f'{UPDATE_INSTALL_FILE.format(version=VERSION)}_portable'
 
 BUILD_DIR = "build"
 DIST_DIR = "dist"
-DIST_EXE_DIR = "simmon"
+DIST_EXE_DIR = "rF2-Settings-Widget"
 
 REMOTE_DIR = '/simmon'
 
@@ -153,6 +154,24 @@ def run_pyinstaller(spec_file: str):
     return p.returncode
 
 
+def create_portable_archive():
+    archive_file = Path(DIST_DIR) / PORTABLE_ZIP_NAME
+    dist_exe_dir = Path(DIST_DIR) / DIST_EXE_DIR
+    portable_dist_dir = Path(DIST_DIR) / 'portable' / PORTABLE_ZIP_NAME
+    archive_root_dir = Path(DIST_DIR) / 'portable'
+
+    portable_dist_dir.mkdir(parents=True)
+    copy_tree(dist_exe_dir.as_posix(), portable_dist_dir.as_posix())
+
+    old_archive = Path(DIST_DIR) / f'{PORTABLE_ZIP_NAME}.zip'
+    old_archive.unlink(missing_ok=True)
+
+    print('Creating portable archive:', archive_file.as_posix())
+    shutil.make_archive(archive_file.as_posix(), format='zip', root_dir=archive_root_dir)
+
+    shutil.rmtree(archive_root_dir, ignore_errors=True)
+
+
 def main(process: int = 0):
     if process == -1:
         print('Aborting process.')
@@ -205,6 +224,9 @@ def main(process: int = 0):
         if p.returncode != 0:
             print('Inno Script Studio encountered an error!')
             return
+
+        # -- Create Portable Archive
+        create_portable_archive()
 
         rm_dir = Path(DIST_DIR) / Path(DIST_EXE_DIR)
         for dist_dir in [rm_dir, *EXTERNAL_APP_DIRS]:

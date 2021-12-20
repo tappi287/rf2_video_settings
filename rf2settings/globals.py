@@ -34,7 +34,7 @@ RFACTOR_MODMGR = 'Bin64/ModMgr.exe'
 GIT_RELEASE_URL = 'https://api.github.com/repos/tappi287/rf2_video_settings/releases/latest'
 
 UPDATE_VERSION_FILE = 'version.txt'
-UPDATE_INSTALL_FILE = 'rF2_Settings_Wizard_{version}_win64.exe'
+UPDATE_INSTALL_FILE = 'rF2_Settings_Wizard_{version}_win64'
 
 DEFAULT_LOG_LEVEL = 'DEBUG'
 
