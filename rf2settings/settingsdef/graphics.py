@@ -107,6 +107,10 @@ adjustable_graphics_settings = {
                                    'desc': 'Fraction of head physics movement applied to '
                                            'cockpit view (position AND rotation)'},)
                      },
+    'Vertical FOV Degrees': {'name': 'Vertical FOV', 'value': 9,
+                             'settings': ({'settingType': 'range', 'min': 9, 'max': 100, 'step': 1,
+                                           'desc': 'Vertical field of view in degrees(horizontal is calculated '
+                                                   'based on aspect ratio). rFactor 2 default setting: 9'},)},
     'Steering Wheel': {'name': 'Steering Wheel', 'value': 0,
                        'settings': (
                            {'value': 0, 'name': 'On [Default]', 'desc': 'Moving steering wheel and arms'},
