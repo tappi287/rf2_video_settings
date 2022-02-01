@@ -5,7 +5,9 @@ from subprocess import Popen
 
 from ..app_settings import AppSettings
 from ..preset.preset_base import PRESET_TYPES, load_presets_from_dir
+from ..preset.preset import PresetType
 from ..preset.presets_dir import get_user_presets_dir, get_user_export_dir
+from ..preset.settings_model import VideoSettings
 from ..rfactor import RfactorPlayer
 from ..utils import create_file_safe_name, capture_app_exceptions
 
@@ -51,6 +53,17 @@ def get_presets(preset_type: int):
 
     presets = sorted(presets, key=lambda k: k.name)
     presets = [current_preset] + presets
+
+    # -- Remove obsolete settings
+    if preset_type == PresetType.graphics and rf.version >= '1.1123':
+        for p in presets:
+            if not hasattr(p, VideoSettings.app_key):
+                continue
+            video_settings: VideoSettings = getattr(p, VideoSettings.app_key)
+            for o in video_settings.options:
+                if o.key == 'FSAA':
+                    video_settings.options.remove(o)
+                    break
 
     return json.dumps({'result': True, 'presets': [p.to_js() for p in presets],
                        'selected_preset': selected_preset_name,
