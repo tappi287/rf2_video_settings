@@ -2,6 +2,7 @@
 # Copyright (C) 2013 Oliver Ainsworth
 
 import collections
+import collections.abc
 import struct
 
 from rf2settings.valve import util
@@ -363,7 +364,7 @@ class MessageDictField(MessageArrayField):
         return entries_dict, buffer
 
 
-class Message(collections.Mapping):
+class Message(collections.abc.Mapping):
 
     fields = ()
 
