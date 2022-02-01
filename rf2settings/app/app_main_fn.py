@@ -1,5 +1,6 @@
 import json
 import logging
+import subprocess
 from pathlib import WindowsPath, Path
 from subprocess import Popen
 from typing import Optional
@@ -10,6 +11,7 @@ from ..rf2command import CommandQueue, Command
 from ..rf2connect import RfactorState
 from ..rfactor import RfactorPlayer, RfactorLocation
 from ..utils import capture_app_exceptions
+from ..valve.steam_utils import SteamApps
 
 
 def _get_rf_location(sub_path):
@@ -81,6 +83,17 @@ def run_rfactor(server_info: Optional[dict] = None, method: Optional[int] = 0):
             CommandQueue.append(Command(Command.wait_for_state, data=RfactorState.ready, timeout=10.0))
 
     return json.dumps({'result': result, 'msg': rf.error})
+
+
+@capture_app_exceptions
+def run_steamvr():
+    try:
+        steam_path = Path(SteamApps.find_steam_location()) / 'steam.exe'
+        cmd = [str(WindowsPath(steam_path)), '-applaunch', "250820"]
+        subprocess.Popen(cmd)
+    except Exception as e:
+        return json.dumps({'result': False, 'msg': f'Error launching SteamVR: {e}'})
+    return json.dumps({'result': True, 'msg': f'Launched SteamVR'})
 
 
 @capture_app_exceptions

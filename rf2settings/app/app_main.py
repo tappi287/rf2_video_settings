@@ -65,6 +65,11 @@ def run_rfactor(server_info: Optional[dict] = None, method: Optional[int] = 0):
 
 
 @eel.expose
+def run_steamvr():
+    return app_main_fn.run_steamvr()
+
+
+@eel.expose
 def get_rf_version():
     return app_main_fn.get_rf_version()
 
