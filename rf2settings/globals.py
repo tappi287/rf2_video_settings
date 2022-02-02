@@ -7,8 +7,6 @@ from typing import Union
 
 from appdirs import user_data_dir, user_log_dir
 
-from .knownpaths import get_current_user_documents_path
-
 
 APP_NAME = 'rf2_settings_widget'
 SETTINGS_DIR_NAME = 'rf2_settings_widget'
@@ -106,8 +104,8 @@ def get_present_mon_bin() -> Path:
 
 
 def _get_user_doc_dir() -> Path:
-    docs_dir = get_current_user_documents_path()
-    if not docs_dir:
+    docs_dir = Path.home() / 'Documents'
+    if not docs_dir or not docs_dir.exists():
         docs_dir = os.path.expanduser('~\\Documents\\')
     return Path(docs_dir)
 
