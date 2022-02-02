@@ -3,9 +3,9 @@ from threading import Timer
 
 import gevent
 
-from .directInputKeySend import PressReleaseKey
-from .rf2connect import RfactorConnect
-from .rf2sharedmem import sharedMemoryAPI
+from rf2settings.directInputKeySend import PressReleaseKey
+from rf2settings.rf2connect import RfactorConnect
+from rf2settings.rf2sharedmem import sharedMemoryAPI
 
 
 def update_status(message):

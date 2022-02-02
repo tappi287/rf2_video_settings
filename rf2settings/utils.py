@@ -12,7 +12,7 @@ from typing import Tuple, Union, Optional
 import eel
 import gevent.event
 
-from .globals import get_settings_dir
+from .globals import get_settings_dir, FROZEN
 
 try:
     import pygame
@@ -141,6 +141,9 @@ class AppExceptionHook:
 
 def capture_app_exceptions(func):
     """ Decorator to capture exceptions at app level """
+    if not FROZEN:
+        return func
+
     def func_wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)

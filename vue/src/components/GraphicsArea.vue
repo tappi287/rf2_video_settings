@@ -88,9 +88,9 @@
         for more information.
         <br /><br />
         If you want to adjust settings in-game: create a new preset inside the ReShade UI.
-        The settings you adjust here will override the default "generic_vr.ini" settings.
+        The settings you adjust here will use a custom Reshade preset "rf2_widget_preset.ini".
         <br />
-        Use these enhancements in PanCake mode: set the <i>"Use Center Mask"</i> setting to <i>Disabled</i>
+        To use these enhancements in PanCake mode: set the <i>"Use Center Mask"</i> setting to <i>Disabled</i>
         <div class="float-right">
           <b-button size="sm" @click="showAllReshade = !showAllReshade"
                     v-b-popover.lefttop.hover="'Show all VRToolKit setting details even if they are not activated.'">
@@ -154,6 +154,40 @@
                 :preset="preset" :idx="idx" settings-key="reshade_aa_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
                 :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
+                :previous-preset-name="previousPresetName"
+                :view_mode="viewMode"
+                :search="search" header-icon="image"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
+  </SettingsCard>
+
+  <!-- OpenVR FSR Settings -->
+  <SettingsCard :preset="preset" :idx="idx" settings-key="openvrfsr_settings"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
+                :current_preset_idx="current_preset_idx" :settingDisabled="openVrFsrSettingDisabled"
+                :previous-preset-name="previousPresetName"
+                :view_mode="viewMode"
+                :search="search" header-icon="image"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
+    <template #footer v-if="!compact">
+      <div style="font-size: small;">
+        Visit
+        <b-link class="text-rf-orange" target="_blank" href="https://github.com/fholger/openvr_fsr#modified-openvr-dll-with-amd-fidelityfx-superresolution--nvidia-image-scaling">
+          github.com/fholger/openvr_fsr
+        </b-link>
+        for detailed information.
+        <br /><br />
+        Leave Apply MIP bias: Off and use the rF2 Advanced Display Setting: Texture Sharpening instead!
+      </div>
+    </template>
+  </SettingsCard>
+  <!-- OpenVR FSR HotKey Settings - Hidden -->
+  <SettingsCard :preset="preset" :idx="idx" settings-key="openvrfsr_hk_settings" v-if="false"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
+                :current_preset_idx="current_preset_idx" :settingDisabled="openVrFsrSettingDisabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode"
                 :search="search" header-icon="image"
@@ -257,9 +291,20 @@ export default {
       })
       return result
     },
+    _getFSROption(key) {
+      let result = null
+      this.preset.openvrfsr_settings.options.forEach(o => {
+        if (o.key === key) { result = o.value }
+      })
+      return result
+    },
     reshadeSettingEnabled(setting) {
       if (setting.key === 'use_reshade') { return false }
       return !this.reshadeEnabled
+    },
+    openVrFsrSettingDisabled(setting) {
+      if (setting.key === 'enabled') { return false }
+      return !this.openVrFsrEnabled
     },
     settingDisabled: function(setting) {
       if (setting.key === 'UseFXAA' && this._getFsaaEnabled()) {
@@ -305,6 +350,10 @@ export default {
     viewMode: function () {
       if (this.view_mode !== undefined) { return this.view_mode }
       return 0
+    },
+    openVrFsrEnabled: function () {
+      if (this.preset === undefined) { return false }
+      return this._getFSROption('enabled')
     },
     reshadeEnabled: function () {
       if (this.preset === undefined) { return false }

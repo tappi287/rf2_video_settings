@@ -8,7 +8,7 @@ from .app_settings import AppSettings
 from .gamecontroller import ControllerEvents, SetupControllerAxis
 from .preset.preset import HeadlightControlsSettingsPreset
 from .preset.settings_model import HeadlightSettings, HeadlightControllerAssignments, AutoHeadlightSettings
-from .rf2lights import RfactorHeadlight
+from .mods.rf2lights import RfactorHeadlight
 from .rfactor import RfactorPlayer
 from .settingsdef.headlights import controller_assignments
 from .utils import create_js_pygame_event_dict, capture_app_exceptions, AppAudioFx

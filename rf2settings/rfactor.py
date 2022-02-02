@@ -3,14 +3,15 @@ import logging
 import subprocess
 from configparser import ConfigParser
 from pathlib import Path, WindowsPath
-from typing import Optional, Iterator
+from typing import Optional, Iterator, Union, Type
 
 from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, RF2_APPID, RFACTOR_VERSION_TXT, RFACTOR_CONTROLLER
 from .preset.preset import BasePreset, PresetType
 from .preset.settings_model import BaseOptions, OptionsTarget
 from .preset.settings_model_base import OPTION_CLASSES
 from .valve.steam_utils import SteamApps
-from .vrtoolkit import VrToolKit
+from .mods.vrtoolkit import VrToolKit
+from .mods.open_vr import OpenVrFsrMod, OpenVrFoveatedMod
 
 """
 ModMgr.exe
@@ -163,7 +164,14 @@ class RfactorPlayer:
 
         result = vr_toolkit.read()
         if not result:
-            self.error = vr_toolkit.error
+            self.error += f'{vr_toolkit.error}\n'
+
+        # -- Get OpenVr Options
+        for target, mod_type in zip((OptionsTarget.open_vr_fsr, OptionsTarget.open_vr_fov),
+                                    (OpenVrFsrMod, OpenVrFoveatedMod)):
+            mod = mod_type(self._get_target_options(target), self.location)
+            if not mod.read():
+                self.error += f'{mod.error}\n'
 
         self.is_valid = True
 
@@ -195,7 +203,11 @@ class RfactorPlayer:
         self._write_video_config(preset)
 
         # -- Write reshade settings
-        self.write_reshade(preset)
+        self.write_mod(preset, VrToolKit)
+
+        # -- Write OpenVr mod
+        self.write_mod(preset, OpenVrFsrMod)
+        self.write_mod(preset, OpenVrFoveatedMod)
 
         # -- Update WebUi Session Settings and Content Selection
         self.update_webui_settings(preset, OptionsTarget.webui_session)
@@ -313,18 +325,27 @@ class RfactorPlayer:
 
         return True
 
-    def write_reshade(self, preset: BasePreset) -> bool:
-        if preset.preset_type != PresetType.graphics:
+    def write_mod(self, preset: BasePreset,
+                  mod_type: Union[Type[VrToolKit], Type[OpenVrFsrMod], Type[OpenVrFoveatedMod]]) -> bool:
+        if preset.preset_type != PresetType.graphics or mod_type not in (VrToolKit, OpenVrFsrMod, OpenVrFoveatedMod):
             return True
         if not self._check_bin_dir():
             self.error += 'Could not locate rFactor 2 Bin directory.\n'
             return False
 
-        vr_toolkit = VrToolKit(self._get_target_options(OptionsTarget.reshade, preset), self.location)
+        target = None
+        if mod_type is VrToolKit:
+            target = OptionsTarget.reshade
+        elif mod_type is OpenVrFsrMod:
+            target = OptionsTarget.open_vr_fsr
+        elif mod_type is OpenVrFoveatedMod:
+            target = OptionsTarget.open_vr_fov
 
-        result = vr_toolkit.write()
+        mod = mod_type(self._get_target_options(target, preset), self.location)
+
+        result = mod.write()
         if not result:
-            self.error = vr_toolkit.error
+            self.error = mod.error
 
         return result
 

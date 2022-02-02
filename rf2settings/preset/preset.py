@@ -160,6 +160,7 @@ class GraphicsPreset(BasePreset):
                          settings_model.ReshadeSettings.app_key, settings_model.ReshadeFasSettings.app_key,
                          settings_model.ReshadeCasSettings.app_key, settings_model.ReshadeAaSettings.app_key,
                          settings_model.ReshadeLutSettings.app_key, settings_model.ReshadeCcSettings.app_key,
+                         settings_model.OpenVrFsrSettings.app_key, settings_model.OpenVrFsrHotKeySettings.app_key,
                          }
     prefix = 'gfx'
 

@@ -1,6 +1,7 @@
 import logging
 from typing import Union, List, Optional
 
+from open_vr_mod.cfg import FsrSettings
 from ..settingsdef import graphics, generic, controls, headlights
 from ..utils import JsonRepr
 
@@ -14,6 +15,8 @@ class OptionsTarget:
     reshade = 20
     webui_session = 30
     webui_content = 40
+    open_vr_fsr = 50
+    open_vr_fov = 51
     app_settings = 100
 
 
@@ -374,6 +377,42 @@ class ReshadeAaSettings(BaseOptions):
 
         # -- Read Default options
         self.read_from_python_dict(graphics.reshade_aa)
+
+
+class OpenVrFsrSettings(BaseOptions):
+    key = 'openvrfsr_settings'
+    app_key = 'openvrfsr_settings'
+    title = 'OpenVR FSR'
+    target = OptionsTarget.open_vr_fsr
+    mandatory = False
+
+    def __init__(self):
+        super(OpenVrFsrSettings, self).__init__()
+
+        # -- Read Default options
+        fsr_cfg = FsrSettings()
+
+        # -- Tweak defaults
+        fsr_cfg.enabled.value = False
+        fsr_cfg.sharpness.value = 0.0
+        fsr_cfg.sharpness.settings[0]['min'] = 0.0
+        fsr_cfg.applyMIPBias.value = False
+        self.read_from_python_dict(fsr_cfg.to_dict(category_filter=['FSR Settings']))
+
+
+class OpenVrFsrHotKeySettings(BaseOptions):
+    key = 'openvrfsr_hk_settings'
+    app_key = 'openvrfsr_hk_settings'
+    title = 'OpenVR FSR HotKeys'
+    target = OptionsTarget.open_vr_fsr
+    mandatory = False
+
+    def __init__(self):
+        super(OpenVrFsrHotKeySettings, self).__init__()
+
+        # -- Read Default options
+        fsr_cfg = FsrSettings()
+        self.read_from_python_dict(fsr_cfg.to_dict(category_filter=['Hotkey Settings', 'Hotkeys']))
 
 
 class ResolutionSettings(BaseOptions):

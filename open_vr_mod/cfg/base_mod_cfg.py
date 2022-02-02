@@ -108,6 +108,21 @@ class BaseModSettings(JsonRepr):
     def to_js(self, export: bool = False) -> list:
         return [s.to_js_object(export) for s in self.get_options()]
 
+    def to_dict(self, category_filter: list = None):
+        """ Convert into a flat python dict suitable for rf2settings """
+        settings = dict()
+
+        for s in self.get_options():
+            if category_filter:
+                if s.category not in category_filter:
+                    continue
+            key = s.key
+            if s.parent:
+                key = f'{s.parent} {s.key}'
+            settings[key] = s.to_js_object()
+
+        return settings
+
     def update_from_json_cfg(self, file: Path) -> bool:
         data = ModCfgJsonHandler.read_cfg(self, file)
         return True if data else False
