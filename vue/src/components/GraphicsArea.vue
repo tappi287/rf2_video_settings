@@ -12,15 +12,23 @@
                 @set-busy="setBusy"
                 @make-toast="makeToast">
     <template #footer v-if="!compact">
-      <div class="float-left video-indicator">
+      <div class="float-left">
         <template v-if="preset.resolution_settings.options[0].value !== null">
-          <b-iconstack>
-            <b-icon stacked icon="display" variant="white" />
-            <b-icon stacked shift-v="1.25" icon="check" variant="success" />
-          </b-iconstack>
+          <div v-b-popover.auto.hover="'Screen Resolution, Window Mode and Refresh Rate have been saved and ' +
+               'will be applied with this Graphics Preset.'"
+               class="h3 mt-0 mb-0 video-indicator">
+            <b-iconstack>
+              <b-icon stacked shift-v="0.0" icon="display" variant="white" />
+              <b-icon stacked shift-v="0.85" icon="check" variant="success" />
+            </b-iconstack>
+          </div>
         </template>
         <template v-else>
-          <b-icon icon="display-fill" variant="secondary" />
+          <div v-b-popover.auto.hover="'Click the Video Setup button to save and apply Screen Resolution, Window Mode ' +
+               'and Refresh Rate with this Graphics Preset.'"
+                class="h3 mt-0 mb-0 video-indicator">
+            <b-icon icon="display-fill" variant="secondary" />
+          </div>
         </template>
       </div>
       <div class="float-right">
@@ -389,8 +397,5 @@ export default {
 </script>
 
 <style scoped>
-.video-indicator {
-  padding: .25rem .5rem;
-  font-size: 1.275rem;
-}
+.video-indicator { line-height: 0.98; }
 </style>
