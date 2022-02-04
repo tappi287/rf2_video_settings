@@ -83,11 +83,11 @@ class Command:
     @staticmethod
     def _get_all_tracks_cars_series(selected):
         for series in AppSettings.content.get('series', list()):
-            if series and series['shortName'] == 'All Tracks & Cars':
-                if AppSettings.last_rf_version >= '1.1125':
-                    selected['series'] = series['signature']
-                else:
-                    selected['series'] = series['id']
+            if series and series.get('shortName') == 'All Tracks & Cars':
+                if AppSettings.last_rf_version >= '1.1125' and series.get('signature', None):
+                    selected['series'] = series.get('signature')
+                elif series.get('id'):
+                    selected['series'] = series.get('id')
                 break
         return selected
 
