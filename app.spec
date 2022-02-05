@@ -10,7 +10,7 @@ except ImportError:
 from PyInstaller.utils.hooks import get_package_paths
 
 block_cipher = None
-excluded_modules = list()
+excluded_modules = ['_ssl', 'cryptography']
 
 # ----- define app name
 APP_NAME = 'rF2-Settings-Widget'
@@ -20,17 +20,6 @@ eel_js = get_package_paths('eel')[-1] + '\\eel.js'
 
 # ----- App Icon
 icon_file = './vue/src/assets/app_icon.ico'
-
-if pygame_avail:
-    # ---- pygame excludes
-    required_pygame_modules = ('base', 'constants', 'color', 'colordict', 'event', 'version', 'rect', 'compat', 'rwobject',
-                               'surflock', 'bufferproxy', 'math', 'joystick', 'key', 'mouse')
-    for p in dir(pygame):
-        if type(getattr(pygame, p)) is ModuleType and p not in required_pygame_modules:
-            excluded_modules.append(f'pygame.{p}')
-
-# ---- other excludes
-excluded_modules += ['_ssl', 'cryptography']
 
 
 a = Analysis(['app.py'],

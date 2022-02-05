@@ -16,10 +16,11 @@ pyinstaller = "*"
 eel = {version = "==0.14.1", index = "piwigo"}  # See fork https://github.com/tappi287/Eel
 appdirs = "*"
 gevent = ">=21.1.2"
-pygame = {version = "==2.1.2", index = "piwigo"}  # Py 3.10 whl from https://www.lfd.uci.edu/~gohlke/pythonlibs/#pygame
+pygame = "==2.1.2"
 python-a2s = "*"
 psutil = "*"
 "ruamel.yaml" = "*"
+pyinstaller = "==4.9"
 
 [requires]
 python_version = "3.10"

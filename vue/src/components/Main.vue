@@ -57,8 +57,8 @@
                         size="sm" placeholder="Search..."
                         class="search-bar mr-sm-2 text-white"/>
         </b-nav-form>
-        <b-nav-item id="vr-nav" right @click="launchSteamVr">
-          <div class="vr-nav-container" v-b-popover.auto.hover="'Launch SteamVR'">
+        <b-nav-item id="vr-nav" right @click="launchSteamVr" v-b-popover.auto.hover="'Launch SteamVR'">
+          <div class="vr-nav-container">
             <div class="vr-nav-font"><b>VR</b></div>
             <div class="vr-nav-icon"><b-icon icon="square-fill"></b-icon></div>
           </div>
@@ -557,7 +557,7 @@ export default {
   position: relative; width: 1rem;
 }
 .vr-nav-font {
-  position: absolute;color: black; z-index: 999; font-size: 0.85rem; left: 0.08rem; top: 0.135rem;
+  position: absolute;color: black; z-index: 999; font-size: 0.8rem; left: 0.075rem; top: 0.175rem;
 }
 .vr-nav-icon {
   position: absolute;

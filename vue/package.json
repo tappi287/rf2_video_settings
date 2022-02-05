@@ -1,6 +1,6 @@
 {
   "name": "rF2-Settings-Widget",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

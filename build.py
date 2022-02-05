@@ -22,7 +22,7 @@ BUILD_DIR = "build"
 DIST_DIR = "dist"
 DIST_EXE_DIR = "rF2-Settings-Widget"
 
-REMOTE_DIR = '/simmon'
+REMOTE_DIR = '/rf2settingswidget'
 
 
 class FindInnoSetup:
@@ -117,6 +117,14 @@ def update_version_info(out_dir: Path):
     # update_manifest_version()
 
 
+def remove_dist_info_dirs():
+    dist_dir = Path(DIST_DIR) / Path(DIST_EXE_DIR)
+    for d in dist_dir.glob('*.dist-info'):
+        if not d.is_dir():
+            continue
+        shutil.rmtree(d)
+
+
 def upload_release() -> bool:
     setup_exe = Path(DIST_DIR) / Path(ISS_SETUP_EXE_FILE)
 
@@ -208,6 +216,8 @@ def main(process: int = 0):
             if result:
                 print('Added app folder: ', src_dir.name)
 
+        remove_dist_info_dirs()
+
     if process in (1, 2):
         iss_path = FindInnoSetup.compiler_path()
         if iss_path is None or not iss_path.exists():
@@ -225,6 +235,7 @@ def main(process: int = 0):
             print('Inno Script Studio encountered an error!')
             return
 
+    if process in (0, 1, 2):
         # -- Create Portable Archive
         create_portable_archive()
 
