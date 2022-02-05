@@ -121,6 +121,7 @@ class RfactorConnect:
 
     # -- Shared memory
     shared_memory_obj = SimInfoAPI()
+    enable_shared_mem_check = None
     _timestamp = 0
 
     @staticmethod
@@ -136,6 +137,23 @@ class RfactorConnect:
         return f'http://{cls.host}:{cls.web_ui_port}'
 
     @classmethod
+    def _shared_memory_check(cls):
+        # -- Check if shared Memory available
+        if not cls.shared_memory_obj.sharedMemoryVerified:
+            if cls.shared_memory_obj.isRF2running():
+                if not cls.shared_memory_obj.isSharedMemoryAvailable():
+                    logging.info('Shared memory not available: Disabling Shared Memory Updates')
+                    cls.enable_shared_mem_check = False
+                    return
+        # -- Shared Memory available
+        else:
+            if not cls.shared_memory_obj.isRF2running():
+                # -- Set unavailable
+                logging.info('Setting rF2 State to unavailable from shared memory state.')
+                cls.state = RfactorState.unavailable
+                cls.set_to_active_timeout()
+
+    @classmethod
     def check_connection(cls) -> None:
         """ Check if Web UI connection is available every timeout interval
             or use shared memory if reported to be available.
@@ -147,6 +165,9 @@ class RfactorConnect:
         if response is not None:
             cls.set_state(response)
             return
+
+        if cls.enable_shared_mem_check:
+            cls._shared_memory_check()
 
         # - Only check every connection_check_interval
         timeout = min(cls.long_timeout, cls.connection_check_interval)
@@ -183,12 +204,16 @@ class RfactorConnect:
         elif nav_state is False:
             # -- Set unavailable
             cls.state = RfactorState.unavailable
+            cls.enable_shared_mem_check = None
 
         if previous_state != cls.state:
             if cls.state == RfactorState.loading:
                 cls.set_to_active_timeout()
             elif cls.state == RfactorState.unavailable:
                 cls.set_to_idle_timeout()
+            elif cls.state == RfactorState.ready and cls.enable_shared_mem_check is None:
+                logging.info('Enabling Shared Memory Updates')
+                cls.enable_shared_mem_check = True
             logging.debug('Updating rFactor 2 state to: %s', RfactorState.names.get(cls.state))
 
     @classmethod
