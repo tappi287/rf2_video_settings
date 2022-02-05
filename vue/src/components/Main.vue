@@ -2,7 +2,7 @@
   <div id="main" class="position-relative" v-cloak>
     <b-navbar class="text-left pl-0 pr-0" type="dark">
       <b-navbar-brand href="#" @click="navActive=0" class="r-icon-brand position-relative"
-                      v-b-popover.auto.hover="'Dashboard'">
+                      v-b-popover.bottomleft.hover="'Dashboard'">
         <b-img width="32px" key="1" src="@/assets/rfW_logo_white.svg"
                :class="navActive === 0 ? 'r-icon top' : 'r-icon top inv'"></b-img>
         <b-img width="32px" key="2" src="@/assets/rfW_logo.svg"
@@ -57,6 +57,12 @@
                         size="sm" placeholder="Search..."
                         class="search-bar mr-sm-2 text-white"/>
         </b-nav-form>
+        <b-nav-item id="vr-nav" right @click="launchSteamVr">
+          <div class="vr-nav-container" v-b-popover.auto.hover="'Launch SteamVR'">
+            <div class="vr-nav-font"><b>VR</b></div>
+            <div class="vr-nav-icon"><b-icon icon="square-fill"></b-icon></div>
+          </div>
+        </b-nav-item>
         <b-nav-item id="wiki-nav" right :active="navActive === 7" @click="navActive=7">
           <b-icon icon="question-square-fill"></b-icon>
         </b-nav-item>
@@ -480,6 +486,14 @@ export default {
       await this.stopSlideShow()
       if (this.$refs.ses !== undefined) { await this.$refs.ses.update() }
     },
+    launchSteamVr: async function() {
+      let r = await getEelJsonObject(window.eel.run_steamvr()())
+      if (r !== undefined && r.result) {
+        this.makeToast(r.msg, 'success', 'SteamVR Launch')
+      } else if (r !== undefined && !r.result) {
+        this.makeToast(r.msg, 'danger', 'SteamVR Launch')
+      }
+    },
     stopSlideShow: async function() {
       if (this.$refs.dash !== undefined) { await this.$refs.dash.$refs.slider.stop() }
     },
@@ -538,6 +552,15 @@ export default {
 #main {
   width: 97%;
   margin: 0 auto 0 auto;
+}
+.vr-nav-container {
+  position: relative; width: 1rem;
+}
+.vr-nav-font {
+  position: absolute;color: black; z-index: 999; font-size: 0.85rem; left: 0.08rem; top: 0.135rem;
+}
+.vr-nav-icon {
+  position: absolute;
 }
 #wiki-nav a { padding-right: 0; }
 .nav-link.active {

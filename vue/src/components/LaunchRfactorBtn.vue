@@ -20,9 +20,6 @@
       <b-dropdown-item v-if="chooseContent" @click="$emit('show-content')">
         Choose Tracks and Cars
       </b-dropdown-item>
-      <b-dropdown-item @click="launchSteamVr">
-        Launch SteamVR
-      </b-dropdown-item>
     </b-dropdown>
   </b-button-group>
 </template>
@@ -66,14 +63,6 @@ name: "LaunchRfactorBtn",
         this.$emit('launch-failed')
       }
     },
-    launchSteamVr: async function() {
-      let r = await getEelJsonObject(window.eel.run_steamvr()())
-      if (r !== undefined && r.result) {
-        this.makeToast(r.msg, 'success', 'SteamVR Launch')
-      } else if (r !== undefined && !r.result) {
-        this.makeToast(r.msg, 'danger', 'SteamVR Launch')
-      }
-    }
   },
   computed: {
     serverData: function ()  {
