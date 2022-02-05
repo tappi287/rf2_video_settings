@@ -1,11 +1,10 @@
 <template>
 <div v-if="current_preset_idx === idx">
   <!-- Video Settings -->
-  <SettingsCard :preset="preset" :idx="idx" settings-key="video_settings"
+  <SettingsCard :preset="preset" :idx="idx" settings-key="video_settings" v-if="showVideoSettings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
                 :current_preset_idx="current_preset_idx"
                 :previous-preset-name="previousPresetName"
-                :setting-disabled="settingDisabled"
                 :show-performance="showPerformance"
                 :search="search" header-icon="film"
                 @update-setting="updateSetting"
@@ -62,6 +61,19 @@
         </b-button>
       </div>
     </template>
+  </SettingsCard>
+
+  <!-- View Settings -->
+  <SettingsCard :preset="preset" :idx="idx" settings-key="graphic_view_options"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
+                :current_preset_idx="current_preset_idx"
+                :previous-preset-name="previousPresetName"
+                :show-performance="showPerformance"
+                :view_mode="viewMode"
+                :search="search" header-icon="person-square"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
   </SettingsCard>
 
   <!-- Advanced Display Settings -->
@@ -171,13 +183,13 @@
   </SettingsCard>
 
   <!-- OpenVR FSR Settings -->
-  <SettingsCard :preset="preset" :idx="idx" settings-key="openvrfsr_settings"
+  <SettingsCard :preset="preset" :idx="idx" settings-key="openvrfsr_settings" v-if="showOpenVrSettings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
                 :current_preset_idx="current_preset_idx" :settingDisabled="openVrFsrSettingDisabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode"
-                :search="search" header-icon="image"
-                @update-setting="updateSetting"
+                :search="search" header-icon="exclude"
+                @update-setting="updateOpenVrFsrSetting"
                 @set-busy="setBusy"
                 @make-toast="makeToast">
     <template #footer v-if="!compact">
@@ -187,8 +199,11 @@
           github.com/fholger/openvr_fsr
         </b-link>
         for detailed information.
-        <br /><br />
+        <br />
         Leave Apply MIP bias: Off and use the rF2 Advanced Display Setting: Texture Sharpening instead!
+        <template v-if="openVrFoveatedEnabled">
+          <div class="mt-2">You need to disable Open VR Foveated to use this Mod.</div>
+        </template>
       </div>
     </template>
   </SettingsCard>
@@ -196,6 +211,44 @@
   <SettingsCard :preset="preset" :idx="idx" settings-key="openvrfsr_hk_settings" v-if="false"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
                 :current_preset_idx="current_preset_idx" :settingDisabled="openVrFsrSettingDisabled"
+                :previous-preset-name="previousPresetName"
+                :view_mode="viewMode"
+                :search="search" header-icon="image"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
+  </SettingsCard>
+
+  <!-- OpenVR Foveated Settings -->
+  <SettingsCard :preset="preset" :idx="idx" settings-key="openvrfoveated_settings" v-if="showOpenVrSettings"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
+                :current_preset_idx="current_preset_idx" :settingDisabled="openVrFoveatedSettingDisabled"
+                :previous-preset-name="previousPresetName"
+                :view_mode="viewMode"
+                :search="search" header-icon="exclude"
+                @update-setting="updateOpenVrFoveatedSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
+    <template #footer v-if="!compact">
+      <div style="font-size: small;">
+        Visit
+        <b-link class="text-rf-orange" target="_blank" href="https://github.com/fholger/openvr_foveated#fixed-foveated-rendering-mod-for-steamvr-games">
+          github.com/fholger/openvr_foveated
+        </b-link>
+        for detailed information.
+        <br />
+        Leave Sharpening: Off and use the VRToolkit for advanced sharpening instead! Can not be used in
+        parallel with FSR.
+        <template v-if="openVrFsrEnabled">
+          <div class="mt-2">You need to disable Open VR FSR to use this Mod.</div>
+        </template>
+      </div>
+    </template>
+  </SettingsCard>
+  <!-- OpenVR Foveated HotKey Settings - Hidden -->
+  <SettingsCard :preset="preset" :idx="idx" settings-key="openvrfoveated_hk_settings" v-if="false"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
+                :current_preset_idx="current_preset_idx" :settingDisabled="openVrFoveatedSettingDisabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode"
                 :search="search" header-icon="image"
@@ -245,7 +298,7 @@ export default {
   data: function () {
     return {
       showPerformance: true, showAllReshade: false,
-      abortResolutionUpdate: false,
+      abortResolutionUpdate: false, showOpenVrSettings: true, showVideoSettings: true,
     }
   },
   props: {preset: Object, idx: Number, current_preset_idx: Number, view_mode: Number, search: String,
@@ -255,6 +308,32 @@ export default {
       this.$emit('make-toast', message, category, title, append, delay)
     },
     updateSetting: function (setting, value) {
+      this.$emit('update-setting', setting, value)
+    },
+    updateOpenVrFsrSetting: function (setting, value) {
+      if (setting.key === 'enabled' && value === true) {
+        if (this.openVrFoveatedEnabled) {
+          this.showOpenVrSettings = false
+          // Disable Foveated
+          this.preset['openvrfoveated_settings'].options.forEach(o => {
+            if (o.key === 'enabled') { this.$emit('update-setting', o, false, false); o.value = false }
+          })
+          this.$nextTick(() => {this.showOpenVrSettings = true})
+        }
+      }
+      this.$emit('update-setting', setting, value)
+    },
+    updateOpenVrFoveatedSetting: function (setting, value) {
+      if (setting.key === 'enabled' && value === true) {
+        if (this.openVrFsrEnabled) {
+          this.showOpenVrSettings = false
+          // Disable FSR
+          this.preset['openvrfsr_settings'].options.forEach(o => {
+            if (o.key === 'enabled') { this.$emit('update-setting', o, false, false); o.value = false }
+          })
+          this.$nextTick(() => {this.showOpenVrSettings = true})
+        }
+      }
       this.$emit('update-setting', setting, value)
     },
     setBusy: function (busy) { this.$emit('set-busy', busy) },
@@ -283,26 +362,13 @@ export default {
       this.makeToast('Video Settings for Resolution, Refresh Rate and Window Mode successfully updated.',
           'success', 'Video Setup')
     },
-    _getFsaaEnabled() {
-      let result = true
-      this.preset.video_settings.options.forEach(setting => {
-        if (setting.key === 'FSAA') {
-          if (setting.value === 0) { result = false }
+    _getSetSettingsOption(settings_key, option_key, setValue=null) {
+      let result = null
+      this.preset[settings_key].options.forEach(o => {
+        if (o.key === option_key) {
+          if (setValue !== null) { o.value = setValue }
+          result = o.value
         }
-      })
-      return result
-    },
-    _getReshadeOption(key) {
-      let result = null
-      this.preset.reshade_settings.options.forEach(o => {
-        if (o.key === key) { result = o.value }
-      })
-      return result
-    },
-    _getFSROption(key) {
-      let result = null
-      this.preset.openvrfsr_settings.options.forEach(o => {
-        if (o.key === key) { result = o.value }
       })
       return result
     },
@@ -314,14 +380,9 @@ export default {
       if (setting.key === 'enabled') { return false }
       return !this.openVrFsrEnabled
     },
-    settingDisabled: function(setting) {
-      if (setting.key === 'UseFXAA' && this._getFsaaEnabled()) {
-        // Disable FXAA and do not trigger a preset save
-        this.$emit('update-setting', setting, 0, false)
-        return true
-      }
-      // Enabled
-      return false
+    openVrFoveatedSettingDisabled(setting) {
+      if (setting.key === 'enabled') { return false }
+      return !this.openVrFoveatedEnabled
     },
     deleteConfig() {
       this.preset.resolution_settings.options.forEach(setting => {
@@ -361,32 +422,36 @@ export default {
     },
     openVrFsrEnabled: function () {
       if (this.preset === undefined) { return false }
-      return this._getFSROption('enabled')
+      return this._getSetSettingsOption('openvrfsr_settings', 'enabled')
+    },
+    openVrFoveatedEnabled: function () {
+      if (this.preset === undefined) { return false }
+      return this._getSetSettingsOption('openvrfoveated_settings', 'enabled')
     },
     reshadeEnabled: function () {
       if (this.preset === undefined) { return false }
-      return this._getReshadeOption('use_reshade')
+      return this._getSetSettingsOption('reshade_settings', 'use_reshade')
     },
     // Display Reshade Setting Details if setting active
     sharpeningFas: function () {
       if (this.preset === undefined) { return false } if (this.showAllReshade) { return true }
-      return this._getReshadeOption('VRT_SHARPENING_MODE') === 1;
+      return this._getSetSettingsOption('reshade_settings', 'VRT_SHARPENING_MODE') === 1;
     },
     sharpeningCas: function () {
       if (this.preset === undefined) { return false } if (this.showAllReshade) { return true }
-      return this._getReshadeOption('VRT_SHARPENING_MODE') === 2;
+      return this._getSetSettingsOption('reshade_settings', 'VRT_SHARPENING_MODE') === 2;
     },
     applyLUT: function () {
       if (this.preset === undefined) { return false } if (this.showAllReshade) { return true }
-      return this._getReshadeOption('VRT_COLOR_CORRECTION_MODE') === 1;
+      return this._getSetSettingsOption('reshade_settings', 'VRT_COLOR_CORRECTION_MODE') === 1;
     },
     colorCorrection: function () {
       if (this.preset === undefined) { return false } if (this.showAllReshade) { return true }
-      return this._getReshadeOption('VRT_COLOR_CORRECTION_MODE') === 2;
+      return this._getSetSettingsOption('reshade_settings', 'VRT_COLOR_CORRECTION_MODE') === 2;
     },
     antiAliasing: function () {
       if (this.preset === undefined) { return false } if (this.showAllReshade) { return true }
-      return this._getReshadeOption('VRT_ANTIALIASING_MODE') === 1;
+      return this._getSetSettingsOption('reshade_settings', 'VRT_ANTIALIASING_MODE') === 1;
     },
   },
   created() {

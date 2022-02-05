@@ -1,7 +1,7 @@
 import logging
 from typing import Union, List, Optional
 
-from open_vr_mod.cfg import FsrSettings
+from open_vr_mod.cfg import FsrSettings, FoveatedSettings
 from ..settingsdef import graphics, generic, controls, headlights
 from ..utils import JsonRepr
 
@@ -278,6 +278,19 @@ class GraphicOptions(BaseOptions):
         self.read_from_python_dict(graphics.adjustable_graphics_settings)
 
 
+class GraphicViewOptions(BaseOptions):
+    key = 'Graphic Options'
+    app_key = 'graphic_view_options'
+    title = 'View Settings'
+    target = OptionsTarget.player_json
+
+    def __init__(self):
+        super(GraphicViewOptions, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(graphics.view_settings)
+
+
 class VideoSettings(BaseOptions):
     key = 'Video Settings'
     app_key = 'video_settings'
@@ -413,6 +426,42 @@ class OpenVrFsrHotKeySettings(BaseOptions):
         # -- Read Default options
         fsr_cfg = FsrSettings()
         self.read_from_python_dict(fsr_cfg.to_dict(category_filter=['Hotkey Settings', 'Hotkeys']))
+
+
+class OpenVrFoveatedSettings(BaseOptions):
+    key = 'openvrfoveated_settings'
+    app_key = 'openvrfoveated_settings'
+    title = 'OpenVR Foveated'
+    target = OptionsTarget.open_vr_fov
+    mandatory = False
+
+    def __init__(self):
+        super(OpenVrFoveatedSettings, self).__init__()
+
+        # -- Read Default options
+        fov_cfg = FoveatedSettings()
+
+        # -- Tweak defaults
+        fov_cfg.enabled.value = False
+        fov_cfg.sharpenEnabled.value = False
+        self.read_from_python_dict(fov_cfg.to_dict(
+            category_filter=['FFR Settings', 'FFR Radius', 'Sharpness Settings'])
+        )
+
+
+class OpenVrFoveatedHotkeySettings(BaseOptions):
+    key = 'openvrfoveated_hk_settings'
+    app_key = 'openvrfoveated_hk_settings'
+    title = 'OpenVR Foveated HotKeys'
+    target = OptionsTarget.open_vr_fov
+    mandatory = False
+
+    def __init__(self):
+        super(OpenVrFoveatedHotkeySettings, self).__init__()
+
+        # -- Read Default options
+        fov_cfg = FoveatedSettings()
+        self.read_from_python_dict(fov_cfg.to_dict(category_filter=['Hotkey Settings', 'Hotkeys']))
 
 
 class ResolutionSettings(BaseOptions):

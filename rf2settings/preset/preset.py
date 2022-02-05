@@ -155,12 +155,15 @@ class BasePreset:
 
 class GraphicsPreset(BasePreset):
     preset_type: int = PresetType.graphics
-    option_class_keys = {settings_model.GraphicOptions.app_key, settings_model.AdvancedGraphicSettings.app_key,
+    option_class_keys = {settings_model.GraphicOptions.app_key, settings_model.GraphicViewOptions.app_key,
+                         settings_model.AdvancedGraphicSettings.app_key,
                          settings_model.VideoSettings.app_key, settings_model.ResolutionSettings.app_key,
                          settings_model.ReshadeSettings.app_key, settings_model.ReshadeFasSettings.app_key,
                          settings_model.ReshadeCasSettings.app_key, settings_model.ReshadeAaSettings.app_key,
                          settings_model.ReshadeLutSettings.app_key, settings_model.ReshadeCcSettings.app_key,
                          settings_model.OpenVrFsrSettings.app_key, settings_model.OpenVrFsrHotKeySettings.app_key,
+                         settings_model.OpenVrFoveatedSettings.app_key,
+                         settings_model.OpenVrFoveatedHotkeySettings.app_key,
                          }
     prefix = 'gfx'
 

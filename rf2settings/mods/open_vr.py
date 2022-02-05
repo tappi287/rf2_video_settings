@@ -14,6 +14,16 @@ class OpenVrMod:
             'path': location.as_posix(),
             FsrMod.DLL_LOC_KEY: [Path(location / 'Bin64' / 'openvr_api.dll').as_posix()],
             FsrMod.DLL_LOC_KEY_SELECTED: [Path(location / 'Bin64' / 'openvr_api.dll').as_posix()],
+            # -- Adjust default settings to match Preset default settings
+            FsrMod.VAR_NAMES['settings']: [
+                {"key": "applyMIPBias", "name": "Apply MIP Bias", "value": False, "parent": None, "hidden": False},
+                {"key": "enabled", "name": "Enabled", "value": False, "parent": None, "hidden": False},
+                {"key": "sharpness", "name": "Sharpness", "value": 0, "parent": None, "hidden": False}
+            ],
+            FoveatedMod.VAR_NAMES['settings']: [
+                {"key": "enabled", "name": "Enabled", "value": False, "parent": None, "hidden": False},
+                {"key": "enabled", "name": "Sharpen Enabled", "value": False, "parent": 'sharpen', "hidden": False}
+            ]
         }
         self.mod = mod_type(rf_manifest)
         self.error = str()
