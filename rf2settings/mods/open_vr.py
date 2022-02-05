@@ -49,23 +49,27 @@ class OpenVrMod:
         return use_mod
 
     def _update_preset_from_mod_config(self) -> bool:
-        result = self.mod.update_from_disk()
-        if not result:
+        mod_installed = self.mod.update_from_disk()
+        if not mod_installed:
             self.error = self.mod.error
 
         mod_settings = self.mod.settings.to_dict()
-        if not result:
+        if not mod_installed:
             mod_settings['enabled']['value'] = False
 
         for preset_options in self.options:
             for option in preset_options.options:
+                if not mod_installed:
+                    option.exists_in_rf = False
+                    continue
+
                 mod_setting = mod_settings.get(option.key)
                 if not mod_setting:
                     continue
                 option.value = mod_setting.get('value')
                 option.exists_in_rf = True
 
-        return result
+        return mod_installed
 
     def write(self) -> bool:
         # -- Update mod install state
