@@ -96,21 +96,31 @@ adjustable_graphics_settings = {
                               'desc': 'Vertical position of Low Speed Info message box as a fraction '
                                       'of screen height (-1 to disable)'},)
                 },
+    'Max Visible Vehicles': {'name': 'Visible Vehicles', 'value': 12,
+                             'settings': ({'settingType': 'range', 'min': 5, 'max': 105, 'step': 1,
+                                           'desc': 'rFactor 2 default setting: 12'},)},
+}
+view_settings = {
     'Stabilize Horizon': {'name': 'Stabilize Horizon', 'value': 1,
                           'settings': (
                               {'value': 0, 'name': 'Off'}, {'value': 1, 'name': 'Low'},
                               {'value': 2, 'name': 'Medium'}, {'value': 3, 'name': 'High'}),
                           },
+    'Exaggerate Yaw': {'name': 'Exaggerate Yaw', 'value': -0.8,
+                       'settings': ({'settingType': 'range', 'min': -1.0, 'max': 1.0, 'step': 0.01,
+                                     'display': 'floatpercent',
+                                     'desc': 'Visually exaggerates the heading angle of the vehicle '
+                                             'by rotating the head (which may improve "feel")'},)},
+    'Lookahead Angle': {'name': 'Lookahead Angle', 'value': 0.0,
+                        'settings': ({'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.01,
+                                      'display': 'floatpercent',
+                                      'desc': 'Angle to look ahead (yaw) with steering in radians"'},)},
     'Head Physics': {'name': 'Head Physics', 'value': 1.0,
                      'settings': ({'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.01,
                                    'display': 'floatpercent',
                                    'desc': 'Fraction of head physics movement applied to '
                                            'cockpit view (position AND rotation)'},)
                      },
-    'Vertical FOV Degrees': {'name': 'Vertical FOV', 'value': 9,
-                             'settings': ({'settingType': 'range', 'min': 9, 'max': 100, 'step': 1,
-                                           'desc': 'Vertical field of view in degrees(horizontal is calculated '
-                                                   'based on aspect ratio). rFactor 2 default setting: 9'},)},
     'Steering Wheel': {'name': 'Steering Wheel', 'value': 0,
                        'settings': (
                            {'value': 0, 'name': 'On [Default]', 'desc': 'Moving steering wheel and arms'},
@@ -119,9 +129,11 @@ adjustable_graphics_settings = {
                                                                'while player-controlled)'},
                            {'value': 3, 'name': 'No arms', 'desc': 'Moving steering wheel but no arms'},
                        )},
-    'Max Visible Vehicles': {'name': 'Visible Vehicles', 'value': 12,
-                             'settings': ({'settingType': 'range', 'min': 5, 'max': 105, 'step': 1,
-                                           'desc': 'rFactor 2 default setting: 12'},)},
+    'Vertical FOV Degrees': {'name': 'Vertical FOV', 'value': 9,
+                             'settings': ({'settingType': 'range', 'min': 9, 'max': 100, 'step': 1,
+                                           'desc': '9 means use individual default value for each vehicle. '
+                                                   'Vertical field of view in '
+                                                   'degrees(horizontal is calculated based on aspect ratio).'},)},
 }
 advanced_settings = {
     'Transparency AA': {'name': 'Transparency AA', 'value': True,
