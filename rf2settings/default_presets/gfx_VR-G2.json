@@ -20,7 +20,7 @@
       },
       {
         "key": "Rearview_Back_Clip",
-        "value": 140
+        "value": 240
       },
       {
         "key": "Rearview Driving",
@@ -28,11 +28,11 @@
       },
       {
         "key": "Rearview Onboard",
-        "value": 0
+        "value": 1
       },
       {
         "key": "Rearview Swingman",
-        "value": 0
+        "value": 1
       },
       {
         "key": "Screenshot Format",
@@ -49,13 +49,13 @@
     ],
     "title": "Advanced Display Settings"
   },
-  "desc": "Based on VR-Medium but with negative Mipmap LOD bias and VRToolkit ReShade to increase sharpness quite a bit",
+  "desc": "VR preset with FSR enabled for top tier machines and high-resolution HMD's. Consider lowering your vendor specific Super-Sampling settings and adjust the FSR render scale to a value above 100%. Also consider to apply a VRToolkit LUT ToneDownDay to reduce specular aliasing.",
   "graphic_options": {
     "key": "Graphic Options",
     "options": [
       {
         "key": "Track Detail",
-        "value": 0
+        "value": 1
       },
       {
         "key": "Player Detail",
@@ -63,7 +63,7 @@
       },
       {
         "key": "Opponent Detail",
-        "value": 1
+        "value": 2
       },
       {
         "key": "Texture Detail",
@@ -71,15 +71,15 @@
       },
       {
         "key": "Texture Filter",
-        "value": 5
+        "value": 4
       },
       {
         "key": "Special FX",
-        "value": 3
+        "value": 4
       },
       {
         "key": "Shadows",
-        "value": 1
+        "value": 2
       },
       {
         "key": "Shadow Blur",
@@ -106,8 +106,26 @@
         "value": 0.15
       },
       {
+        "key": "Max Visible Vehicles",
+        "value": 12
+      }
+    ],
+    "title": "Display Settings"
+  },
+  "graphic_view_options": {
+    "key": "Graphic Options",
+    "options": [
+      {
         "key": "Stabilize Horizon",
         "value": 1
+      },
+      {
+        "key": "Exaggerate Yaw",
+        "value": -0.8
+      },
+      {
+        "key": "Lookahead Angle",
+        "value": 0
       },
       {
         "key": "Head Physics",
@@ -115,16 +133,224 @@
       },
       {
         "key": "Steering Wheel",
-        "value": 3
+        "value": 0
       },
       {
-        "key": "Max Visible Vehicles",
-        "value": 10
+        "key": "Vertical FOV Degrees",
+        "value": 9
       }
     ],
-    "title": "Display Settings"
+    "title": "View Settings"
   },
-  "name": "VR-MedSharp",
+  "name": "VR-G2",
+  "openvrfoveated_hk_settings": {
+    "key": "openvrfoveated_hk_settings",
+    "options": [
+      {
+        "key": "hotkeys",
+        "value": {}
+      },
+      {
+        "key": "hotkeys captureOutput",
+        "value": 118
+      },
+      {
+        "key": "hotkeys decreaseRadius",
+        "value": 116
+      },
+      {
+        "key": "hotkeys decreaseSharpness",
+        "value": 114
+      },
+      {
+        "key": "hotkeys enabled",
+        "value": true
+      },
+      {
+        "key": "hotkeys increaseRadius",
+        "value": 117
+      },
+      {
+        "key": "hotkeys increaseSharpness",
+        "value": 115
+      },
+      {
+        "key": "hotkeys requireAlt",
+        "value": false
+      },
+      {
+        "key": "hotkeys requireCtrl",
+        "value": false
+      },
+      {
+        "key": "hotkeys requireShift",
+        "value": false
+      },
+      {
+        "key": "hotkeys selectInnerRadius",
+        "value": 49
+      },
+      {
+        "key": "hotkeys selectMidRadius",
+        "value": 50
+      },
+      {
+        "key": "hotkeys selectOuterRadius",
+        "value": 51
+      },
+      {
+        "key": "hotkeys selectSharpenRadius",
+        "value": 52
+      },
+      {
+        "key": "hotkeys toggleDebugMode",
+        "value": 113
+      },
+      {
+        "key": "hotkeys toggleFFR",
+        "value": 112
+      },
+      {
+        "key": "hotkeys toggleUseVRS",
+        "value": 119
+      }
+    ],
+    "title": "OpenVR Foveated HotKeys"
+  },
+  "openvrfoveated_settings": {
+    "key": "openvrfoveated_settings",
+    "options": [
+      {
+        "key": "debugMode",
+        "value": false
+      },
+      {
+        "key": "enabled",
+        "value": false
+      },
+      {
+        "key": "innerRadius",
+        "value": 0.6
+      },
+      {
+        "key": "midRadius",
+        "value": 0.8
+      },
+      {
+        "key": "outerRadius",
+        "value": 1
+      },
+      {
+        "key": "sharpen",
+        "value": {}
+      },
+      {
+        "key": "sharpen enabled",
+        "value": false
+      },
+      {
+        "key": "sharpen radius",
+        "value": 0.75
+      },
+      {
+        "key": "sharpen sharpness",
+        "value": 0.4
+      },
+      {
+        "key": "useVariableRateShading",
+        "value": true
+      }
+    ],
+    "title": "OpenVR Foveated"
+  },
+  "openvrfsr_hk_settings": {
+    "key": "openvrfsr_hk_settings",
+    "options": [
+      {
+        "key": "hotkeys",
+        "value": {}
+      },
+      {
+        "key": "hotkeys captureOutput",
+        "value": 118
+      },
+      {
+        "key": "hotkeys decreaseRadius",
+        "value": 116
+      },
+      {
+        "key": "hotkeys decreaseSharpness",
+        "value": 114
+      },
+      {
+        "key": "hotkeys enabled",
+        "value": true
+      },
+      {
+        "key": "hotkeys increaseRadius",
+        "value": 117
+      },
+      {
+        "key": "hotkeys increaseSharpness",
+        "value": 115
+      },
+      {
+        "key": "hotkeys requireAlt",
+        "value": false
+      },
+      {
+        "key": "hotkeys requireCtrl",
+        "value": false
+      },
+      {
+        "key": "hotkeys requireShift",
+        "value": false
+      },
+      {
+        "key": "hotkeys toggleDebugMode",
+        "value": 113
+      },
+      {
+        "key": "hotkeys toggleUseNIS",
+        "value": 112
+      }
+    ],
+    "title": "OpenVR FSR HotKeys"
+  },
+  "openvrfsr_settings": {
+    "key": "openvrfsr_settings",
+    "options": [
+      {
+        "key": "applyMIPBias",
+        "value": false
+      },
+      {
+        "key": "debugMode",
+        "value": false
+      },
+      {
+        "key": "enabled",
+        "value": true
+      },
+      {
+        "key": "radius",
+        "value": 0.5
+      },
+      {
+        "key": "renderScale",
+        "value": 0.77
+      },
+      {
+        "key": "sharpness",
+        "value": 0
+      },
+      {
+        "key": "useNIS",
+        "value": false
+      }
+    ],
+    "title": "OpenVR FSR"
+  },
   "preset_type": 0,
   "reshade_aa_settings": {
     "key": "reshade_aa_settings",
@@ -181,7 +407,7 @@
     "options": [
       {
         "key": "FAS_Strength",
-        "value": 125
+        "value": 215
       },
       {
         "key": "FAS_Radius",
@@ -189,7 +415,7 @@
       },
       {
         "key": "FAS_Clamp",
-        "value": 0.54
+        "value": 0.535
       }
     ],
     "title": "Filmic Anamorph Sharpen"
@@ -241,11 +467,11 @@
       },
       {
         "key": "DitheringStrength",
-        "value": 0.375
+        "value": 0.175
       },
       {
         "key": "CircularMaskSize",
-        "value": 0.3
+        "value": 0.4
       },
       {
         "key": "CircularMaskSmoothness",
@@ -289,7 +515,7 @@
       },
       {
         "key": "FSAA",
-        "value": 34
+        "value": 0
       },
       {
         "key": "MSAA",

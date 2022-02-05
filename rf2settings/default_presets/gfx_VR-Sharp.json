@@ -12,7 +12,7 @@
       },
       {
         "key": "Heat FX Fade Speed",
-        "value": 30
+        "value": 0
       },
       {
         "key": "Rearview Particles",
@@ -20,7 +20,7 @@
       },
       {
         "key": "Rearview_Back_Clip",
-        "value": 0
+        "value": 140
       },
       {
         "key": "Rearview Driving",
@@ -28,15 +28,15 @@
       },
       {
         "key": "Rearview Onboard",
-        "value": 1
+        "value": 0
       },
       {
         "key": "Rearview Swingman",
-        "value": 1
+        "value": 0
       },
       {
         "key": "Screenshot Format",
-        "value": 3
+        "value": 0
       },
       {
         "key": "Sun Occlusion",
@@ -49,13 +49,13 @@
     ],
     "title": "Advanced Display Settings"
   },
-  "desc": "Generic Preset for higher end machines. Favors performance [Circuit, Opponent=High] and image clarity [8x AA].",
+  "desc": "General purpose VR Preset with negative Mipmap LOD bias and VRToolkit ReShade to increase visual clarity a lot. Optimized for big grids and the most demanding tracks.",
   "graphic_options": {
     "key": "Graphic Options",
     "options": [
       {
         "key": "Track Detail",
-        "value": 2
+        "value": 0
       },
       {
         "key": "Player Detail",
@@ -63,7 +63,7 @@
       },
       {
         "key": "Opponent Detail",
-        "value": 2
+        "value": 1
       },
       {
         "key": "Texture Detail",
@@ -75,15 +75,15 @@
       },
       {
         "key": "Special FX",
-        "value": 4
-      },
-      {
-        "key": "Shadows",
         "value": 3
       },
       {
+        "key": "Shadows",
+        "value": 1
+      },
+      {
         "key": "Shadow Blur",
-        "value": 2
+        "value": 0
       },
       {
         "key": "Soft Particles",
@@ -91,23 +91,23 @@
       },
       {
         "key": "Rain FX Quality",
-        "value": 4
+        "value": 1
       },
       {
         "key": "Road Reflections",
-        "value": 3
+        "value": 1
       },
       {
         "key": "Environment Reflections",
-        "value": 3
+        "value": 1
       },
       {
         "key": "LSI Top",
-        "value": 0.01
+        "value": 0.15
       },
       {
         "key": "Max Visible Vehicles",
-        "value": 12
+        "value": 10
       }
     ],
     "title": "Display Settings"
@@ -129,7 +129,7 @@
       },
       {
         "key": "Head Physics",
-        "value": 1
+        "value": 0
       },
       {
         "key": "Steering Wheel",
@@ -142,7 +142,7 @@
     ],
     "title": "View Settings"
   },
-  "name": "High",
+  "name": "VR-Sharp",
   "openvrfoveated_hk_settings": {
     "key": "openvrfoveated_hk_settings",
     "options": [
@@ -407,7 +407,7 @@
     "options": [
       {
         "key": "FAS_Strength",
-        "value": 80
+        "value": 225
       },
       {
         "key": "FAS_Radius",
@@ -415,7 +415,7 @@
       },
       {
         "key": "FAS_Clamp",
-        "value": 0.525
+        "value": 0.54
       }
     ],
     "title": "Filmic Anamorph Sharpen"
@@ -459,15 +459,15 @@
       },
       {
         "key": "VRT_DITHERING",
-        "value": 1
-      },
-      {
-        "key": "VRT_USE_CENTER_MASK",
         "value": 0
       },
       {
+        "key": "VRT_USE_CENTER_MASK",
+        "value": 1
+      },
+      {
         "key": "DitheringStrength",
-        "value": 0.175
+        "value": 0.15
       },
       {
         "key": "CircularMaskSize",
@@ -511,7 +511,7 @@
     "options": [
       {
         "key": "VrSettings",
-        "value": 0
+        "value": 2
       },
       {
         "key": "FSAA",
@@ -519,11 +519,11 @@
       },
       {
         "key": "MSAA",
-        "value": 8
+        "value": 4
       },
       {
         "key": "EPostProcessingSettings",
-        "value": 4
+        "value": 1
       },
       {
         "key": "UseFXAA",
