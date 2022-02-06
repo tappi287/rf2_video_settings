@@ -2,41 +2,14 @@
 import logging
 
 import eel
-import gevent
-import gevent.event
 
 from .app.app_main import CLOSE_EVENT
 from .app_settings import AppSettings
-from .preset.preset import PresetType
-from .preset.preset_base import load_presets_from_dir
-from .preset.presets_dir import get_user_presets_dir
 from .rf2benchmark import RfactorBenchmark
 from .rf2command import Command, CommandQueue
 from .rf2connect import RfactorState, RfactorConnect
 from .rf2events import RfactorLiveEvent, RfactorQuitEvent, RfactorStatusEvent, BenchmarkProgressEvent
-from .rfactor import RfactorPlayer
 from .utils import capture_app_exceptions
-
-
-def _restore_pre_replay_preset():
-    if AppSettings.replay_playing:
-        if AppSettings.replay_preset != '':
-            # -- Get currently selected graphics preset
-            selected_preset_name = AppSettings.selected_presets.get(str(PresetType.graphics))
-            _, selected_preset = load_presets_from_dir(get_user_presets_dir(), PresetType.graphics,
-                                                       selected_preset_name=selected_preset_name)
-
-            RfactorStatusEvent.set(f'Applying pre-replay graphics preset: {selected_preset.name}')
-            gevent.sleep(1.0)  # If rf2 just quit, give it some time to write settings
-
-            # -- Apply selected preset to rF2
-            if selected_preset:
-                rf = RfactorPlayer()
-                if rf.is_valid:
-                    logging.info('Restoring non-replay preset %s', selected_preset_name)
-                    rf.write_settings(selected_preset)
-        AppSettings.replay_playing = False
-        AppSettings.save()
 
 
 def _rfactor_greenlet_loop():
@@ -49,8 +22,9 @@ def _rfactor_greenlet_loop():
 
     # -- If we were live before, re-apply previous graphics preset
     if RfactorLiveEvent.changed_from_live():
-        _restore_pre_replay_preset()
-        gevent.sleep(0.5)
+        # -- Moved to a FrontEnd call so Presets refresh
+        #    and Preset restore will not happen in parallel in different greenlets
+        pass
 
     # -- Update rFactor Live State
     if RfactorConnect.state != RfactorState.unavailable and not RfactorLiveEvent.was_live:

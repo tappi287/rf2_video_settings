@@ -3,11 +3,14 @@ import logging
 from pathlib import WindowsPath
 from subprocess import Popen
 
+import gevent
+
 from ..app_settings import AppSettings
-from ..preset.preset_base import PRESET_TYPES, load_presets_from_dir
 from ..preset.preset import PresetType
+from ..preset.preset_base import PRESET_TYPES, load_presets_from_dir
 from ..preset.presets_dir import get_user_presets_dir, get_user_export_dir
 from ..preset.settings_model import VideoSettings
+from ..rf2events import RfactorStatusEvent
 from ..rfactor import RfactorPlayer
 from ..utils import create_file_safe_name, capture_app_exceptions
 
@@ -184,3 +187,25 @@ def _create_preset_instance_from_js_dict(preset_js_dict: dict):
     p.from_js_dict(preset_js_dict)
 
     return p
+
+
+@capture_app_exceptions
+def restore_pre_replay_preset():
+    if AppSettings.replay_playing:
+        if AppSettings.replay_preset != '':
+            # -- Get currently selected graphics preset
+            selected_preset_name = AppSettings.selected_presets.get(str(PresetType.graphics))
+            _, selected_preset = load_presets_from_dir(get_user_presets_dir(), PresetType.graphics,
+                                                       selected_preset_name=selected_preset_name)
+
+            RfactorStatusEvent.set(f'Applying pre-replay graphics preset: {selected_preset.name}')
+            gevent.sleep(1.0)  # If rf2 just quit, give it some time to write settings
+
+            # -- Apply selected preset to rF2
+            if selected_preset:
+                rf = RfactorPlayer()
+                if rf.is_valid:
+                    logging.info('Restoring non-replay preset %s', selected_preset_name)
+                    rf.write_settings(selected_preset)
+        AppSettings.replay_playing = False
+        AppSettings.save()

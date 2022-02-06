@@ -341,7 +341,7 @@ import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 import Headlights from "@/components/Headlights";
 import ReplayArea from "@/components/ReplayArea";
 import Log from "@/components/Log";
-import {getEelJsonObject} from "@/main";
+import {getEelJsonObject, sleep} from "@/main";
 import Benchmark from "@/components/Benchmark";
 import GraphicsPresetArea from "@/components/GraphicsPresetArea";
 import SessionPresetArea from "@/components/SessionPresetArea";
@@ -435,16 +435,24 @@ export default {
         if (this.$refs.dash !== undefined) { this.$refs.dash.gfxPresetsReady = true }
       })
     },
+    _refreshPresets: async function() {
+      // Restore pre-replay Preset
+      await getEelJsonObject(window.eel.restore_pre_replay_preset()())
+      await sleep(200)
+
+      // Refresh settings
+      if (this.$refs.gfx !== undefined) { await this.$refs.gfx.getPresets() }
+      if (this.$refs.con !== undefined) { await this.$refs.con.getPresets() }
+      if (this.$refs.gen !== undefined) { await this.$refs.gen.getPresets() }
+      if (this.$refs.ses !== undefined) { await this.$refs.ses.getPresets() }
+      await this.$refs.Benchmark.refresh()
+    },
     returnedFromLive: function () {
-      this.makeToast('Rfactor 2 closed. Refreshing settings.', 'success', 'rFactor 2 Control')
-      this.$nextTick(() => {
-        // Refresh settings
-        if (this.$refs.gfx !== undefined) { this.$refs.gfx.getPresets() }
-        if (this.$refs.con !== undefined) { this.$refs.con.getPresets() }
-        if (this.$refs.gen !== undefined) { this.$refs.gen.getPresets() }
-        if (this.$refs.ses !== undefined) { this.$refs.ses.getPresets() }
-      })
-      this.$refs.Benchmark.refresh()
+      this.makeToast('Rfactor 2 closed. Refreshing settings in 5 seconds.', 'success', 'rFactor 2 Control')
+      // Add a timeout to let rF release its resources
+      setTimeout(() => {
+        this._refreshPresets()
+      }, 3000)
     },
     importPreset: async function (importPreset) {
       if (importPreset.CHAT !== undefined) {

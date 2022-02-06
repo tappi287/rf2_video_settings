@@ -4,11 +4,11 @@ from typing import Any, List, Optional
 
 import gevent
 
-from .utils import AppAudioFx
 from .app_settings import AppSettings
 from .directInputKeySend import PressReleaseKey, PressKey, ReleaseKey
 from .rf2connect import RfactorState, RfactorConnect
 from .rf2events import RfactorStatusEvent, RfactorLiveEvent, RfactorQuitEvent, RecordBenchmarkEvent
+from .utils import AppAudioFx
 
 
 class CommandUrls:
