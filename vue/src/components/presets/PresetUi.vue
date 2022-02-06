@@ -54,6 +54,7 @@
           <b-button :disabled="!addButtonState" variant="secondary" @click="createPreset">
             <b-icon icon="plus"></b-icon>
           </b-button>
+
           <b-button variant="secondary" @click="$emit('refresh')"
                     v-b-popover.hover.bottom="'Refresh Presets if you updated a setting in-game'">
             <b-icon icon="arrow-repeat"></b-icon>

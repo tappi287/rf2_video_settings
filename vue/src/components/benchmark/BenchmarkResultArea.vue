@@ -97,9 +97,9 @@
 </template>
 
 <script>
-import GraphicsArea from "@/components/GraphicsArea";
+import GraphicsArea from "@/components/pages/GraphicsArea";
 import SessionArea from "@/components/SessionArea";
-import BenchChart from "@/components/BenchChart";
+import BenchChart from "@/components/benchmark/BenchChart";
 import {getEelJsonObject} from "@/main";
 
 export default {

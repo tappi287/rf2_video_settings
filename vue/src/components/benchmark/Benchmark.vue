@@ -128,11 +128,11 @@
 <script>
 
 import {getEelJsonObject} from "@/main";
-import Setting from "@/components/Setting";
-import GraphicsPresetArea from "@/components/GraphicsPresetArea";
-import SessionPresetArea from "@/components/SessionPresetArea";
+import Setting from "@/components/settings/Setting";
+import GraphicsPresetArea from "@/components/presets/GraphicsPresetArea";
+import SessionPresetArea from "@/components/presets/SessionPresetArea";
 import ReplayList from "@/components/ReplayList";
-import BenchmarkResultArea from "@/components/BenchmarkResultArea";
+import BenchmarkResultArea from "@/components/benchmark/BenchmarkResultArea";
 // --- </ Prepare receiving Benchmark Progress Events
 window.eel.expose(rfactorBenchmarkProgress, 'benchmark_progress')
 async function rfactorBenchmarkProgress (event) {

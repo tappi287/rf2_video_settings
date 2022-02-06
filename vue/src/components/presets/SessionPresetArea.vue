@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import PresetUi from "@/components/PresetUi";
+import PresetUi from "@/components/presets/PresetUi";
 import SessionArea from "@/components/SessionArea";
 
 export default {

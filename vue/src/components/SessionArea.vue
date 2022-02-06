@@ -50,7 +50,7 @@
 
 <script>
 import {getEelJsonObject} from "@/main";
-import SettingsCard from "@/components/SettingsCard";
+import SettingsCard from "@/components/settings/SettingsCard";
 import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 
 export default {

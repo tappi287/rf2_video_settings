@@ -290,7 +290,7 @@
 </template>
 
 <script>
-import SettingsCard from "@/components/SettingsCard";
+import SettingsCard from "@/components/settings/SettingsCard";
 import {getEelJsonObject} from "@/main";
 
 export default {

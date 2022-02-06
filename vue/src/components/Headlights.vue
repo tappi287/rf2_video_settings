@@ -131,9 +131,9 @@
 </template>
 
 <script>
-import Setting from "@/components/Setting";
+import Setting from "@/components/settings/Setting";
 import {getControllerDeviceTypeName, getControllerValueName, getEelJsonObject, sleep} from "@/main";
-import ControllerAssignment from "@/components/ControllerAssignment";
+import ControllerAssignment from "@/components/settings/ControllerAssignment";
 
 export default {
 name: "Headlights",

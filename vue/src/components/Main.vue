@@ -331,20 +331,20 @@
 </template>
 
 <script>
-import Dashboard from "@/components/Dashboard";
-import PresetUi from "@/components/PresetUi";
-import ServerBrowser from "@/components/ServerBrowser";
-import PresetHandler from "@/components/PresetHandler";
-import SettingsCard from "@/components/SettingsCard";
+import Dashboard from "@/components/pages/Dashboard";
+import PresetUi from "@/components/presets/PresetUi";
+import ServerBrowser from "@/components/pages/ServerBrowser";
+import PresetHandler from "@/components/presets/PresetHandler";
+import SettingsCard from "@/components/settings/SettingsCard";
 import Wiki from "@/components/Wiki";
 import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
 import Headlights from "@/components/Headlights";
-import ReplayArea from "@/components/ReplayArea";
+import ReplayArea from "@/components/pages/ReplayArea";
 import Log from "@/components/Log";
 import {getEelJsonObject, sleep} from "@/main";
-import Benchmark from "@/components/Benchmark";
-import GraphicsPresetArea from "@/components/GraphicsPresetArea";
-import SessionPresetArea from "@/components/SessionPresetArea";
+import Benchmark from "@/components/benchmark/Benchmark";
+import GraphicsPresetArea from "@/components/presets/GraphicsPresetArea";
+import SessionPresetArea from "@/components/presets/SessionPresetArea";
 // --- </ Prepare receiving rfactor live events
 window.eel.expose(rfactorLiveFunc, 'rfactor_live')
 async function rfactorLiveFunc (event) {

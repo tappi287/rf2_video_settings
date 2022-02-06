@@ -30,8 +30,8 @@
 </template>
 
 <script>
-import PresetUi from "@/components/PresetUi";
-import GraphicsArea from "@/components/GraphicsArea";
+import PresetUi from "@/components/presets/PresetUi";
+import GraphicsArea from "@/components/pages/GraphicsArea";
 
 export default {
   name: "GraphicsPresetArea",
