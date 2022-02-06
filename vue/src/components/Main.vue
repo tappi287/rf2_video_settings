@@ -436,6 +436,8 @@ export default {
       })
     },
     _refreshPresets: async function() {
+      this.setBusy(true)
+
       // Restore pre-replay Preset
       await getEelJsonObject(window.eel.restore_pre_replay_preset()())
       await sleep(200)
@@ -445,7 +447,9 @@ export default {
       if (this.$refs.con !== undefined) { await this.$refs.con.getPresets() }
       if (this.$refs.gen !== undefined) { await this.$refs.gen.getPresets() }
       if (this.$refs.ses !== undefined) { await this.$refs.ses.getPresets() }
-      await this.$refs.Benchmark.refresh()
+      if (this.$refs.Benchmark !== undefined) { await this.$refs.Benchmark.refresh() }
+
+      this.setBusy(false)
     },
     returnedFromLive: function () {
       this.makeToast('Rfactor 2 closed. Refreshing settings in 5 seconds.', 'success', 'rFactor 2 Control')
