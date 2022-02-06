@@ -1,0 +1,152 @@
+#app {
+  /*font-family: Avenir, Helvetica, Arial, sans-serif;*/
+  /* font-family: "Ubuntu", sans-serif;*/
+  font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #efefef;
+}
+#drop-animation {
+  position: relative;
+  top: 30%; margin: auto;
+}
+body {
+  background: none !important;
+}
+
+html {
+  background: #16161a linear-gradient(60deg, #0e0e19 0%, #171213 100%);
+}
+
+.hidden { display: none; }
+.no-border { border: none; }
+.main-footer {
+  margin-bottom: 3rem;
+}
+
+.info-field {
+  background-image: linear-gradient(to left, #ddd9de 0%, #c6c7cd 100%), radial-gradient(88% 271%, rgba(255, 255, 255, 0.25) 0%, rgba(254, 254, 254, 0.25) 1%, rgba(0, 0, 0, 0.25) 100%), radial-gradient(50% 100%, rgba(255, 255, 255, 0.30) 0%, rgba(0, 0, 0, 0.30) 100%);
+  background-blend-mode: normal, lighten, soft-light;
+}
+.info-field.diff {
+  background-image: linear-gradient(120deg, #ddd9de 70%, #fa7c56 100%);
+  border: none;
+}
+.setting { display: inline-block }
+.setting-item { min-width: 7.0rem; font-weight: lighter; }
+.setting-field {
+  box-shadow: 0 6px 15px rgba(36, 37, 38, 0.3);
+}
+/* Remove plastic bootstrap style */
+.setting-card .card-header, .card-body, .card-footer {
+  background: none; border: none;
+}
+
+.logo-style {
+  box-shadow: 0 6px 15px rgba(36, 37, 38, 0.9);
+  border-radius: 0.25rem;
+  background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  padding: 2px 3px 2px 4px;
+}
+
+.title {
+  text-shadow: 0px 3px 7px rgba(36, 37, 38, 0.9);
+  font-family: "Ubuntu", sans-serif;
+}
+
+.btn-rf-yellow, .btn-rf-yellow:hover, .rf-yellow {
+  color: #161616;
+  background-color: #FF9900;
+}
+.btn-rf-yellow.disabled { opacity: 0.65; }
+
+.b-popover-rf-yellow .popover-header {
+  color: #161616;
+  background-color: #fac87c;
+}
+
+.btn-rf-orange-light, .btn-rf-orange-light:hover, .rf-orange-light {
+  color: #efefef;
+  background-color: #FF3000;
+}
+.btn-rf-orange-light.disabled { opacity: 0.65; }
+
+.b-popover-rf-orange-light .popover-header, .badge-rf-orange-light {
+  color: #efefef;
+  background-color: #fc9982;
+}
+
+.btn-rf-orange, .btn-rf-orange:hover, .rf-orange {
+  color: #eaeaea !important;
+  font-weight: normal !important;
+  background: #fa5a57; /* fallback for old browsers */
+  background: linear-gradient(to bottom, rgba(250, 130, 87, 0.6), rgba(210, 109, 74, 0.6));
+  background-blend-mode: screen !important;
+  border: none !important;
+}
+.btn-rf-orange.disabled { opacity: 0.65; }
+
+.b-popover-rf-orange .popover-header, .badge-rf-orange {
+  color: #efefef;
+  background-color: #E06119;
+}
+
+.text-rf-orange {
+  color: #E06119;
+}
+
+.btn-rf-blue, .btn-rf-blue:hover, .rf-blue {
+  color: #efefef !important;
+  border: none !important;
+  background: #9D50BB !important; /* fallback for old browsers */
+  background: linear-gradient(to bottom, rgba(85, 78, 164, 0.65), rgba(73, 69, 133, 0.65)) !important; /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background-blend-mode: screen !important;
+}
+.btn-rf-blue.disabled { opacity: 0.65; }
+
+.b-popover-rf-blue .popover-header {
+  color: #161616;
+  background-color: #728bb0;
+}
+
+.btn-rf-red, .btn-rf-red:hover, .rf-red {
+  color: #efefef;
+  border: none;
+  background: #fa523c; /* fallback for old browsers */
+  background: linear-gradient(to bottom, rgba(250, 82, 60, 0.4), rgba(250, 124, 86, 0.2));
+}
+.btn-rf-red.disabled { opacity: 0.65; }
+
+.btn:focus,.btn:active:focus,.btn.active:focus,
+.btn.focus,.btn:active.focus,.btn.active.focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.bg-dark, .table-dark {
+  background-color: rgba(173, 192, 192, 0.1) !important;
+}
+
+.table-dark.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.01);
+}
+
+.flex-grow { flex-grow: 1; }
+
+@keyframes backgroundColorPalette {
+  0% {
+    background: #ecaaa8;
+  }
+  100% {
+    background: white;
+  }
+}
+.filter-warn {
+  animation-name: backgroundColorPalette;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+.server-list * td { vertical-align: baseline !important; }
+.server-list { margin-bottom: 0 }

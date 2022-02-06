@@ -33,7 +33,7 @@
           <b-link class="text-white" @click="$emit('nav', 1)">Graphics Presets</b-link>
         </h6>
         <template v-for="(preset, idx) in gfxHandler.presets.slice(1)">
-          <b-button :key="idx"
+          <b-button :key="idx" squared
                     v-b-popover.bottom.hover="preset.desc"
                     :class="gfxHandler.selectedPresetIdx === idx+1 ? 'active' + cls : 'inactive' + cls"
                     :variant="gfxHandler.selectedPresetIdx === idx+1 ? 'rf-orange' : 'rf-blue'"
@@ -83,7 +83,7 @@ function prepareScreenshots () {
 }
 
 export default {
-  name: "Dashboard",
+  name: "DashBoard",
   data: function () {
     return {
       userName: 'Driver',
@@ -200,7 +200,9 @@ export default {
 
 .btn-rf-orange, .btn-rf-blue { font-weight: 300; }
 .btn-rf-orange.active, .btn-rf-blue.active { font-weight: 400; }
-.active, .inactive { box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.8), 0 6px 20px 0 rgba(0, 0, 0, 0.75); }
+.active, .inactive {
+  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.8), 0 6px 20px 0 rgba(0, 0, 0, 0.75); */
+}
 
 .no-pointer { pointer-events: none; }
 

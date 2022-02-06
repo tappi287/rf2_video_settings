@@ -7,6 +7,7 @@ import "@fontsource/ubuntu/300.css"
 import "@fontsource/inter/100.css"
 import "@fontsource/inter/200.css"
 import "@fontsource/inter/300.css"
+import "source-sans/source-sans-3.css"
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'

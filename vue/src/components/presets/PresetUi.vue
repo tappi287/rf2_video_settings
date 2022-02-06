@@ -129,7 +129,7 @@ export default {
       viewMode: 0,
     }
   },
-  props: { presets: Object, previousPresetName: String, selectedPresetIdx: Number, idRef: Number,
+  props: { presets: Array, previousPresetName: String, selectedPresetIdx: Number, idRef: String,
            presetDir: String, displayName: String },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {

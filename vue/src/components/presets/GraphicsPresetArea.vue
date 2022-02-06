@@ -14,7 +14,7 @@
               @delete-preset="gfxHandler.deletePreset"
               @update-setting="gfxHandler.updateSetting"
               @update-desc="gfxHandler.updateDesc"
-              @update-view-mode="gfxHandler.viewMode=$event"
+              @update-view-mode="gfxHandler.viewMode"
               @make-toast="makeToast" />
 
     <div v-for="(gfxPreset, idx) in gfxHandler.presets" :key="gfxPreset.name">

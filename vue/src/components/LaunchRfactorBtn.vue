@@ -1,12 +1,14 @@
 <template>
   <b-button-group>
     <b-dropdown variant="primary" size="sm" right split @click="launchRfactor">
-      <template #button-content class="rounded-right">
-        <b-icon icon="play"></b-icon>
-        {{ buttonText }}
-        <span class="ml-2" v-if="displayLive">
-          <b-icon shift-v="-1" :icon="live ? 'circle-fill' : 'circle'" :variant="live ? 'success' : 'primary'"/>
-        </span>
+      <template #button-content>
+        <div class="rounded-right">
+          <b-icon icon="play"></b-icon>
+          {{ buttonText }}
+          <span class="ml-2" v-if="displayLive">
+            <b-icon shift-v="-1" :icon="live ? 'circle-fill' : 'circle'" :variant="live ? 'success' : 'primary'"/>
+          </span>
+        </div>
       </template>
       <b-dropdown-item @click="launchRfactor">
         Launch via Steam

@@ -23,27 +23,27 @@
     <!-- Settings -->
     <template v-if="!viewMode">
       <!-- View Mode Grid -->
-      <Setting v-for="setting in searchedOptions" :key="setting.key"
+      <SettingItem v-for="setting in searchedOptions" :key="setting.key"
                :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixedWidth="fixedWidth" :frozen="frozen"
                :show_performance="showPerformance"
                :disabled="settingDisabledLocal(setting)"
                :group-id="groupId"
                :previous-preset-name="previousPresetName"
                @setting-changed="updateSetting">
-      </Setting>
+      </SettingItem>
     </template>
     <template v-else>
       <!-- View Mode List -->
       <b-list-group class="text-left">
         <b-list-group-item class="bg-transparent" v-for="setting in searchedOptions"
                            :key="setting.key">
-          <Setting :setting="setting" variant="rf-orange" :fixedWidth="fixedWidth" :frozen="frozen"
+          <SettingItem :setting="setting" variant="rf-orange" :fixedWidth="fixedWidth" :frozen="frozen"
                    :show_performance="showPerformance"
                    :disabled="settingDisabledLocal(setting)"
                    :group-id="groupId"
                    :previous-preset-name="previousPresetName"
                    @setting-changed="updateSetting">
-          </Setting>
+          </SettingItem>
         </b-list-group-item>
       </b-list-group>
     </template>
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import Setting from "./Setting.vue"
+import SettingItem from "./Setting.vue"
 import RfactorContentCard from "@/components/presets/RfactorContentCard";
 /* import {getEelJsonObject} from "@/main"; */
 
@@ -93,7 +93,7 @@ export default {
     },
   },
   components: {
-    Setting,
+    SettingItem,
     RfactorContentCard
   },
   computed: {

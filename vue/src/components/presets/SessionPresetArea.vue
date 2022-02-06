@@ -14,7 +14,7 @@
             @delete-preset="sesHandler.deletePreset"
             @update-setting="sesHandler.updateSetting"
             @update-desc="sesHandler.updateDesc"
-            @update-view-mode="sesHandler.viewMode=$event"
+            @update-view-mode="sesHandler.viewMode"
             @make-toast="makeToast" />
 
     <div v-for="(sesPreset, idx) in sesHandler.presets" :key="sesPreset.name">

@@ -24,7 +24,7 @@ expose_app_methods()
 setup_logging()
 
 
-def start_eel():
+def start_eel(npm_serve=True):
     logging.info('\n\n\n')
     logging.info('#######################################################')
     logging.info('################ Starting APP               ###########')
@@ -53,10 +53,17 @@ def start_eel():
     """
         //
     """
-    page = 'index.html'
     host = 'localhost'
+    page = 'index.html'
     port = 8123
-    eel.init('web')
+
+    if npm_serve:
+        # Dev env with npm run serve
+        page = {'port': 8080}
+        eel.init('vue/src')
+    else:
+        # Frozen or npm run build
+        eel.init('web')
 
     # TODO: fetch OSError port in use
     try:

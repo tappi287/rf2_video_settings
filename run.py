@@ -20,4 +20,4 @@ if p.returncode != 0:
     sys.exit()
 
 # -- Start app
-start_eel()
+start_eel(npm_serve=False)

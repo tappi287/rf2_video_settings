@@ -78,7 +78,7 @@
 import {minutesToDaytime, setFixedWidth} from "@/main";
 
 export default {
-  name: 'Setting',
+  name: 'SettingItem',
   data: function () {
     return {
       currentSettingValue: {},
@@ -184,7 +184,7 @@ export default {
     }
   },
   mounted () {
-    if (this.variant === undefined) { this.variant = 'secondary'}
+    // if (this.variant === undefined) { this.variant = 'secondary'}
     this.currentSettingValue = this.setting.value
     // Access after rendering finished
     this.$nextTick(() => {

@@ -20,7 +20,7 @@
 import {getEelJsonObject} from "@/main";
 
 export default {
-  name: "Log",
+  name: "AppLog",
   data: function () {
     return {
       logContent: '',

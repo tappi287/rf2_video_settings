@@ -2,7 +2,7 @@
   <div id="main" class="position-relative" v-cloak>
     <b-navbar class="text-left pl-0 pr-0" type="dark">
       <b-navbar-brand href="#" @click="navActive=0" class="r-icon-brand position-relative"
-                      v-b-popover.bottomleft.hover="'Dashboard'">
+                      v-b-popover.bottomleft.hover="'DashBoard'">
         <b-img width="32px" key="1" src="@/assets/rfW_logo_white.svg"
                :class="navActive === 0 ? 'r-icon top' : 'r-icon top inv'"></b-img>
         <b-img width="32px" key="2" src="@/assets/rfW_logo.svg"
@@ -87,7 +87,7 @@
 
     <!-- Dashboard -->
     <keep-alive>
-      <Dashboard ref="dash" :gfx-handler="$refs.gfx" v-if="navActive === 0 && gfxReady"
+      <DashBoard ref="dash" :gfx-handler="$refs.gfx" v-if="navActive === 0 && gfxReady"
                  :refresh-favs="refreshDashFavs" @favs-updated="refreshDashFavs = false"
                  :rfactor-version="rfactorVersion"
                  @make-toast="makeToast" @error="setError" @set-busy="setBusy" @nav="navigate"/>
@@ -199,7 +199,7 @@
     </template>
 
     <!-- Headlights -->
-    <Headlights ref="headlights" v-if="navActive === 4"
+    <rf2Headlights ref="headlights" v-if="navActive === 4"
                 @make-toast="makeToast" />
 
     <!-- Replays -->
@@ -214,15 +214,15 @@
     </keep-alive>
 
     <!-- Wiki -->
-    <Wiki v-if="navActive === 7" @nav="navigate" />
+    <AppWiki v-if="navActive === 7" @nav="navigate" />
 
     <!-- Log -->
-    <Log v-if="navActive === 8" @nav="navigate" />
+    <AppLog v-if="navActive === 8" @nav="navigate" />
 
     <!-- Benchmark -->
     <template v-if="navActive === 9">
       <b-overlay :show="$refs.ses.isBusy" variant="dark" rounded>
-        <Benchmark ref="Benchmark" @make-toast="makeToast" @set-busy="setBusy"
+        <BenchMark ref="Benchmark" @make-toast="makeToast" @set-busy="setBusy"
                    :gfx-handler="$refs.gfx" :ses-handler="$refs.ses"/>
       </b-overlay>
     </template>
@@ -331,18 +331,18 @@
 </template>
 
 <script>
-import Dashboard from "@/components/pages/Dashboard";
+import DashBoard from "@/components/pages/DashBoard";
 import PresetUi from "@/components/presets/PresetUi";
 import ServerBrowser from "@/components/pages/ServerBrowser";
 import PresetHandler from "@/components/presets/PresetHandler";
 import SettingsCard from "@/components/settings/SettingsCard";
-import Wiki from "@/components/Wiki";
+import AppWiki from "@/components/Wiki";
 import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
-import Headlights from "@/components/Headlights";
+import rf2Headlights from "@/components/rf2Headlights";
 import ReplayArea from "@/components/pages/ReplayArea";
-import Log from "@/components/Log";
+import AppLog from "@/components/Log";
 import {getEelJsonObject, sleep} from "@/main";
-import Benchmark from "@/components/benchmark/Benchmark";
+import BenchMark from "@/components/benchmark/Benchmark";
 import GraphicsPresetArea from "@/components/presets/GraphicsPresetArea";
 import SessionPresetArea from "@/components/presets/SessionPresetArea";
 // --- </ Prepare receiving rfactor live events
@@ -368,7 +368,7 @@ async function playAudio (event) {
 // --- />
 
 export default {
-  name: 'Main',
+  name: 'MainPage',
   data: function () {
     return {
       navActive: 0,
@@ -544,17 +544,17 @@ export default {
   components: {
     SessionPresetArea,
     GraphicsPresetArea,
-    Benchmark,
+    BenchMark,
     ReplayArea,
-    Headlights,
+    rf2Headlights,
     LaunchRfactorBtn,
     SettingsCard,
-    Dashboard,
+    DashBoard,
     ServerBrowser,
     PresetHandler,
     PresetUi,
-    Wiki,
-    Log
+    AppWiki,
+    AppLog
   },
 }
 </script>
@@ -569,7 +569,7 @@ export default {
   position: relative; width: 1rem;
 }
 .vr-nav-font {
-  position: absolute;color: black; z-index: 999; font-size: 0.8rem; left: 0.075rem; top: 0.175rem;
+  position: absolute;color: black; z-index: 999; font-size: 0.875rem; left: 0.075rem; top: 0.175rem;
 }
 .vr-nav-icon {
   position: absolute;
