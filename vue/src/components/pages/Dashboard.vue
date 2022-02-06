@@ -57,8 +57,8 @@
 </template>
 
 <script>
-import ServerBrowser from "@/components/ServerBrowser"
-import PresetHandler from "@/components/PresetHandler";
+import ServerBrowser from "@/components/pages/ServerBrowser"
+import PresetHandler from "@/components/presets/PresetHandler";
 import { VueFlux, FluxCaption, FluxPreloader } from 'vue-flux';
 import {getEelJsonObject, chooseIndex, userScreenShots, getMaxWidth} from "@/main"
 import rfWPoster from "@/assets/rfW_Poster.webp"
@@ -90,7 +90,7 @@ export default {
       cls: ' mb-3 mr-2 ml-2 preset-button',
       serverBrowserReady: false,
       gfxPresetsReady: false,
-      vfOptions: { autoplay: true, delay: 12000 },
+      vfOptions: { autoplay: true, delay: 12000, allowFullscreen: true },
       vfImages: [],
       vfTransitions: [ 'fade', 'slide', 'swipe', 'fade' ],
       vfCaptions: [],
@@ -191,6 +191,8 @@ export default {
   font-weight: 200;
   text-shadow: 1px 1px 2px black;
 }
+.title::selection { background: transparent; }
+.title::-moz-selection { background: transparent; }
 
 .fade-enter-active, .fade-leave-active { transition: opacity 3s, height 3s; }
 
