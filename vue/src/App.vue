@@ -5,7 +5,8 @@
       <b-overlay :show="dragActive" variant="white" :no-center="true" opacity="0.9" :fixed="true">
 
         <!-- Main component -->
-        <Main v-on:error="setError" ref="main" :rfactor-version="rfactorVersion"></Main>
+        <Main v-on:error="setError" ref="main" :rfactor-version="rfactorVersion"
+              :key="mainComponentKey"/>
 
         <!-- Drag Overlay Content-->
         <template #overlay>
@@ -96,6 +97,7 @@ export default {
       rfactorPath: '',
       rfOverwriteLocation: null,
       rfOverwriteLocationValid: null,
+      mainComponentKey: 0,
     }
   },
   methods: {
@@ -158,6 +160,9 @@ export default {
     resetAdmin: async function () {
       await window.eel.reset_admin()
     },
+    forceReRender() {
+      this.mainComponentKey += 1
+    }
   },
   components: {
     Updater,
@@ -183,6 +188,8 @@ export default {
   created() {
     window.addEventListener('app-exception-event', this.setException)
     this.getRfVersion()
+    // Hack Browser sometimes not rendering UI
+    setTimeout(() => { this.forceReRender()}, 10);
   },
   computed: {
     rfactorLocationPlaceholder: function () {
