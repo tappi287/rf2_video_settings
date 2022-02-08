@@ -197,6 +197,8 @@ def restore_pre_replay_preset():
             selected_preset_name = AppSettings.selected_presets.get(str(PresetType.graphics))
             _, selected_preset = load_presets_from_dir(get_user_presets_dir(), PresetType.graphics,
                                                        selected_preset_name=selected_preset_name)
+            if not selected_preset:
+                return
 
             RfactorStatusEvent.set(f'Applying pre-replay graphics preset: {selected_preset.name}')
             gevent.sleep(1.0)  # If rf2 just quit, give it some time to write settings
