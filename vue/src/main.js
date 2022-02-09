@@ -1,6 +1,8 @@
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import Vue from 'vue'
 import App from './App.vue'
-import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import "@fontsource/ubuntu/500.css"
 import "@fontsource/ubuntu/400.css"
 import "@fontsource/ubuntu/300.css"
@@ -9,8 +11,6 @@ import "@fontsource/inter/200.css"
 import "@fontsource/inter/300.css"
 import "source-sans/source-sans-3.css"
 
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
 import Axios from "axios"
 
 Vue.use(BootstrapVue)
