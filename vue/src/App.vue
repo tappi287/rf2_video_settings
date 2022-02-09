@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import './assets/app.scss'
 import MainPage from "./components/MainPage.vue";
 import AppUpdater from "@/components/Updater";
 import {createPopperLite as createPopper, flip, preventOverflow} from "@popperjs/core";
@@ -214,6 +215,6 @@ if (!pass) {
 }
 </script>
 
-<style src="./assets/app.css">
+<style scoped>
 
 </style>

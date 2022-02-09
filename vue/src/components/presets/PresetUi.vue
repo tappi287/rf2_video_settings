@@ -4,7 +4,7 @@
       <b-input-group>
         <!-- Switch View Mode -->
         <b-input-group-prepend>
-          <b-button @click="toggleViewMode" class="rounded-left">
+          <b-button @click="toggleViewMode" class="low-round-left">
             <b-icon :icon="viewMode ? 'grid-fill' : 'list'"></b-icon>
           </b-button>
           <b-input-group-text class="info-field">{{ displayName }}</b-input-group-text>
@@ -63,7 +63,8 @@
                     v-b-popover.hover.bottom="'Export current Preset to your documents dir to be able to share it!'">
             <b-icon icon="file-earmark-arrow-up-fill"></b-icon>
           </b-button>
-          <b-button :disabled="!deleteButtonState" variant="secondary" :id="'delete-preset-btn' + idRef" class="rounded-right">
+          <b-button :disabled="!deleteButtonState" variant="secondary" :id="'delete-preset-btn' + idRef"
+                    class="low-round-right">
             <b-icon icon="trash-fill"></b-icon>
           </b-button>
 

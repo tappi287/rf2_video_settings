@@ -51,12 +51,12 @@
     </b-progress>
 
     <!-- Server List -->
-    <div v-if="onlyFav" class="text-center bg-dark text-muted rounded-top table-blocks">
+    <div v-if="onlyFav" class="text-center bg-dark text-muted  low-round-top table-blocks">
       <b-icon icon="star-fill" /><span class="ml-2">Favourites</span>
     </div>
     <b-table :items="computedServerList" :fields="serverFields" table-variant="dark" :busy="isBusy" show-empty
              primary-key="id" class="server-list"
-             :thead-class="onlyFav ? 'hidden' : 'bg-dark text-white'"
+             :thead-class="onlyFav ? 'hidden' : 'text-white'"
              small :striped="!onlyFav" borderless>
       <!-- Name -->
       <template v-slot:cell(server_name)="server">
@@ -231,7 +231,7 @@
         </div>
       </template>
     </b-table>
-    <div class="bg-dark rounded-bottom table-blocks" style="height: 1.75rem;"></div>
+    <div class="bg-dark rounded-bottom low-round-bottom table-blocks mt-0"></div>
 
     <!-- Join password protected Server -->
     <b-modal :id="pwdModalId" centered>
@@ -527,5 +527,5 @@ export default {
 </script>
 
 <style scoped>
-  .table-blocks { height: 1.75rem; line-height: 1.75rem }
+
 </style>

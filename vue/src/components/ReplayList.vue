@@ -65,7 +65,7 @@
     </b-input-group>
 
     <b-table :items="computedReplayList" :fields="replayFields" table-variant="dark" small borderless
-             primary-key="id" class="server-list" thead-class="bg-dark text-white"
+             primary-key="id" class="server-list" thead-class="text-white"
              ref="replayTable"
              selectable selected-variant="primary"
              :select-mode="editing ? 'range' : 'single'"
