@@ -233,6 +233,9 @@ export default {
       this.getSelectedPreset().desc = newDesc
       this.savePreset(this.getSelectedPreset())
     },
+    updateViewMode: function (viewMode) {
+      this.viewMode = viewMode
+    },
     updateSetting: async function (setting, value, save = true) {
       this.setBusy(true)
       setting.value = value
