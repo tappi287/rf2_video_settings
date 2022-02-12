@@ -9,7 +9,7 @@
           <b-img width=".3rem" class="hdl-icon bottom" src="@/assets/rf2_headlights_off.svg"></b-img>
         </div>
         <!-- Title -->
-        <b-input-group-text class="bg-transparent no-border section-title text-white pl-1">
+        <b-input-group-text class="bg-transparent no-border title text-white pl-1">
           rF2 Headlights
         </b-input-group-text>
       </b-input-group-prepend>
@@ -131,7 +131,7 @@
     <!-- Footer -->
     <div class="mt-3 small font-weight-lighter">
       <span>Idea, functionality and code portions courtesy of: </span>
-      <a href="https://github.com/TonyWhitley/rF2headlights" target="_blank">rf2headlights</a>
+      <b><a href="https://github.com/TonyWhitley/rF2headlights" target="_blank">rf2headlights</a></b>
     </div>
   </div>
 </template>
@@ -308,8 +308,7 @@ name: "rf2Headlights",
 </script>
 
 <style scoped>
-.section-title { font-family: Ubuntu, sans-serif; }
-.headlight-title-right { right: 1.15rem; top: .75rem; }
+.headlight-title-right { right: -0.15em; top: -0.25rem;}
 .hdl-icon { width: 2.275rem; }
 .hdl-icon.bottom { position: relative; }
 .hdl-icon.pulse {

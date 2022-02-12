@@ -20,7 +20,7 @@
         </flux-caption>
       </template>
     </vue-flux>
-    <div id="img-gradient" class="rounded"></div>
+    <div id="img-gradient" class="low-round"></div>
 
     <!-- Display over image slider -->
     <div class="p-3" id="top-menu">

@@ -1,9 +1,11 @@
 <template>
   <div>
     <!-- Filter -->
-    <b-input-group size="md" class="mt-2">
+    <b-input-group size="sm" class="mt-2 table-bar">
       <b-input-group-prepend>
-        <b-input-group-text><b-icon icon="filter" aria-hidden="true"></b-icon></b-input-group-text>
+        <b-input-group-text class="rf-secondary border-0 low-round-left">
+          <b-icon icon="filter" aria-hidden="true"></b-icon>
+        </b-input-group-text>
       </b-input-group-prepend>
 
       <b-form-input v-model="replayTextFilter" type="search" debounce="1000"
@@ -14,35 +16,35 @@
       <b-input-group-append>
         <b-button-group>
           <b-button @click="filterP = !filterP" :variant="!filterP ? 'dark' : ''"
-                    v-b-popover.auto.hover="'Filter Practice Sessions'">
-            <b-icon icon="filter" :variant="filterP ? 'secondary' : 'secondary'"/>
+                    v-b-popover.auto.hover="'Filter Practice Sessions'" size="sm">
+            <b-icon icon="filter" :variant="filterP ? 'rf-secondary' : 'secondary'"/>
             <span class="ml-2">P</span>
           </b-button>
           <b-button @click="filterW = !filterW" :variant="!filterW ? 'dark' : ''"
-                    v-b-popover.auto.hover="'Filter Warm Up Sessions'">
-            <b-icon icon="filter" :variant="filterW ? 'secondary' : 'info'"/>
+                    v-b-popover.auto.hover="'Filter Warm Up Sessions'" size="sm">
+            <b-icon icon="filter" :variant="filterW ? 'rf-secondary' : 'info'"/>
             <span class="ml-2">W</span>
           </b-button>
           <b-button @click="filterQ = !filterQ" :variant="!filterQ ? 'dark' : ''"
-                    v-b-popover.auto.hover="'Filter Qualifying Sessions'">
-            <b-icon icon="filter" :variant="filterQ ? 'secondary' : 'primary'"/>
+                    v-b-popover.auto.hover="'Filter Qualifying Sessions'" size="sm">
+            <b-icon icon="filter" :variant="filterQ ? 'rf-secondary' : 'primary'"/>
             <span class="ml-2">Q</span>
           </b-button>
           <b-button @click="filterH = !filterH" :variant="!filterH ? 'dark' : ''"
-                    v-b-popover.auto.hover="'Filter Hot Laps'">
-            <b-icon icon="filter" :variant="filterH ? 'secondary' : 'danger'"/>
+                    v-b-popover.auto.hover="'Filter Hot Laps'" size="sm">
+            <b-icon icon="filter" :variant="filterH ? 'rf-secondary' : 'danger'"/>
             <span class="ml-2">H</span>
           </b-button>
           <b-button @click="filterR = !filterR" :variant="!filterR ? 'dark' : ''"
-                    v-b-popover.auto.hover="'Filter Race Sessions'">
-            <b-icon icon="filter" :variant="filterR ? 'secondary' : 'success'"/>
+                    v-b-popover.auto.hover="'Filter Race Sessions'" size="sm">
+            <b-icon icon="filter" :variant="filterR ? 'rf-secondary' : 'success'"/>
             <span class="ml-2">R</span>
           </b-button>
           <b-button variant="danger" :id="'delete-replays-btn' + _uid" v-if="editing"
-                    v-b-popover.auto.hover="'Delete selected Replay files.'">
+                    v-b-popover.auto.hover="'Delete selected Replay files.'" size="sm">
             <b-icon class="mr-2 ml-1" icon="trash-fill" aria-hidden="true"></b-icon>
           </b-button>
-          <b-button @click="resetFilter" variant="secondary">
+          <b-button @click="resetFilter" variant="rf-secondary" size="sm">
               <b-icon class="mr-2 ml-1" icon="backspace-fill" aria-hidden="true"></b-icon>Reset
           </b-button>
         </b-button-group>
@@ -92,18 +94,18 @@
             </div>
             <div class="text-right">
               <b-button @click="playReplay(replay.item); $root.$emit('bv::hide::popover', 'replay-action-btn-' + replay.item.id + _uid)"
-                        size="sm" variant="primary"
+                        size="sm" variant="rf-blue-light"
                         v-if="watchEnabled"
                         aria-label="Watch" class="mr-2">
                 Watch
               </b-button>
               <b-button @click="renameReplay(replay.item); $root.$emit('bv::hide::popover', 'replay-action-btn-' + replay.item.id + _uid)"
-                        size="sm" variant="warning"
+                        size="sm" variant="rf-orange-light"
                         aria-label="Rename" class="mr-2">
                 Rename
               </b-button>
               <b-button @click="$root.$emit('bv::hide::popover', 'replay-action-btn-' + replay.item.id + _uid)"
-                        size="sm" aria-label="Close">
+                        size="sm" aria-label="Close" variant="rf-secondary">
                 Close
               </b-button>
             </div>
@@ -133,8 +135,8 @@ export default {
       replayFields: [
         { key: 'type', label: 'T', sortable: true, class: 'text-left' },
         { key: 'name', label: 'Name', sortable: true, class: 'text-left' },
-        { key: 'size', label: 'Size', sortable: true, class: 'text-right' },
-        { key: 'date', label: 'Last modified', sortable: true, class: 'text-right' },
+        { key: 'size', label: 'Size', sortable: true, class: 'text-right secondary-info' },
+        { key: 'date', label: 'Last modified', sortable: true, class: 'text-right secondary-info' },
       ],
       newReplayName: '',
       currentSelection: [],

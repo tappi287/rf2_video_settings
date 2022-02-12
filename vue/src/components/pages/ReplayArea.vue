@@ -1,12 +1,12 @@
 <template>
   <div id="replays">
-    <b-input-group>
+    <b-input-group size="sm">
       <b-input-group-prepend>
-        <div class="pl-0 pr-1 rpl-con position-relative bg-transparent rounded-left">
+        <div class="pl-0 pr-1 rpl-con position-relative bg-transparent">
           <b-img width=".3rem" class="rpl-icon" src="@/assets/rfW_logo_color.svg"></b-img>
         </div>
         <!-- Title -->
-        <b-input-group-text class="bg-transparent no-border section-title text-white pl-0">
+        <b-input-group-text class="bg-transparent no-border title text-white pl-0">
           Replay Manager
         </b-input-group-text>
       </b-input-group-prepend>
@@ -101,7 +101,6 @@ export default {
 </script>
 
 <style scoped>
-.section-title { font-family: Ubuntu, sans-serif; }
 .rpl-icon { width: 2.075rem; }
 .rpl-con { margin-top: .1rem; }
 </style>

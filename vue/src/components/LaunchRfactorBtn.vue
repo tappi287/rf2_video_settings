@@ -1,12 +1,12 @@
 <template>
   <b-button-group>
-    <b-dropdown variant="primary" size="sm" right split @click="launchRfactor">
+    <b-dropdown variant="rf-blue-light" size="sm" right split @click="launchRfactor">
       <template #button-content>
         <div class="rounded-right">
-          <b-icon icon="play"></b-icon>
+          <b-icon shift-v="1.5" icon="play"></b-icon>
           {{ buttonText }}
           <span class="ml-2" v-if="displayLive">
-            <b-icon shift-v="-1" :icon="live ? 'circle-fill' : 'circle'" :variant="live ? 'success' : 'primary'"/>
+            <b-icon shift-v="1" :icon="live ? 'circle-fill' : 'circle'" :variant="live ? 'success' : 'rf-blue'"/>
           </span>
         </div>
       </template>

@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <script type=text/javascript src="/eel.js"></script>
+    <script type=text/javascript src="http://localhost:8123/eel.js"></script>
     <script type="text/javascript">
+        eel._host="http://localhost:8123"
         eel.expose(closeApp)
         function closeApp () {
           return window.close()

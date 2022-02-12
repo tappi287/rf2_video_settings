@@ -17,7 +17,7 @@
         <!-- Dropdown Menu -->
         <template v-if="inputType === 'value'">
           <b-dropdown :text="currentSettingName" :variant="variant" :id="elemId" size="sm"
-                      toggle-class="settings-dropdown"
+                      toggle-class="settings-dropdown low-round-right"
                       class="setting-item fixed-width-setting no-border" :disabled="disabled">
             <b-dropdown-item v-for="s in setting.settings" :key="s.value" class="setting-dropdown-item"
                              @click="selectSetting(s)">
@@ -35,8 +35,9 @@
         <!-- Spinner Menu -->
         <template v-if="inputType === 'range'">
           <div :id="elemId" class="fixed-width-setting position-relative">
-            <b-form-spinbutton v-model="rangeValue" :min="rangeMin" :max="rangeMax" :step="rangeStep" inline
-                               :class="'spinner-setting no-border btn-' + variant"
+            <b-form-spinbutton v-model="rangeValue" :min="rangeMin" :max="rangeMax" :step="rangeStep"
+                               size="sm" inline
+                               :class="'spinner-setting rounded-0 low-round-right btn-' + variant"
                                :disabled="disabled"
                                @change="spinnerSettingUpdated" :formatter-fn="spinnerDisplay">
             </b-form-spinbutton>

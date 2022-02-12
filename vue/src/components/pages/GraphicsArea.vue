@@ -31,7 +31,7 @@
         </template>
       </div>
       <div class="float-right">
-        <b-button @click="launchConfig" size="sm"
+        <b-button @click="launchConfig" size="sm" variant="rf-secondary"
                   v-b-popover.lefttop.hover="'Launch rf Config to change resolution, refresh rate ' +
                    'and window mode.'">
           <b-icon icon="display-fill" /><span class="ml-2">Video Setup</span>
@@ -53,7 +53,7 @@
                 @make-toast="makeToast">
     <template #footer v-if="!compact">
       <div class="float-right">
-        <b-button size="sm" @click="showPerformance = !showPerformance"
+        <b-button size="sm" @click="showPerformance = !showPerformance" variant="rf-scondary"
                   v-b-popover.lefttop.hover="'Show performance data next to supported settings in ' +
                    'the dropdown menu. ' +
                    'G=relative GPU performance impact | C=relative CPU performance impact'">
@@ -112,7 +112,7 @@
         <br />
         To use these enhancements in PanCake mode: set the <i>"Use Center Mask"</i> setting to <i>Disabled</i>
         <div class="float-right">
-          <b-button size="sm" @click="showAllReshade = !showAllReshade"
+          <b-button size="sm" @click="showAllReshade = !showAllReshade" variant="rf-secondary"
                     v-b-popover.lefttop.hover="'Show all VRToolKit setting details even if they are not activated.'">
             <b-icon :icon="showAllReshade ? 'chevron-double-up' : 'chevron-double-down'"></b-icon>
           </b-button>
@@ -281,8 +281,8 @@
         </p>
       </div>
       <div class="d-block text-right">
-        <b-button variant="warning" @click="deleteConfig" class="mr-2">Delete Settings</b-button>
-        <b-button variant="secondary" @click="abortConfig">Abort</b-button>
+        <b-button variant="rf-orange" @click="deleteConfig" class="mr-2">Delete Settings</b-button>
+        <b-button variant="rf-secondary" @click="abortConfig">Abort</b-button>
       </div>
     </template>
   </b-modal>

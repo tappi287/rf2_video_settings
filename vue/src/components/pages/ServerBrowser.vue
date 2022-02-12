@@ -1,9 +1,11 @@
 <template>
   <div id="server-browser" v-if="!onlyFav || browserReady">
     <!-- Filter -->
-    <b-input-group size="md" v-if="!isBusy && !onlyFav">
+    <b-input-group size="sm" v-if="!isBusy && !onlyFav" class="table-bar">
       <b-input-group-prepend>
-        <b-input-group-text><b-icon icon="filter" aria-hidden="true"></b-icon></b-input-group-text>
+        <b-input-group-text class="rf-secondary border-0 low-round-left">
+          <b-icon icon="filter" aria-hidden="true"></b-icon>
+        </b-input-group-text>
       </b-input-group-prepend>
 
       <b-form-input v-model="serverTextFilter" id="filter-server" type="search" debounce="1000"
@@ -13,30 +15,30 @@
 
       <b-input-group-append>
         <b-button-group>
-          <b-button @click="toggleFavs" :variant="filterFavs ? 'dark' : ''">
+          <b-button @click="toggleFavs" :variant="filterFavs ? 'dark' : ''" size="sm">
             <b-icon :icon="filterFavs ? 'star-fill' : 'star'" :variant="filterFavs ? 'warning' : 'white'">
             </b-icon>
             <span class="ml-2">Favourites</span>
           </b-button>
-          <b-button @click="toggleEmpty" :variant="filterEmpty ? 'dark' : ''">
+          <b-button @click="toggleEmpty" :variant="filterEmpty ? 'dark' : ''" size="sm">
             <b-icon :icon="filterEmpty ? 'people-fill' : 'people'" :variant="filterEmpty ? 'warning' : 'white'">
             </b-icon>
             <span class="ml-2">Players</span>
           </b-button>
-          <b-button @click="togglePwd" :variant="filterPwd ? 'dark' : ''">
+          <b-button @click="togglePwd" :variant="filterPwd ? 'dark' : ''" size="sm">
             <b-icon :icon="filterPwd ? 'key-fill' : 'key'" :variant="filterPwd ? 'warning' : 'white'">
             </b-icon>
             <span class="ml-2">Password</span>
           </b-button>
-          <b-button @click="toggleVer" :variant="filterVer ? 'dark' : ''">
+          <b-button @click="toggleVer" :variant="filterVer ? 'dark' : ''" size="sm">
             <b-icon :icon="filterVer ? 'plug-fill' : 'plug'" :variant="filterVer ? 'success' : 'white'">
             </b-icon>
             <span class="ml-2">Version</span>
           </b-button>
-          <b-button @click="refreshServerList(true)" variant="secondary">
+          <b-button @click="refreshServerList(true)" variant="rf-secondary" size="sm" class="border-0">
               <b-icon class="mr-1 ml-1" icon="arrow-clockwise" aria-hidden="true"></b-icon>
           </b-button>
-          <b-button @click="resetFilter" variant="secondary">
+          <b-button @click="resetFilter" variant="rf-secondary" size="sm" class="border-0 low-round-right">
               <b-icon class="mr-2 ml-1" icon="backspace-fill" aria-hidden="true"></b-icon>Reset
           </b-button>
         </b-button-group>
@@ -183,7 +185,7 @@
 
           <!-- Actions -->
           <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
-            <b-button @click="refreshServer(server.item)" class="mr-2" size="sm">
+            <b-button @click="refreshServer(server.item)" class="mr-2" variant="rf-secondary" size="sm">
               <b-icon shift-v="-1" icon="arrow-clockwise"></b-icon>
               <span class="ml-1 mr-1">Refresh Server Data</span>
             </b-button>
@@ -299,9 +301,9 @@ export default {
         { key: 'server_name', label: 'Name', sortable: true, class: 'text-left' },
         { key: 'password_protected', label: 'Pwd', sortable: true },
         { key: 'map_name', label: 'Track', sortable: true, class: 'text-left' },
-        { key: 'player_count', label: 'Players', sortable: true, class: 'text-right' },
-        { key: 'version', label: 'Version', sortable: true, class: 'text-right'},
-        { key: 'ping', label: 'Ping', sortable: true, class: 'text-right' },
+        { key: 'player_count', label: 'Players', sortable: true, class: 'text-right secondary-info' },
+        { key: 'version', label: 'Version', sortable: true, class: 'text-right secondary-info'},
+        { key: 'ping', label: 'Ping', sortable: true, class: 'text-right secondary-info' },
         { key: 'actions', label: '', class: 'text-right'},
       ],
       selectedServer: {},

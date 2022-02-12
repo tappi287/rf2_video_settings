@@ -31,6 +31,7 @@ def start_eel(npm_serve=True):
     logging.info('#######################################################\n\n\n')
 
     if FROZEN:
+        npm_serve = False
         # Set Exception hook
         sys.excepthook = AppExceptionHook.exception_hook
 

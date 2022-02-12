@@ -240,17 +240,17 @@
                             @show-content="navActive = 10"/>
         </b-col>
         <b-col class="text-right p-0">
-          <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Open rF2 vehicle setups folder'"
+          <b-button size="sm" variant="rf-secondary" class="ml-2" v-b-popover.auto.hover="'Open rF2 vehicle setups folder'"
                     @click="openSetupFolder">
             <b-icon icon="folder"></b-icon>
           </b-button>
-          <b-button size="sm" variant="secondary" class="ml-2" v-b-popover.auto.hover="'Run rF2 ModMgr.exe'"
+          <b-button size="sm" variant="rf-secondary" class="ml-2" v-b-popover.auto.hover="'Run rF2 ModMgr.exe'"
                     @click="runModMgr">
             <b-icon icon="archive-fill"></b-icon>
           </b-button>
-          <b-button size="sm" class="ml-2" variant="secondary" id="restore-btn"
+          <b-button size="sm" class="ml-2" variant="rf-secondary" id="restore-btn"
                     v-b-popover.auto.hover="'Restore your original settings'">
-              <b-icon icon="arrow-counterclockwise" class="text-white"></b-icon>
+              <b-icon icon="arrow-counterclockwise"></b-icon>
           </b-button>
         </b-col>
       </b-row>
@@ -338,7 +338,7 @@ import PresetHandler from "@/components/presets/PresetHandler";
 import SettingsCard from "@/components/settings/SettingsCard";
 import AppWiki from "@/components/Wiki";
 import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
-import rf2Headlights from "@/components/rf2Headlights";
+import rf2Headlights from "@/components/pages/rf2Headlights";
 import ReplayArea from "@/components/pages/ReplayArea";
 import AppLog from "@/components/Log";
 import {getEelJsonObject, sleep} from "@/main";
