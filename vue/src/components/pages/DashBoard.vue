@@ -1,6 +1,6 @@
 <template>
   <div v-cloak id="dashboard" class="position-relative mb-3 text-left">
-    <vue-flux class="img-slider rounded" id="img"
+    <vue-flux class="img-slider" id="img"
         ref="slider"
         :captions="vfCaptions"
         :images="vfImages"
@@ -20,7 +20,7 @@
         </flux-caption>
       </template>
     </vue-flux>
-    <div id="img-gradient" class="rounded"></div>
+    <div id="img-gradient" class="low-round"></div>
 
     <!-- Display over image slider -->
     <div class="p-3" id="top-menu">
@@ -33,9 +33,9 @@
           <b-link class="text-white" @click="$emit('nav', 1)">Graphics Presets</b-link>
         </h6>
         <template v-for="(preset, idx) in gfxHandler.presets.slice(1)">
-          <b-button :key="idx"
+          <b-button :key="idx" squared
                     v-b-popover.bottom.hover="preset.desc"
-                    :class="gfxHandler.selectedPresetIdx === idx+1 ? 'active' + cls : 'inactive' + cls"
+                    :class="gfxHandler.selectedPresetIdx === idx+1 ? 'low-round active' + cls : 'low-round inactive' + cls"
                     :variant="gfxHandler.selectedPresetIdx === idx+1 ? 'rf-orange' : 'rf-blue'"
                     @click="gfxHandler.selectPreset(preset, true)">
             {{ preset.name }}
@@ -83,7 +83,7 @@ function prepareScreenshots () {
 }
 
 export default {
-  name: "Dashboard",
+  name: "DashBoard",
   data: function () {
     return {
       userName: 'Driver',
@@ -185,41 +185,6 @@ export default {
 }
 </script>
 
-<style scoped>
-.int-font { font-family: Inter, "Segoe UI", system-ui, sans-serif; }
-.title {
-  font-weight: 200;
-  text-shadow: 1px 1px 2px black;
-}
-.title::selection { background: transparent; }
-.title::-moz-selection { background: transparent; }
+<style scoped src="../../assets/dashboard.css">
 
-.fade-enter-active, .fade-leave-active { transition: opacity 3s, height 3s; }
-
-.fade-enter, .fade-leave-to {opacity: 0; height: 0;}
-
-.btn-rf-orange, .btn-rf-blue { font-weight: 300; }
-.btn-rf-orange.active, .btn-rf-blue.active { font-weight: 400; }
-.active, .inactive { box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.8), 0 6px 20px 0 rgba(0, 0, 0, 0.75); }
-
-.no-pointer { pointer-events: none; }
-
-#top-menu { z-index: 10; position: relative; }
-#spacer { z-index: -10; position: relative; }
-.img-slider { position: absolute; z-index: 1; width: 100%; }
-.img-caption { position: absolute; width: 100%; bottom: 0; }
-.img-caption a { line-height: 1.1rem; width: 100%; font-family: Ubuntu, "Segoe UI", sans-serif; }
-#img-gradient {
-  position: absolute;
-  background: linear-gradient(rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 100%);
-  height: 6rem; width: 100%; z-index: 2;
-}
-</style>
-
-<style>
-.flux-image { border-radius: .25rem; }
-.flux-caption {
-  background-color: transparent !important;
-  background: radial-gradient(circle at 50% 250%, rgba(0,0,0, 0.85) 10%, rgba(0,0,0,0) 30%);
-}
 </style>

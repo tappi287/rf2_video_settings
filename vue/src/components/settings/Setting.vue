@@ -1,7 +1,7 @@
 <template>
   <div class="setting" v-if="!settingHidden">
     <b-input-group size="sm" class="setting-field">
-      <b-input-group-prepend>
+      <b-input-group-prepend class="low-round-left">
         <b-input-group-text
             :class="infoFieldClass" :id="nameId">
           {{ setting.name }}
@@ -13,12 +13,13 @@
           </b-icon>
         </b-input-group-text>
       </b-input-group-prepend>
-      <b-input-group-append>
+      <b-input-group-append class="low-round-right">
         <!-- Dropdown Menu -->
         <template v-if="inputType === 'value'">
-          <b-dropdown :text="currentSettingName" :variant="variant" :id="elemId"
+          <b-dropdown :text="currentSettingName" :variant="variant" :id="elemId" size="sm"
+                      toggle-class="settings-dropdown low-round-right"
                       class="setting-item fixed-width-setting no-border" :disabled="disabled">
-            <b-dropdown-item v-for="s in setting.settings" :key="s.value"
+            <b-dropdown-item v-for="s in setting.settings" :key="s.value" class="setting-dropdown-item"
                              @click="selectSetting(s)">
               {{ s.name }}
               <b-icon v-if="s.desc !== undefined" icon="info-square"
@@ -34,8 +35,9 @@
         <!-- Spinner Menu -->
         <template v-if="inputType === 'range'">
           <div :id="elemId" class="fixed-width-setting position-relative">
-            <b-form-spinbutton v-model="rangeValue" :min="rangeMin" :max="rangeMax" :step="rangeStep" inline
-                               :class="'spinner-setting no-border btn-' + variant"
+            <b-form-spinbutton v-model="rangeValue" :min="rangeMin" :max="rangeMax" :step="rangeStep"
+                               size="sm" inline
+                               :class="'spinner-setting rounded-0 low-round-right btn-' + variant"
                                :disabled="disabled"
                                @change="spinnerSettingUpdated" :formatter-fn="spinnerDisplay">
             </b-form-spinbutton>
@@ -78,7 +80,7 @@
 import {minutesToDaytime, setFixedWidth} from "@/main";
 
 export default {
-  name: 'Setting',
+  name: 'SettingItem',
   data: function () {
     return {
       currentSettingValue: {},
@@ -184,7 +186,7 @@ export default {
     }
   },
   mounted () {
-    if (this.variant === undefined) { this.variant = 'secondary'}
+    // if (this.variant === undefined) { this.variant = 'secondary'}
     this.currentSettingValue = this.setting.value
     // Access after rendering finished
     this.$nextTick(() => {
@@ -204,8 +206,8 @@ export default {
       return name
     },
     infoFieldClass: function () {
-      if (this.settingDiff) { return 'info-field diff fixed-width-name' }
-      return 'info-field fixed-width-name'
+      if (this.settingDiff) { return 'info-field diff low-round-left fixed-width-name' }
+      return 'info-field low-round-left fixed-width-name'
     },
     showPerformance: function () {
       if (this.show_performance !== undefined) { return this.show_performance }
@@ -236,6 +238,9 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+
+</style>
 <style>
 .spinner-setting { width: 100% !important; }
 .spinner-overlay {

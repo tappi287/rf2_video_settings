@@ -9,7 +9,7 @@
           <b-img width=".3rem" class="hdl-icon bottom" src="@/assets/rf2_headlights_off.svg"></b-img>
         </div>
         <!-- Title -->
-        <b-input-group-text class="bg-transparent no-border section-title text-white pl-1">
+        <b-input-group-text class="bg-transparent no-border title text-white pl-1">
           rF2 Headlights
         </b-input-group-text>
       </b-input-group-prepend>
@@ -21,13 +21,15 @@
     <!-- Headlight rFactor Control Mapping -->
     <b-card class="mt-2 setting-card" id="hdl-controller-json-area" header-class="p-3"
             bg-variant="dark" text-variant="white" footer-class="pt-0">
-      <template #header class="position-relative">
-        <b-icon icon="lamp" /><span class="ml-2">rFactor 2 Headlight Control</span>
-        <div class="position-absolute headlight-title-right">
-          <b-button size="sm" class="rounded-right" @click="getSettings"
-                    v-b-popover.hover.bottom="'Refresh Settings if you updated a setting in-game'">
-            <b-icon icon="arrow-repeat"></b-icon>
-          </b-button>
+      <template #header>
+        <div class="position-relative">
+          <b-icon icon="lamp" /><span class="ml-2">rFactor 2 Headlight Control</span>
+          <div class="position-absolute headlight-title-right">
+            <b-button size="sm" class="rounded-right" @click="getSettings"
+                      v-b-popover.hover.bottom="'Refresh Settings if you updated a setting in-game'">
+              <b-icon icon="arrow-repeat"></b-icon>
+            </b-button>
+          </div>
         </div>
       </template>
       <ControllerAssignment
@@ -56,20 +58,22 @@
     <!-- Headlight App Settings -->
     <b-card class="mt-2 setting-card" id="headlight-settings-area"  header-class="p-3"
             bg-variant="dark" text-variant="white" footer-class="pt-0">
-      <template #header class="position-relative">
-        <b-icon icon="stopwatch" /><span class="ml-2">{{ headlightSettings.title }}</span>
-        <div class="position-absolute headlight-title-right">
-          <b-button size="sm" @click="showSettingsWiki = !showSettingsWiki">
-            <b-icon :icon="showSettingsWiki ? 'exclamation' : 'question'"></b-icon>
-          </b-button>
+      <template #header>
+        <div class="position-relative">
+          <b-icon icon="stopwatch" /><span class="ml-2">{{ headlightSettings.title }}</span>
+          <div class="position-absolute headlight-title-right">
+            <b-button size="sm" @click="showSettingsWiki = !showSettingsWiki">
+              <b-icon :icon="showSettingsWiki ? 'exclamation' : 'question'"></b-icon>
+            </b-button>
+          </div>
         </div>
       </template>
-      <Setting v-for="setting in headlightSettings.options" :key="setting.key"
+      <SettingItem v-for="setting in headlightSettings.options" :key="setting.key"
                :setting="setting" class="mr-3 mb-3" group-id="headlight-settings-area" :fixed-width="true"
                :variant="isHeadlightAppEnabled || setting.key === 'enabled' ? 'rf-orange' : 'secondary'"
                @setting-changed="updateSetting"
                @make-toast="makeToast">
-      </Setting>
+      </SettingItem>
       <template #footer v-if="showSettingsWiki">
         <div class="text-left" style="font-size: small;">
           To control the headlights
@@ -99,12 +103,14 @@
     <!-- Headlight Controller Mappings -->
     <b-card class="mt-2 setting-card" id="hdl-controller-area" header-class="p-3"
             bg-variant="dark" text-variant="white" footer-class="pt-0">
-      <template #header class="position-relative">
-        <b-icon icon="controller" /><span class="ml-2">Controller Assignments</span>
-        <div class="position-absolute headlight-title-right">
-          <b-button size="sm" @click="showAssignWiki = !showAssignWiki">
-            <b-icon :icon="showAssignWiki ? 'exclamation' : 'question'"></b-icon>
-          </b-button>
+      <template #header>
+        <div class="position-relative">
+          <b-icon icon="controller" /><span class="ml-2">Controller Assignments</span>
+          <div class="position-absolute headlight-title-right">
+            <b-button size="sm" @click="showAssignWiki = !showAssignWiki">
+              <b-icon :icon="showAssignWiki ? 'exclamation' : 'question'"></b-icon>
+            </b-button>
+          </div>
         </div>
       </template>
       <ControllerAssignment
@@ -125,18 +131,18 @@
     <!-- Footer -->
     <div class="mt-3 small font-weight-lighter">
       <span>Idea, functionality and code portions courtesy of: </span>
-      <a href="https://github.com/TonyWhitley/rF2headlights" target="_blank">rf2headlights</a>
+      <b><a href="https://github.com/TonyWhitley/rF2headlights" target="_blank">rf2headlights</a></b>
     </div>
   </div>
 </template>
 
 <script>
-import Setting from "@/components/settings/Setting";
+import SettingItem from "@/components/settings/Setting";
 import {getControllerDeviceTypeName, getControllerValueName, getEelJsonObject, sleep} from "@/main";
 import ControllerAssignment from "@/components/settings/ControllerAssignment";
 
 export default {
-name: "Headlights",
+name: "rf2Headlights",
   data: function () {
     return {
       viewMode: 0,
@@ -157,9 +163,6 @@ name: "Headlights",
       this.$emit('make-toast', message, category, title, append, delay)
     },
     setBusy: function (busy) { this.$emit('set-busy', busy) },
-    toggleViewMode: function () {
-      this.viewMode = !this.viewMode ? 1 : 0
-    },
     triggerLogoFlash: async function() {
       if (this.flashing) { return }
       this.flashing = true
@@ -300,13 +303,12 @@ name: "Headlights",
   },
   mounted() { this.$nextTick(() => { this.setupLogoFlash() }) },
   created() { this.getSettings() },
-  components: {ControllerAssignment, Setting }
+  components: {ControllerAssignment, SettingItem }
 }
 </script>
 
 <style scoped>
-.section-title { font-family: Ubuntu, sans-serif; }
-.headlight-title-right { right: 1.15rem; top: .75rem; }
+.headlight-title-right { right: -0.15em; top: -0.25rem;}
 .hdl-icon { width: 2.275rem; }
 .hdl-icon.bottom { position: relative; }
 .hdl-icon.pulse {

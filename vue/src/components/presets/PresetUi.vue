@@ -1,17 +1,17 @@
 <template>
   <div id="preset-ui" v-cloak>
     <template v-if="presets.length > 0">
-      <b-input-group>
+      <b-input-group size="sm">
         <!-- Switch View Mode -->
         <b-input-group-prepend>
-          <b-button @click="toggleViewMode" class="rounded-left">
+          <b-button @click="toggleViewMode" class="low-round-left" size="sm" variant="rf-secondary">
             <b-icon :icon="viewMode ? 'grid-fill' : 'list'"></b-icon>
           </b-button>
           <b-input-group-text class="info-field">{{ displayName }}</b-input-group-text>
 
           <!-- Preset Folder Select -->
           <b-button v-b-popover.hover.bottom="'Customize Presets save location'"
-                    squared variant="secondary" id="preset-folder">
+                    squared variant="rf-secondary" id="preset-folder" size="sm">
             <b-icon icon="folder-fill"></b-icon>
           </b-button>
 
@@ -28,7 +28,7 @@
                 Save
               </b-button>
               <b-button @click="$root.$emit('bv::hide::popover', 'preset-folder')"
-                        size="sm" aria-label="Close">
+                        class="ml-2" size="sm" aria-label="Close">
                 Close
               </b-button>
             </div>
@@ -36,7 +36,7 @@
         </b-input-group-prepend>
 
         <!-- Preset Selection-->
-        <b-dropdown :text="currentPresetName" variant="rf-blue" toggle-class="rounded-0">
+        <b-dropdown :text="currentPresetName" variant="rf-orange-light" toggle-class="pl-3 pr-3 rounded-0" size="sm">
           <b-dropdown-item v-for="preset in presets" :key="preset.name"
                            @click="selectPreset(preset)">
             {{ preset.name }}
@@ -51,19 +51,20 @@
 
         <b-input-group-append>
           <!-- Add/Export/Del Preset Buttons -->
-          <b-button :disabled="!addButtonState" variant="secondary" @click="createPreset">
+          <b-button :disabled="!addButtonState" variant="rf-secondary" @click="createPreset" size="sm">
             <b-icon icon="plus"></b-icon>
           </b-button>
 
-          <b-button variant="secondary" @click="$emit('refresh')"
+          <b-button variant="rf-secondary" @click="$emit('refresh')" size="sm"
                     v-b-popover.hover.bottom="'Refresh Presets if you updated a setting in-game'">
             <b-icon icon="arrow-repeat"></b-icon>
           </b-button>
-          <b-button variants="secondary" @click="exportCurrentPreset"
+          <b-button variant="rf-secondary" @click="exportCurrentPreset" size="sm"
                     v-b-popover.hover.bottom="'Export current Preset to your documents dir to be able to share it!'">
             <b-icon icon="file-earmark-arrow-up-fill"></b-icon>
           </b-button>
-          <b-button :disabled="!deleteButtonState" variant="secondary" :id="'delete-preset-btn' + idRef" class="rounded-right">
+          <b-button :disabled="!deleteButtonState" variant="rf-secondary" :id="'delete-preset-btn' + idRef"
+                    class="low-round-right" size="sm">
             <b-icon icon="trash-fill"></b-icon>
           </b-button>
 
@@ -129,7 +130,7 @@ export default {
       viewMode: 0,
     }
   },
-  props: { presets: Object, previousPresetName: String, selectedPresetIdx: Number, idRef: Number,
+  props: { presets: Array, previousPresetName: String, selectedPresetIdx: Number, idRef: String,
            presetDir: String, displayName: String },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {

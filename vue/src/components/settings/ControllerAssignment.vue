@@ -2,14 +2,14 @@
   <div class="setting">
     <b-input-group size="sm" class="setting-field">
       <b-input-group-prepend>
-        <b-input-group-text class="info-field fixed-width-name" :id="nameId">
+        <b-input-group-text class="info-field fixed-width-name low-round-left" :id="nameId">
           {{ setting.name }}
           <b-icon v-if="settingDesc !== ''" icon="info-square" class="ml-2 mr-1"
                   v-b-popover.hover.topright="settingDesc">
           </b-icon>
         </b-input-group-text>
       </b-input-group-prepend>
-      <b-input-group-append>
+      <b-input-group-append class="low-round-right">
         <div :class="settingVariant + ' setting-item fixed-width-setting'">
           <b-icon shift-v="-1" icon="controller" class="text-white" v-b-popover.hover.topright="settingDeviceName"/>
           <span class="ml-2">{{ typeName }} {{ settingValueName }}</span>
@@ -231,7 +231,6 @@ export default {
   vertical-align: bottom;
   font-size: .875rem;
   padding: .25rem .5rem;
-  border-radius: 0 0.25rem 0.25rem 0;
 }
 .old-setting {
   color: #c6c6c6;

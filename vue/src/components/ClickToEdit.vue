@@ -7,7 +7,7 @@
            @blur.native="valueLocal = $event.target.value; edit = false; $emit('input', valueLocal);"
            @keyup.enter.native="valueLocal = $event.target.value; edit = false; $emit('input', valueLocal);"
     />
-    <p v-else="" @click="edit = true;">
+    <p v-else @click="edit = true;">
       {{ valueLocal }}
     </p>
   </div>

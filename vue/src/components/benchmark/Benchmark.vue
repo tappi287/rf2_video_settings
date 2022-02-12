@@ -47,7 +47,7 @@
 
       <!-- Benchmark Settings -->
       <div class="pt-4 pb-4">
-        <Setting v-for="setting in settings.options" :key="setting.key"
+        <SettingItem v-for="setting in settings.options" :key="setting.key"
                  :setting="setting" variant="rf-orange" class="mr-3 mb-3"
                  ref="benchmarkSettings"
                  @setting-changed="updateSetting"/>
@@ -65,8 +65,10 @@
           <b-icon icon="plus-circle" /><span class="ml-2 mr-2" >Add</span>
         </b-button>
         <b-dropdown variant="primary" @click="startBenchmarkQueue" :disabled="startButtonDisabled" split right>
-          <template #button-content class="rounded-right">
-            <b-icon icon="play-btn" /><span class="ml-2">Start Benchmark Queue [{{ benchmarkQueue.length }}]</span>
+          <template #button-content>
+            <div class="rounded-right">
+              <b-icon icon="play-btn" /><span class="ml-2">Start Benchmark Queue [{{ benchmarkQueue.length }}]</span>
+            </div>
           </template>
           <b-dropdown-item v-for="q in benchmarkQueue" :key="q.id">
             <span>{{ q.id }} <span v-for="p in q.presets" :key="p">{{' - ' + p }}</span> - Replay: {{ q.replay }}</span>
@@ -128,7 +130,7 @@
 <script>
 
 import {getEelJsonObject} from "@/main";
-import Setting from "@/components/settings/Setting";
+import SettingItem from "@/components/settings/Setting";
 import GraphicsPresetArea from "@/components/presets/GraphicsPresetArea";
 import SessionPresetArea from "@/components/presets/SessionPresetArea";
 import ReplayList from "@/components/ReplayList";
@@ -142,13 +144,13 @@ async function rfactorBenchmarkProgress (event) {
 // --- />
 
 export default {
-  name: "Benchmark",
+  name: "BenchMark",
   components: {
     BenchmarkResultArea,
     ReplayList,
     SessionPresetArea,
     GraphicsPresetArea,
-    Setting,
+    SettingItem,
   },
   data: function () {
     return {

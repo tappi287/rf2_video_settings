@@ -365,7 +365,7 @@
 import {version} from "../../package.json";
 
 export default {
-  name: "Wiki",
+  name: "AppWiki",
   data: function () {
     return {
       ver: version,

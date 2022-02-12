@@ -29,7 +29,7 @@ import {version} from '../../package.json';
 const GIT_RELEASE_URL = 'https://api.github.com/repos/tappi287/rf2_video_settings/releases/latest'
 
 export default {
-  name: 'Updater',
+  name: 'AppUpdater',
   data: function () {
     return {
       updatedVersion: '',
