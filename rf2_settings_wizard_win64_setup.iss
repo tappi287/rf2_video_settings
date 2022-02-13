@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "rF2-Settings-Widget"
-#define MyAppVersion "1.2.1"
+#define MyAppVersion "1.3.0"
 #define MyAppPublisher "Stefan Tapper"
 #define MyAppURL "https://sim-site.netlify.app"
 #define MyAppExeName "rF2-Settings-Widget.exe"

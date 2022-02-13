@@ -30,5 +30,10 @@ module.exports = {
 
         return options
       })
+    config.plugin("html").tap(args => {
+      args[0].title = process.env.VUE_APP_FRIENDLY_NAME
+      /* args[0].pyFrozen = process.env.VUE_APP_FROZEN */
+      return args
+    })
   },
 }
