@@ -173,33 +173,18 @@ class VrToolKit:
 
         # -- Update Preset Ini file
         try:
-            # -- Read Preset Ini file
-            with open(reshade_preset, 'r') as f:
-                preset_lines = f.readlines()
-
-            # -- Apply settings to Preset Ini file lines
+            # -- Create Preset Ini Settings
             configured_preset_lines = list()
-            for line in preset_lines:
-                # -- Fill PreprocessorDefinitions
-                if line.startswith(self.preprocessor_name) and preprocessor_values:
-                    line = f'{self.preprocessor_name}={preprocessor_values}\n'
-                # -- Fill Techniques
-                elif line.startswith(self.techniques_name):
-                    line = f'{self.techniques_name}=VRToolkit@VRToolkit.fx' \
-                           f'{",Clarity@Clarity.fx" if use_clarity else ""}\n'
-                # -- Fill TechniqueSorting
-                elif line.startswith(self.techniques_sorting):
-                    line = f'{self.techniques_sorting}=VRToolkit@VRToolkit.fx' \
-                           f'{",Clarity@Clarity.fx" if use_clarity else ""}\n'
-                configured_preset_lines.append(line)
-
-                if line.replace('\r', '').replace('\n', '') == '[VRToolkit.fx]':
-                    break
+            configured_preset_lines.append(f'{self.preprocessor_name}={preprocessor_values}\n')
+            configured_preset_lines.append(f'{self.techniques_name}=VRToolkit@VRToolkit.fx'
+                                           f'{",Clarity@Clarity.fx" if use_clarity else ""}\n')
+            configured_preset_lines.append(f'{self.techniques_sorting}=VRToolkit@VRToolkit.fx'
+                                           f'{",Clarity@Clarity.fx" if use_clarity else ""}\n')
 
             # -- Add [Clarity.fx] Ini Settings
             clarity_fx_lines = list()
             for k, v in self.ini_settings.items():
-                if k not in self.clarity_ini_keys:
+                if k not in self.clarity_ini_keys or v == self.ini_default_settings.get(k):
                     continue
                 clarity_fx_lines.append(self._add_ini_value_line(k, v))
 
@@ -210,13 +195,15 @@ class VrToolKit:
                 configured_preset_lines.append('\n')
 
             # -- Add [VRToolkit.fx] Ini Settings
+            configured_preset_lines.append('\n')
+            configured_preset_lines.append('[VRToolkit.fx]\n')
             for k, v in self.ini_settings.items():
-                if k not in self.vr_toolkit_ini_keys:
+                if k not in self.vr_toolkit_ini_keys or v == self.ini_default_settings.get(k):
                     continue
                 configured_preset_lines.append(self._add_ini_value_line(k, v))
 
             # - Write Preset Ini file
-            logging.info('Updating ReShade Preset file: %s', reshade_preset)
+            logging.info('Creating ReShade Preset file: %s', reshade_preset)
             with open(reshade_preset, 'w') as f:
                 f.writelines(configured_preset_lines)
 
