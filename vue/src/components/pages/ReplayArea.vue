@@ -20,7 +20,7 @@
       <div class="mt-1">
         <b-input-group size="sm" class="setting-field">
           <b-input-group-prepend>
-            <b-input-group-text class="info-field fixed-width-name">
+            <b-input-group-text class="info-field fixed-width-name low-round-left">
               Replay Graphics Preset
             </b-input-group-text>
           </b-input-group-prepend>

@@ -31,7 +31,7 @@ html {
 
 .hidden { display: none; }
 .no-border { border: none; }
-.main-footer {
+#updater {
   margin-bottom: 3rem;
 }
 
@@ -42,7 +42,9 @@ html {
   border: none;
 }
 .info-field.diff {
-  background-image: linear-gradient(120deg, #ddd9de 70%, #fa7c56 100%);
+  background-image:
+          linear-gradient(120deg, rgba(221, 217, 222, 0) 70%, #fa7c56 100%),
+          $bg-secondary;
   border: none;
 }
 .setting { display: inline-block }
@@ -97,11 +99,12 @@ $settings-padding: 0.25rem 0.75rem 0.25rem 0.75rem;
 }
 .table-blocks { height: 1.75rem; line-height: 1.75rem }
 .progress {
-  background-color: rgba(36, 40, 40, 0.4) !important;
+  /* background-color: rgba(173, 173, 173, 0.9) !important; */
+  border-radius: $low-border-radius;
 }
-.progress-bar { color: #e4e4f1; }
+.progress-bar { color: $dark-text-color; }
 .progress-bar.bg-dark {
-  background-color: rgba(36, 40, 40, 0.4) !important;
+  background: $bg-secondary !important;
 }
 .filter-warn {
   animation-name: backgroundColorPalette;
@@ -150,15 +153,11 @@ $settings-padding: 0.25rem 0.75rem 0.25rem 0.75rem;
 .dropdown-menu {
   border-radius: $low-border-radius;
 }
-.popover {
+.card, .alert, .toast, .popover, .btn, .btn-sm, .modal-content {
   border-radius: $low-border-radius;
 }
-.card {
-  border-radius: $low-border-radius;
-}
-.btn, .btn-sm {
-  border-radius: $low-border-radius;
-}
+.alert a { font-weight: 400;}
+
 
 /* Button custom styles */
 .btn-rf-blue, .btn-rf-blue:hover, .rf-blue {
@@ -186,9 +185,9 @@ $settings-padding: 0.25rem 0.75rem 0.25rem 0.75rem;
   border: none;
 }
 .btn-rf-blue-light:hover {
-  background: linear-gradient(to bottom, rgb(47, 94, 185), rgb(23, 75, 175));
+  background: linear-gradient(to bottom, rgb(54, 111, 217), rgb(46, 69, 213));
 }
-.btn-rf-blue.light.disabled { opacity: 0.65; color: $dark-text-color; }
+.btn-rf-blue-light.disabled { opacity: 0.65; color: $dark-text-color; }
 .b-popover-rf-blue-light .popover-header, .badge-rf-blue-light {
   color: $light-text-color;
   background-color: #3e7ff8;
@@ -205,7 +204,7 @@ $settings-padding: 0.25rem 0.75rem 0.25rem 0.75rem;
 .btn-rf-secondary:hover {
   background: $bg-secondary-hover;
 }
-.btn-rf-blue.light.disabled { opacity: 0.65; color: $dark-text-color; }
+.btn-rf-secondary.disabled { opacity: 0.65; color: $dark-text-color; }
 .b-popover-rf-secondary .popover-header, .badge-rf-secondary {
   color: $light-text-color;
   background-color: #3e7ff8;
@@ -235,7 +234,10 @@ $settings-padding: 0.25rem 0.75rem 0.25rem 0.75rem;
   background-blend-mode: screen;
   border: none;
 }
-.btn-rf-orange.disabled { opacity: 0.65; color: $dark-text-color; }
+.btn-rf-orange.disabled { opacity: 0.65; }
+.btn-rf-orange:hover {
+  background: linear-gradient(to bottom, rgb(211, 121, 95), rgb(224, 91, 74));
+}
 .text-rf-orange {
   color: #ff573e; font-weight: 300;
 }

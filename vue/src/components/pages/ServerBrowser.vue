@@ -45,7 +45,7 @@
       </b-input-group-append>
     </b-input-group>
 
-    <b-progress v-if="isBusy && !onlyFav" :max="maxLoadProgress" variant="dark" height="3em"
+    <b-progress v-if="isBusy && !onlyFav" :max="maxLoadProgress" variant="dark" height="2.75em"
                 class="mt-0 mb-0">
       <b-progress-bar :value="loadProgress">
         <span>Loading: <strong>{{ loadProgress }} / {{ maxLoadProgress }}</strong></span>
@@ -54,7 +54,7 @@
 
     <!-- Server List -->
     <div v-if="onlyFav" class="text-center bg-dark text-muted  low-round-top table-blocks">
-      <b-icon icon="star-fill" /><span class="ml-2">Favourites</span>
+      <b-icon icon="star-fill" /><span class="ml-2 title">Favourites</span>
     </div>
     <b-table :items="computedServerList" :fields="serverFields" table-variant="dark" :busy="isBusy" show-empty
              primary-key="id" class="server-list"
@@ -191,7 +191,7 @@
             </b-button>
             <template v-if="server.item.password_protected">
               <b-button @click="joinPswdProtectedRfactor(server.item)"
-                        variant="primary" size="sm">
+                        variant="rf-blue-light" size="sm">
                 <b-icon variant="light" icon="play"></b-icon>
                 <span class="ml-1 mr-1">Join Server</span>
               </b-button>
@@ -207,6 +207,7 @@
       <template #empty>
         <div class="text-center">
           <template v-if="isBusy">
+            <b-spinner></b-spinner>
             <p>Acquiring server data...</p>
           </template>
           <template v-if="onlyFav">
@@ -322,7 +323,7 @@ export default {
       console.log('Making toast', message, category, title, append, delay)
       this.$emit('make-toast', message, category, title, append, delay)
     },
-    setBusy: function (busy) { this.isBusy = busy; this.$emit('set-busy', busy) },
+    setBusy: function (busy) { this.isBusy = busy; /* this.$emit('set-busy', busy) */ },
     compareVersion: function (serverVersion) {
       if (this.rfactorVersion !== '' && this.rfactorVersion !== undefined) {
         if (this.rfactorVersion === serverVersion) {
@@ -396,6 +397,7 @@ export default {
     },
     refreshServerList: async function() {
       this.setBusy(true)
+      this.isBusy = true
       this.serverListData = []
 
       try {

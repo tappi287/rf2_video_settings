@@ -41,8 +41,6 @@ export const userScreenShots =
   'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-348'],
  ['https://forum.studio-397.com/index.php?attachments/20201108231324_1-jpg.34446/', 'svictor',
   'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-349'],
- ['https://forum.studio-397.com/index.php?attachments/365960_20201110141049_1-png.34504/', 'marciovs28',
-  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-349'],
  ['https://i.imgur.com/CwYk11v.jpg', 'mantasisg',
   'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-352'],
  ['https://forum.studio-397.com/index.php?attachments/20201221185422_1-jpg.35356/', 'svictor',
@@ -57,8 +55,6 @@ export const userScreenShots =
  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-256#post-967468'],
 ['https://forum.studio-397.com/index.php?attachments/2020-08-31-18-24_01-png.33144/', 'MiguelVallejo',
  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-344#post-1037906'],
-['https://i.imgur.com/hQV5bIx.jpg', 'TheNexpresso',
- 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-258#post-968996'],
 ['https://forum.studio-397.com/index.php?attachments/jsp3-jpg.19130/', 'sg333',
  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-258#post-969316'],
 ['https://forum.studio-397.com/index.php?attachments/2021-02-18-17-18_01-png.37087/', 'MiguelVallejo',
@@ -128,7 +124,11 @@ export const userScreenShots =
 ['https://live.staticflickr.com/65535/51875755280_5e44294401_k.jpg', 'Franck',
 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090813'],
 ['https://live.staticflickr.com/65535/51877483044_6cec9ac889_k.jpg', 'Franck',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090946']
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090946'],
+['https://forum.studio-397.com/index.php?attachments/20220208114143_1-jpg.43035/', 'Fabian Balle',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090578'],
+['https://live.staticflickr.com/65535/51875647017_ff265b3821_k.jpg', 'Franck',
+'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090928']
 ]
 
 Vue.prototype.$eventHub = new Vue(); // Global event bus

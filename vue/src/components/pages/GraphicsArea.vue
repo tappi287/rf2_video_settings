@@ -281,8 +281,8 @@
         </p>
       </div>
       <div class="d-block text-right">
-        <b-button variant="rf-orange" @click="deleteConfig" class="mr-2">Delete Settings</b-button>
-        <b-button variant="rf-secondary" @click="abortConfig">Abort</b-button>
+        <b-button variant="danger" @click="deleteConfig" class="mr-2">Delete Settings</b-button>
+        <b-button variant="secondary" @click="abortConfig">Abort</b-button>
       </div>
     </template>
   </b-modal>

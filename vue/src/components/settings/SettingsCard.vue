@@ -24,7 +24,8 @@
     <template v-if="!viewMode">
       <!-- View Mode Grid -->
       <SettingItem v-for="setting in searchedOptions" :key="setting.key"
-               :setting="setting" variant="rf-orange" class="mr-3 mb-3" :fixedWidth="fixedWidth" :frozen="frozen"
+               :setting="setting" class="mr-3 mb-3" :fixedWidth="fixedWidth" :frozen="frozen"
+               :variant="settingDisabledLocal(setting) ? 'rf-secondary': 'rf-orange'"
                :show_performance="showPerformance"
                :disabled="settingDisabledLocal(setting)"
                :group-id="groupId"
@@ -37,7 +38,8 @@
       <b-list-group class="text-left">
         <b-list-group-item class="bg-transparent" v-for="setting in searchedOptions"
                            :key="setting.key">
-          <SettingItem :setting="setting" variant="rf-orange" :fixedWidth="fixedWidth" :frozen="frozen"
+          <SettingItem :setting="setting" :fixedWidth="fixedWidth" :frozen="frozen"
+                   :variant="settingDisabledLocal(setting) ? 'rf-secondary' : 'rf-orange'"
                    :show_performance="showPerformance"
                    :disabled="settingDisabledLocal(setting)"
                    :group-id="groupId"

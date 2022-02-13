@@ -70,7 +70,8 @@
       </template>
       <SettingItem v-for="setting in headlightSettings.options" :key="setting.key"
                :setting="setting" class="mr-3 mb-3" group-id="headlight-settings-area" :fixed-width="true"
-               :variant="isHeadlightAppEnabled || setting.key === 'enabled' ? 'rf-orange' : 'secondary'"
+               :variant="isHeadlightAppEnabled || setting.key === 'enabled' ? 'rf-orange' : 'rf-secondary'"
+               :disabled="!isHeadlightAppEnabled && setting.key !== 'enabled'"
                @setting-changed="updateSetting"
                @make-toast="makeToast">
       </SettingItem>
@@ -116,7 +117,7 @@
       <ControllerAssignment
           v-for="setting in controllerAssignments.options" :key="setting.key"
           :setting="setting" class="mr-3 mb-3" group-id="hdl-controller-area" :fixed-width="true"
-          :variant="isHeadlightAppEnabled ? 'rf-orange' : 'secondary'"
+          :variant="isHeadlightAppEnabled ? 'rf-orange' : 'rf-secondary'"
           @update-assignment="updateAssignment"
           @make-toast="makeToast">
       </ControllerAssignment>

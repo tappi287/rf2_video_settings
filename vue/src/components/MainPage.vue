@@ -9,9 +9,6 @@
                :class="navActive !== 0 ? 'r-icon bottom' : 'r-icon bottom inv'"></b-img>
       </b-navbar-brand>
       <b-nav>
-        <b-nav-item v-if="false" :active="navActive === 0" @click="navActive=0" link-classes="pl-0">
-          Dash
-        </b-nav-item>
         <b-nav-item-dropdown text="Settings"
                              :toggle-class="[1,2,3].indexOf(navActive) !== -1 ? 'used pl-0' : 'pl-0'">
           <b-dropdown-item>
@@ -565,11 +562,12 @@ export default {
   width: 97%;
   margin: 0 auto 0 auto;
 }
+.nav { margin-top: 0.225rem; }
 .vr-nav-container {
   position: relative; width: 1rem;
 }
 .vr-nav-font {
-  position: absolute;color: black; z-index: 999; font-size: 0.875rem; left: 0.075rem; top: 0.175rem;
+  position: absolute;color: black; z-index: 999; font-size: 0.875rem; left: 0.115rem; top: 0.185rem;
 }
 .vr-nav-icon {
   position: absolute;
