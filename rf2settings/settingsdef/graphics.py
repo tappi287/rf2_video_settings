@@ -361,7 +361,7 @@ reshade_dither = {
                           },
 }
 reshade_fas = {
-    'FAS_Strength': {'name': 'Strength', 'value': 300.0,
+    'FAS_Strength': {'name': 'Strength', 'value': 125.0,
                      'settings': (
                          {'settingType': 'range', 'min': 0.0, 'max': 250.0, 'step': 1.0, 'desc': '[Default 125]'},
                      )
