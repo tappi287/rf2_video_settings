@@ -32,7 +32,7 @@ class VrToolKit:
                     'VRT_COLOR_CORRECTION_MODE': 0, 'VRT_ANTIALIASING_MODE': 0, 'LUT_TextureName': '"lut.png"'}
 
     techniques_name = 'Techniques'
-    techniques_sorting = 'TechniquesSorting'
+    techniques_sorting = 'TechniqueSorting'
 
     def __init__(self, options: Iterator[BaseOptions], location: Path):
         self.options = options
