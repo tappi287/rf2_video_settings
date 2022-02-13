@@ -392,6 +392,20 @@ class ReshadeAaSettings(BaseOptions):
         self.read_from_python_dict(graphics.reshade_aa)
 
 
+class ReshadeClaritySettings(BaseOptions):
+    key = 'reshade_clarity_settings'
+    app_key = 'reshade_clarity_settings'
+    title = 'ReShade Clarity'
+    target = OptionsTarget.reshade
+    mandatory = False
+
+    def __init__(self):
+        super(ReshadeClaritySettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(graphics.reshade_clarity)
+
+
 class OpenVrFsrSettings(BaseOptions):
     key = 'openvrfsr_settings'
     app_key = 'openvrfsr_settings'

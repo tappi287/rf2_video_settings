@@ -121,6 +121,19 @@
     </template>
   </SettingsCard>
 
+  <!-- ReShade Clarity.fx Settings -->
+  <SettingsCard v-if="clarity"
+                :preset="preset" :idx="idx" settings-key="reshade_clarity_settings"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
+                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
+                :previous-preset-name="previousPresetName"
+                :view_mode="viewMode"
+                :search="search" header-icon="image"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
+  </SettingsCard>
+
   <!-- ReShade FAS Settings -->
   <SettingsCard v-if="sharpeningFas"
                 :preset="preset" :idx="idx" settings-key="reshade_fas_settings"
@@ -452,6 +465,10 @@ export default {
     antiAliasing: function () {
       if (this.preset === undefined) { return false } if (this.showAllReshade) { return true }
       return this._getSetSettingsOption('reshade_settings', 'VRT_ANTIALIASING_MODE') === 1;
+    },
+    clarity: function () {
+      if (this.preset === undefined) { return false } if (this.showAllReshade) { return true }
+      return this._getSetSettingsOption('reshade_settings', 'use_clarity');
     },
   },
   created() {

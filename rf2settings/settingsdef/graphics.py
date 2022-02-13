@@ -273,6 +273,13 @@ reshade_settings = {
                         {'value': True, 'name': 'Enabled'},
                     ),
                     },
+    'use_clarity': {'name': 'Use Clarity.fx', 'value': False,
+                    'desc': 'GPU intensive shader to increase image clarity.',
+                    'settings': (
+                        {'value': False, 'name': 'Disabled'},
+                        {'value': True, 'name': 'Enabled'},
+                    ),
+                    },
     'VRT_SHARPENING_MODE': {'name': 'Sharpening Mode', 'value': 1, 'desc': 'Configures the sharpening/clarity modes',
                             'settings': (
                                 {'value': 0, 'name': 'Disabled'},
@@ -472,4 +479,67 @@ reshade_aa = {
                                       'increase performance. [Default 0.0]'},
                          )
                          },
+}
+reshade_clarity = {
+    'ClarityRadius': {'name': 'Clarity Radius', 'value': 1,
+                      'desc': 'Higher values will increase the radius of the effect.',
+                      'settings': (
+                          {'value': 0, 'name': '0'},
+                          {'value': 1, 'name': '1'},
+                          {'value': 2, 'name': '2'},
+                          {'value': 3, 'name': '3'},
+                          {'value': 4, 'name': '4'}
+                      ),
+                      },
+    'ClarityOffset': {'name': 'Clarity Offset', 'value': 2.00,
+                      'settings': (
+                          {'settingType': 'range', 'min': 1.00, 'max': 5.00, 'step': 0.10,
+                           'desc': 'Additional adjustment for the blur radius. Increasing '
+                                   'the value will increase the radius.'},
+                      )
+                      },
+    'ClarityBlendMode': {'name': 'Clarity Blend Mode', 'value': 2,
+                         'desc': 'Blend modes determine how the clarity mask is applied to the original image',
+                         'settings': (
+                             {'value': 0, 'name': 'Soft Light'},
+                             {'value': 1, 'name': 'Overlay'},
+                             {'value': 2, 'name': 'Hard Light [Default]'},
+                             {'value': 3, 'name': 'Multiply'},
+                             {'value': 4, 'name': 'Vivid Light'},
+                             {'value': 5, 'name': 'Linear Light'},
+                             {'value': 6, 'name': 'Addition'},
+                         ),
+                         },
+    'ClarityBlendIfDark': {'name': 'Clarity Blend If Dark', 'value': 50,
+                           'settings': (
+                               {'settingType': 'range', 'min': 0, 'max': 255, 'step': 1,
+                                'desc': 'Any pixels below this value will be excluded from the effect. Set to 50 to '
+                                        'target mid-tones.'},
+                           )
+                           },
+    'ClarityBlendIfLight': {'name': 'Clarity Blend If Light', 'value': 205,
+                            'settings': (
+                                {'settingType': 'range', 'min': 0, 'max': 255, 'step': 1,
+                                 'desc': 'Any pixels above this value will be excluded from the effect. '
+                                         'Set to 205 to target mid-tones.'},
+                            )
+                            },
+    'ClarityStrength': {'name': 'Clarity Strength', 'value': 0.400,
+                        'settings': (
+                            {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.005,
+                             'desc': 'Adjusts the strength of the effect'},
+                        )
+                        },
+    'ClarityDarkIntensity': {'name': 'Clarity Dark Intensity', 'value': 0.400,
+                             'settings': (
+                                 {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.005,
+                                  'desc': 'Adjusts the strength of dark halos.'},
+                             )
+                             },
+    'ClarityLightIntensity': {'name': 'Clarity Light Intensity', 'value': 0.000,
+                              'settings': (
+                                  {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.005,
+                                   'desc': 'Adjusts the strength of light halos.'},
+                              )
+                              },
 }

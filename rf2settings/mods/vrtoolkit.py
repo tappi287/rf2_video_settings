@@ -1,16 +1,20 @@
 import logging
 import shutil
 from pathlib import Path
-from typing import Iterator
+from typing import Iterator, Tuple
 from zipfile import ZipFile
 
-from rf2settings.globals import get_data_dir, RESHADE_ZIP, RESHADE_PRESET_DIR, RESHADE_TARGET_PRESET_NAME, \
-    RESHADE_INI_NAME
+from rf2settings.globals import get_data_dir
 from rf2settings.preset.settings_model import BaseOptions
 from rf2settings.settingsdef import graphics
 
 
 class VrToolKit:
+    RESHADE_ZIP = 'VRToolkitReshadeUniversal_0.9.7-pre_plus_Clarity.zip'
+    RESHADE_PRESET_DIR = 'ReShade/Presets/'
+    RESHADE_TARGET_PRESET_NAME = 'rf2_widget_preset.ini'
+    RESHADE_INI_NAME = 'ReShade.ini'
+
     dll_tgt = ('ReShade64.dll', 'dxgi.dll')
     extra_files = [
         ('rF2_nonPBRmodDay1.png', 'ReShade/Textures'),
@@ -27,6 +31,9 @@ class VrToolKit:
     preprocessor = {'VRT_SHARPENING_MODE': 0, 'VRT_USE_CENTER_MASK': 0, 'VRT_DITHERING': 0,
                     'VRT_COLOR_CORRECTION_MODE': 0, 'VRT_ANTIALIASING_MODE': 0, 'LUT_TextureName': '"lut.png"'}
 
+    techniques_name = 'Techniques'
+    techniques_sorting = 'TechniquesSorting'
+
     def __init__(self, options: Iterator[BaseOptions], location: Path):
         self.options = options
         self.location = location
@@ -34,6 +41,10 @@ class VrToolKit:
         self.error = str()
         self.ini_settings = dict()
         self.ini_default_settings = dict()
+
+        self.vr_toolkit_ini_keys = set()
+        self.clarity_ini_keys = set()
+
         self._read_setting_defaults()
 
     def _read_setting_defaults(self):
@@ -45,13 +56,17 @@ class VrToolKit:
         settings_dict.update(graphics.reshade_cas)
         settings_dict.update(graphics.reshade_cc)
         settings_dict.update(graphics.reshade_lut)
+        self.vr_toolkit_ini_keys = set(settings_dict.keys())
+
+        settings_dict.update(graphics.reshade_clarity)
+        self.clarity_ini_keys = set(graphics.reshade_clarity.keys())
 
         for key, setting in settings_dict.items():
             self.ini_settings[key] = setting.get('value')
             self.ini_default_settings[key] = setting.get('value')
 
-    def _update_options(self, update_from_disk: bool = False) -> bool:
-        use_reshade = False
+    def _update_options(self, update_from_disk: bool = False) -> Tuple[bool, bool]:
+        use_reshade, use_clarity = False, False
 
         # -- Iterate Preset options
         for preset_options in self.options:
@@ -60,6 +75,8 @@ class VrToolKit:
                 if not update_from_disk:
                     if option.key == 'use_reshade':
                         use_reshade = option.value
+                    elif option.key == 'use_clarity':
+                        use_clarity = option.value
                     elif option.key in self.preprocessor:
                         self.preprocessor[option.key] = option.value
                     elif option.key in self.ini_settings:
@@ -69,6 +86,9 @@ class VrToolKit:
                     if option.key == 'use_reshade':
                         option.value = True
                         option.exists_in_rf = True
+                    if option.key == 'use_clarity':
+                        option.value = True
+                        option.exists_in_rf = True
                     elif option.key in self.preprocessor:
                         option.value = self.preprocessor[option.key]
                         option.exists_in_rf = True
@@ -76,10 +96,10 @@ class VrToolKit:
                         option.value = self.ini_settings[option.key]
                         option.exists_in_rf = True
 
-        return use_reshade
+        return use_reshade, use_clarity
 
     def _work_thru_reshade_release_zip(self, use_reshade: bool, bin_dir: Path) -> list:
-        reshade_zip = get_data_dir() / RESHADE_ZIP
+        reshade_zip = get_data_dir() / self.RESHADE_ZIP
         remove_dirs = list()
 
         with ZipFile(reshade_zip, 'r') as zip_obj:
@@ -143,8 +163,8 @@ class VrToolKit:
         else:
             return f'{key}={value:.6f}\n'
 
-    def _update_preset_ini(self, reshade_preset: Path):
-        """ Write updated values to Generic VRToolKit Preset """
+    def _update_preset_ini(self, reshade_preset: Path, use_clarity = False):
+        """ Write updated values to custom VRToolKit Preset """
         p_dict, preprocessor_values = self.preprocessor.copy(), ''
 
         # -- Prepare Preprocessor values
@@ -160,18 +180,39 @@ class VrToolKit:
             # -- Apply settings to Preset Ini file lines
             configured_preset_lines = list()
             for line in preset_lines:
+                # -- Fill PreprocessorDefinitions
                 if line.startswith(self.preprocessor_name) and preprocessor_values:
                     line = f'{self.preprocessor_name}={preprocessor_values}\n'
+                # -- Fill Techniques
+                elif line.startswith(self.techniques_name):
+                    line = f'{self.techniques_name}=VRToolkit@VRToolkit.fx' \
+                           f'{",Clarity@Clarity.fx" if use_clarity else ""}\n'
+                # -- Fill TechniqueSorting
+                elif line.startswith(self.techniques_sorting):
+                    line = f'{self.techniques_sorting}=VRToolkit@VRToolkit.fx' \
+                           f'{",Clarity@Clarity.fx" if use_clarity else ""}\n'
                 configured_preset_lines.append(line)
 
                 if line.replace('\r', '').replace('\n', '') == '[VRToolkit.fx]':
                     break
 
-            # -- Add Ini Settings
+            # -- Add [VRToolkit.fx] Ini Settings
             for k, v in self.ini_settings.items():
-                if v == self.ini_default_settings[k]:
+                if k not in self.vr_toolkit_ini_keys:
                     continue
                 configured_preset_lines.append(self._add_ini_value_line(k, v))
+
+            # -- Add [Clarity.fx] Ini Settings
+            clarity_fx_lines = list()
+            for k, v in self.ini_settings.items():
+                if k not in self.clarity_ini_keys:
+                    continue
+                clarity_fx_lines.append(self._add_ini_value_line(k, v))
+
+            if use_clarity:
+                configured_preset_lines.append('')
+                configured_preset_lines.append('[Clarity.fx]\n')
+                configured_preset_lines.extend(clarity_fx_lines)
 
             # - Write Preset Ini file
             logging.info('Updating ReShade Preset file: %s', reshade_preset)
@@ -190,9 +231,9 @@ class VrToolKit:
     @staticmethod
     def _update_reshade_ini(base_dir: Path):
         """ update the global reshade preset ini to update preset path """
-        reshade_preset_dir_str = RESHADE_PRESET_DIR.replace('/', '\\')
-        reshade_preset_path = f".\\{reshade_preset_dir_str}{RESHADE_TARGET_PRESET_NAME}"
-        reshade_ini = base_dir / RESHADE_INI_NAME
+        reshade_preset_dir_str = VrToolKit.RESHADE_PRESET_DIR.replace('/', '\\')
+        reshade_preset_path = f".\\{reshade_preset_dir_str}{VrToolKit.RESHADE_TARGET_PRESET_NAME}"
+        reshade_ini = base_dir / VrToolKit.RESHADE_INI_NAME
 
         reshade_ini_lines, updated_ini_lines = list(), list()
 
@@ -214,10 +255,10 @@ class VrToolKit:
             f.writelines(updated_ini_lines)
 
     def write(self):
-        use_reshade = self._update_options()
+        use_reshade, use_clarity = self._update_options()
 
         bin_dir = self.location / 'Bin64'
-        reshade_preset = bin_dir / RESHADE_PRESET_DIR / RESHADE_TARGET_PRESET_NAME
+        reshade_preset = bin_dir / self.RESHADE_PRESET_DIR / self.RESHADE_TARGET_PRESET_NAME
         reshade_removed = False
 
         # -- Extract ReShade files
@@ -252,7 +293,7 @@ class VrToolKit:
         self._update_reshade_ini(bin_dir)
 
         # -- Prepare writing of ReShade Preset file
-        return self._update_preset_ini(reshade_preset)
+        return self._update_preset_ini(reshade_preset, use_clarity)
 
     def _read_preset_ini(self, reshade_preset: Path) -> bool:
         """ Lookup current VRToolkit Settings on disk """
@@ -300,6 +341,6 @@ class VrToolKit:
 
     def read(self) -> bool:
         bin_dir = self.location / 'Bin64'
-        reshade_preset = bin_dir / RESHADE_PRESET_DIR / RESHADE_TARGET_PRESET_NAME
+        reshade_preset = bin_dir / self.RESHADE_PRESET_DIR / self.RESHADE_TARGET_PRESET_NAME
 
         return self._read_preset_ini(reshade_preset)
