@@ -196,12 +196,6 @@ class VrToolKit:
                 if line.replace('\r', '').replace('\n', '') == '[VRToolkit.fx]':
                     break
 
-            # -- Add [VRToolkit.fx] Ini Settings
-            for k, v in self.ini_settings.items():
-                if k not in self.vr_toolkit_ini_keys:
-                    continue
-                configured_preset_lines.append(self._add_ini_value_line(k, v))
-
             # -- Add [Clarity.fx] Ini Settings
             clarity_fx_lines = list()
             for k, v in self.ini_settings.items():
@@ -210,9 +204,16 @@ class VrToolKit:
                 clarity_fx_lines.append(self._add_ini_value_line(k, v))
 
             if use_clarity:
-                configured_preset_lines.append('')
+                configured_preset_lines.append('\n')
                 configured_preset_lines.append('[Clarity.fx]\n')
                 configured_preset_lines.extend(clarity_fx_lines)
+                configured_preset_lines.append('\n')
+
+            # -- Add [VRToolkit.fx] Ini Settings
+            for k, v in self.ini_settings.items():
+                if k not in self.vr_toolkit_ini_keys:
+                    continue
+                configured_preset_lines.append(self._add_ini_value_line(k, v))
 
             # - Write Preset Ini file
             logging.info('Updating ReShade Preset file: %s', reshade_preset)

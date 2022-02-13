@@ -493,7 +493,7 @@ reshade_clarity = {
                       },
     'ClarityOffset': {'name': 'Clarity Offset', 'value': 2.0,
                       'settings': (
-                          {'settingType': 'range', 'min': 1.00, 'max': 5.00, 'step': 0.10,
+                          {'settingType': 'range', 'min': 1.0, 'max': 5.0, 'step': 1.0,
                            'desc': 'Additional adjustment for the blur radius. Increasing '
                                    'the value will increase the radius.'},
                       )
