@@ -20,7 +20,8 @@ def close_callback(page, sockets):
 def request_close():
     logging.info('Received close request.')
     CLOSE_EVENT.set()
-    eel.closeApp()(close_js_result)
+    if hasattr(eel, 'closeApp'):
+        eel.closeApp()(close_js_result)
 
 
 def close_js_result(result):

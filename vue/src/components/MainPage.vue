@@ -361,7 +361,12 @@ export default {
     },
     navigate(target=0) {
       // Hack to re-draw if requested
-      if (target === -1) { const currentNav = this.navActive; this.navActive = 0; target = currentNav }
+      if (target === -1) {
+        const currentNav = this.navActive
+        this.navActive = 0
+        this.$nextTick(() => { this.navigate(currentNav) })
+        return
+      }
       this.navActive = target
     },
     updateRfactorLiveState: function (event) {
@@ -518,7 +523,7 @@ export default {
   width: 97%;
   margin: 0 auto 0 auto;
 }
-.nav { margin-top: 0.225rem; }
+.nav { margin-top: .175rem; }
 .vr-nav-container {
   position: relative; width: 1rem;
 }
