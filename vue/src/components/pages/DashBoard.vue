@@ -154,7 +154,6 @@ export default {
   activated() {
     console.log('Dashboard activated')
     this.resize()
-    this.$refs.slider.play()
     this.updateFavs()
   },
   updated() {

@@ -1,5 +1,5 @@
 <template>
-  <div id="main" class="position-relative" v-cloak>
+  <div id="main" class="position-relative" v-cloak @focus.once="startSlideShow">
     <b-navbar class="text-left pl-0 pr-0" type="dark">
       <b-navbar-brand href="#" @click="navActive=0" class="r-icon-brand position-relative"
                       v-b-popover.bottomleft.hover="'DashBoard'">
