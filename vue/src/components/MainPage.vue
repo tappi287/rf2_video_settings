@@ -359,7 +359,11 @@ export default {
       })
       this.$eventHub.$emit('play-audio', 'audioSelect')
     },
-    navigate(target=0) {this.navActive = target },
+    navigate(target=0) {
+      // Hack to re-draw if requested
+      if (target === -1) { const currentNav = this.navActive; this.navActive = 0; target = currentNav }
+      this.navActive = target
+    },
     updateRfactorLiveState: function (event) {
       this.live = event.detail
       if (this.live) { this.stopSlideShow(); this.wasLive = true }
@@ -483,6 +487,12 @@ export default {
     navSearchEnabled() {
       return this.searchActive.indexOf(this.navActive) !== -1;
     },
+  },
+  created() {
+    this.$eventHub.$on('navigate', this.navigate)
+  },
+  beforeDestroy() {
+    this.$eventHub.$off('navigate', this.navigate)
   },
   components: {
     SessionPresetArea,

@@ -204,7 +204,6 @@ export default {
     },
     playAudio(elemId) {
       let a = document.getElementById(elemId)
-      console.log('Playing audio element:', a)
       if (a !== undefined) { a.play() }
     },
   },

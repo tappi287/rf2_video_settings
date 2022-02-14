@@ -72,6 +72,8 @@ export default {
         this.makeToast('Detected settings deviations to previously selected Preset ' + this.previousPresetName +
             ' on disk. Pointing you to the "Current Preset" reflecting the actual settings on disk.',
             'secondary',this.getPresetTypeName(this.presetType), true, 15000)
+        // Force re-draw of Presets
+        this.$eventHub.$emit('navigate', -1)
       }
 
       for (let i = 0; i <= this.presets.length; i++) {
