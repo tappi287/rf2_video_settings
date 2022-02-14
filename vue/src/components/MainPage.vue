@@ -310,20 +310,6 @@
         </template>
       </template>
     </b-overlay>
-
-
-    <!-- Audio -->
-    <div style="display: none">
-      <audio src="@/assets/UI_Confirm.mp4" id="audioConfirm"></audio>
-      <audio src="@/assets/UI_Ping.mp4" id="audioPing"></audio>
-      <audio src="@/assets/UI_Indicator.mp4" id="audioIndicator"></audio>
-      <audio src="@/assets/UI_Cute-Select.mp4" id="audioCuteSelect"></audio>
-      <audio src="@/assets/UI_Switch.mp4" id="audioSwitch"></audio>
-      <audio src="@/assets/UI_SwitchOn.mp4" id="audioSwitchOn"></audio>
-      <audio src="@/assets/UI_SwitchOff.mp4" id="audioSwitchOff"></audio>
-      <audio src="@/assets/UI_Select.mp4" id="audioSelect"></audio>
-      <audio src="@/assets/UI_Flash.mp4" id="audioFlash"></audio>
-    </div>
   </div>
 </template>
 
@@ -342,27 +328,6 @@ import {getEelJsonObject, sleep} from "@/main";
 import BenchMark from "@/components/benchmark/Benchmark";
 import GraphicsPresetArea from "@/components/presets/GraphicsPresetArea";
 import SessionPresetArea from "@/components/presets/SessionPresetArea";
-// --- </ Prepare receiving rfactor live events
-window.eel.expose(rfactorLiveFunc, 'rfactor_live')
-async function rfactorLiveFunc (event) {
-  const liveEvent = new CustomEvent('rfactor-live-event', {detail: event})
-  window.dispatchEvent(liveEvent)
-}
-// --- />
-// --- </ Prepare receiving rfactor status events
-window.eel.expose(rfactorStatusFunc, 'rfactor_status')
-async function rfactorStatusFunc (event) {
-  const statusEvent = new CustomEvent('rfactor-status-event', {detail: event})
-  window.dispatchEvent(statusEvent)
-}
-// --- />
-// --- </ Prepare receiving play audio events
-window.eel.expose(playAudio, 'play_audio')
-async function playAudio (event) {
-  const audioEvent = new CustomEvent('play-audio-event', {detail: event})
-  window.dispatchEvent(audioEvent)
-}
-// --- />
 
 export default {
   name: 'MainPage',
@@ -392,15 +357,7 @@ export default {
         variant: category,
         solid: true,
       })
-      this.playAudio('audioSelect')
-    },
-    externalPlayAudioEvent(event) {
-      if (event.detail === undefined) { return }
-      this.playAudio(event.detail)
-    },
-    playAudio(elemId) {
-      let a = document.getElementById(elemId)
-      if (a !== undefined) { a.play() }
+      this.$eventHub.$emit('play-audio', 'audioSelect')
     },
     navigate(target=0) {this.navActive = target },
     updateRfactorLiveState: function (event) {
@@ -448,12 +405,12 @@ export default {
 
       this.setBusy(false)
     },
-    returnedFromLive: function () {
+    returnedFromLive: async function () {
       this.makeToast('Rfactor 2 closed. Refreshing settings in 5 seconds.', 'success', 'rFactor 2 Control')
+
       // Add a timeout to let rF release its resources
-      setTimeout(() => {
-        this._refreshPresets()
-      }, 3000)
+      await sleep(5000)
+      await this._refreshPresets()
     },
     importPreset: async function (importPreset) {
       if (importPreset.CHAT !== undefined) {
@@ -503,6 +460,7 @@ export default {
         this.makeToast(r.msg, 'danger', 'SteamVR Launch')
       }
     },
+    startSlideShow: async function() { await sleep(5000); await this.$refs.dash.$refs.slider.play() },
     stopSlideShow: async function() {
       if (this.$refs.dash !== undefined) { await this.$refs.dash.$refs.slider.stop() }
     },
@@ -525,18 +483,6 @@ export default {
     navSearchEnabled() {
       return this.searchActive.indexOf(this.navActive) !== -1;
     },
-  },
-  created() {
-    window.addEventListener('rfactor-live-event', this.updateRfactorLiveState)
-    window.addEventListener('rfactor-status-event', this.updateRfactorStatus)
-    window.addEventListener('play-audio-event', this.externalPlayAudioEvent)
-    this.$eventHub.$on('play-audio', this.playAudio)
-  },
-  beforeDestroy() {
-    this.$eventHub.$off('play-audio')
-    window.removeEventListener('rfactor-live-event', this.updateRfactorLiveState)
-    window.removeEventListener('rfactor-status-event', this.updateRfactorStatus)
-    window.removeEventListener('play-audio-event', this.externalPlayAudioEvent)
   },
   components: {
     SessionPresetArea,

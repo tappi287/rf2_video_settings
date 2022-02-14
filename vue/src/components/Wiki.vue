@@ -344,17 +344,17 @@
       <b-button class="ml-2" variant="danger" @click="testException">Produce Test App Exception</b-button>
       <p></p>
       <b-button-group size="sm">
-        <b-button @click="$eventHub.$emit('play-audio', 'audioConfirm')">audioConfirm</b-button>
-        <b-button @click="$eventHub.$emit('play-audio', 'audioPing')">audioPing</b-button>
-        <b-button @click="$eventHub.$emit('play-audio', 'audioIndicator')">audioIndicator</b-button>
-        <b-button @click="$eventHub.$emit('play-audio', 'audioSelect')">audioSelect</b-button>
-        <b-button @click="$eventHub.$emit('play-audio', 'audioCuteSelect')">audioCuteSelect</b-button>
+        <b-button @click="playAudio('audioConfirm')">audioConfirm</b-button>
+        <b-button @click="playAudio('audioPing')">audioPing</b-button>
+        <b-button @click="playAudio('audioIndicator')">audioIndicator</b-button>
+        <b-button @click="playAudio('audioSelect')">audioSelect</b-button>
+        <b-button @click="playAudio('audioCuteSelect')">audioCuteSelect</b-button>
       </b-button-group>
       <b-button-group size="sm">
-        <b-button @click="$eventHub.$emit('play-audio', 'audioSwitch')">audioSwitch</b-button>
-        <b-button @click="$eventHub.$emit('play-audio', 'audioSwitchOn')">audioSwitchOn</b-button>
-        <b-button @click="$eventHub.$emit('play-audio', 'audioSwitchOff')">audioSwitchOff</b-button>
-        <b-button @click="$eventHub.$emit('play-audio', 'audioFlash')">audioFlash</b-button>
+        <b-button @click="playAudio('audioSwitch')">audioSwitch</b-button>
+        <b-button @click="playAudio('audioSwitchOn')">audioSwitchOn</b-button>
+        <b-button @click="playAudio('audioSwitchOff')">audioSwitchOff</b-button>
+        <b-button @click="playAudio('audioFlash')">audioFlash</b-button>
       </b-button-group>
     </b-card>
   </div>
@@ -376,6 +376,7 @@ export default {
       this.$emit('make-toast', message, category, title, append, delay)
     },
     testException: async function () { await window.eel.test_app_exception() },
+    playAudio: async function (audioEffectName) { this.$eventHub.$emit('play-audio', audioEffectName) },
   },
   components: {
   },

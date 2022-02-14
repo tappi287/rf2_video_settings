@@ -5,8 +5,7 @@
       <b-overlay :show="dragActive" variant="white" :no-center="true" opacity="0.9" :fixed="true">
 
         <!-- Main component -->
-        <MainPage v-on:error="setError" ref="main" :rfactor-version="rfactorVersion"
-              :key="mainComponentKey"/>
+        <MainPage v-on:error="setError" ref="main" :rfactor-version="rfactorVersion"/>
 
         <!-- Drag Overlay Content-->
         <template #overlay>
@@ -71,6 +70,19 @@
     <div class="mt-3 main-footer small font-weight-lighter">
       <AppUpdater></AppUpdater>
     </div>
+
+    <!-- Audio -->
+    <div style="display: none">
+      <audio src="@/assets/UI_Confirm.mp4" id="audioConfirm"></audio>
+      <audio src="@/assets/UI_Ping.mp4" id="audioPing"></audio>
+      <audio src="@/assets/UI_Indicator.mp4" id="audioIndicator"></audio>
+      <audio src="@/assets/UI_Cute-Select.mp4" id="audioCuteSelect"></audio>
+      <audio src="@/assets/UI_Switch.mp4" id="audioSwitch"></audio>
+      <audio src="@/assets/UI_SwitchOn.mp4" id="audioSwitchOn"></audio>
+      <audio src="@/assets/UI_SwitchOff.mp4" id="audioSwitchOff"></audio>
+      <audio src="@/assets/UI_Select.mp4" id="audioSelect"></audio>
+      <audio src="@/assets/UI_Flash.mp4" id="audioFlash"></audio>
+    </div>
   </div>
 </template>
 
@@ -87,6 +99,26 @@ async function appExceptionFunc (event) {
   window.dispatchEvent(excEvent)
 }
 // --- />
+// --- </ Prepare receiving play audio events
+window.eel.expose(playAudio, 'play_audio')
+async function playAudio (event) {
+  const audioEvent = new CustomEvent('play-audio-event', {detail: event})
+  window.dispatchEvent(audioEvent)
+}
+// --- />
+// --- </ Prepare receiving rfactor live events
+window.eel.expose(rfactorLiveFunc, 'rfactor_live')
+async function rfactorLiveFunc (event) {
+  const liveEvent = new CustomEvent('rfactor-live-event', {detail: event})
+  window.dispatchEvent(liveEvent)
+}
+// --- />
+// --- </ Prepare receiving rfactor status events
+window.eel.expose(rfactorStatusFunc, 'rfactor_status')
+async function rfactorStatusFunc (event) {
+  const statusEvent = new CustomEvent('rfactor-status-event', {detail: event})
+  window.dispatchEvent(statusEvent)
+}
 
 export default {
   name: 'App',
@@ -98,7 +130,6 @@ export default {
       rfactorPath: '',
       rfOverwriteLocation: null,
       rfOverwriteLocationValid: null,
-      mainComponentKey: 0,
     }
   },
   methods: {
@@ -163,7 +194,19 @@ export default {
     },
     forceReRender() {
       this.mainComponentKey += 1
-    }
+    },
+    externalPlayAudioEvent(event) {
+      if (event.detail === undefined) {
+        console.error('Received external play audio event but no event.details provided!')
+        return
+      }
+      this.playAudio(event.detail)
+    },
+    playAudio(elemId) {
+      let a = document.getElementById(elemId)
+      console.log('Playing audio element:', a)
+      if (a !== undefined) { a.play() }
+    },
   },
   components: {
     AppUpdater,
@@ -184,13 +227,19 @@ export default {
     dropZone.addEventListener('dragover', this.handleDragOver, false)
     dropZone.addEventListener('dragleave', this.handleDragLeave, false)
     dropZone.addEventListener('drop', this.handleFileDrop, false)
+
     window.addEventListener('beforeunload', this.requestClose)
+
+    window.addEventListener('rfactor-live-event', this.$refs.main.updateRfactorLiveState)
+    window.addEventListener('rfactor-status-event', this.$refs.main.updateRfactorStatus)
   },
-  created() {
+  async created() {
     window.addEventListener('app-exception-event', this.setException)
-    this.getRfVersion()
-    // Hack Browser sometimes not rendering UI
-    setTimeout(() => { this.forceReRender()}, 10);
+    window.addEventListener('play-audio-event', this.externalPlayAudioEvent)
+
+    await this.getRfVersion()
+
+    this.$eventHub.$on('play-audio', this.playAudio)
   },
   computed: {
     rfactorLocationPlaceholder: function () {
@@ -198,8 +247,15 @@ export default {
       return 'Path eg. D:\\Steam\\steamapps\\common\\rFactor 2\\'
     }
   },
+  beforeDestroy() {
+    window.removeEventListener('rfactor-live-event', this.$refs.main.updateRfactorLiveState)
+    window.removeEventListener('rfactor-status-event', this.$refs.main.updateRfactorStatus)
+    this.requestClose()
+  },
   destroyed() {
+    this.$eventHub.$off('play-audio')
     window.removeEventListener('app-exception-event', this.setException)
+    window.removeEventListener('play-audio-event', this.externalPlayAudioEvent)
   }
 }
 
