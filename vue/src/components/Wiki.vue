@@ -5,7 +5,7 @@
         <h6 class="mb-0 text-center"><span class="title">About</span></h6>
       </template>
       <a href="https://www.github.com/tappi287/rf2_video_settings" target="_blank" class="text-rf-orange">
-        rf2 Settings Widget v{{ ver }}
+        rF2 Settings Widget v{{ ver }}
       </a>
       published under MIT license &#169; 2020-2021
       <a href="https://sim-site.netlify.app" target="_blank" class="text-rf-orange">Stefan Tapper</a>
@@ -362,13 +362,11 @@
 
 <script>
 
-import {version} from "../../package.json";
-
 export default {
   name: "AppWiki",
   data: function () {
     return {
-      ver: version,
+      ver: process.env.VUE_APP_VERSION,
     }
   },
   methods: {

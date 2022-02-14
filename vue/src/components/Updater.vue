@@ -24,7 +24,6 @@
 
 <script>
 import {getRequest} from '@/main'
-import {version} from '../../package.json';
 
 const GIT_RELEASE_URL = 'https://api.github.com/repos/tappi287/rf2_video_settings/releases/latest'
 
@@ -57,7 +56,7 @@ export default {
         return
       }
 
-      if (version >= newVersion) { this.updatedVersion = ''; return }
+      if (process.env.VUE_APP_VERSION >= newVersion) { this.updatedVersion = ''; return }
       console.log('Found updated Version', newVersion)
       this.updatedVersion = newVersion
     },
