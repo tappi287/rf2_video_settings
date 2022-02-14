@@ -307,7 +307,7 @@ class VideoSettings(BaseOptions):
 class ReshadeSettings(BaseOptions):
     key = 'reshade_settings'
     app_key = 'reshade_settings'
-    title = 'VRToolkit'
+    title = 'VRToolkit + ReShade'
     target = OptionsTarget.reshade
     mandatory = False
 
