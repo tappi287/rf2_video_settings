@@ -12,6 +12,11 @@ from rf2settings.utils import AppExceptionHook
 CLOSE_EVENT = gevent.event.Event()
 
 
+def close_callback(page, sockets):
+    logging.info('Received eel close callback. Shutting down application. %s %s', page, sockets)
+    CLOSE_EVENT.set()
+
+
 def request_close():
     logging.info('Received close request.')
     CLOSE_EVENT.set()

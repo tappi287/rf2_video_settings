@@ -7,7 +7,7 @@ import eel
 import gevent
 
 from rf2settings.app import expose_app_methods
-from rf2settings.app.app_main import CLOSE_EVENT
+from rf2settings.app.app_main import CLOSE_EVENT, close_callback
 from rf2settings.app_settings import AppSettings
 from rf2settings.gamecontroller import controller_greenlet, controller_event_loop
 from rf2settings.globals import FROZEN
@@ -68,7 +68,7 @@ def start_eel(npm_serve=True):
 
     # TODO: fetch OSError port in use
     try:
-        eel.start(page, host=host, port=port, block=False)
+        eel.start(page, host=host, port=port, block=False, close_callback=close_callback)
     except EnvironmentError:
         # If Chrome isn't found, fallback to Microsoft Edge on Win10 or greater
         if sys.platform in ['win32', 'win64'] and int(platform.release()) >= 10:
