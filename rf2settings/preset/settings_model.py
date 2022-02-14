@@ -392,10 +392,26 @@ class ReshadeAaSettings(BaseOptions):
         self.read_from_python_dict(graphics.reshade_aa)
 
 
+class ReshadeClarityFxSettings(BaseOptions):
+    # PreProcessor Definitions
+    key = 'reshade_clarity_fx_settings'
+    app_key = 'reshade_clarity_fx_settings'
+    title = 'ReShade Clarity2'
+    target = OptionsTarget.reshade
+    mandatory = False
+
+    def __init__(self):
+        super(ReshadeClarityFxSettings, self).__init__()
+
+        # -- Read Default options
+        self.read_from_python_dict(graphics.clarity_settings)
+
+
 class ReshadeClaritySettings(BaseOptions):
+    # Options
     key = 'reshade_clarity_settings'
     app_key = 'reshade_clarity_settings'
-    title = 'ReShade Clarity'
+    title = 'Clarity Options'
     target = OptionsTarget.reshade
     mandatory = False
 

@@ -121,7 +121,18 @@
     </template>
   </SettingsCard>
 
-  <!-- ReShade Clarity.fx Settings -->
+  <!-- ReShade Clarity2.fx PreProcessor Definitions -->
+  <SettingsCard :preset="preset" :idx="idx" settings-key="reshade_clarity_fx_settings"
+                :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
+                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
+                :previous-preset-name="previousPresetName"
+                :view_mode="viewMode"
+                :search="search" header-icon="image"
+                @update-setting="updateSetting"
+                @set-busy="setBusy"
+                @make-toast="makeToast">
+  </SettingsCard>
+  <!-- ReShade Clarity2.fx Options -->
   <SettingsCard v-if="clarity"
                 :preset="preset" :idx="idx" settings-key="reshade_clarity_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
@@ -468,7 +479,7 @@ export default {
     },
     clarity: function () {
       if (this.preset === undefined) { return false } if (this.showAllReshade) { return true }
-      return this._getSetSettingsOption('reshade_settings', 'use_clarity');
+      return this._getSetSettingsOption('reshade_clarity_fx_settings', 'use_clarity');
     },
   },
   created() {

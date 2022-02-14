@@ -151,6 +151,12 @@
         ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
         SUCH DAMAGE.
       </pre>
+      <pre class="text-muted">
+        //Clarity2 by Ioxa
+        //Version 08.09.17 for ReShade 3.0
+        // Lightly optimized by Marot Satil for the GShade project.
+        <b-link href="https://github.com/Mortalitas/GShade" target="_blank">github.com/Mortalitas/GShade</b-link>
+      </pre>
       <h4 class="mt-5">VRToolkit - Copyright (c) 2021, Alexandre Miguel Maia. All rights reserved.</h4>
       <pre class="text-muted">
         BSD 3-Clause License

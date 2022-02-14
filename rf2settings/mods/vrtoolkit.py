@@ -29,10 +29,15 @@ class VrToolKit:
     ]
     preprocessor_name = 'PreprocessorDefinitions'
     preprocessor = {'VRT_SHARPENING_MODE': 0, 'VRT_USE_CENTER_MASK': 0, 'VRT_DITHERING': 0,
-                    'VRT_COLOR_CORRECTION_MODE': 0, 'VRT_ANTIALIASING_MODE': 0, 'LUT_TextureName': '"lut.png"'}
+                    'VRT_COLOR_CORRECTION_MODE': 0, 'VRT_ANTIALIASING_MODE': 0, 'LUT_TextureName': '"lut.png"',
+                    'ClarityRGBMode': 0, 'UseClarityDebug': 0}
 
     techniques_name = 'Techniques'
     techniques_sorting = 'TechniqueSorting'
+    vrt_shader = 'VRToolkit.fx'
+    vrt_technique = f'VRToolkit@{vrt_shader}'
+    clarity2_shader = 'Clarity2.fx'
+    clarity2_technique = f'Clarity2@{clarity2_shader}'
 
     def __init__(self, options: Iterator[BaseOptions], location: Path):
         self.options = options
@@ -176,12 +181,12 @@ class VrToolKit:
             # -- Create Preset Ini Settings
             configured_preset_lines = list()
             configured_preset_lines.append(f'{self.preprocessor_name}={preprocessor_values}\n')
-            configured_preset_lines.append(f'{self.techniques_name}=VRToolkit@VRToolkit.fx'
-                                           f'{",Clarity@Clarity.fx" if use_clarity else ""}\n')
-            configured_preset_lines.append(f'{self.techniques_sorting}=VRToolkit@VRToolkit.fx'
-                                           f'{",Clarity@Clarity.fx" if use_clarity else ""}\n')
+            configured_preset_lines.append(f'{self.techniques_name}={self.vrt_technique}'
+                                           f'{f",{self.clarity2_technique}" if use_clarity else ""}\n')
+            configured_preset_lines.append(f'{self.techniques_sorting}={self.vrt_technique}'
+                                           f'{f",{self.clarity2_technique}" if use_clarity else ""}\n')
 
-            # -- Add [Clarity.fx] Ini Settings
+            # -- Add [Clarity2.fx] Ini Settings
             clarity_fx_lines = list()
             for k, v in self.ini_settings.items():
                 if k not in self.clarity_ini_keys or v == self.ini_default_settings.get(k):
@@ -190,13 +195,13 @@ class VrToolKit:
 
             if use_clarity:
                 configured_preset_lines.append('\n')
-                configured_preset_lines.append('[Clarity.fx]\n')
+                configured_preset_lines.append(f'[{self.clarity2_shader}]\n')
                 configured_preset_lines.extend(clarity_fx_lines)
                 configured_preset_lines.append('\n')
 
             # -- Add [VRToolkit.fx] Ini Settings
             configured_preset_lines.append('\n')
-            configured_preset_lines.append('[VRToolkit.fx]\n')
+            configured_preset_lines.append(f'[{self.vrt_shader}]\n')
             for k, v in self.ini_settings.items():
                 if k not in self.vr_toolkit_ini_keys or v == self.ini_default_settings.get(k):
                     continue

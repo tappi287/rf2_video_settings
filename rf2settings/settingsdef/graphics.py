@@ -263,18 +263,10 @@ resolution_video_settings = {
                      'settings': ({'value': 1, 'name': '60Hz'},)
                      },
 }
-
 reshade_settings = {
-    'use_reshade': {'name': 'Use VRToolkit', 'value': False,
+    'use_reshade': {'name': 'Use VRToolkit+ReShade', 'value': False,
                     'desc': 'The VRToolkit is a modular shader created for ReShade to enhance the clarity & sharpness '
                             'in VR to get most out of your HMD while keeping the performance impact minimal.',
-                    'settings': (
-                        {'value': False, 'name': 'Disabled'},
-                        {'value': True, 'name': 'Enabled'},
-                    ),
-                    },
-    'use_clarity': {'name': 'Use Clarity.fx', 'value': False,
-                    'desc': 'GPU intensive shader to increase image clarity.',
                     'settings': (
                         {'value': False, 'name': 'Disabled'},
                         {'value': True, 'name': 'Enabled'},
@@ -325,6 +317,27 @@ reshade_settings = {
                                          'DX10 or higher'},
                             ),
                             },
+}
+clarity_settings = {
+    'use_clarity': {'name': 'Use Clarity2.fx', 'value': False,
+                    'desc': 'GPU intensive shader to increase image clarity.',
+                    'settings': (
+                        {'value': False, 'name': 'Disabled'},
+                        {'value': True, 'name': 'Enabled'},
+                    ),
+                    },
+    'ClarityRGBMode': {'name': 'RGB Mode', 'value': 0, 'desc': 'Runs Clarity in RGB instead of luma.',
+                       'settings': (
+                           {'value': 0, 'name': 'Luma [Default]'},
+                           {'value': 1, 'name': 'RGB'}
+                       ),
+                       },
+    'UseClarityDebug': {'name': 'Debug Mode', 'value': 0, 'desc': 'Activates debug options.',
+                        'settings': (
+                            {'value': 0, 'name': 'Off [Default]'},
+                            {'value': 1, 'name': 'On'}
+                        ),
+                        },
 }
 reshade_mask = {
     'CircularMaskSize': {'name': 'Circle Radius', 'value': 0.30,
@@ -481,65 +494,85 @@ reshade_aa = {
                          },
 }
 reshade_clarity = {
-    'ClarityRadius': {'name': 'Clarity Radius', 'value': 1,
-                      'desc': 'Higher values will increase the radius of the effect.',
-                      'settings': (
-                          {'value': 0, 'name': '0'},
-                          {'value': 1, 'name': '1'},
-                          {'value': 2, 'name': '2'},
-                          {'value': 3, 'name': '3'},
-                          {'value': 4, 'name': '4'}
-                      ),
-                      },
-    'ClarityOffset': {'name': 'Clarity Offset', 'value': 2.0,
-                      'settings': (
-                          {'settingType': 'range', 'min': 1.0, 'max': 5.0, 'step': 1.0,
-                           'desc': 'Additional adjustment for the blur radius. Increasing '
-                                   'the value will increase the radius.'},
-                      )
-                      },
-    'ClarityBlendMode': {'name': 'Clarity Blend Mode', 'value': 2,
-                         'desc': 'Blend modes determine how the clarity mask is applied to the original image',
+    'ClarityRadiusTwo': {'name': 'Radius', 'value': 1,
+                         'desc': 'Higher values will increase the radius of the effect.',
                          'settings': (
-                             {'value': 0, 'name': 'Soft Light'},
-                             {'value': 1, 'name': 'Overlay'},
-                             {'value': 2, 'name': 'Hard Light [Default]'},
-                             {'value': 3, 'name': 'Multiply'},
-                             {'value': 4, 'name': 'Vivid Light'},
-                             {'value': 5, 'name': 'Linear Light'},
-                             {'value': 6, 'name': 'Addition'},
+                             {'value': 0, 'name': '0'},
+                             {'value': 1, 'name': '1'},
+                             {'value': 2, 'name': '2'},
+                             {'value': 3, 'name': '3'},
+                             {'value': 4, 'name': '4'}
                          ),
                          },
-    'ClarityBlendIfDark': {'name': 'Clarity Blend If Dark', 'value': 50,
-                           'settings': (
-                               {'settingType': 'range', 'min': 0, 'max': 255, 'step': 1,
-                                'desc': 'Any pixels below this value will be excluded from the effect. Set to 50 to '
-                                        'target mid-tones.'},
-                           )
-                           },
-    'ClarityBlendIfLight': {'name': 'Clarity Blend If Light', 'value': 205,
+    'ClarityOffsetTwo': {'name': 'Offset', 'value': 2.0,
+                         'settings': (
+                             {'settingType': 'range', 'min': 1.0, 'max': 5.0, 'step': 1.0,
+                              'desc': 'Additional adjustment for the blur radius. Increasing '
+                                      'the value will increase the radius.'},
+                         )
+                         },
+    'ClarityBlendModeTwo': {'name': 'Blend Mode', 'value': 2,
+                            'desc': 'Blend modes determine how the clarity mask is applied to the original image',
                             'settings': (
-                                {'settingType': 'range', 'min': 0, 'max': 255, 'step': 1,
-                                 'desc': 'Any pixels above this value will be excluded from the effect. '
-                                         'Set to 205 to target mid-tones.'},
-                            )
+                                {'value': 0, 'name': 'Soft Light'},
+                                {'value': 1, 'name': 'Overlay'},
+                                {'value': 2, 'name': 'Hard Light [Default]'},
+                                {'value': 3, 'name': 'Multiply'},
+                                {'value': 4, 'name': 'Vivid Light'},
+                                {'value': 5, 'name': 'Linear Light'},
+                                {'value': 6, 'name': 'Addition'},
+                            ),
                             },
-    'ClarityStrength': {'name': 'Clarity Strength', 'value': 0.400,
-                        'settings': (
-                            {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.005,
-                             'desc': 'Adjusts the strength of the effect'},
-                        )
-                        },
-    'ClarityDarkIntensity': {'name': 'Clarity Dark Intensity', 'value': 0.400,
-                             'settings': (
-                                 {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.005,
-                                  'desc': 'Adjusts the strength of dark halos.'},
-                             )
-                             },
-    'ClarityLightIntensity': {'name': 'Clarity Light Intensity', 'value': 0.000,
+    'ClarityBlendIfDarkTwo': {'name': 'Blend If Dark', 'value': 50,
                               'settings': (
-                                  {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.005,
-                                   'desc': 'Adjusts the strength of light halos.'},
+                                  {'settingType': 'range', 'min': 0, 'max': 255, 'step': 1,
+                                   'desc': 'Any pixels below this value will be excluded from the effect. Set to 50 to '
+                                           'target mid-tones.'},
                               )
                               },
+    'ClarityBlendIfLightTwo': {'name': 'Blend If Light', 'value': 205,
+                               'settings': (
+                                   {'settingType': 'range', 'min': 0, 'max': 255, 'step': 1,
+                                    'desc': 'Any pixels above this value will be excluded from the effect. '
+                                            'Set to 205 to target mid-tones.'},
+                               )
+                               },
+    'BlendIfRange': {'name': 'Blend If Range', 'value': 0.2,
+                     'settings': (
+                         {'settingType': 'range', 'min': 0.0, 'max': 1.0, 'step': 0.1,
+                          'desc': 'Adjusts the range of the BlendIfMask.'},
+                     )
+                     },
+    'ClarityStrengthTwo': {'name': 'Strength', 'value': 0.400,
+                           'settings': (
+                               {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.005,
+                                'desc': 'Adjusts the strength of the effect'},
+                           )
+                           },
+    'ClarityDarkIntensityTwo': {'name': 'Clarity Dark Intensity', 'value': 0.400,
+                                'settings': (
+                                    {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.005,
+                                     'desc': 'Adjusts the strength of dark halos.'},
+                                )
+                                },
+    'ClarityLightIntensityTwo': {'name': 'Clarity Light Intensity', 'value': 0.000,
+                                 'settings': (
+                                     {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.005,
+                                      'desc': 'Adjusts the strength of light halos.'},
+                                 )
+                                 },
+    'DitherStrength': {'name': 'Dither Strength', 'value': 1.0,
+                       'settings': (
+                           {'settingType': 'range', 'min': 0.0, 'max': 10.0, 'step': 0.1,
+                            'desc': 'Adds dithering to the ClarityMask to help reduce banding. '
+                                    'Leave at 0 and use the optimized VRToolKit Shader instead.'},
+                       )
+                       },
+    'MaskContrast': {'name': 'Mask Contrast', 'value': 0.00,
+                     'settings': (
+                         {'settingType': 'range', 'min': 0.00, 'max': 1.0, 'step': 0.01,
+                          'desc': 'Additional adjustment for the blur radius. Increasing the value will '
+                                  'increase the radius.'},
+                     )
+                     },
 }
