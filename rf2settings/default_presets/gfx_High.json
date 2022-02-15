@@ -49,7 +49,7 @@
     ],
     "title": "Advanced Display Settings"
   },
-  "desc": "Generic Preset for higher end machines. Favors performance [Circuit, Opponent=High] and image clarity [8x AA].",
+  "desc": "Generic Preset for higher end machines. Favors performance [Circuit, Opponent=High] and image clarity [8x AA] plus ReShade for increased Sharpness and Clarity",
   "graphic_options": {
     "key": "Graphic Options",
     "options": [
@@ -402,6 +402,74 @@
     ],
     "title": "Basic Color Correction"
   },
+  "reshade_clarity_fx_settings": {
+    "key": "reshade_clarity_fx_settings",
+    "options": [
+      {
+        "key": "use_clarity",
+        "value": true
+      },
+      {
+        "key": "ClarityRGBMode",
+        "value": 0
+      },
+      {
+        "key": "UseClarityDebug",
+        "value": 0
+      }
+    ],
+    "title": "ReShade Clarity2"
+  },
+  "reshade_clarity_settings": {
+    "key": "reshade_clarity_settings",
+    "options": [
+      {
+        "key": "ClarityRadiusTwo",
+        "value": 1
+      },
+      {
+        "key": "ClarityOffsetTwo",
+        "value": 2
+      },
+      {
+        "key": "ClarityBlendModeTwo",
+        "value": 2
+      },
+      {
+        "key": "ClarityBlendIfDarkTwo",
+        "value": 50
+      },
+      {
+        "key": "ClarityBlendIfLightTwo",
+        "value": 205
+      },
+      {
+        "key": "BlendIfRange",
+        "value": 0.2
+      },
+      {
+        "key": "ClarityStrengthTwo",
+        "value": 0.4
+      },
+      {
+        "key": "ClarityDarkIntensityTwo",
+        "value": 0.4
+      },
+      {
+        "key": "ClarityLightIntensityTwo",
+        "value": 0
+      },
+      {
+        "key": "DitherStrength",
+        "value": 1
+      },
+      {
+        "key": "MaskContrast",
+        "value": 0
+      }
+    ],
+    "title": "Clarity Options"
+  },
   "reshade_fas_settings": {
     "key": "reshade_fas_settings",
     "options": [
@@ -482,7 +550,7 @@
         "value": 0.3
       }
     ],
-    "title": "VRToolkit"
+    "title": "VRToolkit + ReShade"
   },
   "resolution_settings": {
     "key": "Resolution Settings",

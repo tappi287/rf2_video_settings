@@ -49,7 +49,7 @@
     ],
     "title": "Advanced Display Settings"
   },
-  "desc": "The -all you can get onto your screen- Ultra premium deluxe platinum setup. We've carefully set every Display and Video setting to the highest value for you.",
+  "desc": "Maximum quailty settings plus ReShade CAS Sharpening and Clarity applied for a crisp screen session",
   "graphic_options": {
     "key": "Graphic Options",
     "options": [
@@ -402,6 +402,74 @@
     ],
     "title": "Basic Color Correction"
   },
+  "reshade_clarity_fx_settings": {
+    "key": "reshade_clarity_fx_settings",
+    "options": [
+      {
+        "key": "use_clarity",
+        "value": true
+      },
+      {
+        "key": "ClarityRGBMode",
+        "value": 0
+      },
+      {
+        "key": "UseClarityDebug",
+        "value": 0
+      }
+    ],
+    "title": "ReShade Clarity2"
+  },
+  "reshade_clarity_settings": {
+    "key": "reshade_clarity_settings",
+    "options": [
+      {
+        "key": "ClarityRadiusTwo",
+        "value": 2
+      },
+      {
+        "key": "ClarityOffsetTwo",
+        "value": 2
+      },
+      {
+        "key": "ClarityBlendModeTwo",
+        "value": 2
+      },
+      {
+        "key": "ClarityBlendIfDarkTwo",
+        "value": 55
+      },
+      {
+        "key": "ClarityBlendIfLightTwo",
+        "value": 220
+      },
+      {
+        "key": "BlendIfRange",
+        "value": 0.2
+      },
+      {
+        "key": "ClarityStrengthTwo",
+        "value": 0.4
+      },
+      {
+        "key": "ClarityDarkIntensityTwo",
+        "value": 0.4
+      },
+      {
+        "key": "ClarityLightIntensityTwo",
+        "value": 0
+      },
+      {
+        "key": "DitherStrength",
+        "value": 1
+      },
+      {
+        "key": "MaskContrast",
+        "value": 0
+      }
+    ],
+    "title": "Clarity Options"
+  },
   "reshade_fas_settings": {
     "key": "reshade_fas_settings",
     "options": [
@@ -433,7 +501,7 @@
       },
       {
         "key": "LUT_TextureName",
-        "value": "\"lut.png\""
+        "value": "\"lut_technicolor.png\""
       }
     ],
     "title": "Look Up Table"
@@ -447,7 +515,7 @@
       },
       {
         "key": "VRT_SHARPENING_MODE",
-        "value": 1
+        "value": 2
       },
       {
         "key": "VRT_ANTIALIASING_MODE",
@@ -459,7 +527,7 @@
       },
       {
         "key": "VRT_DITHERING",
-        "value": 1
+        "value": 0
       },
       {
         "key": "VRT_USE_CENTER_MASK",
@@ -482,7 +550,7 @@
         "value": 0.3
       }
     ],
-    "title": "VRToolkit"
+    "title": "VRToolkit + ReShade"
   },
   "resolution_settings": {
     "key": "Resolution Settings",
