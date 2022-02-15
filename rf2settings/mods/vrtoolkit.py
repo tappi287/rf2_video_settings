@@ -70,7 +70,7 @@ class VrToolKit:
             self.ini_settings[key] = setting.get('value')
             self.ini_default_settings[key] = setting.get('value')
 
-    def _update_options(self, update_from_disk: bool = False) -> Tuple[bool, bool]:
+    def _update_options(self, update_from_disk=False, clarity_found=True) -> Tuple[bool, bool]:
         use_reshade, use_clarity = False, False
 
         # -- Iterate Preset options
@@ -86,13 +86,13 @@ class VrToolKit:
                         self.preprocessor[option.key] = option.value
                     elif option.key in self.ini_settings:
                         self.ini_settings[option.key] = option.value
-                # -- Write to Preset options
+                # -- Read from disk and update Preset options
                 else:
                     if option.key == 'use_reshade':
                         option.value = True
                         option.exists_in_rf = True
                     if option.key == 'use_clarity':
-                        option.value = True
+                        option.value = clarity_found
                         option.exists_in_rf = True
                     elif option.key in self.preprocessor:
                         option.value = self.preprocessor[option.key]
@@ -299,6 +299,7 @@ class VrToolKit:
                 preset_lines = f.readlines()
 
             # - Read settings from Preset Ini file lines
+            clarity_found = False
             for line in preset_lines:
                 if line.startswith(self.preprocessor_name):
                     p_str = line.replace(f'{self.preprocessor_name}=', '').replace('\n', '')
@@ -309,6 +310,8 @@ class VrToolKit:
                                 self.preprocessor[key] = int(value)
                             else:
                                 self.preprocessor[key] = value
+                if line.startswith(self.techniques_name) and self.clarity2_technique in line:
+                    clarity_found = True
                 for k, v in self.ini_settings.items():
                     if line.startswith(k):
                         value = line.replace(f'{k}=', '').replace('\n', '')
@@ -324,7 +327,7 @@ class VrToolKit:
                             self.ini_settings[k] = value
 
             # -- Update RfactorPlayer VRToolkit Settings
-            self._update_options(update_from_disk=True)
+            self._update_options(update_from_disk=True, clarity_found=clarity_found)
         except Exception as e:
             msg = f'Error reading Reshade Preset Ini file: {e}'
             logging.error(msg)
