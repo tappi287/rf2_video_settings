@@ -62,10 +62,9 @@ def get_presets(preset_type: int):
         for p in presets:
             if not hasattr(p, VideoSettings.app_key):
                 continue
-            video_settings: VideoSettings = getattr(p, VideoSettings.app_key)
-            for o in video_settings.options:
-                if o.key == 'FSAA':
-                    video_settings.options.remove(o)
+            for idx, o in enumerate(getattr(p, VideoSettings.app_key).options):
+                if o.key in ('FSAA', ):
+                    getattr(p, VideoSettings.app_key).options.pop(idx)
                     break
 
     return json.dumps({'result': True, 'presets': [p.to_js() for p in presets],
