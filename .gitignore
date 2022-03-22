@@ -26,4 +26,4 @@ pnpm-debug.log*
 *.sln
 *.sw?
 /code_analysis.py
-/data/VRToolkitReshadeUniversal_0.9.7-pre_plus_Clarity/
+/data/VRToolkitReshadeUniversal_1.0.0_plus_Clarity
