@@ -6,11 +6,13 @@ from typing import Optional, Union
 from urllib.error import URLError
 
 import gevent
+import psutil
 
 from rf2settings import requests
 from rf2settings.directInputKeySend import PressReleaseKey
 from rf2settings.rf2sharedmem.sharedMemoryAPI import SimInfoAPI
 from rf2settings.rfactor import RfactorPlayer
+from rf2settings.utils import rfactor_process_with_id_exists
 
 
 class RfactorState:
@@ -122,6 +124,8 @@ class RfactorConnect:
     # -- Shared memory
     shared_memory_obj = SimInfoAPI()
     enable_shared_mem_check = None
+    rf2_pid = None
+
     _timestamp = 0
 
     @staticmethod
@@ -137,6 +141,17 @@ class RfactorConnect:
         return f'http://{cls.host}:{cls.web_ui_port}'
 
     @classmethod
+    def _rf2_processes_detected(cls) -> bool:
+        if rfactor_process_with_id_exists(cls.rf2_pid):
+            return True
+
+        for pid in psutil.pids():
+            if rfactor_process_with_id_exists(pid):
+                cls.rf2_pid = pid
+                return True
+        return False
+
+    @classmethod
     def _shared_memory_check(cls):
         # -- Check if shared Memory available
         if not cls.shared_memory_obj.sharedMemoryVerified:
@@ -148,18 +163,21 @@ class RfactorConnect:
         # -- Shared Memory available
         else:
             if not cls.shared_memory_obj.isRF2running():
+                # -- Do an extra check for running rF2 processes
+                if cls._rf2_processes_detected():
+                    cls.set_to_active_timeout()
+                    # -- Shared memory no longer available but UI processes still running
+                    return
+
                 # -- Set unavailable
                 logging.info('Setting rF2 State to unavailable from shared memory state.')
                 cls.state = RfactorState.unavailable
-                cls.set_to_active_timeout()
+                cls.check_for_rf_pid = True
 
     @classmethod
     def check_connection(cls) -> None:
         """ Check if Web UI connection is available every timeout interval
             or use shared memory if reported to be available.
-
-        :param require_loading_state: if running/not running state is not sufficient info
-        :return:
         """
         response = _RfactorConnectRequestThread.check_response()
         if response is not None:
@@ -202,6 +220,9 @@ class RfactorConnect:
                 cls.state = RfactorState.loading if nav_state.get('loadingStatus', dict()
                                                                   ).get('loading') else RfactorState.ready
         elif nav_state is False:
+            if cls._rf2_processes_detected():
+                # -- UI Processes still active
+                return
             # -- Set unavailable
             cls.state = RfactorState.unavailable
             cls.enable_shared_mem_check = None

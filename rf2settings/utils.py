@@ -11,6 +11,7 @@ from typing import Tuple, Union, Optional
 
 import eel
 import gevent.event
+import psutil
 
 from .globals import get_settings_dir, FROZEN
 
@@ -320,3 +321,15 @@ def convert_unit(size_in_bytes, unit):
         return size_in_bytes / (1024 * 1024 * 1024)
     else:
         return size_in_bytes
+
+
+def rfactor_process_with_id_exists(pid: Optional[int]) -> bool:
+    if not pid:
+        return False
+
+    try:
+        p = psutil.Process(pid)
+    except psutil.NoSuchProcess:
+        return False
+    if p.name().lower().startswith('rfactor2.exe'):
+        return True
