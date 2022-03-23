@@ -13,6 +13,7 @@ an eye-candy favoured Replay setup.
 - Choose a preset or click "Graphics Presets", hit the [ + ] button and create a new one
 - adjust the settings to your liking, they will be automatically saved and applied to your rFactor installation whenever
 you change a setting
+- or follow this [YouTube tutorial](https://www.youtube.com/watch?v=32qu10zA28A) courtesy of [Jaytona Virtual Racing](https://www.youtube.com/channel/UCjBDoCHuwXzntUpNk5ji5iw)
 
 
 ## Features
@@ -49,3 +50,26 @@ Adjust settings not available in the game UI without hacking through json files.
  - M$ Windows >= 7 (only tested on 10)
  - modern Web Browser (will start with Chrome, fallback to Chromium Edge, fallback to system default web browser)
  - rFactor 2 Steam installation
+
+
+## Development Setup
+If you'd like to contribute to development, these steps may help you to get up and running:
+ - clone this repo `git clone https://github.com/tappi287/rf2_video_settings`
+ - install [Node Package Manager](https://nodejs.org/en/download/) `npm`
+ - change to front-end dir `cd vue` and install node modules `npm install`
+
+
+ - make sure you have a Python 3.10.x interpreter on your system [python.org/downloads](https://www.python.org/downloads/)
+ - install pipenv `python -m pip install pipenv`
+ - create python virtual env `pipenv install --dev`
+
+#### Usage
+ - in the project root dir *rf2_video_settings* switch into the Python virtual env by `pipenv shell`
+ - start the app with `python.exe app.py`
+ - build an executable/installer with `python.exe build.py`
+
+  ##### Dev Requirements
+ - Python 3.10.x
+   - pipenv >= 2022.3.23
+ - npm >= 8.3.1
+ - Chromium based web browser (Edge, Opera, Chrome) for running in browser app-mode
