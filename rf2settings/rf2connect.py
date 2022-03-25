@@ -3,7 +3,6 @@ import time
 from queue import Queue, Empty
 from threading import Event, Thread
 from typing import Optional, Union
-from urllib.error import URLError
 
 import gevent
 import psutil
@@ -19,6 +18,7 @@ class RfactorState:
     unavailable = 0
     loading = 1
     ready = 2
+    waiting_for_process = 10
 
     names = {0: 'Unavailable', 1: 'Loading', 2: 'Ready'}
 
@@ -222,13 +222,16 @@ class RfactorConnect:
         elif nav_state is False:
             if cls._rf2_processes_detected():
                 # -- UI Processes still active
+                #    wait for them to shut down
+                cls.state = RfactorState.waiting_for_process
+                cls.set_to_active_timeout()
                 return
             # -- Set unavailable
             cls.state = RfactorState.unavailable
             cls.enable_shared_mem_check = None
 
         if previous_state != cls.state:
-            if cls.state == RfactorState.loading:
+            if cls.state in (RfactorState.loading, RfactorState.waiting_for_process):
                 cls.set_to_active_timeout()
             elif cls.state == RfactorState.unavailable:
                 cls.set_to_idle_timeout()

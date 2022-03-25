@@ -26,6 +26,10 @@ def _rfactor_greenlet_loop():
         #    and Preset restore will not happen in parallel in different greenlets
         pass
 
+    # -- Report wait for processes shut down
+    if RfactorConnect.state == RfactorState.waiting_for_process:
+        RfactorStatusEvent.set('Waiting for shut down of rFactor 2 processes.')
+
     # -- Update rFactor Live State
     if RfactorConnect.state != RfactorState.unavailable and not RfactorLiveEvent.was_live:
         # -- Report state change to frontend
