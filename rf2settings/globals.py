@@ -13,6 +13,7 @@ SETTINGS_DIR_NAME = 'rf2_settings_widget'
 EXPORT_DIR_NAME = 'exported'
 PRESETS_DIR = 'presets'
 DEFAULT_PRESETS_DIR = 'default_presets'
+DEFAULT_PRESET_NAME = 'gfx_Defaults.json'
 DATA_DIR = 'data'
 APP_FRIENDLY_NAME = 'rF2 Settings Widget'
 BASE_PATH = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__ + '/..')))

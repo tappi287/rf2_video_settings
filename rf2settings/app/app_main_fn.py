@@ -6,7 +6,9 @@ from subprocess import Popen
 from typing import Optional
 
 from ..app_settings import AppSettings
-from ..globals import RFACTOR_SETUPS, RFACTOR_MODMGR, get_log_file, get_log_dir
+from ..globals import DEFAULT_PRESET_NAME, RFACTOR_SETUPS, RFACTOR_MODMGR, get_log_file, get_log_dir, get_data_dir
+from ..preset.preset import PresetType
+from ..preset.preset_base import load_preset
 from ..rf2command import CommandQueue, Command
 from ..rf2connect import RfactorState
 from ..rfactor import RfactorPlayer, RfactorLocation
@@ -50,6 +52,11 @@ def rf_is_valid():
 @capture_app_exceptions
 def restore_backup():
     rf = RfactorPlayer()
+
+    # -- Restore some default settings and remove ReShade etc.
+    default_preset_file = get_data_dir() / DEFAULT_PRESET_NAME
+    default_preset = load_preset(default_preset_file, PresetType.graphics)
+    rf.write_settings(default_preset)
 
     if not rf.is_valid:
         return json.dumps({'result': False, 'msg': rf.error})

@@ -7,7 +7,7 @@ import eel
 import gevent
 
 from rf2settings.app import expose_app_methods
-from rf2settings.app.app_main import CLOSE_EVENT, close_callback
+from rf2settings.app.app_main import CLOSE_EVENT, close_callback, restore_backup
 from rf2settings.app_settings import AppSettings
 from rf2settings.gamecontroller import controller_greenlet, controller_event_loop
 from rf2settings.globals import FROZEN
@@ -29,11 +29,19 @@ def start_eel(npm_serve=True):
     logging.info('#######################################################')
     logging.info('################ Starting APP               ###########')
     logging.info('#######################################################\n\n\n')
+    logging.info(f'Args: {sys.argv}')
 
     if FROZEN:
         npm_serve = False
         # Set Exception hook
         sys.excepthook = AppExceptionHook.exception_hook
+
+    # -- Restore Mode
+    if len(sys.argv) > 1 and sys.argv[1] == '-b':
+        logging.warning(f'Found restore mode argument. Beginning to restore rFactor 2 settings.')
+        restore_backup()
+        logging.warning('\nFinished Restore Mode. Exiting application.')
+        return
 
     AppSettings.load()
     AppSettings.copy_default_presets()
@@ -101,13 +109,13 @@ def start_eel(npm_serve=True):
     logging.debug('Shutting down Greenlets.')
     gevent.joinall((cg, hg, rg), timeout=15.0, raise_error=True)
 
+
+if __name__ == '__main__':
+    start_eel()
+
     # -- Shutdown logging
     logging.info('\n\n\n')
     logging.info('#######################################################')
     logging.info('################ APP SHUTDOWN               ###########')
     logging.info('#######################################################\n\n\n')
     logging.shutdown()
-
-
-if __name__ == '__main__':
-    start_eel()

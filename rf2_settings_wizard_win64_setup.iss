@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "rF2-Settings-Widget"
-#define MyAppVersion "1.3.1"
+#define MyAppVersion "1.3.3"
 #define MyAppPublisher "Stefan Tapper"
 #define MyAppURL "https://sim-site.netlify.app"
 #define MyAppExeName "rF2-Settings-Widget.exe"
@@ -51,3 +51,6 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 
 [InstallDelete]
 Type: filesandordirs; Name: "{app}\*"
+
+[UninstallRun]
+Filename: "{app}\{#MyAppExeName}"; Parameters: "-b"; WorkingDir: "{app}"
