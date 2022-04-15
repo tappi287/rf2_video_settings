@@ -248,6 +248,9 @@ class RfactorConnect:
             return list()
 
         r = cls.get_request('/rest/watch/replays')
+        if r is None:
+            logging.debug('Could not get Replay list from rFactor 2 WebUi.')
+            return list()
         if r.status_code not in (200, 204):
             logging.debug('Could not get Replay list from rFactor 2 WebUi.')
             return list()

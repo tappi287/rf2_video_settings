@@ -54,6 +54,7 @@ class Command:
         self.timeout = timeout or self.default_timeout
 
         self.finished = False
+        self.reset_queue = False
         self.created = time.time()
 
         self.method = getattr(self, f'{self.names.get(command)}_method')
@@ -70,6 +71,7 @@ class Command:
         logging.debug('rFactor command activated: %s, Timeout: %s',
                       Command.names.get(self.command), self.timeout)
 
+    @property
     def timed_out(self) -> bool:
         result = False
         if (time.time() - self.created) > self.timeout:
@@ -119,7 +121,7 @@ class Command:
             logging.error('Can not play replay without name!')
             return False
 
-        RfactorStatusEvent.set(f'Loading Replay: {self.data}')
+        RfactorStatusEvent.set(f'Getting Replay Id: {self.data}')
 
         # RfactorConnect.wait_for_rf2_ui(20.0)
         replays = RfactorConnect.get_replays()
@@ -132,14 +134,18 @@ class Command:
                 is_playing_replay = True
                 break
 
-        logging.debug('Playing rF2 replay: %s', self.data)
+        # Flag to restore pre-replay graphic settings after this live session
         AppSettings.replay_playing = True
         AppSettings.save()
-        RfactorLiveEvent.set(True)
-        RfactorStatusEvent.set(f'Loading Replay {self.data}')
 
         if not is_playing_replay:
+            RfactorStatusEvent.set(f'Could not find Replay: {self.data}')
+            self.reset_queue = True
             return False
+
+        logging.debug('Playing rF2 replay: %s', self.data)
+        RfactorLiveEvent.set(True)
+        RfactorStatusEvent.set(f'Loading Replay {self.data}')
 
         self.finished = True
         return True
@@ -410,6 +416,11 @@ class CommandQueue:
         cls.queue.append(command)
 
     @classmethod
+    def reset(cls):
+        logging.debug('Resetting rF2 Web Ui Command Queue')
+        cls.queue = list()
+
+    @classmethod
     def is_empty(cls):
         return len(cls.queue) == 0
 
@@ -426,8 +437,13 @@ class CommandQueue:
     @classmethod
     def next(cls) -> Optional[Command]:
         if cls.current_command:
+            # -- Check if we should reset the queue
+            if cls.current_command.reset_queue:
+                cls.reset()
+                return cls._get_next()
+
             # -- Check current Command for timeout
-            if cls.current_command.timed_out():
+            if cls.current_command.timed_out:
                 return cls._get_next()
 
             # -- Move to next command in queue if the current command was finished

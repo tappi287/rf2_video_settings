@@ -122,7 +122,7 @@ def play_replay(replay_name):
 
     # -- Tell the rFactor Greenlet to play a replay in next iteration
     # 1. Wait for UI
-    CommandQueue.append(Command(Command.wait_for_state, data=RfactorState.ready, timeout=30.0))
+    CommandQueue.append(Command(Command.wait_for_state, data=RfactorState.ready, timeout=120.0))
     # 2. Load Replay
     CommandQueue.append(Command(Command.play_replay, replay_name, timeout=30.0))
     # 3. Wait UI Loading State

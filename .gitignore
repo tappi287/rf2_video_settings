@@ -25,5 +25,7 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+*.pyc
 /code_analysis.py
 /data/VRToolkitReshadeUniversal_1.0.0_plus_Clarity
+/_rf_web_api/

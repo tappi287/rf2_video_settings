@@ -20,6 +20,8 @@ class AppSettings(JsonRepr):
 
     rf_overwrite_location = ''
 
+    # 1128 webui change
+    # apiendpoints: http://localhost:5397/swagger/index.html
     last_rf_version = str()
     user_presets_dir = str()
     deleted_defaults = list()  # Default Presets the user deleted
