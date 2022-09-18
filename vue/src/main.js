@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import {BootstrapVue, BootstrapVueIcons} from 'bootstrap-vue'
 import Vue from 'vue'
 import App from './App.vue'
 import "@fontsource/ubuntu/500.css"
@@ -21,192 +21,211 @@ Vue.config.productionTip = false
 export const settingsAreaId = 'settings-area'
 export const userScreenShots =
     [
- ['https://forum.studio-397.com/index.php?attachments/porsche_911_gt3_r_2018_01-jpg.27876/', 'philmcqueen',
-  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-320'],
- ['https://forum.studio-397.com/index.php?attachments/grab_360-jpg.27884/', 'juanchioooo',
-  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-320'],
- ['https://forum.studio-397.com/index.php?attachments/20200113191349_1-jpg.28772/', 'datasting',
-  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-324'],
- ['https://forum.studio-397.com/index.php?attachments/365960_20200322152429_1-png.30174/', 'Frank Murphy',
- 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-331'],
- ['https://i.imgur.com/3RdME7Q.jpg', 'jayarrbee36',
-  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-334'],
- ['https://forum.studio-397.com/index.php?attachments/20200521225453_1-jpg.31126/', 'Pocisk',
-  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-334'],
- ['https://i.ibb.co/Jjtws8M/r-Factor2-2020-05-30-20-32-16.jpg', 'GeraArg',
-  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-335'],
- ['https://forum.studio-397.com/index.php?attachments/grab_002-jpg.32749/', 'memoNo1',
-  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-341'],
- ['https://forum.studio-397.com/index.php?attachments/ec551ad7-aedd-487c-8d8b-494a01f445a3-jpeg.34232/', 'M-Bimmer',
-  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-348'],
- ['https://forum.studio-397.com/index.php?attachments/20201108231324_1-jpg.34446/', 'svictor',
-  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-349'],
- ['https://i.imgur.com/CwYk11v.jpg', 'mantasisg',
-  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-352'],
- ['https://forum.studio-397.com/index.php?attachments/20201221185422_1-jpg.35356/', 'svictor',
-  'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-354#post-1050632'],
-['https://forum.studio-397.com/index.php?attachments/2021-02-02-20-40-png.36838/', 'MiguelVallejo',
- 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-359#post-1059084'],
-['https://cdn.discordapp.com/attachments/541020496087482424/792889002901504080/20201227113904_1.jpg', 'boxwex',
- 'https://discord.com/channels/253557076645773312/541020496087482424/792889005245988945'],
-['https://cdn.discordapp.com/attachments/541020496087482424/792889678721843250/20201224110117_1.jpg', 'boxwex',
- 'https://discord.com/channels/253557076645773312/541020496087482424/792889680517267457'],
-['https://forum.studio-397.com/index.php?attachments/4-rf2-cockpit-rain-mist-copy-jpg.18789/', 'M D Gourley',
- 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-256#post-967468'],
-['https://forum.studio-397.com/index.php?attachments/2020-08-31-18-24_01-png.33144/', 'MiguelVallejo',
- 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-344#post-1037906'],
-['https://forum.studio-397.com/index.php?attachments/jsp3-jpg.19130/', 'sg333',
- 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-258#post-969316'],
-['https://forum.studio-397.com/index.php?attachments/2021-02-18-17-18_01-png.37087/', 'MiguelVallejo',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-360#post-1060896'],
-['https://forum.studio-397.com/index.php?attachments/2021-01-29-19-44-png.36723/', 'MiguelVallejo',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-359#post-1058550'],
-['https://forum.studio-397.com/index.php?attachments/2021-02-07-17-56-png.36950/', 'MiguelVallejo',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-359#post-1059819'],
-['https://i.imgur.com/1JMXxzi.jpg', 'jayarrbee36',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-362#post-1064530'],
-['https://i.imgur.com/SbWk9px.jpg', 'jayarrbee36',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-367#post-1070446'],
-['https://forum.studio-397.com/index.php?attachments/20210612210607_1-jpg.39120/', 'jayarrbee36',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-367#post-1071125'],
-['https://i.imgur.com/PRD6FLd.jpg', 'jayarrbee36',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-367#post-1071137'],
-['https://i.imgur.com/TQlkDNd.jpg', 'jayarrbee36',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-367#post-1071137'],
-['https://forum.studio-397.com/index.php?attachments/2021-06-29-13-10-png.39390/', 'MiguelVallejo',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-368#post-1072242'],
-['https://forum.studio-397.com/index.php?attachments/20210724175153_1-jpg.39909/', 'Fabian Balle',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-371#post-1074909'],
-['https://i.imgur.com/OpqVNMu.jpg', 'jayarrbee36',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-371#post-1075047'],
-['https://i.imgur.com/HnwgHWc.jpg', 'jayarrbee36',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-371#post-1075267'],
-['https://forum.studio-397.com/index.php?attachments/2021-08-05-13-27-png.40114/', 'MiguelVallejo',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-371#post-1076166'],
-['https://forum.studio-397.com/index.php?attachments/20210814130620_1-jpg.40163/', 'Remco Majoor',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-372#post-1076335'],
-['https://forum.studio-397.com/index.php?attachments/365960_screenshots_20210523174938_1-jpg.41232/', 'vava74',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-378#post-1081269'],
-['https://forum.studio-397.com/index.php?attachments/20211105211801_1-jpg.41336/', 'yashiman',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-378#post-1081786'],
-['https://live.staticflickr.com/65535/51663639097_93d481cedc_o_d.jpg', 'Franck',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-379#post-1083552'],
-['https://i.imgur.com/2oinrdT.jpg', 'jayarrbee36',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-382#post-1085941'],
-['https://i.imgur.com/FRHx16w.jpg', 'jayarrbee36',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-382#post-1085941'],
-['https://i.imgur.com/v4EPavK.jpg', 'jayarrbee36',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-382#post-1085941'],
-['https://i.imgur.com/3pP0tDO.jpg', 'jayarrbee36',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-383#post-1086332'],
-['https://i.imgur.com/37WmQkq.jpg', 'jayarrbee36',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-383#post-1086875'],
-['https://i.imgur.com/5kG7nFU.jpg', 'jayarrbee36',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-383#post-1086875'],
-['https://live.staticflickr.com/65535/51846907588_52048dd8de_k.jpg', 'Franck',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-384#post-1088098'],
-['https://live.staticflickr.com/65535/51847163899_1afd7ffc46_k.jpg', 'Franck',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-384#post-1088098'],
-['https://forum.studio-397.com/index.php?attachments/20220129224124_1-jpg.42685/', 'Fabian Balle',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-384#post-1088471'],
-['https://forum.studio-397.com/index.php?attachments/20220130000806_1-jpg.42688/', 'Fabian Balle',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-384#post-1088471'],
-['https://forum.studio-397.com/index.php?attachments/20220202143933_1-jpg.42790/', 'sg333',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-384#post-1089081'],
-['https://forum.studio-397.com/index.php?attachments/20220208110838_1-jpg.43000/', 'Fabian Balle',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090279'],
-['https://forum.studio-397.com/index.php?attachments/20220207233809_1-jpg.42998/', 'Fabian Balle',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090279'],
-['https://live.staticflickr.com/65535/51870549476_4ae25d76fc_k.jpg', 'Franck',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090395'],
-['https://live.staticflickr.com/65535/51868665826_9f12547c14_k.jpg', 'Franck',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090197'],
-['https://live.staticflickr.com/65535/51875755280_5e44294401_k.jpg', 'Franck',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090813'],
-['https://live.staticflickr.com/65535/51877483044_6cec9ac889_k.jpg', 'Franck',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090946'],
-['https://forum.studio-397.com/index.php?attachments/20220208114143_1-jpg.43035/', 'Fabian Balle',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090578'],
-['https://live.staticflickr.com/65535/51875647017_ff265b3821_k.jpg', 'Franck',
-'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090928']
-]
+         ['https://forum.studio-397.com/index.php?attachments/porsche_911_gt3_r_2018_01-jpg.27876/', 'philmcqueen',
+          'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-320'],
+         ['https://forum.studio-397.com/index.php?attachments/grab_360-jpg.27884/', 'juanchioooo',
+          'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-320'],
+         ['https://forum.studio-397.com/index.php?attachments/20200113191349_1-jpg.28772/', 'datasting',
+          'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-324'],
+         ['https://forum.studio-397.com/index.php?attachments/365960_20200322152429_1-png.30174/', 'Frank Murphy',
+         'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-331'],
+         ['https://i.imgur.com/3RdME7Q.jpg', 'jayarrbee36',
+          'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-334'],
+         ['https://forum.studio-397.com/index.php?attachments/20200521225453_1-jpg.31126/', 'Pocisk',
+          'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-334'],
+         ['https://i.ibb.co/Jjtws8M/r-Factor2-2020-05-30-20-32-16.jpg', 'GeraArg',
+          'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-335'],
+         ['https://forum.studio-397.com/index.php?attachments/grab_002-jpg.32749/', 'memoNo1',
+          'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-341'],
+         ['https://forum.studio-397.com/index.php?attachments/ec551ad7-aedd-487c-8d8b-494a01f445a3-jpeg.34232/', 'M-Bimmer',
+          'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-348'],
+         ['https://forum.studio-397.com/index.php?attachments/20201108231324_1-jpg.34446/', 'svictor',
+          'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-349'],
+         ['https://i.imgur.com/CwYk11v.jpg', 'mantasisg',
+          'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-352'],
+         ['https://forum.studio-397.com/index.php?attachments/20201221185422_1-jpg.35356/', 'svictor',
+          'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-354#post-1050632'],
+        ['https://forum.studio-397.com/index.php?attachments/2021-02-02-20-40-png.36838/', 'MiguelVallejo',
+         'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-359#post-1059084'],
+        ['https://cdn.discordapp.com/attachments/541020496087482424/792889002901504080/20201227113904_1.jpg', 'boxwex',
+         'https://discord.com/channels/253557076645773312/541020496087482424/792889005245988945'],
+        ['https://cdn.discordapp.com/attachments/541020496087482424/792889678721843250/20201224110117_1.jpg', 'boxwex',
+         'https://discord.com/channels/253557076645773312/541020496087482424/792889680517267457'],
+        ['https://forum.studio-397.com/index.php?attachments/4-rf2-cockpit-rain-mist-copy-jpg.18789/', 'M D Gourley',
+         'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-256#post-967468'],
+        ['https://forum.studio-397.com/index.php?attachments/2020-08-31-18-24_01-png.33144/', 'MiguelVallejo',
+         'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-344#post-1037906'],
+        ['https://forum.studio-397.com/index.php?attachments/jsp3-jpg.19130/', 'sg333',
+         'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-258#post-969316'],
+        ['https://forum.studio-397.com/index.php?attachments/2021-02-18-17-18_01-png.37087/', 'MiguelVallejo',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-360#post-1060896'],
+        ['https://forum.studio-397.com/index.php?attachments/2021-01-29-19-44-png.36723/', 'MiguelVallejo',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-359#post-1058550'],
+        ['https://forum.studio-397.com/index.php?attachments/2021-02-07-17-56-png.36950/', 'MiguelVallejo',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-359#post-1059819'],
+        ['https://i.imgur.com/1JMXxzi.jpg', 'jayarrbee36',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-362#post-1064530'],
+        ['https://i.imgur.com/SbWk9px.jpg', 'jayarrbee36',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-367#post-1070446'],
+        ['https://forum.studio-397.com/index.php?attachments/20210612210607_1-jpg.39120/', 'jayarrbee36',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-367#post-1071125'],
+        ['https://i.imgur.com/PRD6FLd.jpg', 'jayarrbee36',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-367#post-1071137'],
+        ['https://i.imgur.com/TQlkDNd.jpg', 'jayarrbee36',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-367#post-1071137'],
+        ['https://forum.studio-397.com/index.php?attachments/2021-06-29-13-10-png.39390/', 'MiguelVallejo',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-368#post-1072242'],
+        ['https://forum.studio-397.com/index.php?attachments/20210724175153_1-jpg.39909/', 'Fabian Balle',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-371#post-1074909'],
+        ['https://i.imgur.com/OpqVNMu.jpg', 'jayarrbee36',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-371#post-1075047'],
+        ['https://i.imgur.com/HnwgHWc.jpg', 'jayarrbee36',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-371#post-1075267'],
+        ['https://forum.studio-397.com/index.php?attachments/2021-08-05-13-27-png.40114/', 'MiguelVallejo',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-371#post-1076166'],
+        ['https://forum.studio-397.com/index.php?attachments/20210814130620_1-jpg.40163/', 'Remco Majoor',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-372#post-1076335'],
+        ['https://forum.studio-397.com/index.php?attachments/365960_screenshots_20210523174938_1-jpg.41232/', 'vava74',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-378#post-1081269'],
+        ['https://forum.studio-397.com/index.php?attachments/20211105211801_1-jpg.41336/', 'yashiman',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-378#post-1081786'],
+        ['https://live.staticflickr.com/65535/51663639097_93d481cedc_o_d.jpg', 'Franck',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-379#post-1083552'],
+        ['https://i.imgur.com/2oinrdT.jpg', 'jayarrbee36',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-382#post-1085941'],
+        ['https://i.imgur.com/FRHx16w.jpg', 'jayarrbee36',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-382#post-1085941'],
+        ['https://i.imgur.com/v4EPavK.jpg', 'jayarrbee36',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-382#post-1085941'],
+        ['https://i.imgur.com/3pP0tDO.jpg', 'jayarrbee36',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-383#post-1086332'],
+        ['https://i.imgur.com/37WmQkq.jpg', 'jayarrbee36',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-383#post-1086875'],
+        ['https://i.imgur.com/5kG7nFU.jpg', 'jayarrbee36',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-383#post-1086875'],
+        ['https://live.staticflickr.com/65535/51846907588_52048dd8de_k.jpg', 'Franck',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-384#post-1088098'],
+        ['https://live.staticflickr.com/65535/51847163899_1afd7ffc46_k.jpg', 'Franck',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-384#post-1088098'],
+        ['https://forum.studio-397.com/index.php?attachments/20220129224124_1-jpg.42685/', 'Fabian Balle',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-384#post-1088471'],
+        ['https://forum.studio-397.com/index.php?attachments/20220130000806_1-jpg.42688/', 'Fabian Balle',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-384#post-1088471'],
+        ['https://forum.studio-397.com/index.php?attachments/20220202143933_1-jpg.42790/', 'sg333',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-384#post-1089081'],
+        ['https://forum.studio-397.com/index.php?attachments/20220208110838_1-jpg.43000/', 'Fabian Balle',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090279'],
+        ['https://forum.studio-397.com/index.php?attachments/20220207233809_1-jpg.42998/', 'Fabian Balle',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090279'],
+        ['https://live.staticflickr.com/65535/51870549476_4ae25d76fc_k.jpg', 'Franck',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090395'],
+        ['https://live.staticflickr.com/65535/51868665826_9f12547c14_k.jpg', 'Franck',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090197'],
+        ['https://live.staticflickr.com/65535/51875755280_5e44294401_k.jpg', 'Franck',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090813'],
+        ['https://live.staticflickr.com/65535/51877483044_6cec9ac889_k.jpg', 'Franck',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090946'],
+        ['https://forum.studio-397.com/index.php?attachments/20220208114143_1-jpg.43035/', 'Fabian Balle',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090578'],
+        ['https://live.staticflickr.com/65535/51875647017_ff265b3821_k.jpg', 'Franck',
+        'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-385#post-1090928'],
+        ['https://forum.studio-397.com/index.php?attachments/365960_20220917191008_1-png.47607/', 'datasting', 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-411#post-1108872'],
+        ['https://forum.studio-397.com/index.php?attachments/365960_20220917195956_1-png.47610/', 'datasting', 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-411#post-1108872'],
+        ['https://forum.studio-397.com/index.php?attachments/365960_20220913234818_1-png.47528/', 'datasting', 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-411#post-1108635'],
+        ['https://forum.studio-397.com/index.php?attachments/365960_20220913232142_1-png.47526/', 'datasting', 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-411#post-1108635'],
+        ['https://forum.studio-397.com/index.php?attachments/365960_20220914001253_1-png.47530/', 'datasting', 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-411#post-1108635'],
+        ['https://forum.studio-397.com/index.php?attachments/rfactor2_2022-08-09-21-16_1-png.46749/', 'MiguelVallejo', 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-406#post-1105809'],
+        ['https://forum.studio-397.com/index.php?attachments/rfactor2_2022-08-09-20-42_2-png.46748/', 'MiguelVallejo', 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-406#post-1105809'],
+        ['https://forum.studio-397.com/index.php?attachments/365960_20220811231909_1-png.46754/', 'datasting', 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-406#post-1105823'],
+        ['https://forum.studio-397.com/index.php?attachments/365960_20220811231719_1-png.46756/', 'datasting', 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-406#post-1105823'],
+        ['https://forum.studio-397.com/index.php?attachments/365960_20220812231803_1-png.46801/', 'datasting', 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-406#post-1105949'],
+        ['https://forum.studio-397.com/index.php?attachments/20220814163518_1-jpg.46832/', 'hitm4k3r', 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-407#post-1106151'],
+        ['https://forum.studio-397.com/index.php?attachments/365960_20220831045521_1-png.47188/', 'Jake Denehan', 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-409#post-1107757'],
+        ['https://forum.studio-397.com/index.php?attachments/365960_20220831045442_1-png.47187/', 'Jake Denehan', 'https://forum.studio-397.com/index.php?threads/community-screenshots-thread-unedited-screens-only.40609/page-409#post-1107757']
+    ]
 
 const eventHub = new Vue()
 Vue.prototype.$eventHub = eventHub
 
 new Vue({
-  render: h => h(App),
+    render: h => h(App),
 }).$mount('#app')
 
-export async function getEelJsonObject (promise) {
-  const value = await promise
-  return JSON.parse(value)
+export async function getEelJsonObject(promise) {
+    const value = await promise
+    return JSON.parse(value)
 }
 
 export function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-export function getMaxWidth (elements) {
-  let maxWidth = 0
-  for (let i in elements) {
-    if (elements[i].clientWidth !== undefined) {
-      maxWidth = Math.max(maxWidth, parseInt(elements[i].clientWidth))
+export function getMaxWidth(elements) {
+    let maxWidth = 0
+    for (let i in elements) {
+        if (elements[i].clientWidth !== undefined) {
+            maxWidth = Math.max(maxWidth, parseInt(elements[i].clientWidth))
+        }
     }
-  }
-  return maxWidth
+    return maxWidth
 }
 
-export function clearWidthStyle (elements) {
-  for (let i in elements) {
-      if (elements[i].style !== undefined) { elements[i].style.width = null }
-  }
+export function clearWidthStyle(elements) {
+    for (let i in elements) {
+        if (elements[i].style !== undefined) {
+            elements[i].style.width = null
+        }
+    }
 }
 
 export function chooseIndex(choices) {
-  return Math.floor(Math.random() * choices.length);
+    return Math.floor(Math.random() * choices.length);
 }
 
-export var isValid=(function(){
-  let rg1=/^[^\\/:*?"<>|]+$/; // forbidden characters \ / : * ? " < > |
-  let rg2=/^\./; // cannot start with dot (.)
-  let rg3=/^(nul|prn|con|lpt[0-9]|com[0-9])(\.|$)/i; // forbidden file names
-  return function isValid(fname){
-    return rg1.test(fname)&&!rg2.test(fname)&&!rg3.test(fname);
-  }
+export var isValid = (function () {
+    let rg1 = /^[^\\/:*?"<>|]+$/; // forbidden characters \ / : * ? " < > |
+    let rg2 = /^\./; // cannot start with dot (.)
+    let rg3 = /^(nul|prn|con|lpt[0-9]|com[0-9])(\.|$)/i; // forbidden file names
+    return function isValid(fname) {
+        return rg1.test(fname) && !rg2.test(fname) && !rg3.test(fname);
+    }
 })();
 
 // Generic axios GET request
 export async function getRequest(url) {
-  try {
-    let requestUrl
-    requestUrl = url
-    const response = await Axios.get(requestUrl)
-    return { result: true, data: response.data }
-  } catch (error) {
-    return { result: false, data: error.response.data }
-  }
+    try {
+        let requestUrl
+        requestUrl = url
+        const response = await Axios.get(requestUrl)
+        return {result: true, data: response.data}
+    } catch (error) {
+        return {result: false, data: error.response.data}
+    }
 }
 
 window.eel.expose(updateProgress, 'server_progress')
-function updateProgress (newProgress, newMaxProgress) {
-  const progressEvent = new CustomEvent('update-progress',
-      {detail: {progress: newProgress, maxProgress: newMaxProgress}})
-  window.dispatchEvent(progressEvent)
+
+function updateProgress(newProgress, newMaxProgress) {
+    const progressEvent = new CustomEvent('update-progress',
+        {detail: {progress: newProgress, maxProgress: newMaxProgress}})
+    window.dispatchEvent(progressEvent)
 }
 
 window.eel.expose(addServerListChunk, 'add_server_list_chunk')
-function addServerListChunk (newServerListChunk) {
-  const serverListEvent = new CustomEvent('add-server-list-chunk', {detail: newServerListChunk})
-  window.dispatchEvent(serverListEvent)
+
+function addServerListChunk(newServerListChunk) {
+    const serverListEvent = new CustomEvent('add-server-list-chunk', {detail: newServerListChunk})
+    window.dispatchEvent(serverListEvent)
 }
 
-export const controllerInputTypes = {768: 'Key', 1536: 'Axis', 1538: 'Dpad', 1539: 'Button' }
+export const controllerInputTypes = {768: 'Key', 1536: 'Axis', 1538: 'Dpad', 1539: 'Button'}
 
 // Get the Name of a Controller input Type
 export function getControllerDeviceTypeName(setting) {
-  if (setting === undefined) { return 'Unknown' }
-  return controllerInputTypes[Number(setting.type)]
+    if (setting === undefined) {
+        return 'Unknown'
+    }
+    return controllerInputTypes[Number(setting.type)]
 }
 
 // Get the Name of a rFactor Controller.json input Type
@@ -225,58 +244,77 @@ export function getRfactorControllerDeviceTypeName(setting) {
 
 // Get the Name of a Controller Button/Axis
 export function getControllerValueName({button, key, hat, type, value, axis}) {
-  // Key
-  if (type === 768) {
-      if (key !== undefined && key !== '' && key !== null) { return key.toUpperCase() }
-  }
-  // Axis
-  if (type === 1536 && axis !== undefined) {
-      let a = String(axis)
-      return (value > 0) ? a + ' +' : a + ' -'
-  }
-  // Button
-  if ([768, 1539].indexOf(type) !== -1) {
-      if (value !== undefined && value !== '' && value !== null) { return value }
-      if (button !== undefined) { return button }
-  }
-  // Dpad
-  if (Number(type) === 1538) {
-    let result = String(hat) + ' '
-    switch (value[0]) {
-      case -1: result += 'Left'; break
-      case 1: result += 'Right'; break
+    // Key
+    if (type === 768) {
+        if (key !== undefined && key !== '' && key !== null) {
+            return key.toUpperCase()
+        }
     }
-    switch (value[1]) {
-      case -1: result += 'Down'; break
-      case 1:result += 'Up'; break
+    // Axis
+    if (type === 1536 && axis !== undefined) {
+        let a = String(axis)
+        return (value > 0) ? a + ' +' : a + ' -'
     }
-    return result
-  }
-  return 'Not Set'
+    // Button
+    if ([768, 1539].indexOf(type) !== -1) {
+        if (value !== undefined && value !== '' && value !== null) {
+            return value
+        }
+        if (button !== undefined) {
+            return button
+        }
+    }
+    // Dpad
+    if (Number(type) === 1538) {
+        let result = String(hat) + ' '
+        switch (value[0]) {
+            case -1:
+                result += 'Left';
+                break
+            case 1:
+                result += 'Right';
+                break
+        }
+        switch (value[1]) {
+            case -1:
+                result += 'Down';
+                break
+            case 1:
+                result += 'Up';
+                break
+        }
+        return result
+    }
+    return 'Not Set'
 }
 
 export function clearElementsWidthStyle(groupId) {
-  const nameElem = document.querySelectorAll('#' + groupId + ' .fixed-width-name')
-  const settElem = document.querySelectorAll('#' + groupId + ' .fixed-width-setting')
-  clearWidthStyle(nameElem)
-  clearWidthStyle(settElem)
+    const nameElem = document.querySelectorAll('#' + groupId + ' .fixed-width-name')
+    const settElem = document.querySelectorAll('#' + groupId + ' .fixed-width-setting')
+    clearWidthStyle(nameElem)
+    clearWidthStyle(settElem)
 }
 
 export function setFixedWidth(groupId, nameId, elemId) {
-  // Iterate all elements of this setting group_id and set width to widest element found
-  const nameElem = document.querySelectorAll('#' + groupId + ' .fixed-width-name')
-  const settElem = document.querySelectorAll('#' + groupId + ' .fixed-width-setting')
+    // Iterate all elements of this setting group_id and set width to widest element found
+    const nameElem = document.querySelectorAll('#' + groupId + ' .fixed-width-name')
+    const settElem = document.querySelectorAll('#' + groupId + ' .fixed-width-setting')
 
-  let nameMaxWidth = getMaxWidth(nameElem); let settMaxWidth = getMaxWidth(settElem)
+    let nameMaxWidth = getMaxWidth(nameElem);
+    let settMaxWidth = getMaxWidth(settElem)
 
-  let e = document.getElementById(nameId)
-  if (e !== null) { e.style.width = String(nameMaxWidth) + 'px' }
-  let s = document.getElementById(elemId)
-  if (s !== null) { s.style.width = String(settMaxWidth) + 'px' }
+    let e = document.getElementById(nameId)
+    if (e !== null) {
+        e.style.width = String(nameMaxWidth) + 'px'
+    }
+    let s = document.getElementById(elemId)
+    if (s !== null) {
+        s.style.width = String(settMaxWidth) + 'px'
+    }
 }
 
 export function minutesToDaytime(num) {
-  const hours = ('0' + String(Math.floor(num / 60))).slice(-2)
-  const minutes = ('0' + String(num % 60)).slice(-2)
-  return String(hours + ":" + minutes)
+    const hours = ('0' + String(Math.floor(num / 60))).slice(-2)
+    const minutes = ('0' + String(num % 60)).slice(-2)
+    return String(hours + ":" + minutes)
 }
