@@ -94,7 +94,7 @@
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
                 :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
                 :previous-preset-name="previousPresetName"
-                :view_mode="viewMode"
+                :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
@@ -126,7 +126,7 @@
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
                 :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
                 :previous-preset-name="previousPresetName"
-                :view_mode="viewMode"
+                :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
@@ -138,7 +138,7 @@
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
                 :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
                 :previous-preset-name="previousPresetName"
-                :view_mode="viewMode"
+                :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
@@ -150,7 +150,7 @@
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
                 :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
                 :previous-preset-name="previousPresetName"
-                :view_mode="viewMode"
+                :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
@@ -162,7 +162,7 @@
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
                 :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
                 :previous-preset-name="previousPresetName"
-                :view_mode="viewMode"
+                :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
@@ -174,7 +174,7 @@
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
                 :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
                 :previous-preset-name="previousPresetName"
-                :view_mode="viewMode"
+                :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
@@ -186,7 +186,7 @@
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
                 :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
                 :previous-preset-name="previousPresetName"
-                :view_mode="viewMode"
+                :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
@@ -198,7 +198,7 @@
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
                 :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
                 :previous-preset-name="previousPresetName"
-                :view_mode="viewMode"
+                :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
@@ -210,7 +210,7 @@
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
                 :current_preset_idx="current_preset_idx" :settingDisabled="openVrFsrSettingDisabled"
                 :previous-preset-name="previousPresetName"
-                :view_mode="viewMode"
+                :view_mode="viewMode" :class="openVrFsrEnabled ? 'openvrModEnabled' : 'openvrModDisabled'"
                 :search="search" header-icon="exclude"
                 @update-setting="updateOpenVrFsrSetting"
                 @set-busy="setBusy"
@@ -235,7 +235,7 @@
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
                 :current_preset_idx="current_preset_idx" :settingDisabled="openVrFsrSettingDisabled"
                 :previous-preset-name="previousPresetName"
-                :view_mode="viewMode"
+                :view_mode="viewMode" :class="openVrFsrEnabled ? 'openvrModEnabled' : 'openvrModDisabled'"
                 :search="search" header-icon="image"
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
@@ -247,7 +247,7 @@
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
                 :current_preset_idx="current_preset_idx" :settingDisabled="openVrFoveatedSettingDisabled"
                 :previous-preset-name="previousPresetName"
-                :view_mode="viewMode"
+                :view_mode="viewMode" :class="openVrFoveatedEnabled ? 'openvrModEnabled' : 'openvrModDisabled'"
                 :search="search" header-icon="exclude"
                 @update-setting="updateOpenVrFoveatedSetting"
                 @set-busy="setBusy"
@@ -255,7 +255,7 @@
     <template #footer v-if="!compact">
       <div style="font-size: small;">
         Visit
-        <b-link class="text-rf-orange" target="_blank" href="https://github.com/fholger/openvr_foveated#fixed-foveated-rendering-mod-for-steamvr-games">
+        <b-link class="text-rf-orange" target="_blank" href="https://github.com/fholger/openvr_foveated#readme">
           github.com/fholger/openvr_foveated
         </b-link>
         for detailed information.
@@ -273,7 +273,7 @@
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
                 :current_preset_idx="current_preset_idx" :settingDisabled="openVrFoveatedSettingDisabled"
                 :previous-preset-name="previousPresetName"
-                :view_mode="viewMode"
+                :view_mode="viewMode" :class="openVrFoveatedEnabled ? 'openvrModEnabled' : 'openvrModDisabled'"
                 :search="search" header-icon="image"
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
@@ -488,6 +488,10 @@ export default {
 }
 </script>
 
-<style scoped>
-.video-indicator { line-height: 0.98; }
+<style>
+  .video-indicator { line-height: 0.98; }
+  /* .reshadeEnabled > div.setting-card { background-color: rgba(234, 234, 234, 0.13) !important; } */
+  .reshadeDisabled > div.setting-card { background-color: rgba(56, 56, 56, 0.13) !important; }
+  /* .openvrModEnabled > div.setting-card { background-color: rgba(234, 234, 234, 0.15) !important; } */
+  .openvrModDisabled > div.setting-card { background-color: rgba(56, 56, 56, 0.13) !important; }
 </style>
