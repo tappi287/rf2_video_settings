@@ -92,7 +92,7 @@
   <!-- VRToolKit Settings -->
   <SettingsCard :preset="preset" :idx="idx" settings-key="reshade_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="compact"
-                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
+                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingDisabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
@@ -124,7 +124,7 @@
   <SettingsCard v-if="sharpeningFas"
                 :preset="preset" :idx="idx" settings-key="reshade_fas_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
-                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
+                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingDisabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
@@ -136,7 +136,7 @@
   <SettingsCard v-if="sharpeningCas"
                 :preset="preset" :idx="idx" settings-key="reshade_cas_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
-                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
+                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingDisabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
@@ -148,7 +148,7 @@
   <SettingsCard v-if="applyLUT"
                 :preset="preset" :idx="idx" settings-key="reshade_lut_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
-                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
+                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingDisabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
@@ -160,7 +160,7 @@
   <SettingsCard v-if="colorCorrection"
                 :preset="preset" :idx="idx" settings-key="reshade_cc_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
-                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
+                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingDisabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
@@ -172,7 +172,7 @@
   <SettingsCard v-if="antiAliasing"
                 :preset="preset" :idx="idx" settings-key="reshade_aa_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
-                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
+                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingDisabled"
                 :previous-preset-name="previousPresetName"
                 :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
@@ -184,9 +184,9 @@
   <!-- ReShade Clarity2.fx PreProcessor Definitions -->
   <SettingsCard :preset="preset" :idx="idx" settings-key="reshade_clarity_fx_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
-                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
+                :current_preset_idx="current_preset_idx" :settingDisabled="claritySettingDisabled"
                 :previous-preset-name="previousPresetName"
-                :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
+                :view_mode="viewMode" :class="reshadeEnabled && clarityEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
@@ -196,9 +196,9 @@
   <SettingsCard v-if="clarity"
                 :preset="preset" :idx="idx" settings-key="reshade_clarity_settings"
                 :fixed-width="fixedWidth" :frozen="frozen" :compact="true"
-                :current_preset_idx="current_preset_idx" :settingDisabled="reshadeSettingEnabled"
+                :current_preset_idx="current_preset_idx" :settingDisabled="claritySettingDisabled"
                 :previous-preset-name="previousPresetName"
-                :view_mode="viewMode" :class="reshadeEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
+                :view_mode="viewMode" :class="reshadeEnabled && clarityEnabled ? 'reshadeEnabled' : 'reshadeDisabled'"
                 :search="search" header-icon="image"
                 @update-setting="updateSetting"
                 @set-busy="setBusy"
@@ -395,9 +395,17 @@ export default {
       })
       return result
     },
-    reshadeSettingEnabled(setting) {
+    reshadeSettingDisabled(setting) {
       if (setting.key === 'use_reshade') { return false }
       return !this.reshadeEnabled
+    },
+    claritySettingDisabled(setting) {
+      if (setting.key === 'use_clarity') { return false }
+      return !this.clarityEnabled
+    },
+    videoSettingsDisabled(setting) {
+      if (setting.key === 'UseFXAA') { return this.msaaEnabled }
+      return true
     },
     openVrFsrSettingDisabled(setting) {
       if (setting.key === 'enabled') { return false }
@@ -443,6 +451,10 @@ export default {
       if (this.view_mode !== undefined) { return this.view_mode }
       return 0
     },
+    msaaEnabled: function() {
+      if (this.preset === undefined) { return false }
+      return this._getSetSettingsOption('video_settings', 'MSAA')
+    },
     openVrFsrEnabled: function () {
       if (this.preset === undefined) { return false }
       return this._getSetSettingsOption('openvrfsr_settings', 'enabled')
@@ -454,6 +466,10 @@ export default {
     reshadeEnabled: function () {
       if (this.preset === undefined) { return false }
       return this._getSetSettingsOption('reshade_settings', 'use_reshade')
+    },
+    clarityEnabled: function () {
+      if (this.preset === undefined) { return false }
+      return this._getSetSettingsOption('reshade_clarity_fx_settings', 'use_clarity')
     },
     // Display Reshade Setting Details if setting active
     sharpeningFas: function () {
