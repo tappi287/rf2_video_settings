@@ -5,7 +5,7 @@ from typing import Iterator, Tuple
 from zipfile import ZipFile
 
 from rf2settings.globals import get_data_dir
-from rf2settings.preset.settings_model import BaseOptions
+from rf2settings.preset.settings_model import BaseOptions, ReshadeClaritySettings
 from rf2settings.settingsdef import graphics
 
 
@@ -75,6 +75,12 @@ class VrToolKit:
 
         # -- Iterate Preset options
         for preset_options in self.options:
+            # -- Exclude Clarity settings that will not be in Ini if disabled
+            if preset_options.app_key == ReshadeClaritySettings.app_key and not use_clarity:
+                for option in preset_options.options:
+                    option.exists_in_rf = False
+                continue
+
             for option in preset_options.options:
                 # -- Read from Preset options
                 if not update_from_disk:
