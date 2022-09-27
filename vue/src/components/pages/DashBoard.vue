@@ -60,8 +60,10 @@
 import ServerBrowser from "@/components/pages/ServerBrowser"
 import PresetHandler from "@/components/presets/PresetHandler";
 import { VueFlux, FluxCaption, FluxPreloader } from 'vue-flux';
-import {getEelJsonObject, chooseIndex, userScreenShots, getMaxWidth} from "@/main"
+import {getEelJsonObject, chooseIndex, userScreenShotsUrl, getMaxWidth, getRequest } from "@/main"
 import rfWPoster from "@/assets/rfW_Poster.webp"
+
+let userScreenShots = []
 
 function prepareScreenshots () {
   let imgList = userScreenShots.slice()
@@ -103,6 +105,19 @@ export default {
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
+    },
+    setupScreenShots: async function() {
+      const r = prepareScreenshots()
+      this.vfImages = r.images; this.vfCaptions = r.captions
+    },
+    getRemoteScreenShots: async function() {
+      const request = await getRequest(userScreenShotsUrl)
+      if (request.result === false) {
+        console.error('Error fetching Screenshots: ' + request.data.result)
+        return
+      }
+      userScreenShots = request.data
+      await this.setupScreenShots()
     },
     setBusy: function (busy) {this.$emit('set-busy', busy) },
     getDriver: async function () {
@@ -160,17 +175,18 @@ export default {
     console.log('Dashboard updated')
     this.updateHeight()
   },
-  mounted() {
+  async mounted() {
     console.log('Dashboard mounted')
     // Access after rendering finished
     setTimeout(() => {
       this.equalPresetButtonWidth()
     }, 0)
+
+    await this.getRemoteScreenShots()
   },
   created() {
     this.setBusy(true)
-    const r = prepareScreenshots()
-    this.vfImages = r.images; this.vfCaptions = r.captions
+    this.setupScreenShots()
     this.getDriver()
     this.setBusy(false)
     window.onresize = this.debounceResize
