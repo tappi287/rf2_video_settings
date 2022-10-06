@@ -14,10 +14,10 @@ from .preset.preset_base import PRESET_TYPES, load_presets_from_dir
 from .preset.presets_dir import get_user_presets_dir
 from .preset.settings_model import BenchmarkControllerJsonSettings
 from .process import RunProcess
-from .rf2benchmarkutils import create_benchmark_commands, BenchmarkRun, BenchmarkQueue
+from .rf2benchmarkutils import create_benchmark_commands, BenchmarkRun, BenchmarkQueue, FpsVR
 from .rf2connect import RfactorConnect, RfactorState
-from .rf2events import StartBenchmarkEvent, RecordBenchmarkEvent, RfactorQuitEvent, RfactorStatusEvent, \
-    BenchmarkProgressEvent
+from .rf2events import StartBenchmarkEvent, RecordBenchmarkEvent, RfactorQuitEvent
+from .rf2events import RfactorStatusEvent, BenchmarkProgressEvent
 from .rfactor import RfactorPlayer
 
 # TODO: Abort button
@@ -113,10 +113,13 @@ class RfactorBenchmark:
 
         self.current_run: BenchmarkRun = BenchmarkRun()
 
+        self.fps_vr: Optional[FpsVR] = None
+
         self.result_file: Optional[Path] = None
         self.benchmark_length = self.default_benchmark_length
         self.recording_timeout = self.default_timeout
         self.replay: Optional[str] = None
+        self.use_fps_vr = False
         self.start_time = 0.0
 
         self._timestamp = 0
@@ -130,10 +133,14 @@ class RfactorBenchmark:
 
         # -- Receive Recording Event
         if RecordBenchmarkEvent.event.is_set() and self.running:
-            logging.info('Starting to record benchmark with PresentMon')
             RecordBenchmarkEvent.reset()
-            if not self.start_present_mon_logging():
-                self.finish()
+            if self.use_fps_vr:
+                logging.info('Starting to record benchmark with FpsVR')
+                self.fps_vr.start()
+            else:
+                logging.info('Starting to record benchmark with PresentMon')
+                if not self.start_present_mon_logging():
+                    self.finish()
 
         # -- End Benchmark after benchmark length
         if self.recording and self.start_time > 0.0:
@@ -146,6 +153,8 @@ class RfactorBenchmark:
 
             if remaining <= 0.0:
                 logging.info('Detected end of Benchmark Recording Time.')
+                if self.use_fps_vr:
+                    self.fps_vr.stop()
                 self.start_time = 0.0
                 self.finish()
 
@@ -242,8 +251,11 @@ class RfactorBenchmark:
             return False
 
         # -- Apply current presets
-        preset_names = list()
+        preset_names, gfx_preset_name = list(), str()
         for preset in self.current_run.presets:
+            if preset.preset_type == PresetType.graphics:
+                gfx_preset_name = preset.name
+
             if self.rf.is_valid:
                 logging.info('Applying benchmark preset: %s', preset.name)
                 if not self.rf.write_settings(preset):
@@ -257,12 +269,16 @@ class RfactorBenchmark:
         length = getattr(self.current_run.settings.get_option('Length'), 'value', None)
         timeout = getattr(self.current_run.settings.get_option('TimeOut'), 'value', None)
         self.replay = getattr(self.current_run.settings.get_option('Replay'), 'value', None)
+        self.use_fps_vr = getattr(self.current_run.settings.get_option('use_fps_vr'), 'value', False)
         self.benchmark_length = int(length or self.default_benchmark_length)
         self.recording_timeout = int(timeout or self.default_timeout)
 
         logging.info('Prepared Benchmark Run: %s length %s recording delay %s replay %s with Presets: %s',
                      self.current_run.name, self.benchmark_length, self.recording_timeout, self.replay,
                      preset_names)
+        if self.use_fps_vr:
+            self.fps_vr = FpsVR(gfx_preset_name)
+            logging.info('Using FpsVR for measurements.')
 
         # -- Get Keyboard Assignments for AI Control and FPS View
         return self._update_controller_assignment() and result

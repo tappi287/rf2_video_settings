@@ -48,6 +48,7 @@ KNOWN_APPS = {
 }
 
 RF2_APPID = [k for k in KNOWN_APPS.keys()][0]
+FPSVR_APPID = [k for k in KNOWN_APPS.keys()][1]
 
 # Frozen or Debugger
 if getattr(sys, 'frozen', False):
@@ -131,6 +132,13 @@ def get_log_file() -> Path:
         return Path(get_log_dir()) / f'{APP_NAME}.log'
     else:
         return Path(get_log_dir()) / f'{APP_NAME}_DEV.log'
+
+
+def get_fpsvr_dir() -> Path:
+    docs_dir = _get_user_doc_dir()
+    if not docs_dir:
+        docs_dir = os.path.expanduser('~\\Documents\\')
+    return Path(check_and_create_dir(Path(docs_dir) / 'fpsVR' / 'CSV'))
 
 
 def get_version() -> str:

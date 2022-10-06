@@ -1,18 +1,21 @@
 import csv
 import logging
-import re
 import statistics
+import subprocess
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Dict
 
 from rf2settings.app_settings import AppSettings
+from rf2settings.globals import get_fpsvr_dir, FPSVR_APPID
 from rf2settings.preset.preset import BasePreset, GraphicsPreset, SessionPreset
 from rf2settings.preset.preset_base import load_preset
 from rf2settings.preset.settings_model import BenchmarkSettings
 from rf2settings.rf2command import Command, CommandQueue
 from rf2settings.rf2connect import RfactorState
 from rf2settings.utils import percentile
+from rf2settings.valve.steam_utils import SteamApps
 
 
 class BenchmarkRun:
@@ -169,3 +172,81 @@ def read_preset_result(result_file: Path) -> Dict[int, BasePreset]:
             presets[preset_type] = None if not p else p.to_js()
 
     return presets
+
+
+class FpsVR:
+    initial_loading_timeout = 30.0
+    loading_timeout = 25.0
+    benchmark_length = 60.0
+    FPS_VR_CMD_EXE = 'fpsVRcmd.exe'
+
+    def __init__(self, target_result_name: str = None):
+        """ Start/stop frame data logging and collect file name of the resulting
+            CSV fpsVR file.
+        """
+        self.fps_vr_cmd = Path()
+        self._get_fpsvr_cmd()
+
+        # Keep an index of csv files present before the current benchmark
+        # so we can identify the new created one.
+        self.fpsvr_csv_index = set()
+
+        self.result_csv_file = Path()
+        self.target_result_name = target_result_name
+
+    def start(self):
+        """ Run the benchmark for _benchmark_length_ seconds. """
+        # -- Start fpsVR logging
+        self._index_fpsvr_csv_dir()
+        self.start_stop_fpsvr_logging()
+
+        # -- Wait for _benchmark_length_ seconds
+        logging.info('rF Benchmark started logging.')
+
+    def stop(self):
+        # -- Stop Benchmark
+        self.start_stop_fpsvr_logging()
+        self.close()
+        logging.info('FPS VR stopped logging and will collect results.')
+        time.sleep(1)  # Give fpsVR some time to write the results
+        self._collect_result()
+
+    def start_stop_fpsvr_logging(self):
+        if not self.fps_vr_cmd.exists():
+            return
+
+        args = [self.fps_vr_cmd, 'logging_startstop']
+        try:
+            subprocess.Popen(args)
+        except Exception as e:
+            logging.error('Error starting fpsVR frames logging: %s', e)
+
+    def _collect_result(self):
+        if not self.fps_vr_cmd.exists():
+            return
+
+        for file in get_fpsvr_dir().glob('*.csv'):
+            if file.name not in self.fpsvr_csv_index:
+                self.result_csv_file = file
+                break
+
+        # -- Rename result file
+        if self.result_csv_file.exists() and self.target_result_name:
+            target_path = self.result_csv_file.with_stem(
+                f'{self.target_result_name}_{datetime.strftime(datetime.now(), "%Y-%m-%dT%H%M%S")}'
+            )
+            self.result_csv_file.rename(target_path)
+
+    def _index_fpsvr_csv_dir(self):
+        if not self.fps_vr_cmd.exists():
+            return
+
+        for file in get_fpsvr_dir().glob('*.csv'):
+            self.fpsvr_csv_index.add(file.name)
+
+    def _get_fpsvr_cmd(self):
+        s = SteamApps()
+        path = s.find_game_location(FPSVR_APPID)
+
+        if path and path.exists():
+            self.fps_vr_cmd = path / self.FPS_VR_CMD_EXE
