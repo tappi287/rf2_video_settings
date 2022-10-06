@@ -22,7 +22,21 @@
 
   <!-- Benchmark -->
   <b-collapse v-model="navModel.benchmark" accordion="bench-accordion" role="tabpanel">
-    <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white">
+    <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white"
+            @mouseover.ctrl="devSettingEnable">
+      <b-card class="mb-2 setting-card" bg-variant="dark" text-variant="white" title="Dev Settings"
+              v-if="devSettingEnabled">
+        <div class="text-left">
+          <b-card-text>
+            Use FpsVR for accurate CPU/GPU frame time measurements(Results not accessible via UI).
+          </b-card-text>
+          <b-card-text>
+            Queue a set of predefined Dev GFX Presets iterating most performance heavy options to
+            measure their impact. Enabling this will run the benchmark for quite a long time!
+          </b-card-text>
+          <DevPresets class="text-center mb-2"></DevPresets>
+        </div>
+      </b-card>
       <b-card-text class="text-left">You can run automated Benchmarks here. Choose the desired content, session settings and graphics
       settings. The app will:
         <ul class="mt-2">
@@ -47,10 +61,10 @@
 
       <!-- Benchmark Settings -->
       <div class="pt-4 pb-4">
-        <SettingItem v-for="setting in settings.options" :key="setting.key"
-                 :setting="setting" variant="rf-orange" class="mr-3 mb-3"
-                 ref="benchmarkSettings"
-                 @setting-changed="updateSetting"/>
+        <SettingItem v-for="setting in benchmarkSettings" :key="setting.key"
+                     :setting="setting" variant="rf-orange" class="mr-3 mb-3"
+                     ref="benchmarkSettings"
+                     @setting-changed="updateSetting"/>
         <b-button v-if="showReplayReset"
                   variant="rf-orange" @click="resetReplay" class="setting mr-3"
                   style="top: -0.04rem; position: relative;">
@@ -135,6 +149,7 @@ import GraphicsPresetArea from "@/components/presets/GraphicsPresetArea";
 import SessionPresetArea from "@/components/presets/SessionPresetArea";
 import ReplayList from "@/components/ReplayList";
 import BenchmarkResultArea from "@/components/benchmark/BenchmarkResultArea";
+import DevPresets from "@/components/benchmark/DevPresets";
 // --- </ Prepare receiving Benchmark Progress Events
 window.eel.expose(rfactorBenchmarkProgress, 'benchmark_progress')
 async function rfactorBenchmarkProgress (event) {
@@ -146,6 +161,7 @@ async function rfactorBenchmarkProgress (event) {
 export default {
   name: "BenchMark",
   components: {
+    DevPresets,
     BenchmarkResultArea,
     ReplayList,
     SessionPresetArea,
@@ -164,6 +180,7 @@ export default {
       benchmarkQueue: [],
       benchmarkProgress: 0, benchmarkProgressSize: 0,
       nonePreset: {name: 'None', isNonePreset: true},
+      devSettingEnabled: false,
     }
   },
   props: { gfxHandler: Object, sesHandler: Object, search: String },
@@ -177,6 +194,9 @@ export default {
     refresh: async function() {
       await this.$refs.resultArea.refresh()
       await this.getBenchmarkQueue()
+    },
+    devSettingEnable () {
+      this.devSettingEnabled = true
     },
     getReplaySettingRef: function () {
       let setting = undefined
@@ -339,7 +359,21 @@ export default {
     },
     progressBarEnabled () {
       return this.benchmarkProgress !== 0
-    }
+    },
+    benchmarkSettings () {
+      let options = []
+      let devSettingKeys = ['use_fps_vr', ]
+      if (this.settings.options === undefined) { return options }
+
+      this.settings.options.forEach(option => {
+        if (devSettingKeys.indexOf(option.key) !== -1) {
+          if (this.devSettingEnabled) { options.push(option) }
+        } else {
+          options.push(option)
+        }
+      })
+      return options
+    },
   },
   async created() {
     await this.getSettings()

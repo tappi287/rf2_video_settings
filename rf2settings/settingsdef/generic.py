@@ -82,6 +82,9 @@ benchmark_settings = {
     'Replay': {'key': 'Replay', 'name': 'Replay [optional]', 'value': None,
                'settings': ({'value': None, 'name': 'Select a Replay in the Replay List'},)
                },
+    'use_fps_vr': {'name': 'Use FpsVR', 'value': False,
+                   'settings': ({'value': True, 'name': 'On'},
+                                {'value': False, 'name': 'Off'})}
 }
 
 # Settings set via WebUI
