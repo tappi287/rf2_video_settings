@@ -33,8 +33,9 @@
           <b-card-text>
             Queue a set of predefined Dev GFX Presets iterating most performance heavy options to
             measure their impact. Enabling this will run the benchmark for quite a long time!
+            The currently selected GfxPreset will be used as the base Preset.
           </b-card-text>
-          <DevPresets class="text-center mb-2"></DevPresets>
+          <DevPresets :preset="currentGfxPreset" class="text-center mb-2"></DevPresets>
         </div>
       </b-card>
       <b-card-text class="text-left">You can run automated Benchmarks here. Choose the desired content, session settings and graphics
@@ -352,6 +353,11 @@ export default {
     currentPresetName() {
       if (this.benchmarkPresetName === '') { return this.nonePreset.name }
       return this.benchmarkPresetName
+    },
+    currentGfxPreset() {
+      let gfxSelectedPreset = this.gfxHandler.getSelectedPreset()
+      if (gfxSelectedPreset === undefined) { return this.nonePreset }
+      return gfxSelectedPreset
     },
     startButtonDisabled () {
       if (this.benchmarkQueue.length === 0) { return true }
