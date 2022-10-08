@@ -1,6 +1,34 @@
 <template>
   <div v-cloak id="dev_presets">
-    <b-button variant="danger" @click="createDevGfxPresets">Queue Dev Presets</b-button>
+    <b-card class="pb-2 mb-2 setting-card" bg-variant="dark" text-variant="white" title="Dev Settings">
+      <div class="text-left">
+        <b-card-text>
+          Use FpsVR for accurate CPU/GPU frame time measurements(Results not accessible via UI).
+        </b-card-text>
+        <b-card-text>
+          Queue a set of predefined Dev GFX Presets iterating most performance heavy options to
+          measure their impact. Enabling this will run the benchmark for quite a long time!
+          The currently selected GfxPreset will be used as the base Preset.
+        </b-card-text>
+        <b-card-text>
+          <div class="text-center">
+            <b-button size="sm" v-b-toggle.collapse-dev-1 class="btn-rf-secondary">Show Settings</b-button>
+            <b-button size="sm" class="btn-rf-orange" @click="createDevGfxPresets">Queue Dev Presets</b-button>
+          </div>
+          <b-collapse class="mb-2" id="collapse-dev-1">
+            <div v-for="(settings, name, index) in devPresetSettings" :key="index">
+              <h4>{{ name }}</h4>
+              <ul v-for="(options, sName, sIdx) in settings" :key="sIdx">
+                <h5>{{ sName }}</h5>
+                <ul v-for="(opt, oIdx) in options" :key="oIdx">
+                  {{ opt.name }} {{ opt.value }}
+                </ul>
+              </ul>
+            </div>
+          </b-collapse>
+        </b-card-text>
+      </div>
+    </b-card>
   </div>
 </template>
 
@@ -9,7 +37,6 @@ export default {
   name: "DevPresets",
   data: function () {
     return {
-      a: true,
       devPresets: [],
       devPresetSettings: {
         video_settings: {
@@ -72,6 +99,7 @@ export default {
           }
         }
       }
+      this.$emit('queue-presets', this.devPresets)
     },
     createDevGfxPreset: function (settingAppKey, optionKey, option) {
       // Create a copy of the current gfxPreset

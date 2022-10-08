@@ -24,20 +24,12 @@
   <b-collapse v-model="navModel.benchmark" accordion="bench-accordion" role="tabpanel">
     <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white"
             @mouseover.ctrl="devSettingEnable">
-      <b-card class="mb-2 setting-card" bg-variant="dark" text-variant="white" title="Dev Settings"
-              v-if="devSettingEnabled">
-        <div class="text-left">
-          <b-card-text>
-            Use FpsVR for accurate CPU/GPU frame time measurements(Results not accessible via UI).
-          </b-card-text>
-          <b-card-text>
-            Queue a set of predefined Dev GFX Presets iterating most performance heavy options to
-            measure their impact. Enabling this will run the benchmark for quite a long time!
-            The currently selected GfxPreset will be used as the base Preset.
-          </b-card-text>
-          <DevPresets :preset="currentGfxPreset" class="text-center mb-2"></DevPresets>
-        </div>
-      </b-card>
+      <!-- Dev Presets -->
+      <DevPresets
+          v-if="devSettingEnabled" :preset="currentGfxPreset" class="text-center mb-2"
+          @queue-presets="queueDevPresets">
+      </DevPresets>
+
       <b-card-text class="text-left">You can run automated Benchmarks here. Choose the desired content, session settings and graphics
       settings. The app will:
         <ul class="mt-2">
@@ -198,6 +190,13 @@ export default {
     },
     devSettingEnable () {
       this.devSettingEnabled = true
+
+      // Toggle FpsVr setting
+      this.settings.options.forEach(option => {
+        if (option.key === 'use_fps_vr') {
+          option.value = true
+        }
+      })
     },
     getReplaySettingRef: function () {
       let setting = undefined
@@ -265,9 +264,22 @@ export default {
       await getEelJsonObject(window.eel.reset_benchmark_queue()()); this.benchmarkQueue = []
       await this.getBenchmarkQueue()
     },
-    queueBenchmarkRun: async function() {
+    queueDevPresets: function (devPresets) {
+      for (let i=0; i < devPresets.length; i++) {
+        console.log('Queuing Dev GfxPreset ' +  devPresets[i].name)
+        this.queueBenchmarkRun(undefined, devPresets[i])
+      }
+    },
+    queueBenchmarkRun: async function(event, gfxPrestOverride) {
       this.setBusy(true)
-      const gfxPreset = this.gfxHandler.getSelectedPreset()
+      let gfxPreset
+
+      if (gfxPrestOverride !== undefined) {
+        gfxPreset = gfxPrestOverride
+      } else {
+        gfxPreset = this.gfxHandler.getSelectedPreset()
+      }
+
       const sesPreset = this.sesHandler.getSelectedPreset()
 
       const r = await getEelJsonObject(window.eel.queue_benchmark_run([gfxPreset, sesPreset], this.settings)())

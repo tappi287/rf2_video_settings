@@ -175,9 +175,6 @@ def read_preset_result(result_file: Path) -> Dict[int, BasePreset]:
 
 
 class FpsVR:
-    initial_loading_timeout = 30.0
-    loading_timeout = 25.0
-    benchmark_length = 60.0
     FPS_VR_CMD_EXE = 'fpsVRcmd.exe'
 
     def __init__(self, target_result_name: str = None):
