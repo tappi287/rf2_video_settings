@@ -136,7 +136,8 @@ class RfactorBenchmark:
             RecordBenchmarkEvent.reset()
             if self.use_fps_vr:
                 logging.info('Starting to record benchmark with FpsVR')
-                self.fps_vr.start()
+                if not self.start_fpsvr_logging():
+                    self.finish()
             else:
                 logging.info('Starting to record benchmark with PresentMon')
                 if not self.start_present_mon_logging():
@@ -153,8 +154,6 @@ class RfactorBenchmark:
 
             if remaining <= 0.0:
                 logging.info('Detected end of Benchmark Recording Time.')
-                if self.use_fps_vr:
-                    self.fps_vr.stop()
                 self.start_time = 0.0
                 self.finish()
 
@@ -204,6 +203,13 @@ class RfactorBenchmark:
         logging.info('Instance of PresentMon process is already present. Can not start Benchmark Recording.')
         return False
 
+    def start_fpsvr_logging(self):
+        if self.fps_vr.start():
+            self.start_time = time.time()
+            self.recording = True
+            return True
+        return False
+
     def finish(self):
         logging.info('rF Benchmark stopped and will collect results.')
 
@@ -234,6 +240,9 @@ class RfactorBenchmark:
         if self.present_mon_process is not None:
             self.present_mon_process.join(timeout=10)
             self.present_mon_process = None
+
+        if self.use_fps_vr:
+            self.fps_vr.stop()
 
         logging.info('rF2 Benchmark aborted. Kill event send.')
 

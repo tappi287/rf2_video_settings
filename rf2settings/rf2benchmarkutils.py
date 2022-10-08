@@ -191,32 +191,36 @@ class FpsVR:
         self.result_csv_file = Path()
         self.target_result_name = target_result_name
 
-    def start(self):
+    def start(self) -> bool:
         """ Run the benchmark for _benchmark_length_ seconds. """
         # -- Start fpsVR logging
         self._index_fpsvr_csv_dir()
-        self.start_stop_fpsvr_logging()
+        result = self.start_stop_fpsvr_logging()
 
         # -- Wait for _benchmark_length_ seconds
         logging.info('rF Benchmark started logging.')
+        return result
 
-    def stop(self):
+    def stop(self) -> bool:
         # -- Stop Benchmark
-        self.start_stop_fpsvr_logging()
-        self.close()
-        logging.info('FPS VR stopped logging and will collect results.')
-        time.sleep(1)  # Give fpsVR some time to write the results
-        self._collect_result()
+        if self.start_stop_fpsvr_logging():
+            logging.info('FPS VR stopped logging and will collect results.')
+            time.sleep(1)  # Give fpsVR some time to write the results
+            self._collect_result()
+            return True
+        return False
 
-    def start_stop_fpsvr_logging(self):
+    def start_stop_fpsvr_logging(self) -> bool:
         if not self.fps_vr_cmd.exists():
-            return
+            return False
 
         args = [self.fps_vr_cmd, 'logging_startstop']
         try:
             subprocess.Popen(args)
         except Exception as e:
             logging.error('Error starting fpsVR frames logging: %s', e)
+            return False
+        return True
 
     def _collect_result(self):
         if not self.fps_vr_cmd.exists():
@@ -242,7 +246,11 @@ class FpsVR:
             self.fpsvr_csv_index.add(file.name)
 
     def _get_fpsvr_cmd(self):
+        if self.fps_vr_cmd.exists() and self.fps_vr_cmd.is_file() and self.fps_vr_cmd.name == self.FPS_VR_CMD_EXE:
+            return
+
         s = SteamApps()
+        s.read_steam_library()
         path = s.find_game_location(FPSVR_APPID)
 
         if path and path.exists():
