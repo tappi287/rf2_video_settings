@@ -16,14 +16,26 @@
             <b-button size="sm" class="btn-rf-orange" @click="createDevGfxPresets">Queue Dev Presets</b-button>
           </div>
           <b-collapse class="mb-2" id="collapse-dev-1">
+
             <div v-for="(settings, name, index) in devPresetSettings" :key="index">
-              <h4>{{ name }}</h4>
+              {{ name }}
+
               <ul v-for="(options, sName, sIdx) in settings" :key="sIdx">
-                <h5>{{ sName }}</h5>
+
+                <div class="d-flex">
+                  <div class="d-inline-flex mr-2">{{ sName }}</div>
+                  <b-checkbox class="text-light d-inline-flex" v-model="devSettingsEnabled[sName]" />
+                </div>
+
                 <ul v-for="(opt, oIdx) in options" :key="oIdx">
-                  {{ opt.name }} {{ opt.value }}
+                  <div class="d-flex">
+                    <div class="d-inline-flex mr-2">{{ opt.name }} {{ opt.value }}</div>
+                    <b-checkbox class="text-light d-inline-flex" v-model="devOptionsEnabled[opt.name]" />
+                  </div>
                 </ul>
+
               </ul>
+
             </div>
           </b-collapse>
         </b-card-text>
@@ -38,6 +50,8 @@ export default {
   data: function () {
     return {
       devPresets: [],
+      devSettingsEnabled: {},
+      devOptionsEnabled: {},
       devPresetSettings: {
         video_settings: {
           'MSAA': [
@@ -85,16 +99,23 @@ export default {
   },
   props: {preset: Object},
   methods: {
+    enableSetting: function (event) {
+      console.log(event)
+    },
     createDevGfxPresets: function () {
       this.devPresets = []
 
       // Iterate every Setting and create a preset per setting
       for (let setting_app_key in this.devPresetSettings) {
         let settings = this.devPresetSettings[setting_app_key]
+
         for (let option_key in settings) {
           let options = settings[option_key]
+          if (!this.devSettingsEnabled[option_key]) { continue }
+
           for (let i = 0; i < options.length; i++) {
             let option = options[i]
+            if (!this.devOptionsEnabled[option.name]) { continue }
             this.createDevGfxPreset(setting_app_key, option_key, option)
           }
         }
@@ -115,6 +136,19 @@ export default {
       this.devPresets.push(presetCopy)
     }
   },
+  created() {
+    for (let setting_app_key in this.devPresetSettings) {
+      let settings = this.devPresetSettings[setting_app_key]
+      for (let option_key in settings) {
+        this.devSettingsEnabled[option_key] = true
+        let options = settings[option_key]
+        for (let i = 0; i < options.length; i++) {
+          let option = options[i]
+          this.devOptionsEnabled[option.name] = true
+        }
+      }
+    }
+  }
 }
 </script>
 
