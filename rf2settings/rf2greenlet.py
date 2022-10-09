@@ -5,7 +5,7 @@ import eel
 
 from .app.app_main import CLOSE_EVENT
 from .app_settings import AppSettings
-from .rf2benchmark import RfactorBenchmark
+from rf2settings.benchmark import RfactorBenchmark
 from .rf2command import Command, CommandQueue
 from .rf2connect import RfactorState, RfactorConnect
 from .rf2events import RfactorLiveEvent, RfactorQuitEvent, RfactorStatusEvent, BenchmarkProgressEvent

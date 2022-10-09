@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="benchmark-result-area">
     <b-collapse :visible="selectedResultId != null" @shown="chartCloseBtn=true">
       <!-- Chart Close Button -->
       <div v-if="chartCloseBtn" class="position-absolute" style="width: 100%; z-index: 100;">
@@ -32,7 +32,7 @@
       <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white" footer-class="d-none"
               v-if="currentResult.settings !== undefined">
         <div class="setting mr-3 mb-3 input-group-text info-field fixed-width-name"
-             v-for="s in currentResult.settings" :key="s">
+             v-for="(idx, s) in currentResult.settings" :key="idx">
           {{ s.name }}: {{ s.value }}
         </div>
       </b-card>

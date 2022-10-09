@@ -1,5 +1,6 @@
 import json
 import logging
+import shutil
 import threading
 import time
 from pathlib import Path, WindowsPath
@@ -7,83 +8,23 @@ from typing import Optional
 
 import gevent
 
-from .app_settings import AppSettings
-from .directInputKeySend import rfKeycodeToDIK
-from .preset.preset import PresetType
-from .preset.preset_base import PRESET_TYPES, load_presets_from_dir
-from .preset.presets_dir import get_user_presets_dir
-from .preset.settings_model import BenchmarkControllerJsonSettings
-from .process import RunProcess
-from .rf2benchmarkutils import create_benchmark_commands, BenchmarkRun, BenchmarkQueue, FpsVR
-from .rf2connect import RfactorConnect, RfactorState
-from .rf2events import StartBenchmarkEvent, RecordBenchmarkEvent, RfactorQuitEvent
-from .rf2events import RfactorStatusEvent, BenchmarkProgressEvent
-from .rfactor import RfactorPlayer
+from rf2settings.app_settings import AppSettings
+from rf2settings.directInputKeySend import rfKeycodeToDIK
+from rf2settings.preset.preset import PresetType, GraphicsPreset
+from rf2settings.preset.preset_base import PRESET_TYPES, load_presets_from_dir
+from rf2settings.preset.presets_dir import get_user_presets_dir
+from rf2settings.preset.settings_model import BenchmarkControllerJsonSettings
+from rf2settings.process import RunProcess
+from rf2settings.benchmark.benchmark_utils import create_benchmark_commands, BenchmarkRun, BenchmarkQueue
+from rf2settings.benchmark.fpsvr import FpsVR
+from rf2settings.rf2connect import RfactorConnect, RfactorState
+from rf2settings.rf2events import StartBenchmarkEvent, RecordBenchmarkEvent, RfactorQuitEvent
+from rf2settings.rf2events import RfactorStatusEvent, BenchmarkProgressEvent
+from rf2settings.rfactor import RfactorPlayer
+from rf2settings.utils import create_file_safe_name
+
 
 # TODO: Abort button
-
-"""
-base_url = 'localhost'
-web_ui_port = 5397
-
-Start race session: POST
-/rest/race/startRace
-r = RfactorConnect.post_request('/rest/race/startRace')
-
-Drive: POST
-/rest/garage/drive
-r = RfactorConnect.post_request('/rest/garage/drive')
-
-Get replay dict: GET
-/rest/watch/replays
-
-Load and play replay: GET
-/rest/watch/play/<replay_id>'
-
-Switch to fullscreen: POST (with data=None)
-/navigation/action/NAV_TO_FULL_EVENT_MONITOR
-
-Navigate to garage: POST
-/navigation/action/NAV_TO_GARAGE
-
-Next session: POST
-/navigation/action/NAV_NEXT_SESSION
-
-Switch to MAIN MENU: POST (with data=None)
-/navigation/action/NAV_TO_MAIN_MENU
-
-Quit the game: POST (with data=None)
-/rest/start/quitGame
-
-Get Tracks: GET
-/rest/race/track?locale=en-US
-Set Track: POST, data=track_id
-/rest/race/track
-Get Series GET
-/rest/race/series
-v1124
-Set Series POST data=series_id
-/rest/race/series
-v1125
-/rest/race/series?signature=series_id
-Get Cars GET
-/rest/race/car
-Set Cars POST: data=car_id
-/rest/race/car
-
-SESSION SETTINGS
-Get
-/rest/sessions GET
-Race Time
-/rest/sessions/settings POST {'sessionSetting': 'SESSSET_race_starting_time', 'value': 1}
-Grid Position
-/rest/sessions/settings POST {'sessionSetting': 'SESSSET_Grid_Position', 'value': 1}
-
-Get selection
-/rest/race/selection?locale=en-US
-Get Profile
-/rest/profile
-"""
 
 
 class RfactorBenchmark:
@@ -162,6 +103,11 @@ class RfactorBenchmark:
             logging.info('Detected end of Benchmark Recording process.')
             self.finish()
 
+    def get_current_gfx_preset(self) -> GraphicsPreset:
+        for preset in self.current_run.presets:
+            if preset.preset_type == PresetType.graphics:
+                return preset
+
     def run(self):
         """ Run the benchmark """
         if not self._prepare_benchmark_run():
@@ -180,42 +126,15 @@ class RfactorBenchmark:
         create_benchmark_commands(self.ai_dik, self.fps_dik, self.recording_timeout, self.replay)
         self.running = True
 
-    def start_present_mon_logging(self) -> bool:
-        self.result_file = AppSettings.present_mon_result_dir / f'{self.current_run.name}.csv'
-        if not AppSettings.present_mon_result_dir.exists():
-            AppSettings.present_mon_result_dir.mkdir()
-
-        cmd = [AppSettings.present_mon_bin.as_posix(),
-               '-process_name', 'rFactor2.exe', '-output_file', str(WindowsPath(self.result_file)),
-               '-timed', str(int(self.benchmark_length)), '-no_top', '-qpc_time',
-               '-terminate_after_timed', '-stop_existing_session']  # '-no_track_display'
-        cwd = self.rf.location
-
-        if self.present_mon_process is None:
-            logging.info('Starting PresentMon: %s', cmd)
-            self.kill_pm_event.clear()
-            self.present_mon_process = RunProcess(cmd, cwd, self.kill_pm_event)
-            self.present_mon_process.start()
-            self.start_time = time.time()
-            self.recording = True
-            return True
-
-        logging.info('Instance of PresentMon process is already present. Can not start Benchmark Recording.')
-        return False
-
-    def start_fpsvr_logging(self):
-        if self.fps_vr.start():
-            self.start_time = time.time()
-            self.recording = True
-            return True
-        return False
-
     def finish(self):
         logging.info('rF Benchmark stopped and will collect results.')
+        if self.use_fps_vr:
+            self.fps_vr.stop()
+            self._collect_fps_vr_result()
 
         # -- Kill Running related processes
         self.abort()
-        
+
         # -- Write Session and Graphics Settings to file
         if self.recording and self.result_file is not None:
             self._create_result()
@@ -241,9 +160,6 @@ class RfactorBenchmark:
             self.present_mon_process.join(timeout=10)
             self.present_mon_process = None
 
-        if self.use_fps_vr:
-            self.fps_vr.stop()
-
         logging.info('rF2 Benchmark aborted. Kill event send.')
 
     def _prepare_benchmark_run(self) -> bool:
@@ -260,11 +176,8 @@ class RfactorBenchmark:
             return False
 
         # -- Apply current presets
-        preset_names, gfx_preset_name = list(), str()
+        preset_names = list()
         for preset in self.current_run.presets:
-            if preset.preset_type == PresetType.graphics:
-                gfx_preset_name = preset.name
-
             if self.rf.is_valid:
                 logging.info('Applying benchmark preset: %s', preset.name)
                 if not self.rf.write_settings(preset):
@@ -285,8 +198,12 @@ class RfactorBenchmark:
         logging.info('Prepared Benchmark Run: %s length %s recording delay %s replay %s with Presets: %s',
                      self.current_run.name, self.benchmark_length, self.recording_timeout, self.replay,
                      preset_names)
+
+        if not AppSettings.present_mon_result_dir.exists():
+            AppSettings.present_mon_result_dir.mkdir()
+
         if self.use_fps_vr:
-            self.fps_vr = FpsVR(gfx_preset_name)
+            self.fps_vr = FpsVR(create_file_safe_name(self.get_current_gfx_preset().name))
             logging.info('Using FpsVR for measurements.')
 
         # -- Get Keyboard Assignments for AI Control and FPS View
@@ -313,7 +230,15 @@ class RfactorBenchmark:
                     result = False
             return result
         return False
-    
+
+    def _collect_fps_vr_result(self):
+        file = self.fps_vr.get_result_file()
+        if not file:
+            return
+        target = AppSettings.present_mon_result_dir / file.name
+        shutil.move(file, target)
+        self.result_file = target
+
     def _create_result(self):
         if not self.result_file.exists():
             logging.info('Could not locate PresentMon result file. Skipping creation of result Preset files.')
@@ -325,6 +250,8 @@ class RfactorBenchmark:
             selected_preset_name = AppSettings.selected_presets.get(str(preset_type)) or current_preset.name
             _, selected_preset = load_presets_from_dir(get_user_presets_dir(), preset_type,
                                                        selected_preset_name=selected_preset_name)
+            if not selected_preset and preset_type == PresetType.graphics:
+                selected_preset = self.get_current_gfx_preset()
             preset_names.append(selected_preset_name)
 
             # -- Write preset next to result
@@ -353,3 +280,30 @@ class RfactorBenchmark:
                 logging.debug('Exporting benchmark result settings: %s', file.name)
         except Exception as e:
             logging.error('Could not write benchmark result settings: %s', e)
+
+    def start_fpsvr_logging(self):
+        if self.fps_vr.start():
+            self.start_time = time.time()
+            self.recording = True
+            return True
+        return False
+
+    def start_present_mon_logging(self) -> bool:
+        self.result_file = AppSettings.present_mon_result_dir / f'{self.current_run.name}.csv'
+        cmd = [AppSettings.present_mon_bin.as_posix(),
+               '-process_name', 'rFactor2.exe', '-output_file', str(WindowsPath(self.result_file)),
+               '-timed', str(int(self.benchmark_length)), '-no_top', '-qpc_time',
+               '-terminate_after_timed', '-stop_existing_session']  # '-no_track_display'
+        cwd = self.rf.location
+
+        if self.present_mon_process is None:
+            logging.info('Starting PresentMon: %s', cmd)
+            self.kill_pm_event.clear()
+            self.present_mon_process = RunProcess(cmd, cwd, self.kill_pm_event)
+            self.present_mon_process.start()
+            self.start_time = time.time()
+            self.recording = True
+            return True
+
+        logging.info('Instance of PresentMon process is already present. Can not start Benchmark Recording.')
+        return False

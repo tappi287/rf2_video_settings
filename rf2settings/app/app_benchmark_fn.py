@@ -1,28 +1,16 @@
 import json
 import logging
-from pathlib import Path
 from subprocess import Popen
 
-from ..app_settings import AppSettings
-from ..preset.preset import GraphicsPreset, SessionPreset
-from ..preset.preset_base import PRESET_TYPES
-from ..preset.settings_model import BenchmarkSettings
-from ..rf2benchmarkutils import read_present_mon_result, BenchmarkRun, BenchmarkQueue, read_preset_result
-from ..rf2events import StartBenchmarkEvent
-from ..utils import capture_app_exceptions
-
-
-def _read_result_settings(f: Path):
-    settings, setting_file = dict(), f.parent / f'{f.stem}_settings.json'
-
-    if setting_file.exists():
-        try:
-            with open(setting_file, 'r') as f:
-                settings = json.loads(f.read())
-        except Exception as e:
-            logging.error('Error reading benchmark result settings file: %s', e)
-
-    return settings
+from rf2settings.app_settings import AppSettings
+from rf2settings.preset.preset import GraphicsPreset, SessionPreset
+from rf2settings.preset.preset_base import PRESET_TYPES
+from rf2settings.preset.settings_model import BenchmarkSettings
+from rf2settings.benchmark.benchmark_utils import BenchmarkRun, BenchmarkQueue
+from rf2settings.benchmark.result import read_results, read_preset_result, read_result_settings
+from rf2settings.benchmark.fpsvr import FpsVR
+from rf2settings.rf2events import StartBenchmarkEvent
+from rf2settings.utils import capture_app_exceptions
 
 
 @capture_app_exceptions
@@ -38,15 +26,15 @@ def get_benchmark_results():
     results = list()
 
     for idx, f in enumerate(p.glob('*.csv')):
-        try:
-            logging.debug('Preparing Benchmark Result: %s', f)
-            r = {'id': idx, 'name': f.name,
-                 'data': read_present_mon_result(f, details=False),
-                 'settings': _read_result_settings(f)}
+        if f.stem.startswith(FpsVR.FRAMETIMES_FILE_PREFIX):
+            continue
 
-            results.append(r)
-        except Exception as e:
-            logging.error('Error reading Benchmark result file: %s %s', f, e)
+        logging.debug('Preparing Benchmark Result: %s', f)
+        r = {'id': idx, 'name': f.name,
+             'data': read_results(f, details=False),
+             'settings': read_result_settings(f)}
+
+        results.append(r)
 
     return json.dumps(sorted(results, key=lambda x: x.get('name'), reverse=True))
 
@@ -60,7 +48,7 @@ def get_benchmark_result_details(result_file_name: str):
         if f.name != result_file_name:
             continue
         logging.debug('Reading detailed Benchmark Result: %s', f)
-        data = read_present_mon_result(f, details=True)
+        data = read_results(f, details=True)
         presets = read_preset_result(f)
 
     if data:
