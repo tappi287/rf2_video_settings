@@ -333,3 +333,16 @@ def rfactor_process_with_id_exists(pid: Optional[int]) -> bool:
         return False
     if p.name().lower().startswith('rfactor2.exe'):
         return True
+
+
+def get_widest(str_list, space=3):
+    max_len = 0
+    for v in str_list:
+        max_len = max(max_len, len(v))
+    return max_len + space
+
+
+def pad_string(s, length, align_right=False):
+    if align_right:
+        return s.rjust(length, ' ')
+    return s.ljust(length, ' ')
