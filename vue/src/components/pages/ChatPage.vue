@@ -11,91 +11,92 @@
         </b-input-group-text>
       </b-input-group-prepend>
 
-      <!-- Spacer -->
-      <div class="form-control bg-transparent no-border">
-      </div>
-
-      <!-- Chat Provider Selection -->
-      <div class="mt-1">
-        <b-input-group size="sm" class="setting-field">
-          <b-input-group-prepend>
-            <b-input-group-text class="info-field fixed-width-name low-round-left">
-              Chat Provider
-            </b-input-group-text>
-          </b-input-group-prepend>
-          <b-input-group-append>
-            <b-dropdown size="sm" :text="currentProviderName" right
-                        class="setting-item fixed-width-setting no-border"
-                        v-b-popover.auto.hover="'Select a chat provider to configure.'"
-                        variant="rf-orange">
-              <b-dropdown-item v-for="(provider, idx) in providers" :key="idx"
-                               @click="chooseProvider(idx)">
-                {{ provider.name }}
-              </b-dropdown-item>
-            </b-dropdown>
-          </b-input-group-append>
-        </b-input-group>
-      </div>
+    <!-- Spacer -->
+    <div class="form-control bg-transparent no-border">
+    </div>
     </b-input-group>
 
-    <div>
-      <!-- Input -->
-      <b-input-group size="sm" class="mt-2 table-bar">
-        <b-input-group-prepend>
-          <b-input-group-text class="rf-secondary border-0 low-round-left">
-            <b-icon :icon="currentProvider.icon" :variant="currentProviderActive ? 'success' : 'dark'"
-                    aria-hidden="true"></b-icon>
-          </b-input-group-text>
-        </b-input-group-prepend>
+    <!-- Input -->
+    <b-input-group size="sm" class="mt-2 table-bar">
+      <b-input-group-prepend>
+        <b-input-group-text class="rf-secondary border-0 low-round-left">
+          <b-icon :icon="currentProvider.icon" :variant="currentProviderActive ? 'success' : 'dark'"
+                  aria-hidden="true"></b-icon>
+        </b-input-group-text>
+      </b-input-group-prepend>
 
-        <b-form-input v-model="currentProvider.settings.channel" type="search" debounce="1000"
-                      :placeholder="'Enter ' + currentProviderName + ' Channel Name / Nickname..'"
-                      :disabled="!currentProvider.settings.enabled"
-                      @keydown.enter="activateProvider"
-                      spellcheck="false" class="no-border">
-        </b-form-input>
+      <b-form-input v-model="currentProvider.settings.channel" type="search" debounce="1000"
+                    :placeholder="'Enter ' + currentProviderName + ' Channel Name / Nickname..'"
+                    :disabled="!currentProvider.settings.enabled"
+                    @keydown.enter="activateProvider"
+                    spellcheck="false" class="no-border">
+      </b-form-input>
 
-        <b-input-group-append>
-          <b-input-group-append class="pl-2 bg-white">
-            <span class="ml-2">
-              <b-icon :icon="currentProviderActive ? 'circle-fill' : 'circle-fill'"
-                      :variant="currentProviderActive ? 'success' : 'light'"
-                      class="p-0 m-1" shift-v="-3"/>
-            </span>
-          </b-input-group-append>
-          <b-form-checkbox v-model="currentProvider.settings.startup"
-                           @change="saveSettings" :disabled="!currentProvider.settings.enabled"
-                           class="text-dark bg-white enable-box" switch size="lg">
-            Start with app
-          </b-form-checkbox>
-          <b-button-group>
-            <b-button variant="rf-secondary" size="sm" :disabled="!currentProvider.settings.enabled"
-                      @click="activateProvider">
-              <b-icon class="mr-2 ml-1" icon="play-circle-fill" shift-v="0.75" aria-hidden="true"></b-icon>
-              Start
-            </b-button>
-            <b-button variant="rf-secondary" size="sm" :disabled="!currentProvider.settings.enabled"
-                      @click="deactivateProvider">
-              <b-icon class="mr-2 ml-1" icon="stop-circle-fill" shift-v="0.75" aria-hidden="true"></b-icon>
-              Stop
-            </b-button>
-          </b-button-group>
+      <b-input-group-append>
+        <!-- Active indicator -->
+        <b-input-group-append class="pl-2 bg-white">
+          <span class="ml-2">
+            <b-icon :icon="currentProviderActive ? 'circle-fill' : 'circle-fill'"
+                    :variant="currentProviderActive ? 'success' : 'light'"
+                    class="p-0 m-1" shift-v="-3"/>
+          </span>
         </b-input-group-append>
-      </b-input-group>
-      <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white">
-        <template #header>
-          <div class="position-relative">
-            <b-icon :icon="currentProvider.icon"/>
-            <span class="ml-2">{{ currentProviderName }} Chat</span>
-          </div>
-        </template>
-        <b-card-text></b-card-text>
-        <b-card-text class="text-left" style="font-size: small;">
-          <p class="m-0 p-0" v-for="(message, idx) in currentProvider.chat" :key="idx">{{ message }}</p>
-          <p class="m-0 p-0" v-if="currentProvider.chat.length === 0"><i>No messages received yet.</i></p>
-        </b-card-text>
-      </b-card>
-    </div>
+
+        <!-- Enable StartUp -->
+        <b-form-checkbox v-model="currentProvider.settings.startup"
+                         @change="saveSettings" :disabled="!currentProvider.settings.enabled"
+                         class="text-dark bg-white enable-box" switch size="lg">
+          Start with app
+        </b-form-checkbox>
+
+        <!-- Start Stop Buttons -->
+        <b-button-group>
+          <b-button variant="rf-secondary" size="sm" :disabled="!currentProvider.settings.enabled"
+                    @click="activateProvider">
+            <b-icon class="mr-2 ml-1" icon="play-circle-fill" shift-v="0.75" aria-hidden="true"></b-icon>
+            Start
+          </b-button>
+          <b-button variant="rf-secondary" size="sm" :disabled="!currentProvider.settings.enabled"
+                    @click="deactivateProvider">
+            <b-icon class="mr-2 ml-1" icon="stop-circle-fill" shift-v="0.75" aria-hidden="true"></b-icon>
+            Stop
+          </b-button>
+        </b-button-group>
+
+        <!-- Chat Provider Selection -->
+        <b-input-group-text class="info-field fixed-width-name">
+          Provider:
+        </b-input-group-text>
+        <b-dropdown size="sm" :text="currentProviderName" right
+                    class="setting-item fixed-width-setting no-border"
+                    v-b-popover.auto.hover="'Select a chat provider to configure.'"
+                    variant="rf-orange">
+          <b-dropdown-item v-for="(provider, idx) in providers" :key="idx"
+                           @click="chooseProvider(idx)">
+            {{ provider.name }}
+          </b-dropdown-item>
+        </b-dropdown>
+      </b-input-group-append>
+    </b-input-group>
+    <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white">
+      <template #header>
+        <div class="position-relative">
+          <b-icon :icon="currentProvider.icon"/>
+          <span class="ml-2">{{ currentProviderName }} Chat</span>
+        </div>
+      </template>
+      <b-card-text></b-card-text>
+      <b-card-text class="text-left small mb-3">
+        <p class="m-0 p-0" v-for="(message, idx) in currentProvider.chat" :key="idx">{{ message }}</p>
+        <p class="m-0 p-0" v-if="currentProvider.chat.length === 0 && currentProviderActive">
+          <i>No messages received in this session.</i>
+        </p>
+        <p class="m-0 mt-2 p-0 text-center" v-if="!currentProviderActive">
+          Enter your user/channel name and click Start.
+          Chat messages will be forwarded to your rF2 in-game message window.
+        </p>
+      </b-card-text>
+    </b-card>
 
     <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white">
       <!-- Title -->
@@ -105,14 +106,9 @@
           <span class="ml-2">Chat Transceiver Plugin</span>
         </div>
       </template>
-      <p class="text-left">
-        This rFactor 2 plugin can forward messages from this client application to your in-game message window.
-        Useful if you are in VR and look for a convenient, performance friendly way to view your
-        live-stream chat inside rFactor 2.
-      </p>
-      <p class="text-left">
-        Use the button below to one-click install the plugin to your rFactor 2 Bin64 directory.
-        It will be automatically activated next time you start rFactor 2.
+      <p class="text-center small">
+        rFactor 2 plugin that forwards messages to your in-game message window.
+        Convenient and performance friendly in VR.
       </p>
       <p>
         <b-link class="text-rf-orange" target="_blank" href="https://github.com/tappi287/rf2_chat_transceiver">
@@ -143,7 +139,7 @@ export default {
         {
           name: "Twitch",
           settings: {enabled: true, channel: "", startup: false},
-          chat: ["Inactive. Press the Enter button to activate the chat."],
+          chat: [],
           icon: "twitch", client: undefined
         },
         {
