@@ -841,6 +841,12 @@ if __name__ == '__main__':
     info = SimInfo()
     version = info.Rf2Ext.mVersion
     v = bytes(version).partition(b'\0')[0].decode().rstrip()
+
+    # Needs direct memory access
+    print('mDirectMemoryAccessEnabled', info.Rf2Ext.mDirectMemoryAccessEnabled)
+    print('Last Msg:', bytes(info.Rf2Ext.mLastHistoryMessage).partition(b'\0')[0].decode().rstrip())
+    print('Status Msg:', bytes(info.Rf2Ext.mStatusMessage).partition(b'\0')[0].decode().rstrip())
+
     clutch = info.Rf2Tele.mVehicles[0].mUnfilteredClutch  # 1.0 clutch down, 0 clutch up
     gear = info.Rf2Tele.mVehicles[0].mGear  # -1 to 6
     print('Map version: %s\n'
