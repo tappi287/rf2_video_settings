@@ -9,7 +9,6 @@ url = "https://piwigo.ilikeviecher.com/ftp-upload/packages/"
 verify_ssl = true
 
 [dev-packages]
-paramiko = "*"
 pyinstaller = "*"
 
 [packages]
