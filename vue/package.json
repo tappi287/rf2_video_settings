@@ -17,6 +17,7 @@
     "chartjs-plugin-zoom": "^1.2.0",
     "core-js": "^3.21.0",
     "source-sans": "^3.46.0",
+    "tmi.js": "^1.8.5",
     "vue": "^2.6.14",
     "vue-flux": "^6.4.0",
     "webpack": "^5.68.0"

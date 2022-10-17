@@ -29,6 +29,7 @@ class AppSettings(JsonRepr):
     server_browser: dict = {'filter_fav': False, 'filter_empty': False, 'filter_pwd': False, 'filter_version': False,
                             'filter_text': '', 'store_pwd': False}
     benchmark_settings = dict()
+    chat_settings = list()
     headlight_settings = dict()
     headlight_controller_assignments = dict()
     headlight_rf_key = 'DIK_H'

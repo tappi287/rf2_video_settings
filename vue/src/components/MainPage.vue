@@ -42,6 +42,9 @@
         <b-nav-item :active="navActive === 6" @click="navActive=6" link-classes="pl-0">
           Server Browser
         </b-nav-item>
+        <b-nav-item :active="navActive === 11" @click="navActive=11" link-classes="pl-0">
+          Chat
+        </b-nav-item>
         <b-nav-item :active="navActive === 9" @click="navActive=9" link-classes="pl-0">
           Benchmark
         </b-nav-item>
@@ -210,6 +213,11 @@
                @fav-updated="refreshDashFavs = true"/>
     </keep-alive>
 
+    <!-- ChatPage -->
+    <keep-alive>
+      <ChatPage v-if="navActive === 11" :live="live" @make-toast="makeToast"></ChatPage>
+    </keep-alive>
+
     <!-- Wiki -->
     <AppWiki v-if="navActive === 7" @nav="navigate" />
 
@@ -328,6 +336,7 @@ import {getEelJsonObject, sleep} from "@/main";
 import BenchMark from "@/components/benchmark/Benchmark";
 import GraphicsPresetArea from "@/components/presets/GraphicsPresetArea";
 import SessionPresetArea from "@/components/presets/SessionPresetArea";
+import ChatPage from "@/components/pages/ChatPage";
 
 export default {
   name: 'MainPage',
@@ -500,6 +509,7 @@ export default {
     this.$eventHub.$off('navigate', this.navigate)
   },
   components: {
+    ChatPage,
     SessionPresetArea,
     GraphicsPresetArea,
     BenchMark,
