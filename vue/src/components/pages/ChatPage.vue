@@ -1,5 +1,5 @@
 <template>
-  <div v-cloak id="chat" class="position-relative mb-2">
+  <div v-cloak id="chat" v-if="visible" class="position-relative mb-2">
     <b-input-group size="sm">
       <b-input-group-prepend>
         <div class="pl-0 pr-1 rpl-con position-relative bg-transparent" v-if="false">
@@ -152,17 +152,13 @@ export default {
       twitchUrl: "",
       youtubeUrl: "",
       currentProviderIdx: 0,
-      chatLength: 4,
+      chatLength: 8,
     }
   },
-  props: {live: Boolean},
+  props: {live: Boolean, visible: Boolean},
   methods: {
     chooseProvider(idx) {
       this.currentProviderIdx = idx;
-    },
-    addChatMessage(chat_array, tags, message) {
-      const msg = `${tags['display-name']}: ${message}`
-      return [...chat_array.slice(-this.chatLength), msg]
     },
     activateProvider() {
       if (this.currentProvider.name === "Twitch") {
