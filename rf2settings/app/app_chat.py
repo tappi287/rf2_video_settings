@@ -16,3 +16,8 @@ def save_chat_settings(settings):
 @eel.expose
 def get_chat_settings():
     return app_chat_fn.get_chat_settings()
+
+
+@eel.expose
+def post_chat_message(message):
+    return app_chat_fn.post_chat_message(message)

@@ -171,6 +171,11 @@ export default {
         this.deactivateTmi()
       }
     },
+    addTmiChatMessage(chat_array, tags, message) {
+      const msg = `${tags['display-name']}: ${message}`
+      this.postMessage(msg)
+      return [...chat_array.slice(-this.chatLength), msg]
+    },
     activateTmi() {
       if (this.providers[0].settings.channel === "") {
         return
@@ -180,7 +185,7 @@ export default {
       this.providers[0].client.connect()
       this.providers[0].chat = []
       this.providers[0].client.on('message', (channel, tags, message) => {
-        this.providers[0].chat = this.addChatMessage(this.providers[0].chat, tags, message)
+        this.providers[0].chat = this.addTmiChatMessage(this.providers[0].chat, tags, message)
       });
     },
     deactivateTmi() {
@@ -202,6 +207,9 @@ export default {
           }
         }
       }
+    },
+    async postMessage(message) {
+      await window.eel.post_chat_message(message)()
     },
     async saveSettings() {
       let settings = [];

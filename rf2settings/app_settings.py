@@ -39,7 +39,7 @@ class AppSettings(JsonRepr):
     # -----------------------------------
     # -- Won't be saved to file:
     skip_keys = ['first_load_complete', 'session_selection', 'replay_playing',
-                 'present_mon_bin', 'present_mon_result_dir',
+                 'present_mon_bin', 'present_mon_result_dir', 'chat_plugin_version',
                  'content_selected', 'content_keys', 'content_urls', 'content', 'content_saved']
 
     present_mon_bin: Path = get_present_mon_bin()
