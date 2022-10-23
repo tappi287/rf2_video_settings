@@ -21,3 +21,18 @@ def get_chat_settings():
 @eel.expose
 def post_chat_message(message):
     return app_chat_fn.post_chat_message(message)
+
+
+@eel.expose
+def install_plugin():
+    return app_chat_fn.install_plugin()
+
+
+@eel.expose
+def uninstall_plugin():
+    return app_chat_fn.uninstall_plugin()
+
+
+@eel.expose
+def get_plugin_version():
+    return app_chat_fn.get_plugin_version()

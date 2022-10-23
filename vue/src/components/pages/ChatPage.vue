@@ -117,8 +117,12 @@
       </p>
       <div class="m-3 mt-4">
         <b-button-group>
-          <b-button variant="rf-orange-light">Install Plugin</b-button>
-          <b-button variant="rf-secondary">Remove Plugin</b-button>
+          <b-button variant="rf-orange-light" :disabled="pluginInstalled" @click="installPlugin">
+            Install Plugin
+          </b-button>
+          <b-button variant="rf-secondary" :disabled="!pluginInstalled" @click="uninstallPlugin">
+            Remove Plugin <template v-if="pluginInstalled">v{{ pluginVersion }}</template>
+          </b-button>
         </b-button-group>
       </div>
 
@@ -153,6 +157,7 @@ export default {
       youtubeUrl: "",
       currentProviderIdx: 0,
       chatLength: 8,
+      pluginVersion_v: undefined,
     }
   },
   props: {live: Boolean, visible: Boolean},
@@ -211,6 +216,14 @@ export default {
     async postMessage(message) {
       await window.eel.post_chat_message(message)()
     },
+    async installPlugin() {
+      await window.eel.install_plugin()()
+      await this.getPluginVersion()
+    },
+    async uninstallPlugin() {
+      await window.eel.uninstall_plugin()()
+      await this.getPluginVersion()
+    },
     async saveSettings() {
       let settings = [];
       for (let idx in this.providers) {
@@ -239,6 +252,14 @@ export default {
         this.providers[idx].settings = r.settings[idx]
       }
     },
+    async getPluginVersion() {
+      const r = await getEelJsonObject(window.eel.get_plugin_version()())
+      if (!r.result) {
+        this.pluginVersion_v = ''
+        return
+      }
+      this.pluginVersion_v = r.version
+    }
   },
   computed: {
     currentProvider() {
@@ -249,10 +270,18 @@ export default {
     },
     currentProviderActive() {
       return this.currentProvider.client !== undefined
+    },
+    pluginVersion() {
+      if (this.pluginVersion_v === undefined) { this.getPluginVersion() }
+      return this.pluginVersion_v
+    },
+    pluginInstalled() {
+      return this.pluginVersion_v !== undefined && this.pluginVersion !== "";
     }
   },
   async created() {
     await this.getSettings()
+    await this.getPluginVersion()
     this.startUp()
   }
 }

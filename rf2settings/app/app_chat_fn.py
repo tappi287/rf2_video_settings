@@ -1,9 +1,14 @@
 import json
 import logging
+import shutil
 from multiprocessing import shared_memory
+from pathlib import Path
 
-from ..app_settings import AppSettings
-from ..utils import capture_app_exceptions
+from rf2settings.app.app_main_fn import _get_rf_location
+from rf2settings.app_settings import AppSettings
+from rf2settings.globals import get_data_dir, CHAT_PLUGIN_NAME, RFACTOR_PLUGIN_PATH
+from rf2settings.utils import capture_app_exceptions
+from open_vr_mod.util.utils import get_file_hash
 
 
 @capture_app_exceptions
@@ -44,3 +49,31 @@ def post_chat_message(message):
     logging.debug('Writing to shared memory: %s', mem_bytes)
 
     shm.close()
+
+
+@capture_app_exceptions
+def install_plugin():
+    plugin_path = get_data_dir() / CHAT_PLUGIN_NAME
+    target_path = Path(_get_rf_location(RFACTOR_PLUGIN_PATH))
+    logging.debug('Installing Chat Plugin to: %s', target_path)
+    shutil.copy(plugin_path, target_path)
+
+
+@capture_app_exceptions
+def uninstall_plugin():
+    plugin_path = Path(_get_rf_location(RFACTOR_PLUGIN_PATH)) / CHAT_PLUGIN_NAME
+    logging.debug('Uninstalling Chat Plugin from: %s', plugin_path)
+    if plugin_path.exists() and plugin_path.is_file():
+        plugin_path.unlink()
+
+
+@capture_app_exceptions
+def get_plugin_version():
+    plugin_path = Path(_get_rf_location(RFACTOR_PLUGIN_PATH)) / CHAT_PLUGIN_NAME
+
+    if plugin_path.exists() and plugin_path.is_file():
+        version = AppSettings.chat_plugin_version.get(get_file_hash(plugin_path))
+        logging.debug('Found ChatTransceiver Plugin version: %s', version)
+        return json.dumps({'result': True, 'version': version})
+
+    return json.dumps({'result': False})

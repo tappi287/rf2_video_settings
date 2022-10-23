@@ -36,6 +36,8 @@ class AppSettings(JsonRepr):
     server_passwords = dict()
     apply_webui_settings = False
 
+    chat_plugin_version = {"f62fc2524cff71458bca4acdd558539f": "2022.10.23"}
+
     # -----------------------------------
     # -- Won't be saved to file:
     skip_keys = ['first_load_complete', 'session_selection', 'replay_playing',
