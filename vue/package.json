@@ -20,7 +20,8 @@
     "tmi.js": "^1.8.5",
     "vue": "^2.6.14",
     "vue-flux": "^6.4.0",
-    "webpack": "^5.68.0"
+    "webpack": "^5.68.0",
+    "youtube-chat": "^2.1.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^5.0.0-rc.2",

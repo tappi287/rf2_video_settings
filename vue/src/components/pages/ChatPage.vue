@@ -27,7 +27,7 @@
 
       <b-form-input v-model="currentProvider.settings.channel" type="search" debounce="1000"
                     :placeholder="'Enter ' + currentProviderName + ' Channel Name / Nickname..'"
-                    :disabled="!currentProvider.settings.enabled"
+                    :disabled="!currentProvider.enabled"
                     @keydown.enter="activateProvider"
                     spellcheck="false" class="no-border">
       </b-form-input>
@@ -44,19 +44,19 @@
 
         <!-- Enable StartUp -->
         <b-form-checkbox v-model="currentProvider.settings.startup"
-                         @change="saveSettings" :disabled="!currentProvider.settings.enabled"
+                         @change="saveSettings" :disabled="!currentProvider.enabled"
                          class="text-dark bg-white enable-box" switch size="lg">
           Start with app
         </b-form-checkbox>
 
         <!-- Start Stop Buttons -->
         <b-button-group>
-          <b-button variant="rf-secondary" size="sm" :disabled="!currentProvider.settings.enabled"
+          <b-button variant="rf-secondary" size="sm" :disabled="!currentProvider.enabled"
                     @click="activateProvider">
             <b-icon class="mr-2 ml-1" icon="play-circle-fill" shift-v="0.75" aria-hidden="true"></b-icon>
             Start
           </b-button>
-          <b-button variant="rf-secondary" size="sm" :disabled="!currentProvider.settings.enabled"
+          <b-button variant="rf-secondary" size="sm" :disabled="!currentProvider.enabled"
                     @click="deactivateProvider">
             <b-icon class="mr-2 ml-1" icon="stop-circle-fill" shift-v="0.75" aria-hidden="true"></b-icon>
             Stop
@@ -91,73 +91,59 @@
         <p class="m-0 p-0" v-if="currentProvider.chat.length === 0 && currentProviderActive">
           <i>No messages received in this session.</i>
         </p>
-        <p class="m-0 mt-2 p-0 text-center" v-if="!currentProviderActive">
-          Enter your user/channel name and click Start.
+        <!-- Twitch -->
+        <p class="m-0 mt-2 p-0 text-center" v-if="!currentProviderActive && isTwitch">
+          Enter your <b>user/channel name</b> and click Start.
+          Chat messages will be forwarded to your rF2 in-game message window.
+        </p>
+        <!-- YouTube -->
+        <p class="m-0 mt-2 p-0 text-center" v-if="!currentProviderActive && isYouTube">
+          Enter your YouTube <b>Channel-Id</b> that you can find at
+          <b-link href="https://www.youtube.com/account_advanced" target="_blank">youtube.com/account_advanced</b-link>
+          and click Start.
           Chat messages will be forwarded to your rF2 in-game message window.
         </p>
       </b-card-text>
     </b-card>
 
-    <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white">
-      <!-- Title -->
-      <template #header>
-        <div class="position-relative">
-          <b-icon icon="chat-left-text-fill"/>
-          <span class="ml-2">Chat Transceiver Plugin</span>
-        </div>
-      </template>
-      <p class="text-center small">
-        rFactor 2 plugin that forwards messages to your in-game message window.
-        Convenient and performance friendly in VR.
-      </p>
-      <p>
-        <b-link class="text-rf-orange" target="_blank" href="https://github.com/tappi287/rf2_chat_transceiver">
-          rF2ChatTransceiver Plugin @ Github
-        </b-link>
-      </p>
-      <div class="m-3 mt-4">
-        <b-button-group>
-          <b-button variant="rf-orange-light" :disabled="pluginInstalled" @click="installPlugin">
-            Install Plugin
-          </b-button>
-          <b-button variant="rf-secondary" :disabled="!pluginInstalled" @click="uninstallPlugin">
-            Remove Plugin <template v-if="pluginInstalled">v{{ pluginVersion }}</template>
-          </b-button>
-        </b-button-group>
-      </div>
-
-    </b-card>
+    <ChatPlugin></ChatPlugin>
   </div>
 </template>
 
 <script>
 import {getEelJsonObject} from "@/main";
-
+import ChatPlugin from "@/components/pages/ChatPlugin";
+import {LiveChat} from 'youtube-chat'
 const tmi = require('tmi.js');
+
+const twitch = 0;
+const youtube = 1;
 
 export default {
   name: "ChatPage.vue",
+  components: {ChatPlugin},
   data: function () {
     return {
       providers: [
         {
           name: "Twitch",
-          settings: {enabled: true, channel: "", startup: false},
+          enabled: true,
+          settings: {channel: "", startup: false},
           chat: [],
           icon: "twitch", client: undefined
         },
         {
           name: "YouTube",
-          settings: {enabled: false, channel: "", startup: false},
-          chat: ["YouTube is not implemented yet!"],
+          enabled: true,
+          settings: {channel: "", startup: false},
+          chat: [],
           icon: "youtube", client: undefined
         }
       ],
       twitchUrl: "",
       youtubeUrl: "",
       currentProviderIdx: 0,
-      chatLength: 8,
-      pluginVersion_v: undefined,
+      chatLength: 8
     }
   },
   props: {live: Boolean, visible: Boolean},
@@ -166,63 +152,85 @@ export default {
       this.currentProviderIdx = idx;
     },
     activateProvider() {
-      if (this.currentProvider.name === "Twitch") {
+      if (this.currentProviderIdx === twitch) {
         this.activateTmi()
+      } else if (this.currentProviderIdx === youtube) {
+        this.activateYT()
       }
       this.saveSettings()
     },
     deactivateProvider() {
-      if (this.currentProvider.name === "Twitch") {
+      if (this.currentProviderIdx === twitch) {
         this.deactivateTmi()
+      } else if (this.currentProviderIdx === youtube) {
+        this.deactivateYT()
       }
     },
-    addTmiChatMessage(chat_array, tags, message) {
+    addChatMessage(chatMsgArray, message) {
+      this.postMessage(message)
+      return [...chatMsgArray.slice(-this.chatLength), message]
+    },
+    addYTChatMessage(chatMsgArray, chatItem) {
+      const msg = chatItem.author.name + ': ' + chatItem.message.text
+      return this.addChatMessage(chatMsgArray, msg)
+    },
+    addTmiChatMessage(chatMsgArray, tags, message) {
       const msg = `${tags['display-name']}: ${message}`
-      this.postMessage(msg)
-      return [...chat_array.slice(-this.chatLength), msg]
+      return this.addChatMessage(chatMsgArray, msg)
     },
     activateTmi() {
-      if (this.providers[0].settings.channel === "") {
-        return
-      }
+      if (this.providers[twitch].settings.channel === "") { return }
 
-      this.providers[0].client = new tmi.Client({channels: [this.providers[0].settings.channel]})
-      this.providers[0].client.connect()
-      this.providers[0].chat = []
-      this.providers[0].client.on('message', (channel, tags, message) => {
-        this.providers[0].chat = this.addTmiChatMessage(this.providers[0].chat, tags, message)
+      this.providers[twitch].client = new tmi.Client({channels: [this.providers[twitch].settings.channel]})
+      this.providers[twitch].client.connect()
+      this.providers[twitch].chat = []
+      this.providers[twitch].client.on('message', (channel, tags, message) => {
+        this.providers[twitch].chat = this.addTmiChatMessage(this.providers[twitch].chat, tags, message)
       });
     },
     deactivateTmi() {
-      if (this.providers[0].client !== undefined) {
-        this.providers[0].client.disconnect()
-        this.providers[0].client = undefined
+      if (this.providers[twitch].client !== undefined) {
+        this.providers[twitch].client.disconnect()
+        this.providers[twitch].client = undefined
+      }
+    },
+    async activateYT() {
+      if (this.providers[youtube].settings.channel === "") { return }
+
+      this.providers[youtube].client = new LiveChat({channelId: this.providers[youtube].settings.channel})
+      this.providers[youtube].chat = []
+
+      this.providers[youtube].client.on("error", (err) => {
+        this.$emit('make-toast', err, "warning", "YouTube Live Chat", false, 4000)
+      })
+      this.providers[youtube].client.on("chat", (chatItem) => {
+        this.addYTChatMessage(this.providers[youtube].chat, chatItem)
+      })
+
+      const ok = await this.providers[youtube].client.start()
+      if (!ok) {
+        this.$emit('make-toast', "Could not start fetching YouTube Live Chat.", "" +
+            "danger", "YouTube", false, 4000)
+        await this.deactivateYT()
+      }
+    },
+    async deactivateYT() {
+      if (this.providers[youtube].client !== undefined) {
+        await this.providers[youtube].client.stop()
+        this.providers[youtube].client = undefined
       }
     },
     startUp() {
       for (let idx in this.providers) {
-        if (this.providers[idx].name === "Twitch") {
-          if (this.providers[idx].settings.startup) {
-            this.activateTmi()
-          }
-        }
-        if (this.providers[idx].name === "YouTube") {
-          if (this.providers[idx].settings.startup) {
-            console.log("YouTube not implemented")
-          }
+        if (idx === twitch) {
+          if (this.providers[idx].settings.startup) { this.activateTmi() }
+        } else if (idx === youtube) {
+          if (this.providers[idx].settings.startup) { this.activateYT() }
         }
       }
     },
     async postMessage(message) {
       await window.eel.post_chat_message(message)()
-    },
-    async installPlugin() {
-      await window.eel.install_plugin()()
-      await this.getPluginVersion()
-    },
-    async uninstallPlugin() {
-      await window.eel.uninstall_plugin()()
-      await this.getPluginVersion()
     },
     async saveSettings() {
       let settings = [];
@@ -251,14 +259,6 @@ export default {
       for (let idx in r.settings) {
         this.providers[idx].settings = r.settings[idx]
       }
-    },
-    async getPluginVersion() {
-      const r = await getEelJsonObject(window.eel.get_plugin_version()())
-      if (!r.result) {
-        this.pluginVersion_v = ''
-        return
-      }
-      this.pluginVersion_v = r.version
     }
   },
   computed: {
@@ -268,20 +268,18 @@ export default {
     currentProviderName() {
       return this.currentProvider.name
     },
+    isYouTube() {
+      return this.currentProviderIdx === youtube
+    },
+    isTwitch() {
+      return this.currentProviderIdx === twitch
+    },
     currentProviderActive() {
       return this.currentProvider.client !== undefined
-    },
-    pluginVersion() {
-      if (this.pluginVersion_v === undefined) { this.getPluginVersion() }
-      return this.pluginVersion_v
-    },
-    pluginInstalled() {
-      return this.pluginVersion_v !== undefined && this.pluginVersion !== "";
     }
   },
   async created() {
     await this.getSettings()
-    await this.getPluginVersion()
     this.startUp()
   }
 }
