@@ -113,8 +113,9 @@
 <script>
 import {getEelJsonObject} from "@/main";
 import ChatPlugin from "@/components/pages/ChatPlugin";
-import {LiveChat} from 'youtube-chat'
-const tmi = require('tmi.js');
+// import {LiveChat} from 'youtube-chat'
+const YoutubeChat = require('@/lib/client')
+import tmi from 'tmi.js'
 
 const twitch = 0;
 const youtube = 1;
@@ -170,8 +171,8 @@ export default {
       this.postMessage(message)
       return [...chatMsgArray.slice(-this.chatLength), message]
     },
-    addYTChatMessage(chatMsgArray, chatItem) {
-      const msg = chatItem.author.name + ': ' + chatItem.message.text
+    addYTChatMessage(chatMsgArray, message, author) {
+      const msg = author + ': ' + message
       return this.addChatMessage(chatMsgArray, msg)
     },
     addTmiChatMessage(chatMsgArray, tags, message) {
@@ -197,17 +198,20 @@ export default {
     async activateYT() {
       if (this.providers[youtube].settings.channel === "") { return }
 
-      this.providers[youtube].client = new LiveChat({channelId: this.providers[youtube].settings.channel})
+      const client = new YoutubeChat({channelId: this.providers[youtube].settings.channel})
+      await client.connect();
+
+      this.providers[youtube].client = new YoutubeChat({channelId: this.providers[youtube].settings.channel})
       this.providers[youtube].chat = []
 
       this.providers[youtube].client.on("error", (err) => {
         this.$emit('make-toast', err, "warning", "YouTube Live Chat", false, 4000)
       })
-      this.providers[youtube].client.on("chat", (chatItem) => {
-        this.addYTChatMessage(this.providers[youtube].chat, chatItem)
+      this.providers[youtube].client.on("message", (message, author) => {
+        this.addYTChatMessage(this.providers[youtube].chat, message, author)
       })
 
-      const ok = await this.providers[youtube].client.start()
+      const ok = await this.providers[youtube].client.connect();
       if (!ok) {
         this.$emit('make-toast', "Could not start fetching YouTube Live Chat.", "" +
             "danger", "YouTube", false, 4000)
