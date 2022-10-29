@@ -4,11 +4,11 @@ import shutil
 from multiprocessing import shared_memory
 from pathlib import Path
 
+from open_vr_mod.util.utils import get_file_hash
 from rf2settings.app.app_main_fn import _get_rf_location
 from rf2settings.app_settings import AppSettings
 from rf2settings.globals import get_data_dir, CHAT_PLUGIN_NAME, RFACTOR_PLUGIN_PATH
 from rf2settings.utils import capture_app_exceptions
-from open_vr_mod.util.utils import get_file_hash
 
 
 @capture_app_exceptions
