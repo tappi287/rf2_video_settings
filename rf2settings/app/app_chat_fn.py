@@ -26,12 +26,25 @@ def get_chat_settings():
     return json.dumps({'result': True, 'settings': AppSettings.chat_settings})
 
 
+def decode_message(message):
+    decoded_message = str()
+
+    for character in message:
+        try:
+            character.encode('cp1252')
+        except UnicodeEncodeError:
+            continue
+        decoded_message += character
+    return decoded_message
+
+
 @capture_app_exceptions
 def post_chat_message(message):
     if not message:
         return
 
-    logging.debug('Posting chat message: %s', message)
+    decoded_message = decode_message(message)
+    logging.debug('Posting chat message: %s', decoded_message)
 
     # open shared memory
     try:
@@ -42,7 +55,7 @@ def post_chat_message(message):
     destination = 0  # message center
 
     # make sure message does not exceed message size
-    mem_bytes = f'{destination}{message[:128]}'.encode('cp1252')
+    mem_bytes = f'{destination}{decoded_message[:128]}'.encode('cp1252')
 
     # write to shared memory
     shm.buf[:len(mem_bytes)] = mem_bytes
