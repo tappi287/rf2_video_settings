@@ -10,7 +10,7 @@ except ImportError:
 from PyInstaller.utils.hooks import get_package_paths
 
 block_cipher = None
-excluded_modules = ['_ssl', 'cryptography']
+excluded_modules = ['cryptography']
 
 # ----- define app name
 APP_NAME = 'rF2-Settings-Widget'
@@ -23,12 +23,12 @@ icon_file = './vue/src/assets/app_icon.ico'
 
 
 a = Analysis(['app.py'],
-             pathex=['D:\\Docs\\py\\rfvideosettings'],
+             pathex=['C:\\py\\rf_video_settings'],
              binaries=[],
              datas=[(eel_js, 'eel'), ('web', 'web'), ('rf2settings/default_presets', 'default_presets'),
                     ('build/version.txt', '.'), ('license.txt', '.'), ('data', 'data'),
                     ('bin/PresentMon-1.7.0-x64.exe', 'bin'), ],
-             hiddenimports=['bottle_websocket'],
+             hiddenimports=['bottle_websocket', 'ssl', '_ssl'],
              hookspath=['hooks'],
              runtime_hooks=[],
              excludes=excluded_modules,
