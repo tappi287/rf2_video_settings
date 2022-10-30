@@ -19,7 +19,13 @@ def _yt_greenlet_loop():
 
     # -- Check if we know of an active broadcast
     if AppSettings.yt_livestream is None:
-        AppSettings.yt_livestream = get_live_stream(AppSettings.yt_credentials)
+        try:
+            AppSettings.yt_livestream = get_live_stream(AppSettings.yt_credentials)
+        except Exception as e:
+            error = f'Error acquiring YouTube Live Stream data: {e}'
+            RfactorYouTubeErrorEvent.set([error])
+            AppSettings.yt_livestream = None
+
         if AppSettings.yt_livestream is None:
             RfactorYouTubeLiveEvent.set("")
             logging.debug('No active YouTube Broadcast found.')
@@ -32,7 +38,13 @@ def _yt_greenlet_loop():
 
     # -- Get new messages
     global CURRENT_YT_MESSAGES
-    messages = get_chat_messages(AppSettings.yt_credentials, AppSettings.yt_livestream)
+    try:
+        messages = get_chat_messages(AppSettings.yt_credentials, AppSettings.yt_livestream)
+    except Exception as e:
+        error = f'Error acquiring YouTube live chat messages: {e}'
+        RfactorYouTubeErrorEvent.set([error])
+        CLOSE_EVENT.wait(POLLING_TIMEOUT)
+        return
 
     # -- Quota exceeded!
     if messages is False:

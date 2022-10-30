@@ -55,7 +55,7 @@ def get_live_stream(credentials) -> Optional[dict]:
     if not credentials:
         return
 
-    youtube = build('youtube', 'v3', credentials=credentials)
+    youtube = build('youtube', 'v3', credentials=credentials, static_discovery=False)
 
     request = youtube.liveBroadcasts().list(
         part="snippet,contentDetails,status",
@@ -83,7 +83,7 @@ def get_chat_messages(credentials, live_stream: dict) -> Union[bool, list]:
     if not live_chat_id or not credentials:
         return messages
 
-    youtube = build('youtube', 'v3', credentials=credentials)
+    youtube = build('youtube', 'v3', credentials=credentials, static_discovery=False)
     request = youtube.liveChatMessages().list(liveChatId=live_chat_id, part="id,snippet,authorDetails", maxResults=10)
     response: dict = request.execute()
 
