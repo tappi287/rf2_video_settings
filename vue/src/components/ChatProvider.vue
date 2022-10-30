@@ -98,9 +98,19 @@
       </b-card-text>
 
       <b-card-text class="text-center" v-if="isYouTube">
-        <b-button @click="acquireYouTubeCredentials" size="sm" variant="rf-orange" v-if="showYtConnect">
-          Connect YouTube Account
-        </b-button>
+        <template v-if="showYtConnect">
+          <b-button @click="acquireYouTubeCredentials" size="sm" variant="rf-orange">
+            Connect YouTube Account
+          </b-button>
+          <div class="mt-2">
+            <span class="small">Connecting to YouTube requires you to agree to these
+              <b-link class="text-rf-orange"
+                      href="https://github.com/tappi287/rf2_video_settings/blob/master/Terms.md" target="_blank">
+                Terms and Conditions</b-link>.
+            </span>
+          </div>
+
+        </template>
         <b-button @click="removeYouTubeCredentials" size="sm" variant="secondary" v-if="showYtDisconnect">
           Remove YouTube Account
         </b-button>
