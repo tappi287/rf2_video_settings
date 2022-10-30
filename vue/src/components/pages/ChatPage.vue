@@ -15,9 +15,9 @@
 
     <template v-if="chatSettingsReady">
       <ChatProvider :provider-name="providers[0].name" :provider-details="providers[0]" :visible="visible"
-                    @save-settings="saveSettings" @set-busy="setBusy" />
+                    @save-settings="saveSettings" @set-busy="setBusy" @make-toast="makeToast" />
       <ChatProvider :provider-name="providers[1].name" :provider-details="providers[1]" :visible="visible"
-                    @save-settings="saveSettings" @set-busy="setBusy" />
+                    @save-settings="saveSettings" @set-busy="setBusy" @make-toast="makeToast" />
     </template>
 
     <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white" v-if="visible">
@@ -84,6 +84,9 @@ export default {
   methods: {
     setBusy (busy) {
       this.$emit('set-busy', busy)
+    },
+    makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
+      this.$emit('make-toast', message, category, title, append, delay)
     },
     async saveSettings(event) {
       let settings = []

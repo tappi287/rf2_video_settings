@@ -21,7 +21,7 @@
         </b-form-input>
       </template>
       <template v-else>
-        <b-form-input class="no-border bg-white w-40" :disabled="true" />
+        <b-form-input :placeholder="youtubeLiveTitle" class="no-border bg-white w-40" :disabled="true" />
       </template>
 
       <!-- Prefix Input -->
@@ -119,6 +119,16 @@ async function youtubeMessagesFunc (event) {
   const youtubeMessageEvent = new CustomEvent('youtube-message-event', {detail: event})
   window.dispatchEvent(youtubeMessageEvent)
 }
+window.eel.expose(youtubeErrorsFunc, 'youtube_errors')
+async function youtubeErrorsFunc (event) {
+  const youtubeErrorsEvent = new CustomEvent('youtube-errors-event', {detail: event})
+  window.dispatchEvent(youtubeErrorsEvent)
+}
+window.eel.expose(youtubeLiveFunc, 'youtube_live')
+async function youtubeLiveFunc (event) {
+  const youtubeLiveEvent = new CustomEvent('youtube-live-event', {detail: event})
+  window.dispatchEvent(youtubeLiveEvent)
+}
 // --- />
 
 export default {
@@ -131,7 +141,8 @@ export default {
       icon: "",
       client: undefined,
       chatLength: 8,
-      youtubeCredentialsFound: false
+      youtubeCredentialsFound: false,
+      youtubeLiveTitle: "",
     }
   },
   props: {providerName: String, providerDetails: Object, visible: Boolean},
@@ -162,6 +173,23 @@ export default {
       }
       this.saveSettings()
     },
+    youtubeLive (event) {
+      const broadcastTitle = event.detail
+      if (broadcastTitle === "") {
+        this.youtubeLiveTitle = "No active broadcast"
+      } else {
+        this.youtubeLiveTitle = broadcastTitle
+      }
+    },
+    youtubeErrors (event) {
+      this.deactivateYt()
+
+      const errors = event.detail
+      for (let idx in errors) {
+        const error = errors[idx]
+        this.$emit('make-toast', error.message, 'danger', error.domain, true, 0)
+      }
+    },
     addYtChatMessages(event) {
       const messages = event.detail
       const prefix = this.getPrefix()
@@ -178,9 +206,9 @@ export default {
       this.client = r.result
     },
     async deactivateYt() {
-      const r = await getEelJsonObject(window.eel.stop_youtube_chat_capture()())
+      window.eel.stop_youtube_chat_capture()()
       this.chat = []
-      this.client = !r.result
+      this.client = undefined
     },
     addTmiChatMessage(chat_array, tags, message) {
       const prefix = this.getPrefix()
@@ -207,6 +235,7 @@ export default {
     async removeYouTubeCredentials() {
       window.eel.remove_youtube_credentials()()
       this.youtubeCredentialsFound = false
+      await this.deactivateYt()
     },
     async loadYouTubeCredentials() {
       const r = await getEelJsonObject(window.eel.load_youtube_credentials()())
@@ -254,9 +283,7 @@ export default {
     }
   },
   computed: {
-    currentProviderActive() {
-      return this.client !== undefined
-    },
+    currentProviderActive() { return this.client !== undefined },
     isTwitch () { return this.providerName === 'Twitch' },
     isYouTube () { return this.providerName === 'YouTube' },
     isEnabled () {
@@ -275,6 +302,8 @@ export default {
   async created() {
     if (this.providerName === 'YouTube') {
       window.addEventListener('youtube-message-event', this.addYtChatMessages)
+      window.addEventListener('youtube-errors-event', this.youtubeErrors)
+      window.addEventListener('youtube-live-event', this.youtubeLive)
     }
 
     console.log('Created Chat Provider: ' + this.providerName)
@@ -283,6 +312,8 @@ export default {
   destroyed() {
     if (this.providerName === 'YouTube') {
       window.removeEventListener('youtube-message-event', this.addYtChatMessages)
+      window.removeEventListener('youtube-errors-event', this.youtubeErrors)
+      window.removeEventListener('youtube-live-event', this.youtubeLive)
     }
     this.deactivateTmi()
     this.deactivateYt()

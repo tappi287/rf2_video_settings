@@ -11,6 +11,9 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from rf2settings.globals import get_settings_dir, get_data_dir
 
 
+LAST_ERRORS = list()
+
+
 def remove_oauth_credentials():
     credentials_path = get_settings_dir() / 'ydata.zip'
     if credentials_path.exists() and credentials_path.is_file():
@@ -31,9 +34,9 @@ def load_oauth_credentials() -> Optional[Credentials]:
 
 def acquire_oauth_credentials() -> Optional[Credentials]:
     # -- Acquire new with user interacting with browser
-    client_secrets_file = Path(get_data_dir()).joinpath('client.json')
+    client_file = Path(get_settings_dir()).joinpath('client.json')
     flow = InstalledAppFlow.from_client_secrets_file(
-        client_secrets_file.as_posix(),
+        client_file.as_posix(),
         scopes=['https://www.googleapis.com/auth/youtube.readonly']
     )
     credentials: Credentials = flow.run_local_server(port=8080, prompt="consent", timeout_seconds=60)
@@ -77,17 +80,21 @@ def get_live_stream(credentials) -> Optional[dict]:
 def get_chat_messages(credentials, live_stream: dict) -> Union[bool, list]:
     messages = list()
     live_chat_id = live_stream.get("snippet", dict()).get("liveChatId")
-    if not live_chat_id:
+    if not live_chat_id or not credentials:
         return messages
 
     youtube = build('youtube', 'v3', credentials=credentials)
     request = youtube.liveChatMessages().list(liveChatId=live_chat_id, part="id,snippet,authorDetails", maxResults=10)
     response: dict = request.execute()
 
+    # -- Handle errors
     if response.get("error") and response.get("error", dict()).get("errors"):
         logging.error(response)
         quota_exceeded = False
         for err in response.get("error", dict()).get("errors"):
+            global LAST_ERRORS
+            LAST_ERRORS.append(err)
+
             if err.get("reason") == "quotaExceeded":
                 quota_exceeded = True
 
@@ -103,3 +110,10 @@ def get_chat_messages(credentials, live_stream: dict) -> Union[bool, list]:
         display_name = item.get('authorDetails').get('displayName')
         messages.append(f'{display_name}: {message}')
     return messages
+
+
+def get_last_errors():
+    global LAST_ERRORS
+    errors = LAST_ERRORS[:]
+    LAST_ERRORS = list()
+    return errors

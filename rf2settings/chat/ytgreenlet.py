@@ -1,12 +1,11 @@
 import logging
 
 import eel
-import gevent
 
 from rf2settings.app.app_main import CLOSE_EVENT
 from rf2settings.app_settings import AppSettings
-from rf2settings.chat.youtube import get_chat_messages
-from rf2settings.rf2events import RfactorYouTubeEvent
+from rf2settings.chat.youtube import get_live_stream, get_chat_messages, get_last_errors
+from rf2settings.rf2events import RfactorYouTubeEvent, RfactorYouTubeErrorEvent, RfactorYouTubeLiveEvent
 from rf2settings.utils import capture_app_exceptions
 
 CURRENT_YT_MESSAGES = list()
@@ -14,9 +13,22 @@ POLLING_TIMEOUT = 35.0
 
 
 def _yt_greenlet_loop():
-    # -- Check if YouTube live chat is active
-    if not RfactorYouTubeEvent.is_active or AppSettings.yt_livestream is None:
+    # -- Check if YouTube live chat should be active
+    if not RfactorYouTubeEvent.is_active:
         return
+
+    # -- Check if we know of an active broadcast
+    if AppSettings.yt_livestream is None:
+        AppSettings.yt_livestream = get_live_stream(AppSettings.yt_credentials)
+        if AppSettings.yt_livestream is None:
+            RfactorYouTubeLiveEvent.set("")
+            logging.debug('No active YouTube Broadcast found.')
+            CLOSE_EVENT.wait(POLLING_TIMEOUT * 10)
+            return
+        else:
+            RfactorYouTubeLiveEvent.set(
+                AppSettings.yt_livestream.get("snippet", dict()).get("title")
+            )
 
     # -- Get new messages
     global CURRENT_YT_MESSAGES
@@ -26,11 +38,12 @@ def _yt_greenlet_loop():
     if messages is False:
         AppSettings.yt_livestream = None
         RfactorYouTubeEvent.is_active = False
+        RfactorYouTubeErrorEvent.set(get_last_errors())
         return
 
     # -- No new messages
-    if messages == CURRENT_YT_MESSAGES:
-        gevent.sleep(POLLING_TIMEOUT)
+    if messages == CURRENT_YT_MESSAGES or len(messages) == 0:
+        CLOSE_EVENT.wait(POLLING_TIMEOUT)
         return
 
     # -- New messages
@@ -43,7 +56,7 @@ def _yt_greenlet_loop():
     CURRENT_YT_MESSAGES = messages
     logging.debug('Setting new YouTube messages: %s', new_messages)
     RfactorYouTubeEvent.set(new_messages)
-    gevent.sleep(POLLING_TIMEOUT)
+    CLOSE_EVENT.wait(POLLING_TIMEOUT)
 
 
 def youtube_eventloop():
@@ -52,6 +65,17 @@ def youtube_eventloop():
         if messages:
             eel.youtube_messages(messages)
         RfactorYouTubeEvent.reset()
+
+    if RfactorYouTubeErrorEvent.event.is_set():
+        errors = RfactorYouTubeErrorEvent.get_nowait()
+        if errors:
+            eel.youtube_errors(errors)
+        RfactorYouTubeErrorEvent.reset()
+
+    if RfactorYouTubeLiveEvent.event.is_set():
+        broadcast_title = RfactorYouTubeLiveEvent.get_nowait()
+        eel.youtube_live(broadcast_title)
+        RfactorYouTubeLiveEvent.reset()
 
 
 @capture_app_exceptions

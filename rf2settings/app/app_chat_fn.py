@@ -120,13 +120,12 @@ def remove_youtube_credentials():
 
 @capture_app_exceptions
 def start_youtube_chat_capture():
-    AppSettings.yt_livestream = youtube.get_live_stream(AppSettings.yt_credentials)
     RfactorYouTubeEvent.is_active = True
-    return json.dumps({'result': True if AppSettings.yt_livestream else False})
+    return json.dumps({'result': True})
 
 
 @capture_app_exceptions
 def stop_youtube_chat_capture():
     AppSettings.yt_livestream = None
     RfactorYouTubeEvent.is_active = False
-    return json.dumps({'result': True if AppSettings.yt_livestream else False})
+    return json.dumps({'result': True})

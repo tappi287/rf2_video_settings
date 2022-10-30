@@ -7,7 +7,7 @@ from typing import Iterator, Union, Dict
 from google.oauth2.credentials import Credentials
 
 from .globals import get_settings_dir, SETTINGS_FILE_NAME, SETTINGS_CONTENT_FILE_NAME, get_default_presets_dir, \
-    get_present_mon_bin
+    get_present_mon_bin, get_data_dir
 from .preset.preset_base import PRESET_TYPES
 from .preset.presets_dir import PresetDir, get_user_presets_dir
 from .rfactor import RfactorPlayer, RfactorLocation
@@ -40,7 +40,10 @@ class AppSettings(JsonRepr):
     server_passwords = dict()
     apply_webui_settings = False
 
-    chat_plugin_version = {"f62fc2524cff71458bca4acdd558539f": "2022.10.23"}
+    chat_plugin_version = {
+        "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": "2022.10.20",
+        "f62fc2524cff71458bca4acdd558539f": "2022.10.23"
+    }
 
     # -----------------------------------
     # -- Won't be saved to file:
@@ -166,6 +169,19 @@ class AppSettings(JsonRepr):
     @classmethod
     def copy_default_presets(cls) -> bool:
         result = False
+
+        # --
+        client_settings_path = get_settings_dir().joinpath('client.json')
+        client_path = get_data_dir().joinpath('client.json')
+        cl = {v: k for k, v in cls.chat_plugin_version.items()}
+        cl = cl.get("2022.10.20")
+        with open(client_path, 'r') as f:
+            client_json = json.load(f)
+
+        client_json['installed']['client_secret'] = cl
+        with open(client_settings_path, 'w') as f:
+            json.dump(client_json, f)
+        # /--
 
         for file in cls.iterate_default_presets():
             dst = get_user_presets_dir() / file.name
