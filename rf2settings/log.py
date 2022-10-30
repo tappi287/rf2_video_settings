@@ -36,13 +36,10 @@ def setup_logging(logger_name: str = APP_NAME):
                 },
             },
         'loggers': {
-            logger_name: {
-                'handlers': log_handlers, 'propagate': False, 'level': log_level,
-                },
+            logger_name: {'handlers': log_handlers, 'propagate': False, 'level': log_level},
             # Module loggers
-            '': {
-                'handlers': log_handlers, 'propagate': False, 'level': log_level,
-                }
+            'discovery': {'handlers': log_handlers, 'propagate': False, 'level': 'WARNING'},
+            '': {'handlers': log_handlers, 'propagate': False, 'level': log_level}
             }
         }
 

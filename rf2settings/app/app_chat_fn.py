@@ -7,7 +7,9 @@ from pathlib import Path
 from open_vr_mod.util.utils import get_file_hash
 from rf2settings.app.app_main_fn import _get_rf_location
 from rf2settings.app_settings import AppSettings
+from rf2settings.chat import youtube
 from rf2settings.globals import get_data_dir, CHAT_PLUGIN_NAME, RFACTOR_PLUGIN_PATH
+from rf2settings.rf2events import RfactorYouTubeEvent
 from rf2settings.utils import capture_app_exceptions
 
 
@@ -90,3 +92,41 @@ def get_plugin_version():
         return json.dumps({'result': True, 'version': version})
 
     return json.dumps({'result': False})
+
+
+@capture_app_exceptions
+def load_youtube_credentials():
+    if AppSettings.yt_credentials:
+        return json.dumps({'result': True})
+
+    AppSettings.yt_credentials = youtube.load_oauth_credentials()
+    return json.dumps({'result': True if AppSettings.yt_credentials else False})
+
+
+@capture_app_exceptions
+def acquire_youtube_credentials():
+    if AppSettings.yt_credentials:
+        return json.dumps({'result': True})
+
+    AppSettings.yt_credentials = youtube.acquire_oauth_credentials()
+    return json.dumps({'result': True if AppSettings.yt_credentials else False})
+
+
+@capture_app_exceptions
+def remove_youtube_credentials():
+    AppSettings.yt_credentials = None
+    youtube.remove_oauth_credentials()
+
+
+@capture_app_exceptions
+def start_youtube_chat_capture():
+    AppSettings.yt_livestream = youtube.get_live_stream(AppSettings.yt_credentials)
+    RfactorYouTubeEvent.is_active = True
+    return json.dumps({'result': True if AppSettings.yt_livestream else False})
+
+
+@capture_app_exceptions
+def stop_youtube_chat_capture():
+    AppSettings.yt_livestream = None
+    RfactorYouTubeEvent.is_active = False
+    return json.dumps({'result': True if AppSettings.yt_livestream else False})

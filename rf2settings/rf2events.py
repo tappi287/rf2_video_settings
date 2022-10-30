@@ -78,6 +78,18 @@ class RfactorStatusEvent(RfactorBaseEvent):
         cls.event.set()
 
 
+class RfactorYouTubeEvent(RfactorBaseEvent):
+    """ post status updates to the FrontEnd """
+    event = gevent.event.Event()
+    result = gevent.event.AsyncResult()
+    is_active = False
+
+    @classmethod
+    def set(cls, value):
+        cls.result.set(value)
+        cls.event.set()
+
+
 class ReplayPlayEvent(RfactorBaseEvent):
     """ Communicate a replay play request to rfactor event loop """
     event = gevent.event.Event()

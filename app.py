@@ -14,6 +14,7 @@ from rf2settings.globals import FROZEN
 from rf2settings.headlights import headlights_greenlet
 from rf2settings.log import setup_logging
 from rf2settings.rf2greenlet import rfactor_greenlet, rfactor_event_loop
+from rf2settings.chat.ytgreenlet import youtube_eventloop, youtube_greenlet
 from rf2settings.runasadmin import run_as_admin
 from rf2settings.utils import AppExceptionHook
 
@@ -96,18 +97,23 @@ def start_eel(npm_serve=True):
     # -- rFactor Greenlet
     rg = eel.spawn(rfactor_greenlet)
 
+    # -- YouTUbe Greenlet
+    yg = eel.spawn(youtube_greenlet)
+
     # -- Run until window/tab closed
     while not CLOSE_EVENT.is_set():
         # Game controller event loop
         controller_event_loop()
         # rFactor 2 event loop
         rfactor_event_loop()
+        # YouTube live chat event loop
+        youtube_eventloop()
         # Capture exception events
         AppExceptionHook.exception_event_loop()
 
     # -- Shutdown Greenlets
     logging.debug('Shutting down Greenlets.')
-    gevent.joinall((cg, hg, rg), timeout=15.0, raise_error=True)
+    gevent.joinall((cg, hg, rg, yg), timeout=15.0, raise_error=True)
 
 
 if __name__ == '__main__':

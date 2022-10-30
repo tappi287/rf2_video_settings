@@ -1,6 +1,6 @@
 import eel
 
-from . import app_chat_fn
+from rf2settings.app import app_chat_fn
 
 
 def expose_chat_methods():
@@ -36,3 +36,28 @@ def uninstall_plugin():
 @eel.expose
 def get_plugin_version():
     return app_chat_fn.get_plugin_version()
+
+
+@eel.expose
+def load_youtube_credentials():
+    return app_chat_fn.load_youtube_credentials()
+
+
+@eel.expose
+def acquire_youtube_credentials():
+    return app_chat_fn.acquire_youtube_credentials()
+
+
+@eel.expose
+def remove_youtube_credentials():
+    return app_chat_fn.remove_youtube_credentials()
+
+
+@eel.expose
+def start_youtube_chat_capture():
+    return app_chat_fn.start_youtube_chat_capture()
+
+
+@eel.expose
+def stop_youtube_chat_capture():
+    return app_chat_fn.stop_youtube_chat_capture()

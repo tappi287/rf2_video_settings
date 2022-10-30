@@ -215,7 +215,7 @@
 
     <!-- ChatPage -->
     <keep-alive>
-      <ChatPage :visible="navActive === 11" :live="live" @make-toast="makeToast"></ChatPage>
+      <ChatPage :visible="navActive === 11" :live="live" @make-toast="makeToast" @set-busy="setBusy" />
     </keep-alive>
 
     <!-- Wiki -->
