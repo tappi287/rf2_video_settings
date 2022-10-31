@@ -80,16 +80,13 @@ def get_chat_messages(credentials=None, live_stream: dict = None) -> Union[bool,
     # -- Handle errors
     if response.get("error") and response.get("error", dict()).get("errors"):
         logging.error(response)
-        quota_exceeded = False
         for err in response.get("error", dict()).get("errors"):
             global LAST_ERRORS
-            LAST_ERRORS.append(err)
+            LAST_ERRORS.append(
+                f'{err.get("domain")}: {err.get("message")}'
+            )
 
-            if err.get("reason") == "quotaExceeded":
-                quota_exceeded = True
-
-        if quota_exceeded:
-            return False
+        return False
 
     if not response or not response.get('items'):
         return messages
