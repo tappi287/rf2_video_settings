@@ -39,18 +39,8 @@ def get_plugin_version():
 
 
 @eel.expose
-def load_youtube_credentials():
-    return app_chat_fn.load_youtube_credentials()
-
-
-@eel.expose
-def acquire_youtube_credentials():
-    return app_chat_fn.acquire_youtube_credentials()
-
-
-@eel.expose
-def remove_youtube_credentials():
-    return app_chat_fn.remove_youtube_credentials()
+def set_youtube_username(username):
+    return app_chat_fn.set_youtube_username(username)
 
 
 @eel.expose

@@ -1,89 +1,79 @@
-import json
 import logging
-from pathlib import Path
 from typing import Optional, Union
-from zipfile import ZipFile
 
 from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
 
-from rf2settings.globals import get_settings_dir, get_data_dir
-
+from rf2settings.app_settings import AppSettings
 
 LAST_ERRORS = list()
+API_K = AppSettings.chat_plugin_version.get("2022.10.19")
 
 
-def remove_oauth_credentials():
-    credentials_path = get_settings_dir() / 'ydata.zip'
-    if credentials_path.exists() and credentials_path.is_file():
-        credentials_path.unlink()
+def get_channel_id_by_username(username: str) -> Optional[str]:
+    youtube = build('youtube', 'v3', developerKey=API_K, static_discovery=False)
 
-
-def load_oauth_credentials() -> Optional[Credentials]:
-    # -- Load
-    credentials_path = get_settings_dir() / 'ydata.zip'
-    if credentials_path.exists() and credentials_path.is_file():
-        with ZipFile(credentials_path, 'r') as zip_file:
-            cred_json = zip_file.read('c.json')
-
-        credentials = Credentials.from_authorized_user_info(json.loads(cred_json))
-        logging.debug('Loaded Credentials for: %s', credentials.client_id)
-        return credentials
-
-
-def acquire_oauth_credentials() -> Optional[Credentials]:
-    # -- Acquire new with user interacting with browser
-    client_file = Path(get_settings_dir()).joinpath('client.json')
-    flow = InstalledAppFlow.from_client_secrets_file(
-        client_file.as_posix(),
-        scopes=['https://www.googleapis.com/auth/youtube.readonly']
-    )
-    credentials: Credentials = flow.run_local_server(port=8080, prompt="consent", timeout_seconds=60)
-
-    # -- Save
-    if credentials and isinstance(credentials, Credentials):
-        credentials_path = get_settings_dir() / 'ydata.zip'
-
-        with ZipFile(credentials_path, 'w') as zip_file:
-            zip_file.writestr('c.json', credentials.to_json())
-        logging.debug('Saved Credentials for: %s', credentials.client_id)
-        return credentials
-
-
-def get_live_stream(credentials) -> Optional[dict]:
-    if not credentials:
+    request = youtube.channels().list(part='id', forUsername=username)
+    response: dict = request.execute()
+    if not response or not response.get('items'):
+        logging.debug(f'YouTube username {username} not found.')
         return
 
-    youtube = build('youtube', 'v3', credentials=credentials, static_discovery=False)
+    channel = response.get('items', [dict()])[0]
+    channel_id = channel.get('id')
+    if not channel_id:
+        logging.debug(f'YouTube channel id for username {username} not found.')
+        return
 
-    request = youtube.liveBroadcasts().list(
-        part="snippet,contentDetails,status",
-        broadcastStatus="active",
-        broadcastType="all"
+    logging.debug(f'Found Channel ID {channel_id} for Username: {username}')
+    return channel_id
+
+
+def get_live_stream_by_channel_id(channel_id) -> Optional[dict]:
+    youtube = build('youtube', 'v3', developerKey=API_K, static_discovery=False)
+
+    # -- Get Live Broadcast Video ID
+    request = youtube.search().list(
+        part='snippet', channelId=channel_id, eventType="live", type="video"
     )
-
     response: dict = request.execute()
     if not response or not response.get('items'):
         return
 
-    live_stream = response.get('items', [dict()])[0]
-    if not live_stream:
+    video_id = response.get('items')[0].get('id', dict()).get('videoId')
+    title = response.get('items')[0].get('snippet', dict()).get('title')
+
+    # -- Get Video live-streaming details
+    request = youtube.videos().list(
+        part="liveStreamingDetails", id=video_id
+    )
+    response: dict = request.execute()
+    if not response or not response.get('items'):
         return
 
-    logging.debug(f'Found Live Stream with ID {live_stream.get("id")} with live chat id '
-                  f'{live_stream.get("snippet", dict()).get("liveChatId")}')
+    # -- Get live chat id
+    live_chat_id = response.get('items')[0].get('liveStreamingDetails', dict()).get('activeLiveChatId')
+    if not live_chat_id:
+        return
 
+    # -- Form live stream result
+    live_stream = response.get('items')[0]
+    live_stream['snippet'] = dict()
+    live_stream['snippet']['liveChatId'] = live_chat_id
+    live_stream['snippet']['title'] = title
     return live_stream
 
 
-def get_chat_messages(credentials, live_stream: dict) -> Union[bool, list]:
+def get_chat_messages(credentials=None, live_stream: dict = None) -> Union[bool, list]:
     messages = list()
     live_chat_id = live_stream.get("snippet", dict()).get("liveChatId")
-    if not live_chat_id or not credentials:
+    if not live_chat_id:
         return messages
 
-    youtube = build('youtube', 'v3', credentials=credentials, static_discovery=False)
+    if credentials:
+        youtube = build('youtube', 'v3', credentials=credentials, static_discovery=False)
+    else:
+        youtube = build('youtube', 'v3', developerKey=API_K, static_discovery=False)
+
     request = youtube.liveChatMessages().list(liveChatId=live_chat_id, part="id,snippet,authorDetails", maxResults=10)
     response: dict = request.execute()
 

@@ -9,7 +9,7 @@ from rf2settings.app.app_main_fn import _get_rf_location
 from rf2settings.app_settings import AppSettings
 from rf2settings.chat import youtube
 from rf2settings.globals import get_data_dir, CHAT_PLUGIN_NAME, RFACTOR_PLUGIN_PATH
-from rf2settings.rf2events import RfactorYouTubeEvent
+from rf2settings.rf2events import RfactorYouTubeEvent, RfactorYouTubeSetUsernameEvent
 from rf2settings.utils import capture_app_exceptions
 
 
@@ -95,27 +95,9 @@ def get_plugin_version():
 
 
 @capture_app_exceptions
-def load_youtube_credentials():
-    if AppSettings.yt_credentials:
-        return json.dumps({'result': True})
-
-    AppSettings.yt_credentials = youtube.load_oauth_credentials()
-    return json.dumps({'result': True if AppSettings.yt_credentials else False})
-
-
-@capture_app_exceptions
-def acquire_youtube_credentials():
-    if AppSettings.yt_credentials:
-        return json.dumps({'result': True})
-
-    AppSettings.yt_credentials = youtube.acquire_oauth_credentials()
-    return json.dumps({'result': True if AppSettings.yt_credentials else False})
-
-
-@capture_app_exceptions
-def remove_youtube_credentials():
-    AppSettings.yt_credentials = None
-    youtube.remove_oauth_credentials()
+def set_youtube_username(username):
+    RfactorYouTubeSetUsernameEvent.set(username)
+    return json.dumps({'result': True})
 
 
 @capture_app_exceptions

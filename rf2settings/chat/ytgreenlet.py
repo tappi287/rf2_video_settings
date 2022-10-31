@@ -4,15 +4,24 @@ import eel
 
 from rf2settings.app.app_main import CLOSE_EVENT
 from rf2settings.app_settings import AppSettings
-from rf2settings.chat.youtube import get_live_stream, get_chat_messages, get_last_errors
+from rf2settings.chat.youtube import get_live_stream_by_channel_id, get_channel_id_by_username
+from rf2settings.chat.youtube import get_chat_messages, get_last_errors
 from rf2settings.rf2events import RfactorYouTubeEvent, RfactorYouTubeErrorEvent, RfactorYouTubeLiveEvent
+from rf2settings.rf2events import RfactorYouTubeSetUsernameEvent
 from rf2settings.utils import capture_app_exceptions
 
+CURRENT_YT_USERNAME = str()
 CURRENT_YT_MESSAGES = list()
 POLLING_TIMEOUT = 35.0
 
 
 def _yt_greenlet_loop():
+    # -- Get Username set by front end
+    global CURRENT_YT_USERNAME
+    if RfactorYouTubeSetUsernameEvent.event.is_set():
+        CURRENT_YT_USERNAME = RfactorYouTubeSetUsernameEvent.get_nowait()
+        RfactorYouTubeSetUsernameEvent.reset()
+
     # -- Check if YouTube live chat should be active
     if not RfactorYouTubeEvent.is_active:
         return
@@ -20,7 +29,8 @@ def _yt_greenlet_loop():
     # -- Check if we know of an active broadcast
     if AppSettings.yt_livestream is None:
         try:
-            AppSettings.yt_livestream = get_live_stream(AppSettings.yt_credentials)
+            channel_id = get_channel_id_by_username(CURRENT_YT_USERNAME)
+            AppSettings.yt_livestream = get_live_stream_by_channel_id(channel_id)
         except Exception as e:
             error = f'Error acquiring YouTube Live Stream data: {e}'
             RfactorYouTubeErrorEvent.set([error])
@@ -39,7 +49,7 @@ def _yt_greenlet_loop():
     # -- Get new messages
     global CURRENT_YT_MESSAGES
     try:
-        messages = get_chat_messages(AppSettings.yt_credentials, AppSettings.yt_livestream)
+        messages = get_chat_messages(live_stream=AppSettings.yt_livestream)
     except Exception as e:
         error = f'Error acquiring YouTube live chat messages: {e}'
         RfactorYouTubeErrorEvent.set([error])

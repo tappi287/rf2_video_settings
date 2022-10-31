@@ -90,6 +90,17 @@ class RfactorYouTubeEvent(RfactorBaseEvent):
         cls.event.set()
 
 
+class RfactorYouTubeSetUsernameEvent(RfactorBaseEvent):
+    """ post status updates to the FrontEnd """
+    event = gevent.event.Event()
+    result = gevent.event.AsyncResult()
+
+    @classmethod
+    def set(cls, value):
+        cls.result.set(value)
+        cls.event.set()
+
+
 class RfactorYouTubeErrorEvent(RfactorBaseEvent):
     """ post status updates to the FrontEnd """
     event = gevent.event.Event()

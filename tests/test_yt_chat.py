@@ -1,12 +1,14 @@
 import logging
 
-from rf2settings.chat.youtube import get_oauth_credentials, get_live_stream, get_chat_messages
+from rf2settings.chat import youtube
 
 
 def test_yt_chat():
-    credentials = get_oauth_credentials()
-    if not credentials:
-        return
-    live_stream = get_live_stream(credentials)
-    messages = get_chat_messages(credentials, live_stream)
-    logging.debug(messages)
+    channel_id = youtube.get_channel_id_by_username('Tappi287')
+    live_stream = youtube.get_live_stream_by_channel_id(channel_id)
+    chat_messages = youtube.get_chat_messages(live_stream=live_stream)
+    print(chat_messages)
+
+
+if __name__ == '__main__':
+    test_yt_chat()
