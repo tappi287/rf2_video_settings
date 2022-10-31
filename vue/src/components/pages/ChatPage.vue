@@ -85,8 +85,8 @@ export default {
     setBusy (busy) {
       this.$emit('set-busy', busy)
     },
-    makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
-      this.$emit('make-toast', message, category, title, append, delay)
+    makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000, noAutoHide = false) {
+      this.$emit('make-toast', message, category, title, append, delay, noAutoHide)
     },
     async saveSettings(event) {
       let settings = []

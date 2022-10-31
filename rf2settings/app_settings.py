@@ -4,8 +4,6 @@ from pathlib import Path, WindowsPath
 from shutil import copyfile
 from typing import Iterator, Union, Dict
 
-from google.oauth2.credentials import Credentials
-
 from .globals import get_settings_dir, SETTINGS_FILE_NAME, SETTINGS_CONTENT_FILE_NAME, get_default_presets_dir
 from .globals import get_present_mon_bin
 from .preset.preset_base import PRESET_TYPES
@@ -32,7 +30,6 @@ class AppSettings(JsonRepr):
                             'filter_text': '', 'store_pwd': False}
     benchmark_settings = dict()
     chat_settings = list()
-    yt_credentials: Credentials = None
     yt_livestream: dict = None
     headlight_settings = dict()
     headlight_controller_assignments = dict()
@@ -52,7 +49,7 @@ class AppSettings(JsonRepr):
     skip_keys = ['first_load_complete', 'session_selection', 'replay_playing',
                  'present_mon_bin', 'present_mon_result_dir', 'chat_plugin_version',
                  'content_selected', 'content_keys', 'content_urls', 'content', 'content_saved',
-                 'yt_credentials', 'yt_livestream']
+                 'yt_livestream']
 
     present_mon_bin: Path = get_present_mon_bin()
     present_mon_result_dir: Path = get_user_presets_dir() / 'benchmark_results'

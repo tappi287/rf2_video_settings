@@ -358,13 +358,14 @@ export default {
   },
   props: { rfactorVersion: String },
   methods: {
-    makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
+    makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000, noAutoHide = false) {
       this.$bvToast.toast(message, {
         title: title,
         autoHideDelay: delay,
         appendToast: append,
         variant: category,
         solid: true,
+        noAutoHide: noAutoHide,
       })
       this.$eventHub.$emit('play-audio', 'audioSelect')
     },
