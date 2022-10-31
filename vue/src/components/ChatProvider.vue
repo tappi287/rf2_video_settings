@@ -25,11 +25,11 @@
                     v-b-popover.auto.hover="'Prefix new messages with this word e.g. Tw -> [Tw] User: message'"/>
 
       <b-input-group-append>
-        <!-- Active indicator -->
+        <!-- Live indicator -->
         <b-input-group-append class="pl-2 bg-white">
           <span class="ml-2">
-            <b-icon :icon="currentProviderActive ? 'circle-fill' : 'circle-fill'"
-                    :variant="currentProviderActive ? 'success' : 'light'"
+            <b-icon :icon="liveIndicator ? 'circle-fill' : 'circle-fill'"
+                    :variant="liveIndicator ? 'success' : 'light'"
                     class="p-0 m-1" shift-v="-3"/>
           </span>
         </b-input-group-append>
@@ -245,6 +245,10 @@ export default {
   },
   computed: {
     currentProviderActive() { return this.client !== undefined },
+    liveIndicator () {
+      if (this.providerName === 'Twitch') { return this.client !== undefined }
+      return this.youtubeLiveTitle !== ""
+    },
     isTwitch () { return this.providerName === 'Twitch' },
     isYouTube () { return this.providerName === 'YouTube' },
     isEnabled () {
