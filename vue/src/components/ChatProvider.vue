@@ -62,8 +62,8 @@
       <template #header>
         <div class="position-relative">
           <b-icon :icon="icon"/>
-          <span class="ml-2">{{ providerName }} Chat</span>
-          <span v-if="isYouTube && youtubeLiveTitle" class="pl-2">{{youtubeLiveTitle}}</span>
+          <span v-if="youtubeLiveTitle === ''" class="ml-2">{{ providerName }} Chat</span>
+          <span v-if="isYouTube && youtubeLiveTitle" class="ml-2">{{youtubeLiveTitle}}</span>
         </div>
       </template>
       <b-card-text></b-card-text>
@@ -90,6 +90,7 @@
         </p>
       </b-card-text>
     </b-card>
+    <!--
     <div class="mt-2" v-if="isYouTube">
       <span class="small">Using YouTube requires you to agree to these
         <b-link class="text-rf-orange"
@@ -97,6 +98,7 @@
           Terms and Conditions</b-link>.
       </span>
     </div>
+    -->
   </div>
 </template>
 
@@ -165,18 +167,13 @@ export default {
       this.saveSettings()
     },
     youtubeLive (event) {
-      const broadcastTitle = event.detail
-      if (broadcastTitle === "") {
-        this.youtubeLiveTitle = "No active live stream found"
-      } else {
-        this.youtubeLiveTitle = broadcastTitle
-      }
+      this.youtubeLiveTitle = event.detail
     },
     youtubeErrors (event) {
       const errors = event.detail
       for (let idx in errors) {
         const error = errors[idx]
-        this.$emit('make-toast', error.message, 'danger', error.domain, true, -1, true)
+        this.$emit('make-toast', error.message, 'danger', error.domain, true, null, true)
       }
     },
     addYtChatMessages(event) {
