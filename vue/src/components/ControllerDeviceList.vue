@@ -7,7 +7,7 @@
           <span :class="'ml-2'">Controller Devices</span>
       </template>
       <p class="small">
-        Select Controller Devices here that need to be connected when you start the Sim. The app will warn you
+        Select input devices here that need to be connected when you start rF2. The app will warn you
         if a device is not connected.
       </p>
       <b-list-group class="text-left">
@@ -23,6 +23,8 @@
           <b-checkbox :checked="c.watched" switch inline @change="toggled($event, c.name)" class="ml-3">
             <span class="ml-1 device-name">{{ c.name }}</span>
           </b-checkbox>
+          <!-- Remove device button -->
+          <b-link class="small close-btn" v-if="!c.connected" @click="removeDevice(c.guid)">Remove from list</b-link>
         </b-list-group-item>
       </b-list-group>
     </b-card>
@@ -30,6 +32,8 @@
 </template>
 
 <script>
+import {getEelJsonObject} from "@/main";
+
 // --- </ Prepare receiving controller device events
 window.eel.expose(controllerDeviceEventFunc, 'controller_device_event')
 async function controllerDeviceEventFunc (event) {
@@ -78,30 +82,25 @@ export default {
           device.watched = Boolean(event)
         }
       })
+      this.saveDeviceList()
+    },
+    async removeDevice (deviceGuid) {
+      await getEelJsonObject(window.eel.remove_from_device_list(deviceGuid)())
+      await this.getDeviceList()
+    },
+    async getDeviceList () {
+      this.controller = await getEelJsonObject(window.eel.get_device_list()())
+    },
+    async saveDeviceList () {
+      await getEelJsonObject(window.eel.save_device_list(this.controller)())
     },
     receiveControllerDeviceEvent (event) {
-      const connectedDevices = JSON.parse(event.detail)
-      let deviceIdList = []
-      this.controller.forEach( (device) => { deviceIdList.push(device.guid) })
-
-      // Update/Extend device list
-      connectedDevices.forEach( (connectedDevice) => {
-        if (deviceIdList.indexOf(connectedDevice.guid) !== -1) {
-          this.controller.push({
-            name: connectedDevice.name, guid: connectedDevice.guid, connected: true, watched: false
-          })
-        }
-      })
-
-      // Update device connected state
-      this.controller.forEach( (device) => {
-        connectedDevices.forEach( (connectedDevice) => {
-          if (connectedDevice.name === device.name) { device.connected = true }
-        })
-      })
+      this.controller = JSON.parse(event.detail)
+      this.saveDeviceList()
     },
   },
-  created() {
+  async created() {
+    await this.getDeviceList()
     window.addEventListener('controller-device-event', this.receiveControllerDeviceEvent)
   },
   destroyed() {
@@ -112,4 +111,5 @@ export default {
 
 <style scoped>
 .device-name { font-family: "Ubuntu", sans-serif; }
+.close-btn { height: 1.5rem; }
 </style>
