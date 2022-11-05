@@ -280,11 +280,28 @@ def create_js_pygame_event_dict(joy_dict: dict, joy_event) -> dict:
             'hat': hat, 'axis': axis, 'value': value, 'type': joy_event.type}
 
 
-def create_js_joystick_device_list(joy_dict: dict) -> list:
+def create_js_joystick_device_list(device_dict: dict, joy_dict: dict = None) -> list:
     js_list = list()
 
+    # -- Update from App Settings device dict
+    if not joy_dict:
+        for guid, device in device_dict.items():
+            js_list.append(device)
+        return js_list
+
+    # -- Update from PyGame data
+    for guid, device in device_dict.items():
+        device['connected'] = False
     for instance_id, j in joy_dict.items():
-        js_list.append({'name': j.get_name(), 'guid': j.get_guid()})
+        if j.get_guid() in device_dict:
+            device_dict[j.get_guid()]['connected'] = True
+        else:
+            device_dict[j.get_guid()] = {'name': j.get_name(), 'guid': j.get_guid(),
+                                         'connected': True, 'watched': False}
+
+    for guid, device in device_dict.items():
+        js_list.append(device)
+
     return js_list
 
 

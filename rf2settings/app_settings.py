@@ -36,6 +36,7 @@ class AppSettings(JsonRepr):
     headlight_rf_key = 'DIK_H'
     server_passwords = dict()
     apply_webui_settings = False
+    controller_devices = dict()
 
     chat_plugin_version = {
         "458bca4acdd558539ff62fc2524cff71": "2022.10.18",

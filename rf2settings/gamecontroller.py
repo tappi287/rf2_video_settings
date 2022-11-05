@@ -7,6 +7,7 @@ import gevent.event
 import gevent.timeout
 
 from .app.app_main import CLOSE_EVENT
+from .app_settings import AppSettings
 from .utils import create_js_pygame_event_dict, create_js_joystick_device_list, capture_app_exceptions, AppExceptionHook
 
 try:
@@ -57,9 +58,10 @@ def controller_event_loop():
 
     # -- Forward Device added/removed events to FrontEnd
     if ControllerEvents.add_removed_event.isSet():
-        eel.controller_device_event(
-            json.dumps(create_js_joystick_device_list(ControllerEvents.joysticks), ensure_ascii=False)
+        controller_device_list = create_js_joystick_device_list(
+            AppSettings.controller_devices, ControllerEvents.joysticks
         )
+        eel.controller_device_event(json.dumps(controller_device_list, ensure_ascii=False))
         ControllerEvents.add_removed_event.clear()
 
 
