@@ -170,11 +170,20 @@ export default {
       this.youtubeLiveTitle = event.detail
     },
     youtubeErrors (event) {
+      const httpError = 'HttpError 4'
       const errors = event.detail
+      let deactivate = false
+
       for (let idx in errors) {
         const error = errors[idx]
-        this.$emit('make-toast', error.message, 'danger', error.domain, true, null, true)
+        // Create Error toast
+        this.$emit('make-toast', error, 'danger', this.providerName + " Error", true, undefined, true)
+
+        // Deactivate Yt on Http errors
+        if (error.indexOf(httpError) !== -1) { deactivate = true }
       }
+
+      if (deactivate) { this.deactivateProvider() }
     },
     addYtChatMessages(event) {
       const messages = event.detail
