@@ -209,12 +209,11 @@ def headlights_greenlet():
     # -- Keep track if player is driving for the first time
     _player_is_driving = False
 
-    event_loop_active = True
-    while event_loop_active:
+    while True:
         # --- QUIT ---
         if CLOSE_EVENT.is_set():
             logging.info('Headlights greenlet received CLOSE event.')
-            event_loop_active = False
+            break
 
         # --- Re-read settings if needed ---
         if ControllerEvents.settings_changed.is_set():
