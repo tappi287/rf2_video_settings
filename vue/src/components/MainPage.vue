@@ -105,55 +105,18 @@
     </template>
 
     <!-- Control Settings-->
-    <template  v-if="navActive === 2">
+    <template v-if="navActive === 2">
       <b-overlay :show="$refs.con.isBusy" variant="dark" rounded>
-        <PresetUi ref="conUi" id-ref="con" display-name="Controls"
-                  :presets="$refs.con.presets"
-                  :previous-preset-name="$refs.con.previousPresetName"
-                  :selected-preset-idx="$refs.con.selectedPresetIdx"
-                  :preset-dir="$refs.con.userPresetsDir"
-                  @save-preset="$refs.con.savePreset"
-                  @refresh="$refs.con.getPresets"
-                  @update-presets-dir="$refs.con.setPresetsDir"
-                  @export-current="$refs.con.exportPreset"
-                  @select-preset="$refs.con.selectPreset"
-                  @create-preset="$refs.con.createPreset"
-                  @delete-preset="$refs.con.deletePreset"
-                  @update-setting="$refs.con.updateSetting"
-                  @update-desc="$refs.con.updateDesc"
-                  @update-view-mode="$refs.con.viewMode=$event"
-                  @make-toast="makeToast" />
-
-        <div>
-          <div v-for="(conPreset, idx) in $refs.con.presets" :key="conPreset.name">
-            <SettingsCard :preset="conPreset" :idx="idx" :search="search" fixed-width
-                          settings-key="freelook_settings" header-icon="card-list"
-                          :current_preset_idx="$refs.con.selectedPresetIdx"
-                          :previous-preset-name="$refs.con.previousPresetName"
-                          :view_mode="$refs.con.viewMode"
-                          @update-setting="$refs.con.updateSetting"
-                          @set-busy="setBusy"
-                          @make-toast="makeToast"/>
-            <SettingsCard :preset="conPreset" :idx="idx" :search="search" fixed-width
-                          settings-key="gamepad_mouse_settings" header-icon="receipt"
-                          :current_preset_idx="$refs.con.selectedPresetIdx"
-                          :previous-preset-name="$refs.con.previousPresetName"
-                          :view_mode="$refs.con.viewMode"
-                          @update-setting="$refs.con.updateSetting"
-                          @set-busy="setBusy"
-                          @make-toast="makeToast"/>
-            <SettingsCard :preset="conPreset" :idx="idx" :search="search" fixed-width
-                          settings-key="general_steering_settings" header-icon="filter-circle"
-                          :current_preset_idx="$refs.con.selectedPresetIdx"
-                          :previous-preset-name="$refs.con.previousPresetName"
-                          :view_mode="$refs.con.viewMode"
-                          @update-setting="$refs.con.updateSetting"
-                          @set-busy="setBusy"
-                          @make-toast="makeToast"/>
-          </div>
-        </div>
+        <ControlsPresetArea id-ref="con" fixed-width
+                            @make-toast="makeToast"
+                            @set-busy="setBusy"
+                            :con-handler="$refs.con"
+                            :search="search" />
       </b-overlay>
     </template>
+    <keep-alive>
+      <ControllerDeviceList :visible="navActive === 2"/>
+    </keep-alive>
 
     <!-- Generic Settings-->
     <template  v-if="navActive === 3">
@@ -335,8 +298,10 @@ import AppLog from "@/components/Log";
 import {getEelJsonObject, sleep} from "@/main";
 import BenchMark from "@/components/benchmark/Benchmark";
 import GraphicsPresetArea from "@/components/presets/GraphicsPresetArea";
+import ControlsPresetArea from "@/components/presets/ControlsPresetArea";
 import SessionPresetArea from "@/components/presets/SessionPresetArea";
 import ChatPage from "@/components/pages/ChatPage";
+import ControllerDeviceList from "@/components/ControllerDeviceList";
 
 export default {
   name: 'MainPage',
@@ -510,9 +475,11 @@ export default {
     this.$eventHub.$off('navigate', this.navigate)
   },
   components: {
+    ControllerDeviceList,
     ChatPage,
     SessionPresetArea,
     GraphicsPresetArea,
+    ControlsPresetArea,
     BenchMark,
     ReplayArea,
     rf2Headlights,

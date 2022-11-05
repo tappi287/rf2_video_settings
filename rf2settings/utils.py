@@ -280,6 +280,14 @@ def create_js_pygame_event_dict(joy_dict: dict, joy_event) -> dict:
             'hat': hat, 'axis': axis, 'value': value, 'type': joy_event.type}
 
 
+def create_js_joystick_device_list(joy_dict: dict) -> list:
+    js_list = list()
+
+    for instance_id, j in joy_dict.items():
+        js_list.append({'name': j.get_name(), 'guid': j.get_guid()})
+    return js_list
+
+
 def percentile(data, percent: Union[int, float]):
     size = len(data)
     return data[int(math.ceil((size * percent) / 100)) - 1]

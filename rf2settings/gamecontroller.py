@@ -7,7 +7,7 @@ import gevent.event
 import gevent.timeout
 
 from .app.app_main import CLOSE_EVENT
-from .utils import create_js_pygame_event_dict, capture_app_exceptions, AppExceptionHook
+from .utils import create_js_pygame_event_dict, create_js_joystick_device_list, capture_app_exceptions, AppExceptionHook
 
 try:
     import pygame
@@ -26,6 +26,7 @@ class SetupControllerAxis:
 class ControllerEvents:
     """ Keep event and result objects in this modules namespace """
     event = gevent.event.Event()
+    add_removed_event = gevent.event.Event()
     result = gevent.event.AsyncResult()
     settings_changed = gevent.event.Event()
     joysticks = dict()
@@ -38,6 +39,7 @@ def controller_event_loop():
     # -- Block for timeout until event is set
     event_found = ControllerEvents.event.wait(timeout=1.0)
 
+    # -- Forward Controller Events to FrontEnd
     if event_found:
         ControllerEvents.event.clear()
 
@@ -52,6 +54,13 @@ def controller_event_loop():
             eel.controller_event(
                 json.dumps(create_js_pygame_event_dict(ControllerEvents.joysticks, event), ensure_ascii=False)
             )
+
+    # -- Forward Device added/removed events to FrontEnd
+    if ControllerEvents.add_removed_event.isSet():
+        eel.controller_device_event(
+            json.dumps(create_js_joystick_device_list(ControllerEvents.joysticks), ensure_ascii=False)
+        )
+        ControllerEvents.add_removed_event.clear()
 
 
 def _set_event_result(event):
@@ -84,6 +93,7 @@ def controller_greenlet(event_callback: callable = _set_event_result):
             j.init()
             logging.info('Found PyGame Joystick device %s: %s %s', j_id, j.get_name(), j.get_instance_id())
             ControllerEvents.joysticks[j.get_instance_id()] = j
+        ControllerEvents.add_removed_event.set()
 
     event_loop_active = True
     # When input is triggered by an axis we will not trigger an event again
@@ -106,6 +116,7 @@ def controller_greenlet(event_callback: callable = _set_event_result):
                     # We have to keep a reference to the Joystick objects or we will not receive events.
                     ControllerEvents.joysticks[j.get_instance_id()] = j
                     # ------------------------------------------------------------------------------------
+                    ControllerEvents.add_removed_event.set()
             # --- Joystick removed ---
             elif event.type == pygame.JOYDEVICEREMOVED:
                 valid_ids = set()
@@ -116,6 +127,7 @@ def controller_greenlet(event_callback: callable = _set_event_result):
                 for invalid_id in invalid_ids:
                     ControllerEvents.joysticks.pop(invalid_id)
                     logging.debug('Removed Joystick device with instance id: %s', invalid_id)
+                ControllerEvents.add_removed_event.set()
             # --- Joystick Axis moved ---
             elif event.type == pygame.JOYAXISMOTION:
                 if ControllerEvents.capturing:
