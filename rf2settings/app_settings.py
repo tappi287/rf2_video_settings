@@ -31,6 +31,7 @@ class AppSettings(JsonRepr):
     benchmark_settings = dict()
     chat_settings = list()
     yt_livestream: dict = None
+    yt_channel_id = dict()
     headlight_settings = dict()
     headlight_controller_assignments = dict()
     headlight_rf_key = 'DIK_H'
@@ -50,7 +51,7 @@ class AppSettings(JsonRepr):
     skip_keys = ['first_load_complete', 'session_selection', 'replay_playing',
                  'present_mon_bin', 'present_mon_result_dir', 'chat_plugin_version',
                  'content_selected', 'content_keys', 'content_urls', 'content', 'content_saved',
-                 'yt_livestream']
+                 'yt_livestream', 'yt_channel_id']
 
     present_mon_bin: Path = get_present_mon_bin()
     present_mon_result_dir: Path = get_user_presets_dir() / 'benchmark_results'

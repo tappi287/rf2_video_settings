@@ -7,10 +7,13 @@ from rf2settings.app_settings import AppSettings
 
 LAST_ERRORS = list()
 API_K = AppSettings.chat_plugin_version.get("2022.10.19")
+youtube = None
 
 
 def get_channel_id_by_username(username: str) -> Optional[str]:
-    youtube = build('youtube', 'v3', developerKey=API_K, static_discovery=False)
+    global youtube
+    if youtube is None:
+        youtube = build('youtube', 'v3', developerKey=API_K, static_discovery=False)
 
     request = youtube.channels().list(part='id', forUsername=username)
     response: dict = request.execute()
@@ -29,7 +32,9 @@ def get_channel_id_by_username(username: str) -> Optional[str]:
 
 
 def get_live_stream_by_channel_id(channel_id) -> Optional[dict]:
-    youtube = build('youtube', 'v3', developerKey=API_K, static_discovery=False)
+    global youtube
+    if youtube is None:
+        youtube = build('youtube', 'v3', developerKey=API_K, static_discovery=False)
 
     # -- Get Live Broadcast Video ID
     request = youtube.search().list(
@@ -69,10 +74,13 @@ def get_chat_messages(credentials=None, live_stream: dict = None) -> Union[bool,
     if not live_chat_id:
         return messages
 
+    global youtube
     if credentials:
-        youtube = build('youtube', 'v3', credentials=credentials, static_discovery=False)
+        if youtube is None:
+            youtube = build('youtube', 'v3', credentials=credentials, static_discovery=False)
     else:
-        youtube = build('youtube', 'v3', developerKey=API_K, static_discovery=False)
+        if youtube is None:
+            youtube = build('youtube', 'v3', developerKey=API_K, static_discovery=False)
 
     request = youtube.liveChatMessages().list(liveChatId=live_chat_id, part="id,snippet,authorDetails", maxResults=10)
     response: dict = request.execute()

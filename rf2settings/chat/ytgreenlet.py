@@ -33,7 +33,13 @@ def _yt_greenlet_loop():
     # -- Check if we know of an active broadcast
     if AppSettings.yt_livestream is None:
         try:
-            channel_id = youtube.get_channel_id_by_username(CURRENT_YT_USERNAME)
+            if AppSettings.yt_channel_id.get(CURRENT_YT_USERNAME, None) is None:
+                channel_id = youtube.get_channel_id_by_username(CURRENT_YT_USERNAME)
+                if channel_id:
+                    AppSettings.yt_channel_id[CURRENT_YT_USERNAME] = channel_id
+            else:
+                channel_id = AppSettings.yt_channel_id.get(CURRENT_YT_USERNAME)
+
             AppSettings.yt_livestream = youtube.get_live_stream_by_channel_id(channel_id)
         except Exception as e:
             error = f'Error acquiring YouTube Live Stream data: {e}'
