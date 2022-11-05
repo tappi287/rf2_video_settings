@@ -1,6 +1,7 @@
 import logging
 
 import eel
+import gevent
 
 from rf2settings.app.app_main import CLOSE_EVENT
 from rf2settings.app_settings import AppSettings
@@ -42,7 +43,7 @@ def _yt_greenlet_loop():
         if AppSettings.yt_livestream is None:
             RfactorYouTubeLiveEvent.set("")
             logging.debug('No active YouTube Broadcast found.')
-            CLOSE_EVENT.wait(POLLING_TIMEOUT * 10)
+            gevent.sleep(POLLING_TIMEOUT * 10.0)
             return
         else:
             RfactorYouTubeLiveEvent.set(
@@ -56,7 +57,7 @@ def _yt_greenlet_loop():
     except Exception as e:
         error = f'Error acquiring YouTube live chat messages: {e}'
         RfactorYouTubeErrorEvent.set([error])
-        CLOSE_EVENT.wait(POLLING_TIMEOUT)
+        gevent.sleep(POLLING_TIMEOUT)
         return
 
     # -- Error receiving messages
@@ -67,7 +68,7 @@ def _yt_greenlet_loop():
 
     # -- No new messages
     if messages == CURRENT_YT_MESSAGES or len(messages) == 0:
-        CLOSE_EVENT.wait(POLLING_TIMEOUT)
+        gevent.sleep(POLLING_TIMEOUT)
         return
 
     # -- New messages
@@ -80,7 +81,7 @@ def _yt_greenlet_loop():
     CURRENT_YT_MESSAGES = messages
     logging.debug('Setting new YouTube messages: %s', new_messages)
     RfactorYouTubeEvent.set(new_messages)
-    CLOSE_EVENT.wait(POLLING_TIMEOUT)
+    gevent.sleep(POLLING_TIMEOUT)
 
 
 def youtube_eventloop():
@@ -107,8 +108,9 @@ def youtube_greenlet():
     while True:
         _yt_greenlet_loop()
 
-        close = CLOSE_EVENT.wait(timeout=5.0)
-        if close:
+        if CLOSE_EVENT.is_set():
             logging.info('YouTube greenlet received CLOSE event.')
             break
+        gevent.sleep(5.0)
+
     logging.info('YouTube greenlet exiting.')

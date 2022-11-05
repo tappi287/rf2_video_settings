@@ -13,6 +13,7 @@ from rf2settings.rf2sharedmem.sharedMemoryAPI import SimInfoAPI
 from rf2settings.rfactor import RfactorPlayer
 from rf2settings.utils import rfactor_process_with_id_exists
 
+CONNECTION_DEBUG = False
 
 class RfactorState:
     unavailable = 0
@@ -317,7 +318,8 @@ class RfactorConnect:
         try:
             r = requests.get(f'{cls.base_url()}{url}', timeout=cls.get_request_time)
         except Exception as e:
-            logging.debug('Error during get request: %s', e)
+            if CONNECTION_DEBUG:
+                logging.debug('Error during get request: %s', e)
             return
 
         if r.status_code not in (200, 201, 202, 203, 204):
