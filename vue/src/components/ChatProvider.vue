@@ -173,7 +173,7 @@ export default {
       const errors = event.detail
       for (let idx in errors) {
         const error = errors[idx]
-        this.$emit('make-toast', error.message, 'danger', error.domain, true, null, true)
+        this.$emit('make-toast', error, 'danger', this.providerName, true, undefined, false)
       }
     },
     addYtChatMessages(event) {
