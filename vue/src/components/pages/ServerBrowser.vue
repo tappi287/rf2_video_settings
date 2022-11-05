@@ -185,20 +185,23 @@
 
           <!-- Actions -->
           <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
-            <b-button @click="refreshServer(server.item)" class="mr-2" variant="rf-secondary" size="sm">
-              <b-icon shift-v="-1" icon="arrow-clockwise"></b-icon>
-              <span class="ml-1 mr-1">Refresh Server Data</span>
-            </b-button>
-            <template v-if="server.item.password_protected">
-              <b-button @click="joinPswdProtectedRfactor(server.item)"
-                        variant="rf-blue-light" size="sm">
-                <b-icon variant="light" icon="play"></b-icon>
-                <span class="ml-1 mr-1">Join Server</span>
+            <b-button-group>
+              <b-button @click="refreshServer(server.item)" class="mr-2" variant="rf-secondary" size="sm">
+                <b-icon shift-v="-1" icon="arrow-clockwise"></b-icon>
+                <span class="ml-1 mr-1">Refresh Server Data</span>
               </b-button>
-            </template>
-            <template v-else>
-              <LaunchRfactorBtn @make-toast="makeToast" @launch="joinServerLaunched" :server="server.item" text="Join Server"/>
-            </template>
+              <template v-if="server.item.password_protected">
+                <b-button @click="joinPswdProtectedRfactor(server.item)"
+                          variant="rf-blue-light" size="sm">
+                  <b-icon variant="light" icon="play"></b-icon>
+                  <span class="ml-1 mr-1">Join Server</span>
+                </b-button>
+              </template>
+              <template v-else>
+                <LaunchRfactorBtn @make-toast="makeToast" btn-size="sm"
+                                  @launch="joinServerLaunched" :server="server.item" text="Join Server"/>
+              </template>
+            </b-button-group>
           </div>
         </b-card>
       </template>
@@ -239,7 +242,8 @@
     <!-- Join password protected Server -->
     <b-modal :id="pwdModalId" centered>
       <template #modal-title>
-        <b-icon icon="play-fill" variant="primary"></b-icon>Join {{ selectedServer.server_name }}
+        <b-icon icon="play-fill" variant="primary"></b-icon>
+        <span class="ml-1">Join {{ selectedServer.server_name }}</span>
       </template>
       <div class="d-block" style="font-size: small">
         <p>This server is password protected.</p>
@@ -253,6 +257,7 @@
         <b-form-input type="password" v-model="selectedServer.password"></b-form-input>
         <b-input-group-append>
           <LaunchRfactorBtn @make-toast="makeToast" @launch="joinPswdLaunched" text="Join Server"
+                            btn-size="md"
                             :server="selectedServer"/>
         </b-input-group-append>
       </b-input-group>

@@ -1,29 +1,55 @@
 <template>
-  <b-button-group>
-    <b-dropdown variant="rf-blue-light" size="sm" right split @click="launchRfactor">
-      <template #button-content>
-        <div class="rounded-right">
-          <b-icon shift-v="1.5" icon="play"></b-icon>
-          {{ buttonText }}
-          <span class="ml-2" v-if="displayLive">
-            <b-icon shift-v="1" :icon="live ? 'circle-fill' : 'circle'" :variant="live ? 'success' : 'rf-blue'"/>
-          </span>
+  <div>
+    <b-button-group>
+      <b-dropdown variant="rf-blue-light" :size="btnSizeString" right split @click="launchRfactor">
+        <template #button-content>
+          <div class="rounded-right">
+            <b-icon shift-v="1.5" icon="play"></b-icon>
+            {{ buttonText }}
+            <span class="ml-2" v-if="displayLive">
+              <b-icon shift-v="1" :icon="live ? 'circle-fill' : 'circle'" :variant="live ? 'success' : 'rf-blue'"/>
+            </span>
+          </div>
+        </template>
+        <b-dropdown-item @click="launchRfactor">
+          Launch via Steam
+        </b-dropdown-item>
+        <b-dropdown-item v-b-popover.auto.hover="'Updated Workshop item packages will not be installed or synced.' +
+         ' But if you have eg. a dedicated Server running. This is the method to launch rF2 anyway. Make sure you ' +
+         'have configured your WebUI ports correctly.'"
+                         @click="launchRfactor(1)">
+          Launch via Exe
+        </b-dropdown-item>
+        <b-dropdown-item v-if="chooseContent" @click="$emit('show-content')">
+          Choose Tracks and Cars
+        </b-dropdown-item>
+      </b-dropdown>
+    </b-button-group>
+    <b-modal v-model="showDeviceModal" centered size="md" modal-class="launch-modal">
+      <template #modal-title>
+        <b-icon icon="exclamation-triangle-fill" shift-v="-0.45" variant="primary"></b-icon>
+        <span class="ml-2">Device Warning</span>
+      </template>
+      <p class="small">
+        These Controller Devices were detected as <i>not</i> connected.
+      </p>
+      <p v-for="name in deviceList" :key="name">{{ name }}</p>
+      <p class="small">
+        <i>
+        Go to <b-link @click="$eventHub.$emit('navigate', 2); showDeviceModal=false">
+          Control Settings</b-link>
+        and disable the check boxes in the <b>Controller Devices</b>
+        Section if you do not want to see this warning.
+        </i>
+      </p>
+      <template #modal-footer>
+        <div class="d-block text-right">
+          <b-button variant="rf-blue-light" @click="launchAnyway" class="mr-2">Launch anyway</b-button>
+          <b-button variant="secondary" @click="abort">Abort</b-button>
         </div>
       </template>
-      <b-dropdown-item @click="launchRfactor">
-        Launch via Steam
-      </b-dropdown-item>
-      <b-dropdown-item v-b-popover.auto.hover="'Updated Workshop item packages will not be installed or synced.' +
-       ' But if you have eg. a dedicated Server running. This is the method to launch rF2 anyway. Make sure you ' +
-       'have configured your WebUI ports correctly.'"
-                       @click="launchRfactor(1)">
-        Launch via Exe
-      </b-dropdown-item>
-      <b-dropdown-item v-if="chooseContent" @click="$emit('show-content')">
-        Choose Tracks and Cars
-      </b-dropdown-item>
-    </b-dropdown>
-  </b-button-group>
+    </b-modal>
+  </div>
 </template>
 
 <script>
@@ -38,9 +64,10 @@ async function rfactorLiveFunc (event) {
 
 export default {
 name: "LaunchRfactorBtn",
-  props: {text: String, server: Object, displayLive: Boolean, chooseContent: Boolean },
+  props: {text: String, btnSize: String, server: Object, displayLive: Boolean, chooseContent: Boolean },
   data: function () {
-    return { live: false, contentModal: false }
+    return { live: false, size: "sm", devicesReady: true, deviceList: [],
+             showDeviceModal: false, lastMethod: 0, checkDevices: true }
   },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
@@ -50,8 +77,17 @@ name: "LaunchRfactorBtn",
     updateRfactorState: function (event) {
       this.live = event.detail
     },
+    setDeviceState: function (event) {
+      this.devicesReady = event.devicesReady;
+      this.deviceList = event.deviceList;
+    },
     launchRfactor: async function (method) {
       if (typeof (method) !== 'number') { method = 0 }
+      if (!this.devicesReady && this.checkDevices) {
+        this.showDeviceModal = true
+        this.lastMethod = method
+        return
+      }
       // Give BackEnd some time to write settings
       this.$emit('launch')
       await sleep(200)
@@ -65,6 +101,15 @@ name: "LaunchRfactorBtn",
         this.$emit('launch-failed')
       }
     },
+    abort () {
+      this.showDeviceModal = false
+    },
+    launchAnyway () {
+      this.showDeviceModal = false
+      this.checkDevices = false
+      this.launchRfactor(this.lastMethod)
+      this.checkDevices = true
+    }
   },
   computed: {
     serverData: function ()  {
@@ -75,14 +120,23 @@ name: "LaunchRfactorBtn",
     buttonText: function () {
       if (this.text !== undefined) { return this.text }
       return 'Start rFactor 2'
+    },
+    btnSizeString: function () {
+      if (this.btnSize === undefined) { return this.size }
+      return this.btnSize
     }
   },
   mounted() {
     if (this.displayLive) {
       window.addEventListener('rfactor-live-event', this.updateRfactorState)
     }
+    this.$eventHub.$emit('requestDeviceUpdate')
+  },
+  created() {
+    this.$eventHub.$on('deviceUpdate', this.setDeviceState)
   },
   destroyed() {
+    this.$eventHub.$off('deviceUpdate', this.setDeviceState)
     if (this.displayLive) {
       window.removeEventListener('rfactor-live-event', this.updateRfactorState)
     }

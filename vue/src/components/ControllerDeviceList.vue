@@ -1,26 +1,27 @@
 <template>
   <div v-if="visible">
-    <b-card class="mt-2 setting-card" header-class="m-0 p-2"
-            bg-variant="dark" text-variant="white">
+    <b-card class="mt-2 setting-card no-border" header-class="m-0 p-2 text-center"
+            :bg-variant="darkVar" :text-variant="whiteVar">
       <template #header>
           <b-icon icon="controller"></b-icon>
           <span :class="'ml-2'">Controller Devices</span>
       </template>
       <p class="small">
-        Select input devices here that need to be connected when you start rF2. The app will warn you
-        if a device is not connected.
+        Click on the Checkboxes to select input devices here that need to be connected when you start rF2.
+        The app will warn you if a device is not connected while launching rF2.
       </p>
-      <b-list-group class="text-left">
-        <b-list-group-item class="bg-transparent p-0 m-2" v-for="(c, idx) in controller" :key="idx">
+      <b-list-group class="text-left no-border">
+        <b-list-group-item class="bg-transparent p-0 m-2 no-border" v-for="(c, idx) in controller" :key="idx">
           <!-- Device Connected Indicator -->
-          <b-iconstack font-scale="1.5" v-b-popover.hover.auto="deviceInfoText(c.guid)">
+          <b-iconstack font-scale="1.5">
             <b-icon stacked icon="circle" scale="1" shift-v="-2.0"
-                    :variant="c.connected ? 'white' : 'dark'" />
-            <b-icon stacked :icon="c.connected ? 'plug-fill' : 'dash'" :variant="c.connected ? 'white' : 'dark'"
+                    :variant="c.connected ? whiteVar : mutedVar" />
+            <b-icon stacked :icon="c.connected ? 'plug-fill' : 'dash'" :variant="c.connected ? whiteVar : mutedVar"
                     shift-v="-2.15" shift-h="0.05" scale="0.65" />
           </b-iconstack>
           <!-- Device Watched Checkbox -->
-          <b-checkbox :checked="c.watched" switch inline @change="toggled($event, c.name)" class="ml-3">
+          <b-checkbox :checked="c.watched" switch inline @change="toggled($event, c.guid)" class="ml-3"
+                      v-b-popover.hover.auto="deviceInfoEnabled(c.watched) + deviceInfoText(c.guid)">
             <span class="ml-1 device-name">{{ c.name }}</span>
           </b-checkbox>
           <!-- Remove device button -->
@@ -47,10 +48,11 @@ export default {
   data: function () {
     return {
       controller: [{'name': 'Example Device', 'guid': '0000123456789#123456', 'connected': false, 'watched': false},
-                   {'name': 'Sim Pedals', 'guid': '000023', 'connected': true, 'watched': true}]
+                   {'name': 'Sim Pedals', 'guid': '000023', 'connected': true, 'watched': true}],
+      darkVar: 'dark', whiteVar: 'white', mutedVar: 'dark'
     }
   },
-  props: {visible: Boolean},
+  props: {visible: Boolean, cardStyle: String},
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
@@ -58,27 +60,31 @@ export default {
     setBusy: function (busy) {
       this.$emit('set-busy', busy)
     },
+    deviceInfoEnabled: function (watched) {
+      if (watched) { return ""}
+      return 'Enable to get a warning before launch if this device is not connected. '
+    },
     deviceInfoText: function (guid) {
       let msg = ""
 
       this.controller.forEach( (device) => {
         if (device.guid === guid) {
           if (device.connected && device.watched) {
-            msg = "Device is connected and watched."
+            msg = "Device is connected and monitored."
           } else if (device.connected && !device.watched) {
-            msg = "Device is connected but not watched. You will not be notified upon rF2 launch."
+            msg = "Device is connected but not monitored. You will not be notified upon rF2 launch."
           } else if (!device.connected && device.watched) {
-            msg = "Device is not connected. App will warn you about this upon rF2 launch."
+            msg = "Device is monitored but not connected. App will warn you about this upon rF2 launch."
           } else if (!device.connected && !device.watched) {
-            msg = "Device is not connected and not watched. You will not be notified upon rF2 launch."
+            msg = "Device is not connected and not monitored. You will not be notified upon rF2 launch."
           }
         }
       })
       return msg
     },
-    toggled (event, name) {
+    toggled (event, guid) {
       this.controller.forEach( (device) => {
-        if (device.name === name) {
+        if (device.guid === guid) {
           device.watched = Boolean(event)
         }
       })
@@ -90,20 +96,42 @@ export default {
     },
     async getDeviceList () {
       this.controller = await getEelJsonObject(window.eel.get_device_list()())
+      await this.sendUpdateEvent()
     },
     async saveDeviceList () {
       await getEelJsonObject(window.eel.save_device_list(this.controller)())
+      await this.sendUpdateEvent()
     },
     receiveControllerDeviceEvent (event) {
       this.controller = JSON.parse(event.detail)
       this.saveDeviceList()
     },
+    async sendUpdateEvent () {
+      let devicesReady = true
+      let msg = []
+
+      this.controller.forEach( (device) => {
+        if (device.watched && !device.connected) {
+          devicesReady = false
+          msg.push(device.name)
+        }
+      })
+
+      const deviceEvent = {devicesReady: devicesReady, deviceList: msg}
+      this.$eventHub.$emit('deviceUpdate', deviceEvent)
+    }
+  },
+  async mounted() {
+    await this.getDeviceList()
   },
   async created() {
+    if (this.cardStyle === 'bright') { this.darkVar = 'white'; this.whiteVar = 'dark'; this.mutedVar = 'muted'}
     await this.getDeviceList()
+    this.$eventHub.$on('requestDeviceUpdate', this.sendUpdateEvent)
     window.addEventListener('controller-device-event', this.receiveControllerDeviceEvent)
   },
   destroyed() {
+    this.$eventHub.$off('requestDeviceUpdate', this.sendUpdateEvent)
     window.removeEventListener('controller-device-event', this.receiveControllerDeviceEvent)
   },
 }
@@ -112,4 +140,5 @@ export default {
 <style scoped>
 .device-name { font-family: "Ubuntu", sans-serif; }
 .close-btn { height: 1.5rem; }
+.no-border { border: none; }
 </style>
