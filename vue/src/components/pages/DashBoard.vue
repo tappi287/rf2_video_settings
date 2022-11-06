@@ -134,6 +134,9 @@ export default {
       const maxWidth = getMaxWidth(elements)
       elements.forEach(e => { e.style.width = String(maxWidth) + 'px' })
     },
+    updateSliderSize() {
+      this.$refs.slider.resize()
+    },
     updateFavs: async function () {
       if (this.refreshFavs) {
         // Reset ServerBrowser data
@@ -144,6 +147,7 @@ export default {
     },
   },
   activated() {
+    this.updateSliderSize()
     this.updateFavs()
   },
   async mounted() {
