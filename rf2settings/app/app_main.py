@@ -66,6 +66,11 @@ def restore_backup():
 
 
 @eel.expose
+def get_last_launch_method():
+    return app_main_fn.get_last_launch_method()
+
+
+@eel.expose
 def run_rfactor(server_info: Optional[dict] = None, method: Optional[int] = 0):
     return app_main_fn.run_rfactor(server_info, method)
 
@@ -113,6 +118,16 @@ def set_apply_webui_settings(setting: bool):
 @eel.expose
 def get_apply_webui_settings():
     return app_main_fn.get_apply_webui_settings()
+
+
+@eel.expose
+def save_app_preferences(app_preferences):
+    return app_main_fn.save_app_preferences(app_preferences)
+
+
+@eel.expose
+def load_app_preferences():
+    return app_main_fn.load_app_preferences()
 
 
 def expose_main_methods():

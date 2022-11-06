@@ -3,14 +3,16 @@ import logging
 import re
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 import eel
 import gevent
 
 from ..app_settings import AppSettings
-from ..preset.preset import PresetType
+from ..preset.preset import PresetType, GraphicsPreset
 from ..preset.preset_base import load_presets_from_dir
 from ..preset.presets_dir import get_user_presets_dir
+from ..preset.settings_model import VideoSettings
 from ..rf2command import CommandQueue, Command
 from ..rf2connect import RfactorState
 from ..rf2events import RfactorQuitEvent
@@ -18,14 +20,13 @@ from ..rfactor import RfactorPlayer
 from ..utils import create_file_safe_name, capture_app_exceptions
 
 
-def apply_gfx_preset_with_name(rf: RfactorPlayer, preset_name: str) -> bool:
+def apply_gfx_preset_with_name(rf: RfactorPlayer, preset_name: str) -> Optional[GraphicsPreset]:
     _, selected_preset = load_presets_from_dir(get_user_presets_dir(), PresetType.graphics,
                                                selected_preset_name=preset_name)
     if selected_preset:
         rf.write_settings(selected_preset)
         eel.sleep(0.01)
-        return True
-    return False
+        return selected_preset
 
 
 @capture_app_exceptions
@@ -109,10 +110,15 @@ def play_replay(replay_name):
                                                    f'versions without the newUI. Your version: {version}'})
 
     # -- Apply replay graphics preset
-    apply_gfx_preset_with_name(rf, AppSettings.replay_preset)
+    replay_gfx_preset = apply_gfx_preset_with_name(rf, AppSettings.replay_preset)
+    video_settings: VideoSettings = getattr(replay_gfx_preset, VideoSettings.app_key, VideoSettings())
+    launch_option = video_settings.get_option('Launch')
+    launch_method = 1
+    if launch_option:
+        launch_method = launch_option.value
 
     # -- Start rFactor 2
-    result = rf.run_rfactor()
+    result = rf.run_rfactor(method=launch_method)
     if not result:
         # -- Restore non-replay graphics preset
         selected_preset_name = AppSettings.selected_presets.get(str(PresetType.graphics))

@@ -1,7 +1,6 @@
 <template>
   <div v-cloak id="dashboard" class="position-relative mb-3 text-left">
-    <vue-flux class="img-slider" id="img"
-        ref="slider"
+    <vue-flux class="img-slider" id="img" ref="slider"
         :captions="vfCaptions"
         :images="vfImages"
         :options="vfOptions"
@@ -51,7 +50,7 @@
     <transition name="fade">
       <ServerBrowser ref="serverBrowser" only-favourites class="mt-3" :delay="100" :rfactor-version="rfactorVersion"
                      @make-toast="makeToast" @launch="$refs.slider.stop()"
-                     @set-busy="setBusy"/>
+                     @set-busy="setBusy" v-if="showServerFavs" />
     </transition>
   </div>
 </template>
@@ -59,6 +58,7 @@
 <script>
 import ServerBrowser from "@/components/pages/ServerBrowser"
 import PresetHandler from "@/components/presets/PresetHandler";
+import PreferencesPage from "@/components/pages/PreferencesPage";
 import { VueFlux, FluxCaption, FluxPreloader } from 'vue-flux';
 import {getEelJsonObject, chooseIndex, userScreenShotsUrl, getMaxWidth, getRequest } from "@/main"
 import rfWPoster from "@/assets/rfW_Poster.webp"
@@ -91,6 +91,7 @@ export default {
       userName: 'Driver',
       cls: ' mb-3 mr-2 ml-2 preset-button',
       serverBrowserReady: false,
+      showServerFavs: true,
       gfxPresetsReady: false,
       vfOptions: { autoplay: true, delay: 12000, allowFullscreen: true },
       vfImages: [],
@@ -99,7 +100,7 @@ export default {
       posterImg: rfWPoster
     }
   },
-  props: {gfxHandler: PresetHandler, refreshFavs: Boolean, rfactorVersion: String },
+  props: {gfxHandler: PresetHandler, prefs: PreferencesPage, refreshFavs: Boolean, rfactorVersion: String },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
       this.$emit('make-toast', message, category, title, append, delay)
@@ -109,13 +110,22 @@ export default {
       this.vfImages = r.images; this.vfCaptions = r.captions
     },
     getRemoteScreenShots: async function() {
-      const request = await getRequest(userScreenShotsUrl)
-      if (request.result === false) {
-        console.error('Error fetching Screenshots: ' + request.data.result)
-        return
+      let slideShowActivated = false
+      if (this.prefs !== undefined) {
+        slideShowActivated = this.prefs.dashboardModules.indexOf('img') !== -1
       }
-      userScreenShots = request.data
-      await this.setupScreenShots()
+
+      if (slideShowActivated) {
+        const request = await getRequest(userScreenShotsUrl)
+        if (request.result === false) {
+          console.error('Error fetching Screenshots: ' + request.data.result)
+          return
+        }
+        userScreenShots = request.data
+        await this.setupScreenShots()
+      } else {
+        this.$refs.slider.stop()
+      }
     },
     setBusy: function (busy) {this.$emit('set-busy', busy) },
     getDriver: async function () {
@@ -134,8 +144,20 @@ export default {
       const maxWidth = getMaxWidth(elements)
       elements.forEach(e => { e.style.width = String(maxWidth) + 'px' })
     },
+    updateImageClip () {
+      setTimeout( () => {
+        const element = document.getElementById('img')
+        if (element !== undefined && element !== null) {
+          element.style.width = ""
+        }
+      }, 0)
+    },
+    updateSliderSize() {
+      this.$refs.slider.resize()
+    },
     updateFavs: async function () {
-      if (this.refreshFavs) {
+      this.showServerFavs = this.prefs.dashboardModules.indexOf('favs') !== -1
+      if (this.refreshFavs && this.showServerFavs) {
         // Reset ServerBrowser data
         await this.$refs.serverBrowser.loadSettings()
         await this.$refs.serverBrowser.refreshServerList(true)
@@ -144,21 +166,25 @@ export default {
     },
   },
   activated() {
+    this.updateSliderSize()
     this.updateFavs()
+    this.updateImageClip()
   },
   async mounted() {
     // Access after rendering finished
     setTimeout(() => {
       this.equalPresetButtonWidth()
     }, 0)
-
-    await this.getRemoteScreenShots()
   },
-  created() {
+  async created() {
     this.setBusy(true)
-    this.setupScreenShots()
-    this.getDriver()
-    this.setBusy(false)
+    await this.setupScreenShots()
+    await this.getDriver()
+    await this.setBusy(false)
+    setTimeout( () => {
+      this.getRemoteScreenShots()
+    }, 500)
+    window.onresize = this.updateImageClip
   },
   components: {
     ServerBrowser,

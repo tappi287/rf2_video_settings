@@ -91,6 +91,13 @@ adjustable_graphics_settings = {
                                       }
                                      ),
                                 },
+    'Motion blur': {'name': 'Motion blur', 'value': 0,
+                    'settings':
+                        ({'value': 0, 'name': 'Off'},
+                         {'value': 1, 'name': 'Trackside only'},
+                         {'value': 2, 'name': 'On'},
+                         ),
+                    },
     'LSI Top': {'name': 'Low Speed Info', 'value': 0.15,
                 'settings': ({'settingType': 'range', 'min': 0.01, 'max': 1.0, 'step': 0.01, 'display': 'floatpercent',
                               'desc': 'Vertical position of Low Speed Info message box as a fraction '
@@ -209,6 +216,15 @@ adjustable_video_settings = {
                    'settings': ({'value': 0, 'name': 'Disabled'}, {'value': 1, 'name': 'HMD only'},
                                 {'value': 2, 'name': 'HMD + Mirror'})
                    },
+    'Launch': {'name': 'Launch', 'value': 1, '_type': int, 'desc': 'Choose how this widget should launch rFactor '
+                                                                   'if this preset is selected.',
+               'settings': ({'value': 1, 'name': 'via Executable (Desktop)'},
+                            {'value': 3, 'name': 'via Executable (VR)'},
+                            {'value': 0, 'name': 'via Steam (Desktop) [Deprecated]',
+                             'desc': 'This option no longer works reliably with rF2 from v1.1132'},
+                            {'value': 2, 'name': 'via Steam (VR) [Deprecated]',
+                             'desc': 'This option no longer works reliably with rF2 from v1.1132'})
+               },
     'FSAA': {'name': 'Anti Aliasing (old)', 'value': 0, '_type': int,
              'settings': ({'value': 0, 'name': 'Off'},
                           {'value': 32, 'name': 'Level 1', 'desc': '2x [2x Multisampling]', 'perf': 'G+0,20% C+0,00%'},
@@ -262,6 +278,15 @@ resolution_video_settings = {
     'VideoRefresh': {'name': 'Refresh Rate', 'value': None, 'hidden': True,
                      'settings': ({'value': 1, 'name': '60Hz'},)
                      },
+    'VideoResW': {'name': 'Resolution Width', 'value': None, 'hidden': True,
+                  'settings': ({'value': 1920, 'name': 'FullHD'},)
+                  },
+    'VideoResH': {'name': 'Resolution Height', 'value': None, 'hidden': True,
+                  'settings': ({'value': 1080, 'name': 'FullHD'},)
+                  },
+    'VideoRefreshRate': {'name': 'Video Refresh Rate', 'value': None, 'hidden': True,
+                         'settings': ({'value': 144, 'name': '144Hz'},)
+                         },
 }
 reshade_settings = {
     'use_reshade': {'name': 'Use VRToolkit+ReShade', 'value': False,

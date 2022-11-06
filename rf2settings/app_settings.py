@@ -17,6 +17,7 @@ class AppSettings(JsonRepr):
     needs_admin = False
     selected_presets: Dict[str, str] = dict()
     replay_preset = str()
+    app_preferences = dict()
 
     rf_overwrite_location = ''
 
@@ -38,6 +39,7 @@ class AppSettings(JsonRepr):
     server_passwords = dict()
     apply_webui_settings = False
     controller_devices = dict()
+    last_launch_method = None
 
     chat_plugin_version = {
         "458bca4acdd558539ff62fc2524cff71": "2022.10.18",
@@ -96,7 +98,7 @@ class AppSettings(JsonRepr):
     @staticmethod
     def create_backup(rf: RfactorPlayer):
         result = False
-        files = (rf.player_file, rf.controller_file, rf.ini_file)
+        files = (rf.player_file, rf.controller_file, rf.ini_file, rf.ini_vr_file)
         has_permission_error = False
 
         for org in files:
@@ -130,7 +132,7 @@ class AppSettings(JsonRepr):
     @staticmethod
     def restore_backup(rf: RfactorPlayer):
         result = False
-        files = (rf.player_file, rf.controller_file, rf.ini_file)
+        files = (rf.player_file, rf.controller_file, rf.ini_file, rf.ini_vr_file)
         has_permission_error = False
 
         for org in files:
@@ -312,6 +314,7 @@ class AppSettings(JsonRepr):
         # -- Overwrite rf2 location if overwrite location set
         if cls.rf_overwrite_location and cls.rf_overwrite_location not in ('.', '..', '../modules'):
             RfactorLocation.overwrite_location(cls.rf_overwrite_location)
+            logging.info(f'Using rF2 overwrite location: {RfactorLocation.path}')
 
         # -- Operations on first load
         cls._first_load()

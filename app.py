@@ -1,7 +1,9 @@
 import logging
+import os
 import platform
 import sys
 import webbrowser
+from pathlib import Path
 
 import eel
 import gevent
@@ -70,23 +72,31 @@ def start_eel(npm_serve=True):
     if npm_serve:
         # Dev env with npm run serve
         page = {'port': 8080}
+        url_port = page.get('port')
         eel.init('vue/src')
     else:
         # Frozen or npm run build
+        url_port = port
         eel.init('web')
 
     # TODO: fetch OSError port in use
     try:
         eel.start(page, host=host, port=port, block=False, close_callback=close_callback)
     except EnvironmentError:
-        # If Chrome isn't found, fallback to Microsoft Edge on Win10 or greater
-        if sys.platform in ['win32', 'win64'] and int(platform.release()) >= 10:
-            eel.start(page, mode='edge', host=host, port=port, block=False)
+        start_url = f'http://{host}:{url_port}'
+        edge_cmd = f"{os.path.expandvars('%PROGRAMFILES(x86)%')}\\Microsoft\\Edge\\Application\\msedge.exe"
+
+        # If Chrome isn't found, fallback to Microsoft Chromium Edge
+        if Path(edge_cmd).exists():
+            logging.info('Falling back to Edge Browser')
+            eel.start(page, mode='custom', host=host, port=port, block=False,
+                      cmdline_args=[edge_cmd, '--profile-directory=Default', f'--app={start_url}'])
         # Fallback to opening a regular browser window
         else:
+            logging.info('Falling back to default Web Browser')
             eel.start(page, mode=None, app_mode=False, host=host, port=port, block=False)
             # Open system default web browser
-            webbrowser.open_new(f'http://{host}:{port}')
+            webbrowser.open_new(start_url)
 
     # -- Game Controller Greenlet
     cg = eel.spawn(controller_greenlet)
@@ -101,6 +111,7 @@ def start_eel(npm_serve=True):
     yg = eel.spawn(youtube_greenlet)
 
     # -- Run until window/tab closed
+    logging.debug('Entering Event Loop')
     while not CLOSE_EVENT.is_set():
         # Game controller event loop
         controller_event_loop()

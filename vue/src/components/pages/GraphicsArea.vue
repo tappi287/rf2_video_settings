@@ -291,6 +291,8 @@
       <p>Window, Resolution and Refresh Rate settings will be saved to
         <i>{{ preset.name }}</i> once you finished rFactor's Video Setup dialog.
       </p>
+      <p>Make sure to edit <b>Config_DX11.ini</b>. The widget will update your <i>Config_DX11_VR.ini</i>
+         automatically.</p>
     </div>
 
     <template #modal-footer>

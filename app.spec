@@ -48,12 +48,12 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=False )
+          console=False)
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
                a.datas,
                strip=False,
                upx=True,
-               upx_exclude=['vcruntime140.dll', 'python38.dll', 'python.dll'],
+               upx_exclude=['vcruntime140.dll', 'python38.dll', 'python.dll', 'python3.dll', 'python310.dll'],
                name=APP_NAME)

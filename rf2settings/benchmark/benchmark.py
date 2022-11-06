@@ -13,7 +13,7 @@ from rf2settings.directInputKeySend import rfKeycodeToDIK
 from rf2settings.preset.preset import PresetType, GraphicsPreset
 from rf2settings.preset.preset_base import PRESET_TYPES, load_presets_from_dir
 from rf2settings.preset.presets_dir import get_user_presets_dir
-from rf2settings.preset.settings_model import BenchmarkControllerJsonSettings
+from rf2settings.preset.settings_model import BenchmarkControllerJsonSettings, VideoSettings
 from rf2settings.process import RunProcess
 from rf2settings.benchmark.benchmark_utils import create_benchmark_commands, BenchmarkRun, BenchmarkQueue
 from rf2settings.benchmark.fpsvr import FpsVR
@@ -62,6 +62,7 @@ class RfactorBenchmark:
         self.replay: Optional[str] = None
         self.use_fps_vr = False
         self.start_time = 0.0
+        self.launch_method = 1
 
         self._timestamp = 0
 
@@ -117,7 +118,7 @@ class RfactorBenchmark:
 
         logging.debug('Prepared Benchmark run. Starting rFactor 2')
         # -- Start rFactor 2
-        result = self.rf.run_rfactor(method=1)
+        result = self.rf.run_rfactor(method=self.launch_method)
         if not result:
             logging.error('Rfactor 2 could not be started aborting benchmark run.')
             self.finish()
@@ -194,10 +195,16 @@ class RfactorBenchmark:
         self.use_fps_vr = getattr(self.current_run.settings.get_option('use_fps_vr'), 'value', False)
         self.benchmark_length = int(length or self.default_benchmark_length)
         self.recording_timeout = int(timeout or self.default_timeout)
+        video_options: VideoSettings = getattr(self.get_current_gfx_preset(), VideoSettings.app_key, VideoSettings())
+        launch_option = video_options.get_option('Launch')
+        self.launch_method = 1
+        if launch_option:
+            self.launch_method = launch_option.value
 
-        logging.info('Prepared Benchmark Run: %s length %s recording delay %s replay %s with Presets: %s',
+        logging.info('Prepared Benchmark Run: %s length %s recording delay %s replay %s '
+                     'launch method %s with Presets: %s',
                      self.current_run.name, self.benchmark_length, self.recording_timeout, self.replay,
-                     preset_names)
+                     self.launch_method, preset_names)
 
         if not AppSettings.present_mon_result_dir.exists():
             AppSettings.present_mon_result_dir.mkdir()

@@ -246,7 +246,7 @@ export default {
     },
     async postMessage(message) {
       console.log(this.providerName + ' Chat message: ' + message)
-      await window.eel.post_chat_message(message)()
+      await window.eel.post_chat_message(message.slice(0, 512))()
     },
     async saveSettings() {
       this.$emit('save-settings', {'settings': this.currentSettings, 'provider': this.providerName })
