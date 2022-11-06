@@ -76,6 +76,7 @@ name: "LaunchRfactorBtn",
     setBusy: function (busy) {this.$emit('set-busy', busy) },
     updateRfactorState: function (event) {
       this.live = event.detail
+      this.$emit('update-live', this.live)
     },
     setDeviceState: function (event) {
       this.devicesReady = event.devicesReady;

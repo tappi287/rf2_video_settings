@@ -205,6 +205,7 @@
       <b-row cols="2" class="m-0">
         <b-col class="text-left p-0">
           <LaunchRfactorBtn display-live choose-content @make-toast="makeToast" @launch="rfactorLaunched"
+                            @update-live="live = $event"
                             @show-content="navActive = 10"/>
         </b-col>
         <b-col class="text-right p-0">
@@ -224,6 +225,9 @@
       </b-row>
     </b-container>
 
+    <RfactorOverlay v-if="showRfOverlay" :live="live" :rf2-status="rf2Status"
+                    :quit-busy="quitBusy" @quit-rfactor="quitRfactor" />
+
     <!-- Restore Popover -->
     <b-popover target="restore-btn" triggers="click">
       <p>Do you really want to restore all of your original settings?</p>
@@ -240,47 +244,6 @@
         </b-button>
       </div>
     </b-popover>
-    <b-overlay no-wrap fixed variant="transparent" :show="isBusy" blur="1px">
-      <template #overlay>
-        <template v-if="!live">
-          <div class="d-flex justify-content-center mb-3">
-            <b-spinner label="Loading..."></b-spinner>
-          </div>
-        </template>
-        <template v-else>
-          <div class="busy-div p-4 rounded">
-            <div class="d-flex justify-content-center mb-3">
-              <b-button variant="secondary"
-                        @click="setBusy(false)"
-                        v-b-popover.top.hover="'If you started to watch a replay with this app: ' +
-                         'Please wait a moment so the app can restore the original video settings. ' +
-                         'Detecting rFactor not running can take up to a minute.'">
-                Proceed
-              </b-button>
-              <b-button class="ml-2" variant="danger" id="quit-rfactor">Quit rFactor 2</b-button>
-
-              <!-- Quit Popover -->
-              <b-popover target="quit-rfactor" triggers="click">
-                <template #title>Quit rFactor 2</template>
-                <p>Do you really want to request the currently running instance of rFactor 2 to quit?</p>
-                <div class="text-right">
-                  <b-button variant="danger"
-                            @click="quitRfactor(); $root.$emit('bv::hide::popover', 'quit-rfactor')">
-                    <b-spinner v-if="quitBusy" class="mr-1"></b-spinner>Quit
-                  </b-button>
-                  <b-button class="ml-2" variant="secondary"
-                            @click="$root.$emit('bv::hide::popover', 'quit-rfactor')">
-                    Close
-                  </b-button>
-                </div>
-              </b-popover>
-            </div>
-            <pre class="text-white" v-if="rf2Status !== ''"><span>{{ rf2Status }}</span></pre>
-            <span>rFactor 2 is currently running. Please wait.</span>
-          </div>
-        </template>
-      </template>
-    </b-overlay>
   </div>
 </template>
 
@@ -302,6 +265,7 @@ import ControlsPresetArea from "@/components/presets/ControlsPresetArea";
 import SessionPresetArea from "@/components/presets/SessionPresetArea";
 import ChatPage from "@/components/pages/ChatPage";
 import ControllerDeviceList from "@/components/ControllerDeviceList";
+import RfactorOverlay from "@/components/RfactorOverlay";
 
 export default {
   name: 'MainPage',
@@ -467,6 +431,9 @@ export default {
     navSearchEnabled() {
       return this.searchActive.indexOf(this.navActive) !== -1;
     },
+    showRfOverlay() {
+      return this.live || this.isBusy || this.quitBusy;
+    }
   },
   created() {
     this.$eventHub.$on('navigate', this.navigate)
@@ -475,6 +442,7 @@ export default {
     this.$eventHub.$off('navigate', this.navigate)
   },
   components: {
+    RfactorOverlay,
     ControllerDeviceList,
     ChatPage,
     SessionPresetArea,
@@ -506,7 +474,7 @@ export default {
   position: relative; width: 1rem;
 }
 .vr-nav-font {
-  position: absolute;color: black; z-index: 999; font-size: 0.875rem; left: 0.115rem; top: 0.185rem;
+  position: absolute;color: black; z-index: 2; font-size: 0.875rem; left: 0.115rem; top: 0.185rem;
 }
 .vr-nav-icon {
   position: absolute;
@@ -524,7 +492,6 @@ export default {
 .search-bar {
   background: transparent; border: none;
 }
-.busy-div { background: rgba(0,0,0, 0.5); }
 .search-off { opacity: 0.3; }
 
 .r-icon { transition: opacity .8s; }
