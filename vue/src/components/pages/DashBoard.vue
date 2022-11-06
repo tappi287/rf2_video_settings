@@ -5,8 +5,7 @@
         :captions="vfCaptions"
         :images="vfImages"
         :options="vfOptions"
-        :transitions="vfTransitions"
-        @ready="updateHeight">
+        :transitions="vfTransitions">
 
       <template v-slot:preloader>
         <flux-preloader/>
@@ -20,31 +19,32 @@
         </flux-caption>
       </template>
     </vue-flux>
-    <div id="img-gradient" class="low-round"></div>
+    <div id="i-overlay">
+      <div id="img-gradient" class="low-round"></div>
 
-    <!-- Display over image slider -->
-    <div class="p-3" id="top-menu">
-      <b-icon icon="house-fill" class="mr-1 float-left no-pointer"></b-icon>
-      <h6 class="title int-font mb-0">Hello {{ userName }}</h6>
+      <!-- Display over image slider -->
+      <div class="p-3" id="top-menu">
+        <b-icon icon="house-fill" class="mr-1 float-left no-pointer"></b-icon>
+        <h6 class="title int-font mb-0">Hello {{ userName }}</h6>
 
-      <!-- Shortcuts Play with Preset -->
-      <div v-if="gfxPresetsReady" class="text-center mb-5" style="position: relative; top: -.5rem;">
-        <h6 class="title int-font">
-          <b-link class="text-white" @click="$emit('nav', 1)">Graphics Presets</b-link>
-        </h6>
-        <template v-for="(preset, idx) in gfxHandler.presets.slice(1)">
-          <b-button :key="idx" squared
-                    v-b-popover.bottom.hover="preset.desc"
-                    :class="gfxHandler.selectedPresetIdx === idx+1 ? 'low-round active' + cls : 'low-round inactive' + cls"
-                    :variant="gfxHandler.selectedPresetIdx === idx+1 ? 'rf-orange' : 'rf-blue'"
-                    @click="gfxHandler.selectPreset(preset, true)">
-            {{ preset.name }}
-          </b-button>
-        </template>
+        <!-- Shortcuts Play with Preset v-if="gfxPresetsReady" -->
+        <div class="text-center mb-5" id="gfx-presets">
+          <h6 class="title int-font">
+            <b-link class="text-white" @click="$emit('nav', 1)">Graphics Presets</b-link>
+          </h6>
+          <template v-for="(preset, idx) in gfxHandler.presets.slice(1)">
+            <b-button :key="idx" squared
+                      v-b-popover.bottom.hover="preset.desc"
+                      :class="gfxHandler.selectedPresetIdx === idx+1 ? 'low-round active' + cls : 'low-round inactive' + cls"
+                      :variant="gfxHandler.selectedPresetIdx === idx+1 ? 'rf-orange' : 'rf-blue'"
+                      @click="gfxHandler.selectPreset(preset, true)">
+              {{ preset.name }}
+            </b-button>
+          </template>
+        </div>
+        <!-- Shortcut open Setups Directory -->
       </div>
-      <!-- Shortcut open Setups Directory -->
     </div>
-
     <div id="spacer" class="no-pointer"></div>
 
     <!-- Server Favourites -->
@@ -131,27 +131,6 @@ export default {
         }
       })
     },
-    resize() {
-      // Hack to trigger a resize event
-      window.resizeBy(-1, 0)
-      window.resizeBy(1, 0)
-    },
-    debounceResize() {
-      clearTimeout(this.resizeTimeout)
-      this.resizeTimeout = setTimeout(this.updateHeight, this.resizeDebounceRate)
-    },
-    updateHeight() {
-      this.resizeTimeout = null
-
-      this.$nextTick(() => {
-        const imgDiv = document.getElementById('img')
-        const topMenu = document.getElementById('top-menu')
-        if (imgDiv === undefined || imgDiv === null || topMenu === null || topMenu === undefined) { return }
-        const imgHeight = imgDiv.offsetHeight
-        const menuHeight = topMenu.offsetHeight
-        document.getElementById('spacer').style.height = String(imgHeight - menuHeight) + 'px'
-      })
-    },
     equalPresetButtonWidth() {
       const elements = document.querySelectorAll('.preset-button')
       const maxWidth = getMaxWidth(elements)
@@ -167,16 +146,9 @@ export default {
     },
   },
   activated() {
-    console.log('Dashboard activated')
-    this.resize()
     this.updateFavs()
   },
-  updated() {
-    console.log('Dashboard updated')
-    this.updateHeight()
-  },
   async mounted() {
-    console.log('Dashboard mounted')
     // Access after rendering finished
     setTimeout(() => {
       this.equalPresetButtonWidth()
