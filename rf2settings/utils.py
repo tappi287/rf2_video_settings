@@ -5,12 +5,13 @@ import os
 import os.path
 import re
 import subprocess as sp
+import time
 from datetime import datetime
 from pathlib import Path, WindowsPath
 from typing import Tuple, Union, Optional
 
 import eel
-import gevent.event
+import gevent
 import psutil
 
 from .globals import get_settings_dir, FROZEN
@@ -371,3 +372,17 @@ def pad_string(s, length, align_right=False):
     if align_right:
         return s.rjust(length, ' ')
     return s.ljust(length, ' ')
+
+
+def greenlet_sleep(seconds, close_event: gevent.event.Event = None):
+    # -- Normal sleep event
+    if seconds < 10:
+        gevent.sleep(seconds)
+        return
+
+    # -- Longer sleep will also listen for CLOSE event
+    start = time.time()
+    while time.time() - start < seconds:
+        if close_event and close_event.is_set():
+            break
+        gevent.sleep(5.0)

@@ -2,6 +2,7 @@
 import logging
 
 import eel
+import gevent
 
 from .app.app_main import CLOSE_EVENT
 from .app_settings import AppSettings
@@ -78,10 +79,11 @@ def rfactor_greenlet():
         # -- Benchmark functionality
         rfb.event_loop()
 
-        close = CLOSE_EVENT.wait(timeout=RfactorConnect.active_timeout)
-        if close:
+        if CLOSE_EVENT.is_set():
             logging.info('rFactor Greenlet received CLOSE event.')
             break
+
+        gevent.sleep(RfactorConnect.active_timeout)
 
     RfactorConnect.stop_request_thread()
     logging.info('rFactor Greenlet exiting')

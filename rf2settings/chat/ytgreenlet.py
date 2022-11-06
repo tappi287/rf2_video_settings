@@ -8,7 +8,7 @@ from rf2settings.app_settings import AppSettings
 from rf2settings.chat import youtube
 from rf2settings.rf2events import RfactorYouTubeEvent, RfactorYouTubeErrorEvent, RfactorYouTubeLiveEvent
 from rf2settings.rf2events import RfactorYouTubeSetUsernameEvent
-from rf2settings.utils import capture_app_exceptions
+from rf2settings.utils import capture_app_exceptions, greenlet_sleep
 
 CURRENT_YT_USERNAME = str()
 CURRENT_YT_MESSAGES = list()
@@ -49,7 +49,7 @@ def _yt_greenlet_loop():
         if AppSettings.yt_livestream is None:
             RfactorYouTubeLiveEvent.set("")
             logging.debug('No active YouTube Broadcast found.')
-            gevent.sleep(POLLING_TIMEOUT * 10.0)
+            greenlet_sleep(POLLING_TIMEOUT * 10.0, CLOSE_EVENT)
             return
         else:
             RfactorYouTubeLiveEvent.set(
@@ -63,7 +63,7 @@ def _yt_greenlet_loop():
     except Exception as e:
         error = f'Error acquiring YouTube live chat messages: {e}'
         RfactorYouTubeErrorEvent.set([error])
-        gevent.sleep(POLLING_TIMEOUT)
+        greenlet_sleep(POLLING_TIMEOUT, CLOSE_EVENT)
         return
 
     # -- Error receiving messages
@@ -74,7 +74,7 @@ def _yt_greenlet_loop():
 
     # -- No new messages
     if messages == CURRENT_YT_MESSAGES or len(messages) == 0:
-        gevent.sleep(POLLING_TIMEOUT)
+        greenlet_sleep(POLLING_TIMEOUT, CLOSE_EVENT)
         return
 
     # -- New messages
@@ -87,7 +87,7 @@ def _yt_greenlet_loop():
     CURRENT_YT_MESSAGES = messages
     logging.debug('Setting new YouTube messages: %s', new_messages)
     RfactorYouTubeEvent.set(new_messages)
-    gevent.sleep(POLLING_TIMEOUT)
+    greenlet_sleep(POLLING_TIMEOUT, CLOSE_EVENT)
 
 
 def youtube_eventloop():
