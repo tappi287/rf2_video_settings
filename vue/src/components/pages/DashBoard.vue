@@ -50,7 +50,7 @@
     <!-- Server Favourites -->
     <transition name="fade">
       <ServerBrowser ref="serverBrowser" only-favourites class="mt-3" :delay="100" :rfactor-version="rfactorVersion"
-                     @server-browser-ready="resize" @make-toast="makeToast" @launch="$refs.slider.stop()"
+                     @make-toast="makeToast" @launch="$refs.slider.stop()"
                      @set-busy="setBusy"/>
     </transition>
   </div>
@@ -96,8 +96,6 @@ export default {
       vfImages: [],
       vfTransitions: [ 'fade', 'slide', 'swipe', 'fade' ],
       vfCaptions: [],
-      resizeTimeout: null,
-      resizeDebounceRate: 20,
       posterImg: rfWPoster
     }
   },
@@ -161,7 +159,6 @@ export default {
     this.setupScreenShots()
     this.getDriver()
     this.setBusy(false)
-    window.onresize = this.debounceResize
   },
   components: {
     ServerBrowser,
