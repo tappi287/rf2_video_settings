@@ -12,7 +12,7 @@
           </div>
         </template>
         <b-dropdown-item v-for="(item, key, index) in launchMethods" :key="index"
-                         @click="launchRfactor(key)" v-b-popover.auto.hover="item.desc">
+                         @click="launchRfactor(Number(key))" v-b-popover.auto.hover="item.desc">
           {{ item.name }}
         </b-dropdown-item>
         <b-dropdown-item v-if="chooseContent" @click="$emit('show-content')">
@@ -47,13 +47,13 @@
     <!-- First Launch -->
     <b-modal v-model="showLaunchModal" centered size="md" modal-class="launch-modal">
       <template #modal-title>
-        <b-icon icon="exclamation-triangle-fill" shift-v="-0.45" variant="primary"></b-icon>
+        <b-icon icon="question-square-fill" shift-v="-0.45" variant="primary"></b-icon>
         <span class="ml-2">Choose Launch Option</span>
       </template>
       <div class="text-center">
         <div v-for="(item, key, index) in launchMethods" :key="index">
           <b-button variant="rf-blue-light" class="w-75 mt-3"
-                    :size="btnSizeString" @click="launchFromModal(key)"
+                    :size="btnSizeString" @click="launchFromModal(Number(key))"
                     v-b-popover.auto.hover="item.desc">
             <b-icon shift-v="-0.0" icon="play"></b-icon>
             <span class="ml-2">{{ item.name }}</span>
@@ -62,7 +62,9 @@
       </div>
       <p class="small mt-4">
         Launch option will be remembered the next time you press the launch button. If you want to change the preferred
-        option, use the dropdown menu next to the launch button to choose a different option.
+        option, use the dropdown menu next to the launch button to choose a different option.<br />
+        <i>From Version 1.1132 you need to explicitly request VR as launch option.
+          rF2 will no longer use the DX_Config.ini value.</i>
       </p>
       <template #modal-footer>
         <div class="d-block text-right">
@@ -116,9 +118,7 @@ name: "LaunchRfactorBtn",
       if (typeof (method) !== 'number') {
         method = undefined
         let saved_method = await getEelJsonObject(window.eel.get_last_launch_method()())
-        console.log('Got saved launch method: ' + saved_method + ' ' + typeof (saved_method))
-        if (typeof(saved_method) === 'string') {
-          saved_method = Number(saved_method)
+        if (typeof(saved_method) === 'number') {
           method = saved_method
         } else {
           this.showLaunchModal = true
