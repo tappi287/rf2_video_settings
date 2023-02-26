@@ -11,14 +11,9 @@
             </span>
           </div>
         </template>
-        <b-dropdown-item @click="launchRfactor">
-          Launch via Steam
-        </b-dropdown-item>
-        <b-dropdown-item v-b-popover.auto.hover="'Updated Workshop item packages will not be installed or synced.' +
-         ' But if you have eg. a dedicated Server running. This is the method to launch rF2 anyway. Make sure you ' +
-         'have configured your WebUI ports correctly.'"
-                         @click="launchRfactor(1)">
-          Launch via Exe
+        <b-dropdown-item v-for="(item, key, index) in launchMethods" :key="index"
+                         @click="launchRfactor(key)" v-b-popover.auto.hover="item.desc">
+          {{ item.name }}
         </b-dropdown-item>
         <b-dropdown-item v-if="chooseContent" @click="$emit('show-content')">
           Choose Tracks and Cars
@@ -49,6 +44,32 @@
         </div>
       </template>
     </b-modal>
+    <!-- First Launch -->
+    <b-modal v-model="showLaunchModal" centered size="md" modal-class="launch-modal">
+      <template #modal-title>
+        <b-icon icon="exclamation-triangle-fill" shift-v="-0.45" variant="primary"></b-icon>
+        <span class="ml-2">Choose Launch Option</span>
+      </template>
+      <div class="text-center">
+        <div v-for="(item, key, index) in launchMethods" :key="index">
+          <b-button variant="rf-blue-light" class="w-75 mt-3"
+                    :size="btnSizeString" @click="launchFromModal(key)"
+                    v-b-popover.auto.hover="item.desc">
+            <b-icon shift-v="-0.0" icon="play"></b-icon>
+            <span class="ml-2">{{ item.name }}</span>
+          </b-button>
+        </div>
+      </div>
+      <p class="small mt-4">
+        Launch option will be remembered the next time you press the launch button. If you want to change the preferred
+        option, use the dropdown menu next to the launch button to choose a different option.
+      </p>
+      <template #modal-footer>
+        <div class="d-block text-right">
+          <b-button variant="secondary" @click="abort">Abort</b-button>
+        </div>
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -64,10 +85,19 @@ async function rfactorLiveFunc (event) {
 
 export default {
 name: "LaunchRfactorBtn",
-  props: {text: String, btnSize: String, server: Object, displayLive: Boolean, chooseContent: Boolean },
+  props: {text: String, btnSize: String, server: Object, displayLive: Boolean, chooseContent: Boolean},
   data: function () {
     return { live: false, size: "sm", devicesReady: true, deviceList: [],
-             showDeviceModal: false, lastMethod: 0, checkDevices: true }
+             showDeviceModal: false, showLaunchModal: false, lastMethod: 0, checkDevices: true,
+             launchMethods: {
+               2: {name: 'Launch via Steam in VR', desc: null},
+               3: {name: 'Launch via Exe in VR', desc: 'If you have a dedicated Server running. This is the method to ' +
+                     'launch rF2 anyway. Make sure you have configured your WebUI ports correctly.'},
+               0: {name: 'Launch via Steam', desc: null},
+               1: {name: 'Launch via Exe', desc: 'If you have a dedicated Server running. This is the method to ' +
+                     'launch rF2 anyway. Make sure you have configured your WebUI ports correctly.'}
+             }
+    }
   },
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000) {
@@ -83,7 +113,18 @@ name: "LaunchRfactorBtn",
       this.deviceList = event.deviceList;
     },
     launchRfactor: async function (method) {
-      if (typeof (method) !== 'number') { method = 0 }
+      if (typeof (method) !== 'number') {
+        method = undefined
+        let saved_method = await getEelJsonObject(window.eel.get_last_launch_method()())
+        console.log('Got saved launch method: ' + saved_method + ' ' + typeof (saved_method))
+        if (typeof(saved_method) === 'string') {
+          saved_method = Number(saved_method)
+          method = saved_method
+        } else {
+          this.showLaunchModal = true
+          return
+        }
+      }
       if (!this.devicesReady && this.checkDevices) {
         this.showDeviceModal = true
         this.lastMethod = method
@@ -103,13 +144,17 @@ name: "LaunchRfactorBtn",
       }
     },
     abort () {
-      this.showDeviceModal = false
+      this.showDeviceModal = false; this.showLaunchModal = false
     },
     launchAnyway () {
       this.showDeviceModal = false
       this.checkDevices = false
       this.launchRfactor(this.lastMethod)
       this.checkDevices = true
+    },
+    launchFromModal(method) {
+      this.showLaunchModal = false
+      this.launchRfactor(method)
     }
   },
   computed: {

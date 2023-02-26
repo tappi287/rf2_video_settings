@@ -70,8 +70,17 @@ def restore_backup():
 
 
 @capture_app_exceptions
+def get_last_launch_method() -> Optional[int]:
+    return AppSettings.last_launch_method
+
+
+@capture_app_exceptions
 def run_rfactor(server_info: Optional[dict] = None, method: Optional[int] = 0):
     logging.info('UI requested rF2 run with method: %s', method)
+    if method is None:
+        method = AppSettings.last_launch_method
+        logging.info('Launching rF2 with last known method: %s', method)
+
     if server_info and server_info.get('password_remember'):
         # -- Store password if remember option checked
         logging.info('Storing password for Server %s', server_info.get('id'))
@@ -82,6 +91,9 @@ def run_rfactor(server_info: Optional[dict] = None, method: Optional[int] = 0):
         if server_info.get('id') in AppSettings.server_passwords:
             AppSettings.server_passwords.pop(server_info.get('id'))
             AppSettings.save()
+
+    AppSettings.last_launch_method = method
+    AppSettings.save()
 
     rf, result = RfactorPlayer(), False
     if rf.is_valid:

@@ -66,6 +66,11 @@ def restore_backup():
 
 
 @eel.expose
+def get_last_launch_method():
+    return app_main_fn.get_last_launch_method()
+
+
+@eel.expose
 def run_rfactor(server_info: Optional[dict] = None, method: Optional[int] = 0):
     return app_main_fn.run_rfactor(server_info, method)
 

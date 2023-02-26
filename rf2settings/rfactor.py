@@ -465,9 +465,17 @@ class RfactorPlayer:
 
         # -- Use Steam Launch as default
         #    so Workshop items are updated upon start
-        if method == 0:
+        if method in (0, 2):
             steam_path = Path(SteamApps.find_steam_location()) / 'steam.exe'
             cmd = [str(WindowsPath(steam_path)), '-applaunch', RF2_APPID]
+
+        # -- Add '+VR' Commandline Option
+        if method in (2, 3) and self.version >= '1.1132':
+            cmd += ['+VR']
+
+        # -- Add WorkShop sync option
+        if self.version >= '1.1132':
+            cmd += ['+workshopsync']
 
         if server_info:
             ip, port = server_info.get('address', ('localhost',))[0], server_info.get('port', '64297')
