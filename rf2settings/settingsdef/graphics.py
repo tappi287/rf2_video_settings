@@ -91,6 +91,13 @@ adjustable_graphics_settings = {
                                       }
                                      ),
                                 },
+    'Motion blur': {'name': 'Motion blur', 'value': 0,
+                    'settings':
+                        ({'value': 0, 'name': 'Off'},
+                         {'value': 1, 'name': 'Trackside only'},
+                         {'value': 2, 'name': 'On'},
+                         ),
+                    },
     'LSI Top': {'name': 'Low Speed Info', 'value': 0.15,
                 'settings': ({'settingType': 'range', 'min': 0.01, 'max': 1.0, 'step': 0.01, 'display': 'floatpercent',
                               'desc': 'Vertical position of Low Speed Info message box as a fraction '
