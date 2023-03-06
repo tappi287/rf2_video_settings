@@ -65,7 +65,8 @@ def get_presets(preset_type: int):
             for idx, o in enumerate(getattr(p, VideoSettings.app_key).options):
                 if o.key in ('FSAA', ):
                     getattr(p, VideoSettings.app_key).options.pop(idx)
-                    break
+                if rf.version >= '1.1132' and o.key in ('VrSettings', ):
+                    getattr(p, VideoSettings.app_key).options.pop(idx)
 
     return json.dumps({'result': True, 'presets': [p.to_js() for p in presets],
                        'selected_preset': selected_preset_name,
