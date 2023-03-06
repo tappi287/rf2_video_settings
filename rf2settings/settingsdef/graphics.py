@@ -216,6 +216,13 @@ adjustable_video_settings = {
                    'settings': ({'value': 0, 'name': 'Disabled'}, {'value': 1, 'name': 'HMD only'},
                                 {'value': 2, 'name': 'HMD + Mirror'})
                    },
+    'Launch': {'name': 'Launch', 'value': 0, '_type': int, 'desc': 'Choose how this widget should launch rFactor '
+                                                                   'if this preset is selected.',
+               'settings': ({'value': 0, 'name': 'via Steam (Desktop)'},
+                            {'value': 1, 'name': 'via Executable (Desktop)'},
+                            {'value': 2, 'name': 'via Steam (VR)'},
+                            {'value': 3, 'name': 'via Executable (VR)'})
+               },
     'FSAA': {'name': 'Anti Aliasing (old)', 'value': 0, '_type': int,
              'settings': ({'value': 0, 'name': 'Off'},
                           {'value': 32, 'name': 'Level 1', 'desc': '2x [2x Multisampling]', 'perf': 'G+0,20% C+0,00%'},

@@ -453,6 +453,16 @@ class RfactorPlayer:
         return self.location and Path(self.location / 'Bin64').exists()
 
     def run_rfactor(self, method: int = 0, server_info: Optional[dict] = None) -> bool:
+        """
+            Method:
+                0 - Launch via Steam
+                1 - Launch via Executable
+                2 - Launch via Steam in VR
+                3 - Launch via Executable in VR
+        :param method:
+        :param server_info:
+        :return:
+        """
         if not self._check_bin_dir():
             self.error += 'Could not locate rFactor 2 Bin directory.\n'
             return False
