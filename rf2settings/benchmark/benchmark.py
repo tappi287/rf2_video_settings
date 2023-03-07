@@ -196,7 +196,10 @@ class RfactorBenchmark:
         self.benchmark_length = int(length or self.default_benchmark_length)
         self.recording_timeout = int(timeout or self.default_timeout)
         video_options: VideoSettings = getattr(self.get_current_gfx_preset(), VideoSettings.app_key, VideoSettings())
-        self.launch_method = video_options.get_option('Launch').value or 1
+        launch_option = video_options.get_option('Launch')
+        self.launch_method = 1
+        if launch_option:
+            self.launch_method = launch_option.value
 
         logging.info('Prepared Benchmark Run: %s length %s recording delay %s replay %s '
                      'launch method %s with Presets: %s',
