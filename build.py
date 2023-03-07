@@ -235,7 +235,7 @@ def main(process: int = 0):
             print('Inno Script Studio encountered an error!')
             return
 
-    if process in (0, 1, 2):
+    if process in (1, 2):
         # -- Create Portable Archive
         create_portable_archive()
 

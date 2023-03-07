@@ -89,18 +89,23 @@ def start_eel(npm_serve=True):
             webbrowser.open_new(f'http://{host}:{port}')
 
     # -- Game Controller Greenlet
+    logging.debug('Spawning Controller Greenlet')
     cg = eel.spawn(controller_greenlet)
 
     # -- Headlights Greenlet
+    logging.debug('Spawning Headlights Greenlet')
     hg = eel.spawn(headlights_greenlet)
 
     # -- rFactor Greenlet
+    logging.debug('Spawning rFactor Greenlet')
     rg = eel.spawn(rfactor_greenlet)
 
     # -- YouTUbe Greenlet
+    logging.debug('Spawning YouTube Greenlet')
     yg = eel.spawn(youtube_greenlet)
 
     # -- Run until window/tab closed
+    logging.debug('Entering Event Loop')
     while not CLOSE_EVENT.is_set():
         # Game controller event loop
         controller_event_loop()
