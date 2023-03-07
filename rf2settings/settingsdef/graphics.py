@@ -218,10 +218,12 @@ adjustable_video_settings = {
                    },
     'Launch': {'name': 'Launch', 'value': 0, '_type': int, 'desc': 'Choose how this widget should launch rFactor '
                                                                    'if this preset is selected.',
-               'settings': ({'value': 0, 'name': 'via Steam (Desktop)'},
-                            {'value': 1, 'name': 'via Executable (Desktop)'},
-                            {'value': 2, 'name': 'via Steam (VR)'},
-                            {'value': 3, 'name': 'via Executable (VR)'})
+               'settings': ({'value': 1, 'name': 'via Executable (Desktop)'},
+                            {'value': 3, 'name': 'via Executable (VR)'},
+                            {'value': 0, 'name': 'via Steam (Desktop) [Deprecated]',
+                             'desc': 'This option no longer works reliably with rF2 from v1.1132'},
+                            {'value': 2, 'name': 'via Steam (VR) [Deprecated]',
+                             'desc': 'This option no longer works reliably with rF2 from v1.1132'})
                },
     'FSAA': {'name': 'Anti Aliasing (old)', 'value': 0, '_type': int,
              'settings': ({'value': 0, 'name': 'Off'},
