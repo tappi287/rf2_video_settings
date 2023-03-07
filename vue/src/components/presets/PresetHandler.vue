@@ -246,10 +246,18 @@ export default {
       this.setBusy(false)
     },
     update: async function () { await this.savePreset(this.getSelectedPreset()) },
+    emitCurrentGfxPreset: async function () {
+      if (this.presetType !== 0) { return }
+      this.$eventHub.$emit('currentGfxPreset', this.getSelectedPreset())
+    }
   },
   created() {
     this.getPresets()
     this.getPresetsDirLocation()
+    this.$eventHub.$on('getCurrentGfxPreset', this.emitCurrentGfxPreset)
+  },
+  destroyed() {
+    this.$eventHub.$off('getCurrentGfxPreset', this.emitCurrentGfxPreset)
   }
 }
 </script>

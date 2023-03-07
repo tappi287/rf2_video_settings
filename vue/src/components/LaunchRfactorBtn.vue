@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-button-group>
-      <b-dropdown variant="rf-blue-light" :size="btnSizeString" right split @click="launchRfactor">
+      <b-dropdown variant="rf-blue-light" :size="btnSizeString" right split @click="launchButton">
         <template #button-content>
           <div class="rounded-right">
             <b-icon shift-v="1.5" icon="play"></b-icon>
@@ -62,7 +62,8 @@
       </div>
       <p class="small mt-4">
         Launch option will be remembered the next time you press the launch button. If you want to change the preferred
-        option, use the dropdown menu next to the launch button to choose a different option.<br />
+        option, use the dropdown menu next to the launch button or use the Launch Option inside Graphics Presets
+        to choose a different option.<br />
         <i>From Version 1.1132 you need to explicitly request VR as launch option.
           rF2 will no longer use the DX_Config.ini value.</i>
       </p>
@@ -89,15 +90,19 @@ export default {
 name: "LaunchRfactorBtn",
   props: {text: String, btnSize: String, server: Object, displayLive: Boolean, chooseContent: Boolean},
   data: function () {
-    return { live: false, size: "sm", devicesReady: true, deviceList: [],
+    return { live: false, size: "sm", devicesReady: true, deviceList: [], currentGfxPreset: {},
              showDeviceModal: false, showLaunchModal: false, lastMethod: 0, checkDevices: true,
              launchMethods: {
-               2: {name: 'Launch via Steam in VR', desc: null},
-               3: {name: 'Launch via Exe in VR', desc: 'If you have a dedicated Server running. This is the method to ' +
-                     'launch rF2 anyway. Make sure you have configured your WebUI ports correctly.'},
-               0: {name: 'Launch via Steam', desc: null},
-               1: {name: 'Launch via Exe', desc: 'If you have a dedicated Server running. This is the method to ' +
-                     'launch rF2 anyway. Make sure you have configured your WebUI ports correctly.'}
+               2: {name: 'Launch via Steam in VR [Deprecated]',
+                   desc: 'This option no longer works reliably with rF2 from v1.1132'},
+               3: {name: 'Launch via Exe in VR',
+                   desc: 'If you have a dedicated Server running. This is the method to ' +
+                         'launch rF2 anyway. Make sure you have configured your WebUI ports correctly.'},
+               0: {name: 'Launch via Steam [Deprecated]',
+                   desc: 'This option no longer works reliably with rF2 from v1.1132'},
+               1: {name: 'Launch via Exe',
+                   desc: 'If you have a dedicated Server running. This is the method to ' +
+                         'launch rF2 anyway. Make sure you have configured your WebUI ports correctly.'}
              }
     }
   },
@@ -106,6 +111,17 @@ name: "LaunchRfactorBtn",
       this.$emit('make-toast', message, category, title, append, delay)
     },
     setBusy: function (busy) {this.$emit('set-busy', busy) },
+    getPresetLaunchOption () {
+      if (this.currentGfxPreset.video_settings === undefined) { return undefined }
+      let launchMethodValue = 0
+
+      this.currentGfxPreset.video_settings.options.forEach(option => {
+        if (option.key === 'Launch') {
+          launchMethodValue = option.value
+        }
+      })
+      return launchMethodValue
+    },
     updateRfactorState: function (event) {
       this.live = event.detail
       this.$emit('update-live', this.live)
@@ -113,6 +129,12 @@ name: "LaunchRfactorBtn",
     setDeviceState: function (event) {
       this.devicesReady = event.devicesReady;
       this.deviceList = event.deviceList;
+    },
+    launchButton: async function () {
+      /* Regular Launch button without drop down option */
+      this.$eventHub.$emit('getCurrentGfxPreset')
+      await sleep(100)
+      await this.launchRfactor(this.getPresetLaunchOption())
     },
     launchRfactor: async function (method) {
       if (typeof (method) !== 'number') {
@@ -136,8 +158,9 @@ name: "LaunchRfactorBtn",
 
       let r = await getEelJsonObject(window.eel.run_rfactor(this.serverData, method)())
       if (r !== undefined && r.result) {
-        this.makeToast('rFactor2.exe launched. Do not change settings here while the game is running. ' +
-            'The game would overwrite those settings anyway upon exit.', 'success', 'rFactor 2 Launch')
+        this.makeToast(`${this.launchMethods[method].name}. Do not change settings here while ` +
+            'the game is running. The game would overwrite those settings anyway upon exit.',
+            'success', 'rFactor 2 Launch')
       } else {
         this.makeToast('Could not launch rFactor2.exe', 'danger', 'rFactor 2 Launch')
         this.$emit('launch-failed')
@@ -155,7 +178,8 @@ name: "LaunchRfactorBtn",
     launchFromModal(method) {
       this.showLaunchModal = false
       this.launchRfactor(method)
-    }
+    },
+    setCurrentGfxPreset(preset) { this.currentGfxPreset = preset }
   },
   computed: {
     serverData: function ()  {
@@ -177,12 +201,15 @@ name: "LaunchRfactorBtn",
       window.addEventListener('rfactor-live-event', this.updateRfactorState)
     }
     this.$eventHub.$emit('requestDeviceUpdate')
+    this.$eventHub.$emit('getCurrentGfxPreset')
   },
   created() {
     this.$eventHub.$on('deviceUpdate', this.setDeviceState)
+    this.$eventHub.$on('currentGfxPreset', this.setCurrentGfxPreset)
   },
   destroyed() {
     this.$eventHub.$off('deviceUpdate', this.setDeviceState)
+    this.$eventHub.$off('currentGfxPreset', this.setCurrentGfxPreset)
     if (this.displayLive) {
       window.removeEventListener('rfactor-live-event', this.updateRfactorState)
     }

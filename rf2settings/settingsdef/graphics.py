@@ -216,7 +216,7 @@ adjustable_video_settings = {
                    'settings': ({'value': 0, 'name': 'Disabled'}, {'value': 1, 'name': 'HMD only'},
                                 {'value': 2, 'name': 'HMD + Mirror'})
                    },
-    'Launch': {'name': 'Launch', 'value': 0, '_type': int, 'desc': 'Choose how this widget should launch rFactor '
+    'Launch': {'name': 'Launch', 'value': 1, '_type': int, 'desc': 'Choose how this widget should launch rFactor '
                                                                    'if this preset is selected.',
                'settings': ({'value': 1, 'name': 'via Executable (Desktop)'},
                             {'value': 3, 'name': 'via Executable (VR)'},
