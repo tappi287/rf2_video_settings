@@ -582,6 +582,10 @@
         "value": 2
       },
       {
+        "key": "Launch",
+        "value": 3
+      },
+      {
         "key": "FSAA",
         "value": 0
       },
