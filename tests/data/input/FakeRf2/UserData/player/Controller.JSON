@@ -1,0 +1,2100 @@
+{
+  "Basic Controls": {
+    "Basic Controls": 0
+  },
+  "Controllers": {
+    "Controller 1 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 1 Axis  Y Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 1 Axis  Z Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 1 Axis RX Zone": [
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "Controller 1 Axis RY Zone": [
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "Controller 1 Axis RZ Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 1 Axis S0 Zone": [
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "Controller 1 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 10 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 10 Axis  Y Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 10 Axis  Z Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 10 Axis RX Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 10 Axis RY Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 10 Axis RZ Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 10 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 10 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 11 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 11 Axis  Y Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 11 Axis  Z Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 11 Axis RX Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 11 Axis RY Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 11 Axis RZ Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 11 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 11 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 12 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 12 Axis  Y Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 12 Axis  Z Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 12 Axis RX Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 12 Axis RY Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 12 Axis RZ Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 12 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 12 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 13 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 13 Axis  Y Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 13 Axis  Z Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 13 Axis RX Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 13 Axis RY Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 13 Axis RZ Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 13 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 13 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 14 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 14 Axis  Y Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 14 Axis  Z Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 14 Axis RX Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 14 Axis RY Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 14 Axis RZ Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 14 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 14 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 15 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 15 Axis  Y Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 15 Axis  Z Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 15 Axis RX Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 15 Axis RY Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 15 Axis RZ Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 15 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 15 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 16 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 16 Axis  Y Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 16 Axis  Z Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 16 Axis RX Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 16 Axis RY Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 16 Axis RZ Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 16 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 16 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 2 Axis  X Zone": [
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "Controller 2 Axis  Y Zone": [
+      0,
+      0,
+      0,
+      0.0702983,
+      0.936965
+    ],
+    "Controller 2 Axis  Z Zone": [
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "Controller 2 Axis RX Zone": [
+      0,
+      0,
+      0,
+      0,
+      0.98529
+    ],
+    "Controller 2 Axis RY Zone": [
+      0,
+      0,
+      0,
+      0.00976577,
+      0.927459
+    ],
+    "Controller 2 Axis RZ Zone": [
+      0,
+      0,
+      0,
+      0,
+      0.753918
+    ],
+    "Controller 2 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 2 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 3 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 3 Axis  Y Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 3 Axis  Z Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 3 Axis RX Zone": [
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "Controller 3 Axis RY Zone": [
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "Controller 3 Axis RZ Zone": [
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "Controller 3 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 3 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 4 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 4 Axis  Y Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 4 Axis  Z Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 4 Axis RX Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 4 Axis RY Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 4 Axis RZ Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 4 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 4 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 5 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.55,
+      1
+    ],
+    "Controller 5 Axis  Y Zone": [
+      0,
+      0.45,
+      0.5,
+      0.55,
+      1
+    ],
+    "Controller 5 Axis  Z Zone": [
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "Controller 5 Axis RX Zone": [
+      0,
+      0.45,
+      0.5,
+      0.55,
+      1
+    ],
+    "Controller 5 Axis RY Zone": [
+      0,
+      0.45,
+      0.5,
+      0.55,
+      1
+    ],
+    "Controller 5 Axis RZ Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 5 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 5 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 6 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 6 Axis  Y Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 6 Axis  Z Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 6 Axis RX Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 6 Axis RY Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 6 Axis RZ Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 6 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 6 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 7 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 7 Axis  Y Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 7 Axis  Z Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 7 Axis RX Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 7 Axis RY Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 7 Axis RZ Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 7 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 7 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 8 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 8 Axis  Y Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 8 Axis  Z Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 8 Axis RX Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 8 Axis RY Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 8 Axis RZ Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 8 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 8 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 9 Axis  X Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 9 Axis  Y Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 9 Axis  Z Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 9 Axis RX Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 9 Axis RY Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 9 Axis RZ Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 9 Axis S0 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Controller 9 Axis S1 Zone": [
+      0,
+      0.5,
+      0.5,
+      0.5,
+      1
+    ],
+    "Device Name 1": "Logitech® G27 Shifter=#1dd210a1#4C95DA70-EDEE-11EA-800B-444553540000",
+    "Device Name 10": "",
+    "Device Name 11": "",
+    "Device Name 12": "",
+    "Device Name 13": "",
+    "Device Name 14": "",
+    "Device Name 15": "",
+    "Device Name 16": "",
+    "Device Name 2": "Sim Pedals=#044fb371#39F43CB0-8BF8-11EB-8001-444553540000",
+    "Device Name 3": "FANATEC ClubSport Wheel Base V2.5=#0eb70004#4E20AB40-EE11-11EA-8007-444553540000",
+    "Device Name 4": "FANATEC ClubSport Wheel Base V2.5=#0eb70004#4E20AB40-EE11-11EA-8008-444553540000",
+    "Device Name 5": "Controller (Xbox One For Windows)=#045e02ea#207C11E0-EE14-11EA-8001-444553540000",
+    "Device Name 6": "TWCS Throttle=#044fb687#BABE5F90-EE34-11EA-8002-444553540000",
+    "Device Name 7": "T.16000M=#044fb10a#BABE86A0-EE34-11EA-8003-444553540000",
+    "Device Name 8": "Controller (Xbox One For Windows)=#045e02ff#ADA14800-81F9-11EB-8001-444553540000",
+    "Device Name 9": ""
+  },
+  "Force Feedback": {
+    "Brake effects on steer axis": 0,
+    "Brake effects on steer axis#": "0 = Brake effects on brake axis, 1 = brake effects on steering axis.",
+    "Brake effects strength": 10000,
+    "Brake effects strength#": "-10000 to +10000, applies to all brake effects (force, vibration, static spring, etc?)",
+    "Brake spring coefficient": 0.3,
+    "Brake spring coefficient#": "Static spring effect rate (-1.0 to 1.0)",
+    "Brake spring saturation": 1,
+    "Brake spring saturation#": "Static spring effect peak force (0.0 to 1.0)",
+    "Clutch effects on steer axis": 0,
+    "Clutch effects on steer axis#": "0 = Clutch effects on clutch axis, 1 = brake effects on steering axis.",
+    "Clutch effects strength": 10000,
+    "Clutch effects strength#": "-10000 to +10000, applies to all clutch effects (force, vibration, static spring, etc?)",
+    "Clutch spring coefficient": 0.2,
+    "Clutch spring coefficient#": "Static spring effect rate (-1.0 to 1.0)",
+    "Clutch spring saturation": 1,
+    "Clutch spring saturation#": "Static spring effect peak force (0.0 to 1.0)",
+    "DI Steering effects strength": 10000,
+    "DI Steering effects strength#": "0 to +10000, applies to all DI steering effects (torque, resistance, static spring, jolt, etc.) - use global torque multi to adjust FFB strength instead!",
+    "G920_workaround": true,
+    "G920_workaround#": "Workaround for Logitech G920 firmware bugs ... may need to turn this off after firmware update if it gets fixed.",
+    "Gearbox effects on steer axis": 0,
+    "Gearbox effects on steer axis#": "0 = Gearbox effects on gearbox 'axis', 1 = brake effects on steering axis.",
+    "Gearbox effects strength": 10000,
+    "Gearbox effects strength#": "-10000 to +10000, applies to all gearbox effects (force, vibration, static spring, etc?)",
+    "Gearbox spring coefficient": 0,
+    "Gearbox spring coefficient#": "Static spring effect rate (-1.0 to 1.0)",
+    "Gearbox spring saturation": 1,
+    "Gearbox spring saturation#": "Static spring effect peak force (0.0 to 1.0)",
+    "Ignore controllers": 0,
+    "Ignore controllers#": "Do not use FFB on: 1=controller1, 2=controller2, 4=controller3, 8=controller4 (or add values to ignore multiple controllers, for example 15 ignores all)",
+    "Jolt magnitude": 1.5,
+    "Jolt magnitude#": "How strong jolts from other cars (or walls) are.  Suggested Range: -2.0 to 2.0.",
+    "Off-road multiplier": 0.3,
+    "Off-road multiplier#": "Temporary test variable to reduce force feedback strength off-road (0.0 = zero FFB, 1.0 = full FFB)",
+    "Other spring coefficient": 0.2,
+    "Other spring coefficient#": "Static spring effect rate (-1.0 to 1.0) for any other FFB-capable controllers",
+    "Other spring saturation": 1,
+    "Other spring saturation#": "Static spring effect peak force (0.0 to 1.0) for any other FFB-capable controllers",
+    "Rumble strip magnitude": 0,
+    "Rumble strip magnitude#": "How strong the canned rumble strip rumble is.  Range 0.0 to 1.0, 0.0 disables effect.",
+    "Rumble strip pull factor": 1.5,
+    "Rumble strip pull factor#": "How strongly wheel pulls right/left when running over a rumble strip. Suggested range: -1.5 to 1.5.",
+    "Rumble strip update thresh": 0.05,
+    "Rumble strip update thresh#": "Amount of change required to update rumble strip effect (0.0 - 1.0)",
+    "Rumble strip wave type": 0,
+    "Rumble strip wave type#": "Type of wave to use for vibe: 0=Sine, 1=Square, 2=Triangle, 3=Sawtooth up, 4=Sawtooth down.",
+    "Steering effects strength": 10000,
+    "Steering effects strength#": "-10000 to +10000, applies to all steering effects (torque, resistance, static spring, jolt, etc.)",
+    "Steering resistance coefficient": 0.1,
+    "Steering resistance coefficient#": "Coefficient to use for steering resistance.  Range: -1.0 to 1.0",
+    "Steering resistance saturation": 0.1,
+    "Steering resistance saturation#": "Saturation value to use for steering resistance.  Range: 0 - 1.0",
+    "Steering resistance type": 0,
+    "Steering resistance type#": "0=use damping, 1=use friction",
+    "Steering spring coefficient": 0,
+    "Steering spring coefficient#": "Static spring effect rate (-1.0 to 1.0)",
+    "Steering spring saturation": 0.1,
+    "Steering spring saturation#": "Static spring effect peak force (0.0 to 1.0)",
+    "Steering torque capability": 2.5,
+    "Steering torque capability#": "The maximum torque capability of the wheel (in Nm, obviously)",
+    "Steering torque extrap blend": 0,
+    "Steering torque extrap blend#": "Higher blends of extrapolated value allows driver to feel torque changes even when actual torque exceeds 'input max' (0.0=disables, 1.0=max)",
+    "Steering torque extrap time": 0.015,
+    "Steering torque extrap time#": "Time in seconds to extrapolate steering torque based on current change (Range: 0.001 to 0.050.  To disable, set 'blend' to 0.0)",
+    "Steering torque filter": 2,
+    "Steering torque filter#": "Number of old samples to use to filter torque from vehicle's steering column (0-32, note that higher values increase effective latency)",
+    "Steering torque minimum": 0.025,
+    "Steering torque minimum#": "Minimum torque to apply in either direction to overcome steering wheel's 'FFB deadzone' caused by friction",
+    "Steering torque per-vehicle mult": 0.6,
+    "Steering torque per-vehicle mult#": "Per-vehicle steering column torque multiplier (this is a copy of the .CCH value)",
+    "Steering torque sensitivity": 1,
+    "Steering torque sensitivity#": "Sensitivity curve applied to representable torques: 0.0=low 1.0=linear 2.0=high",
+    "Steering torque zero-speed mult": 0.45,
+    "Steering torque zero-speed mult#": "Multiplier at zero speed to reduce unwanted oscillation from strong static aligning torque",
+    "Test_workaround": true,
+    "Test_workaround#": "Workaround for apparent driver CTD on release",
+    "Throttle effects on steer axis": 0,
+    "Throttle effects on steer axis#": "0 = Throttle effects on throttle axis, 1 = throttle effects on steering axis.",
+    "Throttle effects strength": 10000,
+    "Throttle effects strength#": "-10000 to +10000, applies to all throttle effects (force, vibration, static spring, etc?)",
+    "Throttle spring coefficient": 0.1,
+    "Throttle spring coefficient#": "Static spring effect rate (-1.0 to 1.0)",
+    "Throttle spring saturation": 1,
+    "Throttle spring saturation#": "Static spring effect peak force (0.0 to 1.0)",
+    "Type": 1,
+    "Type#": "Type of force feedback: 0=off 1=wheel 2=joystick 3=rumble/gamepad 4=custom",
+    "Use thread": false,
+    "Use thread#": "Use a separate thread to issue FFB commands which may block with some drivers"
+  },
+  "General Controls": {
+    "Alternate Neutral Activation": true,
+    "Alternate Neutral Activation#": "whether to select neutral if shift up & shift down are pressed simultaneously",
+    "Alternate Rearlook Activation": true,
+    "Alternate Rearlook Activation#": "if left look and right look are both pressed, rearlook becomes activated",
+    "Auto Reverse": 0,
+    "Auto Reverse#": "If auto-shifting and holding brakes, will shift into reverse and reverse throttle/brake temporarily",
+    "Brake Bias Axis": false,
+    "Brake Bias Axis#": "maps forward brake bias control as an axis to the nearest available setting",
+    "Brake Sensitivity": 1.05,
+    "Brake Sensitivity#": "vehicle.  The vehicle itself may have non-linear effects (examples include Ackerman steering, variable",
+    "Camera Zoom Accel": 0.4,
+    "Camera Zoom Accel#": "Camera zoom acceleration when starting to adjust.",
+    "Camera Zoom Decel": 0.25,
+    "Camera Zoom Decel#": "Camera zoom deceleration when stopping adjustments.",
+    "Camera Zoom Speed": 0.25,
+    "Camera Zoom Speed#": "Camera zoom adjustment speed.",
+    "Clutch Sensitivity": 2,
+    "Clutch Sensitivity#": "ratio rack and pinion, engine throttle maps, not to mention hysterisis), which are, of course, applied",
+    "Controller Flags": 2,
+    "Controller Flags#": "add flags: 1=foreground, 2=exclusive (required for FFB)",
+    "Detect Rearranged Controllers": true,
+    "Detect Rearranged Controllers#": "set to 1 if you change controller connections often and your wheel or pedals are sometimes enumerated differently",
+    "Freelook Keyboard Pitch Accel": 0.02,
+    "Freelook Keyboard Pitch Accel#": "Freelook pitch acceleration when using keyboard.",
+    "Freelook Keyboard Pitch Decel": 0.0025,
+    "Freelook Keyboard Pitch Decel#": "Freelook pitch deceleration when using keyboard.",
+    "Freelook Keyboard Pitch Speed": 0.11,
+    "Freelook Keyboard Pitch Speed#": "Freelook pitch speed when using keyboard.",
+    "Freelook Keyboard Roll Accel": 4,
+    "Freelook Keyboard Roll Accel#": "Freelook roll acceleration when using keyboard.",
+    "Freelook Keyboard Roll Decel": 4,
+    "Freelook Keyboard Roll Decel#": "Freelook roll deceleration when using keyboard.",
+    "Freelook Keyboard Roll Speed": 1.5,
+    "Freelook Keyboard Roll Speed#": "Freelook roll speed when using keyboard.",
+    "Freelook Keyboard Yaw Accel": 0.04,
+    "Freelook Keyboard Yaw Accel#": "Freelook Yaw acceleration when using keyboard.",
+    "Freelook Keyboard Yaw Decel": 0.0025,
+    "Freelook Keyboard Yaw Decel#": "Freelook Yaw deceleration when using keyboard.",
+    "Freelook Keyboard Yaw Speed": 0.11,
+    "Freelook Keyboard Yaw Speed#": "Freelook yaw speed when using keyboard.",
+    "Freelook Mouse Control": false,
+    "Freelook Mouse Control#": "Force the use of Mouse for pitch and yaw in Freelook Mode. On False, this is automatically disabled if there are controller assignments.",
+    "Freelook Mouse Pitch Speed": 0.001,
+    "Freelook Mouse Pitch Speed#": "Freelook pitch speed when using mouse.",
+    "Freelook Mouse Yaw Speed": 0.001,
+    "Freelook Mouse Yaw Speed#": "Freelook yaw speed when using mouse.",
+    "Freemove Accel": 25,
+    "Freemove Accel#": "Freemove accel when starting to move.",
+    "Freemove Deadzone Default": 0.1,
+    "Freemove Deadzone Default#": "Freemove Deadzones",
+    "Freemove Decel": 25,
+    "Freemove Decel#": "Freemove decel when stopping movement.",
+    "Freemove Down Speed": 0.6,
+    "Freemove Down Speed#": "Freemove Down speed.",
+    "Freemove Forward Speed": 2.5,
+    "Freemove Forward Speed#": "Freemove Forward speed.",
+    "Freemove Right Speed": 1.5,
+    "Freemove Right Speed#": "Freemove Right speed.",
+    "Gear Select Button Hold": true,
+    "Gear Select Button Hold#": "Enable this option if using a gear select device that holds down a joystick button while in a gear and releases all buttons in neutral (such as the Act-Labs USB Shifter)",
+    "HMD Fore/Aft Range": 0.15,
+    "HMD Fore/Aft Range#": "Range to apply to fore/aft tracking or camera controls (0.35 = max, -0.35 = reversed max)",
+    "HMD Left/Right Range": 0.15,
+    "HMD Left/Right Range#": "Range to apply to left/right tracking or camera controls (0.35 = max, -0.35 = reversed max)",
+    "HMD Up/Down Range": 0.15,
+    "HMD Up/Down Range#": "Range to apply to up/down tracking or camera controls (0.35 = max, -0.35 = reversed max)",
+    "Hardware 3Digit Display": 1,
+    "Hardware 3Digit Display#": "If hardware has 3-digit display, 0=off, 1=gear, 2=speed",
+    "Hold Flap Button": false,
+    "Hold Flap Button#": "whether you need to hold the flap button (as opposed to it acting as a toggle)",
+    "Keyboard Brake": 0.5,
+    "Keyboard Brake#": "rate for keyboard/digital brake (including front and rear handbrake) input",
+    "Keyboard Clutch": 0.2,
+    "Keyboard Clutch#": "rate for keyboard/digital clutch input",
+    "Keyboard Flags": 5,
+    "Keyboard Flags#": "Try 5 if there are issues with multimedia keys. Add to include flag: 1=foreground, 2=exclusive, 4=allow windows key",
+    "Keyboard Layout Override": 1,
+    "Keyboard Layout Override#": "0 = old custom behavior, 1 = try Windows conversion (default), 2+ = attempt to use one of the existing supported keyboard layouts",
+    "Keyboard Power Demand": 2,
+    "Keyboard Power Demand#": "rate for keyboard/digital power demand input",
+    "Keyboard Release Func": 1,
+    "Keyboard Release Func#": "How digital inputs are pulled towards zero: 0.0=classic linear method 1.0=non-linear method",
+    "Keyboard Release Rate": 1,
+    "Keyboard Release Rate#": "Multiplier for how fast digital inputs are pulled towards zero: 0.1=slow 10.0=fast",
+    "Keyboard Throttle": 0.5,
+    "Keyboard Throttle#": "rate for keyboard/digital throttle input",
+    "Power Demand Sensitivity": 1,
+    "Power Demand Sensitivity#": "*after* all the controller effects including these sensitivities.",
+    "Range From Vehicle": true,
+    "Range From Vehicle#": "Whether the Steering Wheel Range is automatically set based on the vehicle's TurnsLockToLock parameter",
+    "Realtime Controller Detection": false,
+    "Realtime Controller Detection#": "whether to check for new controllers while in realtime (0 to disable if it causes any problems)",
+    "Reset FFB Time": 0,
+    "Reset FFB Time#": "reset force feedback every X seconds (0 to disable)",
+    "Reset Steering Wheel Range Time": 0,
+    "Reset Steering Wheel Range Time#": "reset steering wheel range every X seconds (0 to disable)",
+    "Return Rate Multiplier": 1,
+    "Return Rate Multiplier#": "Rate at which the ingame steering rate will be accelerated when recentering instead of turning in",
+    "Sensitivity Type": 1,
+    "Sensitivity Type#": "Type of steering sensitivity to use. 0 = off, 1 = modern slip angle based approach (including FFB effects), 2 = legacy speed sensitivity",
+    "Speed Sensitive Steering": 0,
+    "Start Hardware Event Monitor": true,
+    "Start Hardware Event Monitor#": "Whether to try starting up 3rd party hardware event monitor(s) for the ability to set/get properties not available through DirectInput",
+    "Steering Aggression": 0.5,
+    "Steering Aggression#": "How aggressively gamepad and keyboard controls will turn in",
+    "Steering Rate Factor": 0.5,
+    "Steering Rate Factor#": "Rate at which the ingame steering wheel will try to follow the controller input",
+    "Steering Sensitivity": 1,
+    "Steering Sensitivity#": "0.0=low 1.0=linear 2.0=high.  These are applied after other controller effects like deadzones, digital",
+    "Steering Snap Factor": 0.5,
+    "Steering Snap Factor#": "Factor to control how snappy steering will try to follow inputs. At 0, it will ease in very softly. At 1, it will not slow down as much when it gets close to desired input",
+    "Steering Wheel Bump Stop Harshness": 10,
+    "Steering Wheel Bump Stop Harshness#": "Harshness applied to bump stop when limiting steering wheel rotation, from 1.0 to 100.0, acts as a spring rate",
+    "Steering Wheel Maximum Rotation Default": 900,
+    "Steering Wheel Maximum Rotation Default#": "Default maximum wheel range to use when not read from driver, from 40 to 1440 degrees",
+    "Steering Wheel Maximum Rotation from Driver": true,
+    "Steering Wheel Maximum Rotation from Driver#": "Whether to read the steering wheel rotation from the wheel driver, if possible",
+    "Steering Wheel Range": 620,
+    "Steering Wheel Range#": "Degrees of steering wheel rotation, both visual and physical (if available)",
+    "Steering Wheel Software Rotation": false,
+    "Steering Wheel Software Rotation#": "Whether to limit the maximum steering wheel rotation in software",
+    "Stop Sequential if Neutral Configured": 1,
+    "Stop Sequential if Neutral Configured#": "whether configuring neutral prevents sequential shifts into neutral from 1=1st, 2=reverse, 3=both, or 0=neither",
+    "Throttle Sensitivity": 0.8,
+    "Throttle Sensitivity#": "ramping, etc.  In other words, the sensitivity is applied just before the input is applied to the",
+    "Use Additional Hardware Features": true,
+    "Use Additional Hardware Features#": "Whether to use additional hardware features like steering wheel LEDs",
+    "Use Keyboard Rates For Analog": false,
+    "Use Keyboard Rates For Analog#": "use keyboard/digital driving input rates to intentionally delay analog inputs (may be useful for gamepads)"
+  },
+  "Input": {
+    " Control - FreeLens Exposure Decrease": [
+      0,
+      89
+    ],
+    " Control - FreeLens Exposure Increase": [
+      0,
+      89
+    ],
+    " Control - UI : Mouse Click": [
+      3,
+      57
+    ],
+    " Control - UI : Mouse Down": [
+      0,
+      89
+    ],
+    " Control - UI : Mouse Left": [
+      0,
+      89
+    ],
+    " Control - UI : Mouse Right": [
+      0,
+      89
+    ],
+    " Control - UI : Mouse Up": [
+      0,
+      89
+    ],
+    " Control - VR : Decrease IPD": [
+      0,
+      89
+    ],
+    " Control - VR : Increase IPD": [
+      0,
+      89
+    ],
+    " Control - VR : Reset IPD": [
+      0,
+      43
+    ],
+    "Control - Activate Push 2 Pass": [
+      3,
+      42
+    ],
+    "Control - Adjust Seat Aft": [
+      1,
+      18
+    ],
+    "Control - Adjust Seat Down": [
+      1,
+      17
+    ],
+    "Control - Adjust Seat Fore": [
+      1,
+      16
+    ],
+    "Control - Adjust Seat Up": [
+      1,
+      19
+    ],
+    "Control - Alt Brake": [
+      0,
+      89
+    ],
+    "Control - Alt Shift Down": [
+      3,
+      9
+    ],
+    "Control - Alt Shift Up": [
+      3,
+      7
+    ],
+    "Control - Alt Steer Left": [
+      0,
+      89
+    ],
+    "Control - Alt Steer Right": [
+      0,
+      89
+    ],
+    "Control - Alt Throttle": [
+      0,
+      89
+    ],
+    "Control - Alternate Esc": [
+      1,
+      45
+    ],
+    "Control - Anti-lock Brakes": [
+      0,
+      67
+    ],
+    "Control - Antilock Brake System Down": [
+      1,
+      43
+    ],
+    "Control - Antilock Brake System Up": [
+      1,
+      44
+    ],
+    "Control - Arm Attack Mode": [
+      0,
+      89
+    ],
+    "Control - Auto Clutch": [
+      0,
+      87
+    ],
+    "Control - Auto Pit Lane": [
+      0,
+      68
+    ],
+    "Control - Auto Shifting": [
+      0,
+      65
+    ],
+    "Control - Bias Forward": [
+      3,
+      34
+    ],
+    "Control - Bias Rearward": [
+      3,
+      33
+    ],
+    "Control - Brake": [
+      2,
+      4
+    ],
+    "Control - Braking Help": [
+      0,
+      61
+    ],
+    "Control - CPU Time": [
+      0,
+      50
+    ],
+    "Control - Camera Move Backward": [
+      0,
+      31
+    ],
+    "Control - Camera Move Down": [
+      0,
+      33
+    ],
+    "Control - Camera Move Forward": [
+      0,
+      17
+    ],
+    "Control - Camera Move Left": [
+      0,
+      30
+    ],
+    "Control - Camera Move Right": [
+      0,
+      32
+    ],
+    "Control - Camera Move Up": [
+      0,
+      19
+    ],
+    "Control - Camera Slow Move": [
+      0,
+      42
+    ],
+    "Control - Camera Tilt Down": [
+      5,
+      32
+    ],
+    "Control - Camera Tilt Left": [
+      0,
+      16
+    ],
+    "Control - Camera Tilt Right": [
+      0,
+      18
+    ],
+    "Control - Camera Tilt Up": [
+      5,
+      35
+    ],
+    "Control - Camera Turn Left": [
+      5,
+      34
+    ],
+    "Control - Camera Turn Right": [
+      5,
+      33
+    ],
+    "Control - Camera Zoom In": [
+      0,
+      46
+    ],
+    "Control - Camera Zoom Out": [
+      0,
+      47
+    ],
+    "Control - Camera Zoom Reset": [
+      0,
+      89
+    ],
+    "Control - Check Remaining Push 2 Pass": [
+      3,
+      69
+    ],
+    "Control - Clutch In": [
+      2,
+      2
+    ],
+    "Control - Custom Plugin #1": [
+      0,
+      89
+    ],
+    "Control - Custom Plugin #10": [
+      0,
+      89
+    ],
+    "Control - Custom Plugin #11": [
+      0,
+      89
+    ],
+    "Control - Custom Plugin #12": [
+      0,
+      89
+    ],
+    "Control - Custom Plugin #2": [
+      0,
+      89
+    ],
+    "Control - Custom Plugin #3": [
+      0,
+      89
+    ],
+    "Control - Custom Plugin #4": [
+      0,
+      89
+    ],
+    "Control - Custom Plugin #5": [
+      0,
+      89
+    ],
+    "Control - Custom Plugin #6": [
+      0,
+      89
+    ],
+    "Control - Custom Plugin #7": [
+      0,
+      89
+    ],
+    "Control - Custom Plugin #8": [
+      0,
+      89
+    ],
+    "Control - Custom Plugin #9": [
+      0,
+      89
+    ],
+    "Control - Cycle HUD MFDs": [
+      3,
+      43
+    ],
+    "Control - Dec Front ARB": [
+      0,
+      89
+    ],
+    "Control - Dec Rear ARB": [
+      0,
+      89
+    ],
+    "Control - Decrease Vertical FOV": [
+      0,
+      27
+    ],
+    "Control - Decrease Wedge": [
+      0,
+      89
+    ],
+    "Control - Decrement Boost": [
+      0,
+      89
+    ],
+    "Control - Decrement Electric Motor Map": [
+      0,
+      89
+    ],
+    "Control - Decrement Mixture": [
+      3,
+      63
+    ],
+    "Control - Decrement Push to Pass Map": [
+      3,
+      68
+    ],
+    "Control - Decrement Regeneration": [
+      0,
+      89
+    ],
+    "Control - Display Mode": [
+      0,
+      89
+    ],
+    "Control - Display Vehicle Labels": [
+      3,
+      62
+    ],
+    "Control - Driver Hot Swap": [
+      0,
+      89
+    ],
+    "Control - Driving Aids": [
+      3,
+      86
+    ],
+    "Control - Driving Cameras": [
+      0,
+      210
+    ],
+    "Control - Eighth Gear": [
+      0,
+      89
+    ],
+    "Control - Engine Brake Map Down": [
+      0,
+      89
+    ],
+    "Control - Engine Brake Map Up": [
+      0,
+      89
+    ],
+    "Control - External Signal Cancel": [
+      0,
+      89
+    ],
+    "Control - External Signal Down": [
+      0,
+      89
+    ],
+    "Control - External Signal Left": [
+      0,
+      89
+    ],
+    "Control - External Signal Right": [
+      0,
+      89
+    ],
+    "Control - External Signal Select": [
+      0,
+      89
+    ],
+    "Control - External Signal Up": [
+      0,
+      89
+    ],
+    "Control - Extra Info": [
+      3,
+      81
+    ],
+    "Control - Fifth Gear": [
+      1,
+      36
+    ],
+    "Control - First Gear": [
+      1,
+      32
+    ],
+    "Control - Fourth Gear": [
+      1,
+      35
+    ],
+    "Control - Framerate": [
+      0,
+      49
+    ],
+    "Control - FreeLens Aperture Decrease": [
+      0,
+      89
+    ],
+    "Control - FreeLens Aperture Increase": [
+      0,
+      89
+    ],
+    "Control - FreeLens Focus Decrease": [
+      0,
+      89
+    ],
+    "Control - FreeLens Focus Increase": [
+      0,
+      89
+    ],
+    "Control - FreeLens Tracking Focus Toggle": [
+      0,
+      89
+    ],
+    "Control - FreeLook Mouse Control Toggle": [
+      0,
+      89
+    ],
+    "Control - Front Flap": [
+      0,
+      89
+    ],
+    "Control - Handbrake": [
+      0,
+      89
+    ],
+    "Control - Handfrontbrake": [
+      0,
+      89
+    ],
+    "Control - Headlights": [
+      0,
+      38
+    ],
+    "Control - Headlights Pulse": [
+      0,
+      36
+    ],
+    "Control - Hold TV Camera": [
+      0,
+      89
+    ],
+    "Control - Horn": [
+      0,
+      89
+    ],
+    "Control - Ignition": [
+      1,
+      46
+    ],
+    "Control - Inc Front ARB": [
+      0,
+      89
+    ],
+    "Control - Inc Rear ARB": [
+      0,
+      89
+    ],
+    "Control - Increase Vertical FOV": [
+      0,
+      26
+    ],
+    "Control - Increase Wedge": [
+      0,
+      89
+    ],
+    "Control - Increment Boost": [
+      0,
+      89
+    ],
+    "Control - Increment Electric Motor Map": [
+      0,
+      89
+    ],
+    "Control - Increment Mixture": [
+      3,
+      65
+    ],
+    "Control - Increment Push to Pass Map": [
+      3,
+      78
+    ],
+    "Control - Increment Regeneration": [
+      0,
+      89
+    ],
+    "Control - Instant Replay": [
+      0,
+      89
+    ],
+    "Control - Invulnerability": [
+      0,
+      64
+    ],
+    "Control - Launch Control": [
+      0,
+      89
+    ],
+    "Control - Load Vehicles": [
+      0,
+      89
+    ],
+    "Control - Look Down": [
+      0,
+      89
+    ],
+    "Control - Look Left": [
+      0,
+      89
+    ],
+    "Control - Look Right": [
+      0,
+      89
+    ],
+    "Control - Look Roll Left": [
+      0,
+      89
+    ],
+    "Control - Look Roll Right": [
+      0,
+      89
+    ],
+    "Control - Look Up": [
+      0,
+      89
+    ],
+    "Control - Lower Track Bar": [
+      0,
+      89
+    ],
+    "Control - Message History": [
+      3,
+      85
+    ],
+    "Control - Music Volume Down": [
+      0,
+      89
+    ],
+    "Control - Music Volume Up": [
+      0,
+      89
+    ],
+    "Control - Neutral": [
+      0,
+      89
+    ],
+    "Control - Ninth Gear": [
+      0,
+      89
+    ],
+    "Control - Onboard Cameras": [
+      0,
+      199
+    ],
+    "Control - Opposite Lock": [
+      0,
+      60
+    ],
+    "Control - Passenger Select": [
+      1,
+      48
+    ],
+    "Control - Pause": [
+      0,
+      25
+    ],
+    "Control - Pause Music": [
+      0,
+      89
+    ],
+    "Control - Pause TV Tracking": [
+      0,
+      89
+    ],
+    "Control - Penalties Display": [
+      3,
+      84
+    ],
+    "Control - Pit Display": [
+      3,
+      90
+    ],
+    "Control - Pit Menu Dec": [
+      3,
+      19
+    ],
+    "Control - Pit Menu Down": [
+      3,
+      18
+    ],
+    "Control - Pit Menu Inc": [
+      3,
+      17
+    ],
+    "Control - Pit Menu Up": [
+      3,
+      16
+    ],
+    "Control - Pit Request": [
+      0,
+      35
+    ],
+    "Control - Play Music": [
+      0,
+      89
+    ],
+    "Control - Play Next Song": [
+      0,
+      89
+    ],
+    "Control - Play Previous Song": [
+      0,
+      89
+    ],
+    "Control - Power Demand": [
+      0,
+      89
+    ],
+    "Control - Push To Talk Control for Voice Chat": [
+      0,
+      89
+    ],
+    "Control - Push To change camera view": [
+      0,
+      89
+    ],
+    "Control - Quick Chat #1": [
+      0,
+      89
+    ],
+    "Control - Quick Chat #10": [
+      0,
+      2
+    ],
+    "Control - Quick Chat #11": [
+      0,
+      11
+    ],
+    "Control - Quick Chat #12": [
+      0,
+      3
+    ],
+    "Control - Quick Chat #2": [
+      0,
+      89
+    ],
+    "Control - Quick Chat #3": [
+      0,
+      89
+    ],
+    "Control - Quick Chat #4": [
+      0,
+      89
+    ],
+    "Control - Quick Chat #5": [
+      0,
+      89
+    ],
+    "Control - Quick Chat #6": [
+      0,
+      89
+    ],
+    "Control - Quick Chat #7": [
+      0,
+      89
+    ],
+    "Control - Quick Chat #8": [
+      0,
+      89
+    ],
+    "Control - Quick Chat #9": [
+      0,
+      89
+    ],
+    "Control - Race Info": [
+      3,
+      82
+    ],
+    "Control - Raise Track Bar": [
+      0,
+      89
+    ],
+    "Control - Realtime Chat": [
+      0,
+      89
+    ],
+    "Control - Rear Flap": [
+      0,
+      89
+    ],
+    "Control - Rear Look": [
+      0,
+      48
+    ],
+    "Control - Replay Fast Forward": [
+      0,
+      205
+    ],
+    "Control - Replay Fast Rewind": [
+      0,
+      157
+    ],
+    "Control - Replay Play": [
+      0,
+      57
+    ],
+    "Control - Replay Reverse": [
+      0,
+      203
+    ],
+    "Control - Replay Slowmotion": [
+      0,
+      208
+    ],
+    "Control - Replay Stop": [
+      0,
+      200
+    ],
+    "Control - Reset Force Feedback": [
+      0,
+      41
+    ],
+    "Control - Restart Race": [
+      0,
+      89
+    ],
+    "Control - Reverse Gear": [
+      1,
+      38
+    ],
+    "Control - Screenshot": [
+      0,
+      88
+    ],
+    "Control - Second Gear": [
+      1,
+      33
+    ],
+    "Control - Seventh Gear": [
+      0,
+      89
+    ],
+    "Control - Shift Down": [
+      3,
+      37
+    ],
+    "Control - Shift Up": [
+      3,
+      36
+    ],
+    "Control - Sixth Gear": [
+      1,
+      37
+    ],
+    "Control - Skip Formation": [
+      0,
+      89
+    ],
+    "Control - Spectator Cameras": [
+      0,
+      207
+    ],
+    "Control - Speed Limiter": [
+      3,
+      41
+    ],
+    "Control - Spin Recovery": [
+      0,
+      63
+    ],
+    "Control - Stability Control": [
+      0,
+      62
+    ],
+    "Control - Standard Display": [
+      3,
+      83
+    ],
+    "Control - Standings Display": [
+      3,
+      80
+    ],
+    "Control - Starter": [
+      1,
+      47
+    ],
+    "Control - Steer Left": [
+      3,
+      1
+    ],
+    "Control - Steer Right": [
+      3,
+      0
+    ],
+    "Control - Steering Help": [
+      0,
+      59
+    ],
+    "Control - Swingman Camera": [
+      0,
+      201
+    ],
+    "Control - Swingman Down": [
+      0,
+      80
+    ],
+    "Control - Swingman Left": [
+      0,
+      75
+    ],
+    "Control - Swingman Reset": [
+      0,
+      76
+    ],
+    "Control - Swingman Right": [
+      0,
+      77
+    ],
+    "Control - Swingman Up": [
+      0,
+      72
+    ],
+    "Control - Swingman Zoom In": [
+      0,
+      73
+    ],
+    "Control - Swingman Zoom Out": [
+      0,
+      71
+    ],
+    "Control - TCOverride": [
+      0,
+      24
+    ],
+    "Control - Temporary Boost": [
+      0,
+      89
+    ],
+    "Control - Third Gear": [
+      1,
+      34
+    ],
+    "Control - Throttle": [
+      2,
+      0
+    ],
+    "Control - Time Acceleration": [
+      0,
+      89
+    ],
+    "Control - Toggle AI Control": [
+      0,
+      40
+    ],
+    "Control - Toggle Cursor": [
+      0,
+      211
+    ],
+    "Control - Toggle Free Lens": [
+      0,
+      89
+    ],
+    "Control - Toggle Free Move": [
+      0,
+      22
+    ],
+    "Control - Toggle HUD Stats Bar": [
+      3,
+      64
+    ],
+    "Control - Toggle HUD Tachometer": [
+      3,
+      40
+    ],
+    "Control - Toggle Mirror": [
+      0,
+      4
+    ],
+    "Control - Toggle Overlays": [
+      0,
+      89
+    ],
+    "Control - Toggle use of hardware plugins": [
+      0,
+      34
+    ],
+    "Control - Tracking Cameras": [
+      0,
+      209
+    ],
+    "Control - Traction Control": [
+      0,
+      66
+    ],
+    "Control - Traction Control 2 Down": [
+      0,
+      89
+    ],
+    "Control - Traction Control 2 Up": [
+      0,
+      89
+    ],
+    "Control - Traction Control Down": [
+      1,
+      41
+    ],
+    "Control - Traction Control Slip Angle Down": [
+      0,
+      89
+    ],
+    "Control - Traction Control Slip Angle Up": [
+      0,
+      89
+    ],
+    "Control - Traction Control Up": [
+      1,
+      42
+    ],
+    "Control - Triples And Tires": [
+      0,
+      13
+    ],
+    "Control - VR : Re-Center head position": [
+      3,
+      56
+    ],
+    "Control - Vehicle Status": [
+      3,
+      91
+    ],
+    "Control - View Next Vehicle": [
+      0,
+      78
+    ],
+    "Control - View Original Vehicle": [
+      0,
+      156
+    ],
+    "Control - View Previous Vehicle": [
+      0,
+      74
+    ],
+    "Control - Wipers": [
+      3,
+      32
+    ],
+    "Control - Zero Free Move": [
+      0,
+      23
+    ],
+    "Custom Plugin Control Name #1": "Custom Plugin #1",
+    "Custom Plugin Control Name #10": "Custom Plugin #10",
+    "Custom Plugin Control Name #11": "Custom Plugin #11",
+    "Custom Plugin Control Name #12": "Custom Plugin #12",
+    "Custom Plugin Control Name #2": "Custom Plugin #2",
+    "Custom Plugin Control Name #3": "Custom Plugin #3",
+    "Custom Plugin Control Name #4": "Custom Plugin #4",
+    "Custom Plugin Control Name #5": "Custom Plugin #5",
+    "Custom Plugin Control Name #6": "Custom Plugin #6",
+    "Custom Plugin Control Name #7": "Custom Plugin #7",
+    "Custom Plugin Control Name #8": "Custom Plugin #8",
+    "Custom Plugin Control Name #9": "Custom Plugin #9"
+  },
+  "PlayerFileOverrides": {
+    "Antilock Brakes": -1,
+    "Auto Clutch": -1,
+    "Brake Help": -1,
+    "Cockpit Vibration Freq1": -1,
+    "Cockpit Vibration Freq2": -1,
+    "Cockpit Vibration Mult1": -1,
+    "Cockpit Vibration Mult2": -1,
+    "Exaggerate Yaw": -3,
+    "Head Physics": -1,
+    "Invulnerability": -1,
+    "Lookahead Angle": 0,
+    "Opposite Lock": -1,
+    "Shift Mode": -1,
+    "Stability Control": -1,
+    "Steering Help": -1,
+    "Throttle Control": -1
+  }
+}
