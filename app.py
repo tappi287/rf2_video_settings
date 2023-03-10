@@ -72,16 +72,18 @@ def start_eel(npm_serve=True):
     if npm_serve:
         # Dev env with npm run serve
         page = {'port': 8080}
+        url_port = page.get('port')
         eel.init('vue/src')
     else:
         # Frozen or npm run build
+        url_port = port
         eel.init('web')
 
     # TODO: fetch OSError port in use
     try:
         eel.start(page, host=host, port=port, block=False, close_callback=close_callback)
     except EnvironmentError:
-        start_url = f'http://{host}:{page.get("port", port)}'
+        start_url = f'http://{host}:{url_port}'
         edge_cmd = f"{os.path.expandvars('%PROGRAMFILES(x86)%')}\\Microsoft\\Edge\\Application\\msedge.exe"
 
         # If Chrome isn't found, fallback to Microsoft Chromium Edge
