@@ -48,16 +48,15 @@ class RfactorLocation:
 
     @classmethod
     def get_location(cls, dev: Optional[bool] = False):
-        try:
-            s = SteamApps()
-            s.read_steam_library()
-        except Exception as e:
-            logging.error('Error getting rFactor location: %s', e)
-            return
-
         # -- Path maybe already set by overwrite location
         if cls.path is None or not cls.path.exists():
-            path = s.find_game_location(cls._app_id)
+            try:
+                s = SteamApps()
+                s.read_steam_library()
+                path = s.find_game_location(cls._app_id)
+            except Exception as e:
+                logging.error('Error getting rFactor location from Steam: %s', e)
+                return
         else:
             path = cls.path
 
@@ -66,7 +65,11 @@ class RfactorLocation:
             controller_json = path / RFACTOR_CONTROLLER
             dx_config = path / RFACTOR_DXCONFIG
             version_txt = path / RFACTOR_VERSION_TXT
-
+            logging.info(f'Setting rF location: '
+                         f'{path}'
+                         f'{player_json}\n'
+                         f'{controller_json}\n'
+                         f'{version_txt}')
             if dev:
                 player_json = path / 'ModDev' / RFACTOR_PLAYER
                 controller_json = path / 'ModDev' / RFACTOR_CONTROLLER

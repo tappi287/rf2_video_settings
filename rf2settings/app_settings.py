@@ -313,6 +313,7 @@ class AppSettings(JsonRepr):
         # -- Overwrite rf2 location if overwrite location set
         if cls.rf_overwrite_location and cls.rf_overwrite_location not in ('.', '..', '../modules'):
             RfactorLocation.overwrite_location(cls.rf_overwrite_location)
+            logging.info(f'Using rF2 overwrite location: {RfactorLocation.path}')
 
         # -- Operations on first load
         cls._first_load()
