@@ -169,3 +169,15 @@ def set_apply_webui_settings(setting: bool):
 def get_apply_webui_settings():
     logging.debug('Providing Ui with apply_webui_settings: %s', AppSettings.apply_webui_settings)
     return json.dumps({'result': True, 'setting': AppSettings.apply_webui_settings})
+
+
+@capture_app_exceptions
+def save_app_preferences(app_preferences: dict):
+    AppSettings.app_preferences = app_preferences
+    AppSettings.save()
+    return json.dumps({'result': True})
+
+
+@capture_app_exceptions
+def load_app_preferences():
+    return json.dumps({'result': True, 'preferences': AppSettings.app_preferences})

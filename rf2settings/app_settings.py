@@ -17,6 +17,7 @@ class AppSettings(JsonRepr):
     needs_admin = False
     selected_presets: Dict[str, str] = dict()
     replay_preset = str()
+    app_preferences = dict()
 
     rf_overwrite_location = ''
 

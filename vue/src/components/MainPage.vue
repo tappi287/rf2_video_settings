@@ -1,5 +1,5 @@
 <template>
-  <div id="main" class="position-relative" v-cloak @focus.once="startSlideShow">
+  <div id="main" class="position-relative" v-cloak>
     <b-navbar class="text-left pl-0 pr-0" type="dark">
       <b-navbar-brand href="#" @click="navActive=0" class="r-icon-brand position-relative"
                       v-b-popover.bottomleft.hover="'DashBoard'">
@@ -63,6 +63,12 @@
             <div class="vr-nav-icon"><b-icon icon="square-fill"></b-icon></div>
           </div>
         </b-nav-item>
+        <b-nav-item id="preferences-nav" right :active="navActive === 12" @click="navActive=12">
+          <b-iconstack>
+            <b-icon stacked icon="square-fill"></b-icon>
+            <b-icon stacked icon="gear-fill" scale="0.75" class="gear-icon"></b-icon>
+          </b-iconstack>
+        </b-nav-item>
         <b-nav-item id="wiki-nav" right :active="navActive === 7" @click="navActive=7">
           <b-icon icon="question-square-fill"></b-icon>
         </b-nav-item>
@@ -87,7 +93,7 @@
 
     <!-- Dashboard -->
     <keep-alive>
-      <DashBoard ref="dash" :gfx-handler="$refs.gfx" v-if="navActive === 0 && gfxReady"
+      <DashBoard ref="dash" :gfx-handler="$refs.gfx" :prefs="$refs.preferences" v-if="navActive === 0 && gfxReady"
                  :refresh-favs="refreshDashFavs" @favs-updated="refreshDashFavs = false"
                  :rfactor-version="rfactorVersion"
                  @make-toast="makeToast" @error="setError" @set-busy="setBusy" @nav="navigate"/>
@@ -115,7 +121,7 @@
       </b-overlay>
     </template>
     <keep-alive>
-      <ControllerDeviceList :visible="navActive === 2"/>
+      <ControllerDeviceList :visible="navActive === 2 || navActive === 0"/>
     </keep-alive>
 
     <!-- Generic Settings-->
@@ -200,6 +206,11 @@
                        @content-launched="navActive = 0" :ses-handler="$refs.ses" :search="search"
                        @make-toast="makeToast" @set-busy="setBusy"/>
 
+    <!-- App Preferences -->
+    <keep-alive>
+      <PreferencesPage :visible="navActive === 12" ref="preferences" />
+    </keep-alive>
+
     <!-- rFactor Actions -->
     <b-container fluid class="mt-3 p-0">
       <b-row cols="2" class="m-0">
@@ -266,6 +277,7 @@ import SessionPresetArea from "@/components/presets/SessionPresetArea";
 import ChatPage from "@/components/pages/ChatPage";
 import ControllerDeviceList from "@/components/ControllerDeviceList";
 import RfactorOverlay from "@/components/RfactorOverlay";
+import PreferencesPage from "@/components/pages/PreferencesPage";
 
 export default {
   name: 'MainPage',
@@ -283,6 +295,7 @@ export default {
       quitBusy: false,
       refreshDashFavs: false,
       contentModal: false,
+      constantFalse: false,
     }
   },
   props: { rfactorVersion: String },
@@ -408,7 +421,6 @@ export default {
         this.makeToast(r.msg, 'danger', 'SteamVR Launch')
       }
     },
-    startSlideShow: async function() { await sleep(5000); await this.$refs.dash.$refs.slider.play() },
     stopSlideShow: async function() {
       if (this.$refs.dash !== undefined) { await this.$refs.dash.$refs.slider.stop() }
     },
@@ -442,6 +454,7 @@ export default {
     this.$eventHub.$off('navigate', this.navigate)
   },
   components: {
+    PreferencesPage,
     RfactorOverlay,
     ControllerDeviceList,
     ChatPage,
@@ -479,7 +492,10 @@ export default {
 .vr-nav-icon {
   position: absolute;
 }
+#vr-nav a { padding-right: 0.275rem; }
 #wiki-nav a { padding-right: 0; }
+#preferences-nav a { padding-right: 0; }
+.gear-icon { color: rgba(0.1, 0.1, 0.1, 0.75); }
 .nav-link.active {
   text-decoration: underline;
   text-decoration-skip-ink: auto;
