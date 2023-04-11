@@ -22,6 +22,9 @@
 
       <b-checkbox-group :options="appOptions" v-model="appModules" @change="save" />
 
+      <b-card-text class="mt-3">
+        Weather to play audio feedback when using rf2-headlights or certain actions within the app.
+      </b-card-text>
     </b-card>
 
     <b-card class="setting-card" bg-variant="dark" text-variant="white" footer-class="pt-0">
@@ -45,6 +48,8 @@ import {getEelJsonObject} from "@/main";
 
 export default {
   name: "PreferencesPage",
+  components: {},
+
   props: {visible: Boolean},
   data: function () {
     return {
@@ -56,7 +61,7 @@ export default {
       ],
       appModules: ['audio'],
       appOptions: [
-        {text: 'Enable Audio Feedback', value: 'audio'}
+        {text: 'Enable Audio', value: 'audio'}
       ]
     }
   },

@@ -203,8 +203,11 @@ export default {
       this.playAudio(event.detail)
     },
     playAudio(elemId) {
-      let a = document.getElementById(elemId)
-      if (a !== undefined) { a.play() }
+      let audioEnabled = this.$refs.main.preferences.appModules.indexOf('audio') !== -1
+      if (audioEnabled) {
+        let a = document.getElementById(elemId)
+        if (a !== undefined) { a.play() }
+      }
     },
   },
   components: {
