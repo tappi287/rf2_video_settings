@@ -23,7 +23,6 @@
 .no-pointer { pointer-events: none; }
 
 #spacer { z-index: -10; position: relative; }
-/*.img-slider { position: absolute; z-index: 1; width: 100%; height: 30rem; }*/
 #i-overlay {
   position: absolute;
   width: 100%; top: 0; left: 0; overflow: hidden; z-index: 1;

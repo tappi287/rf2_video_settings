@@ -1,7 +1,6 @@
 <template>
   <div v-cloak id="dashboard" class="position-relative mb-3 text-left">
-    <vue-flux class="img-slider" id="img"
-        ref="slider"
+    <vue-flux class="img-slider" id="img" ref="slider"
         :captions="vfCaptions"
         :images="vfImages"
         :options="vfOptions"
@@ -134,6 +133,12 @@ export default {
       const maxWidth = getMaxWidth(elements)
       elements.forEach(e => { e.style.width = String(maxWidth) + 'px' })
     },
+    updateImageClip () {
+      setTimeout( () => {
+        const element = document.getElementById('img')
+        element.style.width = ""
+      }, 0)
+    },
     updateSliderSize() {
       this.$refs.slider.resize()
     },
@@ -149,6 +154,7 @@ export default {
   activated() {
     this.updateSliderSize()
     this.updateFavs()
+    this.updateImageClip()
   },
   async mounted() {
     // Access after rendering finished
@@ -163,6 +169,7 @@ export default {
     this.setupScreenShots()
     this.getDriver()
     this.setBusy(false)
+    window.onresize = this.updateImageClip
   },
   components: {
     ServerBrowser,
