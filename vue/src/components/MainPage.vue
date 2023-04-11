@@ -120,9 +120,11 @@
                             :search="search" />
       </b-overlay>
     </template>
-    <keep-alive>
-      <ControllerDeviceList :visible="navActive === 2 || navActive === 0"/>
-    </keep-alive>
+    <template v-if="this.preferences">
+      <keep-alive>
+        <ControllerDeviceList :visible="navActive === 2 || (navActive === 0 && this.$refs.preferences.dashboardModules.indexOf('cont') !== -1)"/>
+      </keep-alive>
+    </template>
 
     <!-- Generic Settings-->
     <template  v-if="navActive === 3">
@@ -295,7 +297,7 @@ export default {
       quitBusy: false,
       refreshDashFavs: false,
       contentModal: false,
-      constantFalse: false,
+      preferences: undefined,
     }
   },
   props: { rfactorVersion: String },
@@ -449,6 +451,13 @@ export default {
   },
   created() {
     this.$eventHub.$on('navigate', this.navigate)
+    // Wait for Preferences ref
+    const interval = setInterval(() => {
+      if (this.$refs.preferences) {
+        this.preferences = this.$refs.preferences
+        clearInterval(interval)
+      }
+    }, 50)
   },
   beforeDestroy() {
     this.$eventHub.$off('navigate', this.navigate)

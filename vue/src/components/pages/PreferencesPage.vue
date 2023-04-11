@@ -50,9 +50,9 @@ export default {
     return {
       dashboardModules: ['img', 'favs', 'cont'],
       dashboardOptions: [
-          {text: 'Image Slideshow', value: 'img'},
-          {text: 'Show Favourites', value: 'favs'},
-          {text: 'Show Controller', value: 'cont'}
+          {text: 'Play Image Slideshow', value: 'img'},
+          {text: 'Show Server Favourites', value: 'favs'},
+          {text: 'Show Controller Devices', value: 'cont'}
       ],
       appModules: ['audio'],
       appOptions: [

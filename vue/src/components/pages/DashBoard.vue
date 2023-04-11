@@ -50,7 +50,7 @@
     <transition name="fade">
       <ServerBrowser ref="serverBrowser" only-favourites class="mt-3" :delay="100" :rfactor-version="rfactorVersion"
                      @make-toast="makeToast" @launch="$refs.slider.stop()"
-                     @set-busy="setBusy"/>
+                     @set-busy="setBusy" v-if="showServerFavs" />
     </transition>
   </div>
 </template>
@@ -91,6 +91,7 @@ export default {
       userName: 'Driver',
       cls: ' mb-3 mr-2 ml-2 preset-button',
       serverBrowserReady: false,
+      showServerFavs: true,
       gfxPresetsReady: false,
       vfOptions: { autoplay: true, delay: 12000, allowFullscreen: true },
       vfImages: [],
@@ -153,7 +154,8 @@ export default {
       this.$refs.slider.resize()
     },
     updateFavs: async function () {
-      if (this.refreshFavs) {
+      this.showServerFavs = this.prefs.dashboardModules.indexOf('favs') !== -1
+      if (this.refreshFavs && this.showServerFavs) {
         // Reset ServerBrowser data
         await this.$refs.serverBrowser.loadSettings()
         await this.$refs.serverBrowser.refreshServerList(true)
