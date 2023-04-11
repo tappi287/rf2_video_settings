@@ -147,7 +147,9 @@ export default {
     updateImageClip () {
       setTimeout( () => {
         const element = document.getElementById('img')
-        element.style.width = ""
+        if (element !== undefined && element !== null) {
+          element.style.width = ""
+        }
       }, 0)
     },
     updateSliderSize() {
