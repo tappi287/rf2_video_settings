@@ -5,7 +5,8 @@ from configparser import ConfigParser
 from pathlib import Path, WindowsPath
 from typing import Optional, Iterator, Union, Type
 
-from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, RF2_APPID, RFACTOR_VERSION_TXT, RFACTOR_CONTROLLER
+from .globals import RFACTOR_PLAYER, RFACTOR_DXCONFIG, RFACTOR_DXVRCONFIG
+from .globals import RF2_APPID, RFACTOR_VERSION_TXT, RFACTOR_CONTROLLER
 from .preset.preset import BasePreset, PresetType
 from .preset.settings_model import BaseOptions, OptionsTarget
 from .preset.settings_model_base import OPTION_CLASSES
@@ -26,6 +27,7 @@ class RfactorLocation:
     player_json = Path()
     controller_json = Path()
     dx_config = Path()
+    dx_vr_config = Path()
     version_txt = Path()
     _app_id = RF2_APPID
     is_valid = False
@@ -37,6 +39,7 @@ class RfactorLocation:
         cls.player_json = Path()
         cls.controller_json = Path()
         cls.dx_config = Path()
+        cls.dx_vr_config = Path()
         cls.version_txt = Path()
         cls.is_valid = False
 
@@ -64,23 +67,30 @@ class RfactorLocation:
             player_json = path / RFACTOR_PLAYER
             controller_json = path / RFACTOR_CONTROLLER
             dx_config = path / RFACTOR_DXCONFIG
+            dx_vr_config = path / RFACTOR_DXVRCONFIG
             version_txt = path / RFACTOR_VERSION_TXT
-            logging.info(f'Setting rF location: '
-                         f'{path}'
-                         f'{player_json}\n'
-                         f'{controller_json}\n'
-                         f'{version_txt}')
+
             if dev:
                 player_json = path / 'ModDev' / RFACTOR_PLAYER
                 controller_json = path / 'ModDev' / RFACTOR_CONTROLLER
                 dx_config = path / 'ModDev' / RFACTOR_DXCONFIG
+                dx_vr_config = path / 'ModDev' / RFACTOR_DXVRCONFIG
 
-            if player_json.exists() and dx_config.exists():
+            logging.info(f'Setting rF location: '
+                         f'{path}'
+                         f'{player_json}\n'
+                         f'{controller_json}\n'
+                         f'{dx_config}\n'
+                         f'{dx_vr_config}\n'
+                         f'{version_txt}')
+
+            if player_json.exists() and (dx_config.exists() or dx_vr_config.exists()):
                 cls.is_valid = True
                 cls.path = path
                 cls.player_json = player_json
                 cls.controller_json = controller_json
                 cls.dx_config = dx_config
+                cls.dx_vr_config = dx_vr_config
                 cls.version_txt = version_txt
 
         cls.dev = dev
@@ -107,6 +117,7 @@ class RfactorPlayer:
         self.player_file = Path()
         self.controller_file = Path()
         self.ini_file = Path()
+        self.ini_vr_file = Path()
         self.ini_first_line = str()
         self.ini_config = self._create_ini_config_parser()
         self.location = Path('../modules')
@@ -276,24 +287,27 @@ class RfactorPlayer:
 
         # -- Write Video Config.ini
         try:
-            # - Write config
-            with open(self.ini_file, 'w') as f:
-                self.ini_config.write(f, space_around_delimiters=False)
+            for ini_file in (self.ini_file, self.ini_vr_file):
+                if not ini_file.exists():
+                    continue
+                # - Write config
+                with open(ini_file, 'w') as f:
+                    self.ini_config.write(f, space_around_delimiters=False)
 
-            # - Restore first ini comment line
-            with open(self.ini_file, 'r') as f:
-                f_lines = f.readlines()
-            f_lines = [self.ini_first_line] + f_lines
+                # - Restore first ini comment line
+                with open(ini_file, 'r') as f:
+                    f_lines = f.readlines()
+                f_lines = [self.ini_first_line] + f_lines
 
-            # - Remove trailing new line
-            if f_lines[-1] == '\n':
-                f_lines = f_lines[:-1]
-            # - Remove trailing new line character
-            f_lines[-1] = f_lines[-1].rstrip('\n')
+                # - Remove trailing new line
+                if f_lines[-1] == '\n':
+                    f_lines = f_lines[:-1]
+                # - Remove trailing new line character
+                f_lines[-1] = f_lines[-1].rstrip('\n')
 
-            # - Write modified config
-            with open(self.ini_file, 'w') as f:
-                f.writelines(f_lines)
+                # - Write modified config
+                with open(ini_file, 'w') as f:
+                    f.writelines(f_lines)
         except Exception as e:
             self.error += f'Could not write CONFIG_DX11.ini file! {e}\n'
             logging.error(self.error)
@@ -450,6 +464,7 @@ class RfactorPlayer:
         self.player_file = RfactorLocation.player_json
         self.controller_file = RfactorLocation.controller_json
         self.ini_file = RfactorLocation.dx_config
+        self.ini_vr_file = RfactorLocation.dx_vr_config
         self.version_file = RfactorLocation.version_txt
 
     def _check_bin_dir(self) -> bool:

@@ -21,6 +21,7 @@ BASE_PATH = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__ + 
 RFACTOR_PLAYER = 'UserData/player/player.JSON'
 RFACTOR_CONTROLLER = 'UserData/player/Controller.JSON'
 RFACTOR_DXCONFIG = 'UserData/Config_DX11.ini'
+RFACTOR_DXVRCONFIG = 'UserData/Config_DX11_VR.ini'
 RFACTOR_VERSION_TXT = 'Core/Version.txt'
 RFACTOR_SETUPS = 'UserData/player/Settings'
 RFACTOR_LOG = 'UserData/Log'

@@ -98,7 +98,7 @@ class AppSettings(JsonRepr):
     @staticmethod
     def create_backup(rf: RfactorPlayer):
         result = False
-        files = (rf.player_file, rf.controller_file, rf.ini_file)
+        files = (rf.player_file, rf.controller_file, rf.ini_file, rf.ini_vr_file)
         has_permission_error = False
 
         for org in files:
@@ -132,7 +132,7 @@ class AppSettings(JsonRepr):
     @staticmethod
     def restore_backup(rf: RfactorPlayer):
         result = False
-        files = (rf.player_file, rf.controller_file, rf.ini_file)
+        files = (rf.player_file, rf.controller_file, rf.ini_file, rf.ini_vr_file)
         has_permission_error = False
 
         for org in files:
