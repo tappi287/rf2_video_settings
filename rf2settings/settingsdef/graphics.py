@@ -278,6 +278,15 @@ resolution_video_settings = {
     'VideoRefresh': {'name': 'Refresh Rate', 'value': None, 'hidden': True,
                      'settings': ({'value': 1, 'name': '60Hz'},)
                      },
+    'VideoResW': {'name': 'Resolution Width', 'value': None, 'hidden': True,
+                  'settings': ({'value': 1920, 'name': 'FullHD'},)
+                  },
+    'VideoResH': {'name': 'Resolution Height', 'value': None, 'hidden': True,
+                  'settings': ({'value': 1080, 'name': 'FullHD'},)
+                  },
+    'VideoRefreshRate': {'name': 'Video Refresh Rate', 'value': None, 'hidden': True,
+                         'settings': ({'value': 144, 'name': '144Hz'},)
+                         },
 }
 reshade_settings = {
     'use_reshade': {'name': 'Use VRToolkit+ReShade', 'value': False,
