@@ -60,13 +60,12 @@ If you'd like to contribute to development, these steps may help you to get up a
 
 
  - make sure you have a Python 3.10.x interpreter on your system [python.org/downloads](https://www.python.org/downloads/)
- - install pipenv `python -m pip install pipenv`
- - create python virtual env `pipenv install --dev`
+ - install poetry `https://install.python-poetry.org`
+ - create python virtual env `poetry install`
 
 #### Usage
- - in the project root dir *rf2_video_settings* switch into the Python virtual env by `pipenv shell`
- - start the app with `python.exe app.py`
- - build an executable/installer with `python.exe build.py`
+ - in the project root dir *rf2_video_settings* switch run the Python virtual env by `poetry run python app.py`
+ - build an executable/installer with `poetry run python build.py`
 
   ##### Dev Requirements
  - Python 3.10.x
