@@ -1,6 +1,5 @@
 import logging
 import os
-import platform
 import sys
 import webbrowser
 from pathlib import Path
