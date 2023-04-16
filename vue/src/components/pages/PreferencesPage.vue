@@ -36,7 +36,7 @@
 
       <b-card-text class="mt-3">
         Choose what you would like to see on your dashboard. There is no need to disable the Image Slideshow for
-        performance reasons. It will stop once rF2 is running.
+        performance reasons. It will stop once rF2 is running. App restart required.
       </b-card-text>
 
     </b-card>
