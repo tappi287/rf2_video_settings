@@ -12,7 +12,7 @@ python = ">=3.8,<3.12"
 eel = "^0.16"
 bottle = {file = "./local_pkgs/bottle-0.13.dev0.tar.gz"}
 appdirs = "^1.4.4"
-pygame = "^2.1.2"
+pygame = "^2.5.0"
 python-a2s = "^1.3.0"
 psutil = "^5.9.3"
 google-api-python-client = "^2.65.0"

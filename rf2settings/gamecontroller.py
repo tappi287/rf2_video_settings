@@ -8,7 +8,8 @@ import gevent.timeout
 
 from .app.app_main import CLOSE_EVENT
 from .app_settings import AppSettings
-from .utils import create_js_pygame_event_dict, create_js_joystick_device_list, capture_app_exceptions, AppExceptionHook
+from .utils import create_js_pygame_event_dict, create_js_joystick_device_list, capture_app_exceptions
+from .utils import get_pygame_joy_dict
 
 try:
     import pygame
@@ -89,12 +90,8 @@ def controller_greenlet(event_callback: callable = _set_event_result):
 
     # -- Get an initial set of Joystick devices
     #    +we have to keep a reference to the Joystick objects or we will not receive events
-    if pygame.joystick.get_init():
-        for j_id in range(pygame.joystick.get_count()):
-            j = pygame.joystick.Joystick(j_id)
-            j.init()
-            logging.info('Found PyGame Joystick device %s: %s %s', j_id, j.get_name(), j.get_instance_id())
-            ControllerEvents.joysticks[j.get_instance_id()] = j
+    ControllerEvents.joysticks = get_pygame_joy_dict()
+    if ControllerEvents.joysticks:
         ControllerEvents.add_removed_event.set()
 
     event_loop_active = True

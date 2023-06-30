@@ -281,14 +281,23 @@ def create_js_pygame_event_dict(joy_dict: dict, joy_event) -> dict:
             'hat': hat, 'axis': axis, 'value': value, 'type': joy_event.type}
 
 
+def get_pygame_joy_dict():
+    joy_dict = dict()
+    if pygame.joystick.get_init():
+        for j_id in range(pygame.joystick.get_count()):
+            j = pygame.joystick.Joystick(j_id)
+            j.init()
+            joy_dict[j.get_instance_id()] = j
+
+    return joy_dict
+
+
 def create_js_joystick_device_list(device_dict: dict, joy_dict: dict = None) -> list:
     js_list = list()
 
     # -- Update from App Settings device dict
     if not joy_dict:
-        for guid, device in device_dict.items():
-            js_list.append(device)
-        return js_list
+        joy_dict = get_pygame_joy_dict()
 
     # -- Update from PyGame data
     for guid, device in device_dict.items():
