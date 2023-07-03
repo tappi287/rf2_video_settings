@@ -49,6 +49,32 @@ def get_server_favourites():
 
 
 @capture_app_exceptions
+def get_custom_server():
+    return json.dumps(AppSettings.custom_servers)
+
+
+@capture_app_exceptions
+def custom_server(server_info, add: bool = True):
+    if not server_info.get('id'):
+        return json.dumps({'result': False})
+
+    # -- Add custom
+    if add:
+        logging.debug('Adding custom Server = %s %s', server_info.get('id'), add)
+        AppSettings.custom_servers[server_info.get('id')] = server_info
+        AppSettings.save()
+        return json.dumps({'result': True, 'data': AppSettings.custom_servers})
+
+    # -- Remove custom
+    if server_info.get('id') in AppSettings.custom_servers:
+        logging.debug('Removing custom Server = %s %s', server_info.get('id'), add)
+        AppSettings.custom_servers.pop(server_info.get('id'))
+        AppSettings.save()
+
+    return json.dumps({'result': True, 'data': AppSettings.custom_servers})
+
+
+@capture_app_exceptions
 def server_favourite(server_info, add: bool = True):
     if not server_info.get('id'):
         return json.dumps({'result': False})
