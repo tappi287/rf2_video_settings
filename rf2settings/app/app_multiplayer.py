@@ -34,5 +34,15 @@ def get_server_favourites():
 
 
 @eel.expose
+def get_custom_server():
+    return app_multiplayer_fn.get_custom_server()
+
+
+@eel.expose
+def custom_server(server_info, add: bool = True):
+    return app_multiplayer_fn.custom_server(server_info, add)
+
+
+@eel.expose
 def server_favourite(server_info, add: bool = True):
     return app_multiplayer_fn.server_favourite(server_info, add)

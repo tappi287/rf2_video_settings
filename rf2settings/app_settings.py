@@ -27,6 +27,7 @@ class AppSettings(JsonRepr):
     user_presets_dir = str()
     deleted_defaults = list()  # Default Presets the user deleted
     server_favourites = list()
+    custom_servers = dict()
     server_browser: dict = {'filter_fav': False, 'filter_empty': False, 'filter_pwd': False, 'filter_version': False,
                             'filter_text': '', 'store_pwd': False}
     benchmark_settings = dict()
