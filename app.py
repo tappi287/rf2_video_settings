@@ -79,12 +79,17 @@ def start_eel(npm_serve=True):
         eel.init('web')
 
     # TODO: fetch OSError port in use
-    try:
-        eel.start(page, host=host, port=port, block=False, close_callback=close_callback)
-    except EnvironmentError:
-        start_url = f'http://{host}:{url_port}'
-        edge_cmd = f"{os.path.expandvars('%PROGRAMFILES(x86)%')}\\Microsoft\\Edge\\Application\\msedge.exe"
+    edge_cmd = f"{os.path.expandvars('%PROGRAMFILES(x86)%')}\\Microsoft\\Edge\\Application\\msedge.exe"
+    start_url = f'http://{host}:{url_port}'
 
+    try:
+        app_module_prefs = getattr(AppSettings, 'app_preferences', dict()).get('appModules', list())
+        if Path(edge_cmd).exists() and 'edge_preferred' in app_module_prefs:
+            eel.start(page, mode='custom', host=host, port=port, block=False,
+                      cmdline_args=[edge_cmd, '--profile-directory=Default', f'--app={start_url}'])
+        else:
+            eel.start(page, host=host, port=port, block=False, close_callback=close_callback)
+    except EnvironmentError:
         # If Chrome isn't found, fallback to Microsoft Chromium Edge
         if Path(edge_cmd).exists():
             logging.info('Falling back to Edge Browser')

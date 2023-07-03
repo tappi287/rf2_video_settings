@@ -23,7 +23,9 @@
       <b-checkbox-group :options="appOptions" v-model="appModules" @change="save" />
 
       <b-card-text class="mt-3">
-        Weather to play audio feedback when using rf2-headlights or certain actions within the app.
+        Weather to play audio feedback when using rf2-headlights or certain actions within the app.<br />
+        You can prefer the Windows builtin Chromium Edge browser over Google Chrome to render this app.
+        Changes apply after an app restart.
       </b-card-text>
     </b-card>
 
@@ -61,7 +63,8 @@ export default {
       ],
       appModules: ['audio'],
       appOptions: [
-        {text: 'Enable Audio', value: 'audio'}
+        {text: 'Enable Audio', value: 'audio'},
+        {text: 'Prefer Edge Browser', value: 'edge_preferred'}
       ]
     }
   },
