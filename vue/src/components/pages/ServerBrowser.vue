@@ -58,203 +58,223 @@
     </b-progress>
 
     <!-- Server List -->
-    <div v-if="onlyFav" class="text-center bg-dark text-muted  low-round-top table-blocks">
-      <b-icon icon="star-fill"/>
-      <span class="ml-2 title">Favourites</span>
-      <b-link class="ml-2" @click="$bvModal.show(addModalId)">
-        <b-icon icon="plus"></b-icon>
-        Add custom server
-      </b-link>
-    </div>
-    <b-table :items="computedServerList" :fields="serverFields" table-variant="dark" :busy="isBusy" show-empty
-             primary-key="id" class="server-list"
-             :thead-class="onlyFav ? 'hidden' : 'text-white'"
-             small :striped="!onlyFav" borderless>
-      <!-- Name -->
-      <template v-slot:cell(server_name)="server">
-        <b-link @click="toggleServerDetails(server)" class="text-light">
-          <b-icon :icon="server.detailsShowing ? 'caret-down-fill': 'caret-right-fill'" variant="secondary">
-          </b-icon>
-          <span class="ml-1">{{ server.item.server_name }}</span>
-        </b-link>
+    <b-card class="mt-2 setting-card no-border" header-class="m-0 p-2 text-center"
+            :body-class="onlyFav ? 'p-0' : 'pl-0 pr-0 pt-0'" bg-variant="dark" text-variant="white">
+      <template #header v-if="onlyFav">
+        <div class="d-flex justify-content-between">
+          <div class="p-0 m-0">
+            <!-- Fake styling Buttons -->
+            <b-button size="sm" disabled style="opacity: 0;">
+              <b-icon icon="plus"></b-icon>
+            </b-button>
+            <b-button size="sm" disabled style="opacity: 0;">
+              <b-icon icon="arrow-clockwise"></b-icon>
+            </b-button>
+          </div>
+          <div class="p-0 m-0">
+            <b-icon icon="star-fill"/>
+            <span class="ml-2 title">Favourites</span>
+          </div>
+          <div class="p-0 m-0">
+            <b-button size="sm" @click="$bvModal.show(addModalId)" class="rounded-0 low-round" variant="rf-blue">
+              <b-icon icon="plus"></b-icon>
+            </b-button>
+            <b-button size="sm" @click="refreshServerList()" class="rounded-0 low-round" variant="rf-blue">
+              <b-icon icon="arrow-clockwise"></b-icon>
+            </b-button>
+          </div>
+        </div>
       </template>
-
-      <!-- Pwd -->
-      <template v-slot:cell(password_protected)="server">
-        <template v-if="server.item.password_protected">
-          <b-icon icon="key-fill" variant="danger"></b-icon>
+      <b-table :items="computedServerList" :fields="serverFields" table-variant="dark" :busy="isBusy" show-empty
+               primary-key="id" class="server-list bg-dark"
+               :thead-class="onlyFav ? 'hidden' : 'text-white'"
+               small :striped="!onlyFav" borderless>
+        <!-- Name -->
+        <template v-slot:cell(server_name)="server">
+          <b-link @click="toggleServerDetails(server)" class="text-light">
+            <b-icon :icon="server.detailsShowing ? 'caret-down-fill': 'caret-right-fill'" variant="secondary">
+            </b-icon>
+            <span class="ml-1">{{ server.item.server_name }}</span>
+          </b-link>
         </template>
-      </template>
 
-      <!-- Players -->
-      <template v-slot:cell(player_count)="server">
+        <!-- Pwd -->
+        <template v-slot:cell(password_protected)="server">
+          <template v-if="server.item.password_protected">
+            <b-icon icon="key-fill" variant="danger"></b-icon>
+          </template>
+        </template>
+
+        <!-- Players -->
+        <template v-slot:cell(player_count)="server">
         <span :class="server.item.player_count > 0 ? '' : 'text-muted'">
           {{ server.item.player_count }} / {{ server.item.max_players }}
           <template v-if="server.item.bot_count > 0">[{{ server.item.bot_count }} AI]</template>
         </span>
-      </template>
+        </template>
 
-      <!-- Version -->
-      <template v-slot:cell(version)="server">
+        <!-- Version -->
+        <template v-slot:cell(version)="server">
         <span :class="compareVersion(server.item.version) ? 'text-success' : 'muted'">
           {{ server.item.version.slice(1, 5) }}
         </span>
-      </template>
+        </template>
 
-      <!-- Fav -->
-      <template v-if="!onlyFav" v-slot:cell(actions)="server">
-        <b-link @click="toggleServerFavourite(server.item)">
-          <b-icon shift-v="1" variant="warning" :icon="isServerFav(server.item) ? 'star-fill' : 'star'"></b-icon>
-        </b-link>
-      </template>
+        <!-- Fav -->
+        <template v-if="!onlyFav" v-slot:cell(actions)="server">
+          <b-link @click="toggleServerFavourite(server.item)">
+            <b-icon shift-v="1" variant="warning" :icon="isServerFav(server.item) ? 'star-fill' : 'star'"></b-icon>
+          </b-link>
+        </template>
 
-      <!-- Details -->
-      <template #row-details="server">
-        <b-card :title="server.item.server_name" :sub-title="server.item.id"
-                bg-variant="dark" text-variant="white" class="text-left m-1">
+        <!-- Details -->
+        <template #row-details="server">
+          <b-card :title="server.item.server_name" :sub-title="server.item.id"
+                  bg-variant="dark" text-variant="white" class="text-left m-1">
 
-          <b-card-text>{{ server.item.map_name }}</b-card-text>
+            <b-card-text>{{ server.item.map_name }}</b-card-text>
 
-          <!-- Player Info -->
-          <div class="d-flex flex-wrap mt-3">
-            <template v-if="server.item.player_count > 0">
-              <div class="d-inline-flex mr-2 mb-2 p-1 pr-2 bg-light text-dark rounded"
-                   v-for="name in server.item.players" :key="name">
-                <b-icon shift-v="-4" class="align-baseline" icon="person-fill"></b-icon>
-                <span class="ml-1">{{ name }}</span>
-              </div>
-            </template>
-            <template v-else>
-              <div>
-                <b-icon shift-v="-1" icon="emoji-dizzy"></b-icon>
-                <span class="ml-2">Server is empty</span></div>
-            </template>
-          </div>
-
-          <!-- Bot info -->
-          <template v-if="server.item.bot_count > 0">
+            <!-- Player Info -->
             <div class="d-flex flex-wrap mt-3">
-              <div>
-                <b-icon shift-v="-1" icon="emoji-neutral"></b-icon>
-                <span class="ml-2">{{ server.item.bot_count }} Bots on this server</span>
-              </div>
-            </div>
-          </template>
-
-          <!-- Server info -->
-          <div class="d-flex flex-wrap mt-3 text-muted">
-            <div class="d-inline-flex mr-3 mb-2">
-              <div>
-                <div class="float-sm-left"><b>Platform</b></div>
-                <div style="clear: both;"><i>{{ server.item.platform === 'w' ? 'Windows' : 'Linux' }}</i></div>
-              </div>
-            </div>
-            <div class="d-inline-flex mr-3 mb-2">
-              <div>
-                <div class="float-sm-left"><b>Game Port</b></div>
-                <div style="clear: both;"><i>{{ server.item.port }}</i></div>
-              </div>
-            </div>
-            <div class="d-inline-flex mr-3 mb-2">
-              <div>
-                <div class="float-sm-left"><b>Password</b></div>
-                <div style="clear: both;">
-                  <b-icon :icon="server.item.password_protected ? 'key-fill' : 'x'"
-                          :variant="server.item.password_protected ? 'danger' : 'secondary'"></b-icon>
+              <template v-if="server.item.player_count > 0">
+                <div class="d-inline-flex mr-2 mb-2 p-1 pr-2 bg-light text-dark rounded"
+                     v-for="name in server.item.players" :key="name">
+                  <b-icon shift-v="-4" class="align-baseline" icon="person-fill"></b-icon>
+                  <span class="ml-1">{{ name }}</span>
                 </div>
-              </div>
-            </div>
-            <div class="d-inline-flex mr-3 mb-2">
-              <div>
-                <div class="float-sm-left"><b>Max Players</b></div>
-                <div style="clear: both;"><i>{{ server.item.max_players }}</i></div>
-              </div>
-            </div>
-            <div class="d-inline-flex mr-3 mb-2">
-              <div>
-                <div class="float-sm-left"><b>Steam ID</b></div>
-                <div style="clear: both;"><i>{{ server.item.steam_id }}</i></div>
-              </div>
-            </div>
-            <div class="d-inline-flex mr-3 mb-2">
-              <div>
-                <div class="float-sm-left"><b>Stored Password</b></div>
-                <div style="clear: both;">
-                  <b-icon variant="secondary"
-                          :icon="server.item.password !== '' ? 'check-square-fill': 'x-square-fill'"/>
-                  <template v-if="server.item.password">
-                    <b-link @click="showPwdToggle = !showPwdToggle" class="ml-2">
-                      <b-icon variant="warning" :icon="showPwdToggle ? 'eye-slash-fill' : 'eye-fill'"/>
-                    </b-link>
-                    <template v-if="showPwdToggle">
-                      <span class="ml-2">{{ server.item.password }}</span>
-                    </template>
-                  </template>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
-            <b-button-group>
-              <template v-if="serverCustoms.indexOf(server.item.id) !== -1">
-                <b-button class="mr-2" variant="danger" size="sm"
-                          @click="addCustomServer(false, server.item)">
-                  Remove Custom Server
-                </b-button>
-              </template>
-              <b-button @click="refreshServer(server.item)" class="mr-2" variant="rf-secondary" size="sm">
-                <b-icon shift-v="-1" icon="arrow-clockwise"></b-icon>
-                <span class="ml-1 mr-1">Refresh Server Data</span>
-              </b-button>
-              <template v-if="server.item.password_protected">
-                <b-button @click="joinPswdProtectedRfactor(server.item)"
-                          variant="rf-blue-light" size="sm">
-                  <b-icon variant="light" icon="play"></b-icon>
-                  <span class="ml-1 mr-1">Join Server</span>
-                </b-button>
               </template>
               <template v-else>
-                <LaunchRfactorBtn @make-toast="makeToast" btn-size="sm"
-                                  @launch="joinServerLaunched" :server="server.item" text="Join Server"/>
+                <div>
+                  <b-icon shift-v="-1" icon="emoji-dizzy"></b-icon>
+                  <span class="ml-2">Server is empty</span></div>
               </template>
-            </b-button-group>
-          </div>
-        </b-card>
-      </template>
+            </div>
 
-      <!-- No Server Data -->
-      <template #empty>
-        <div class="text-center">
-          <template v-if="isBusy">
-            <b-spinner></b-spinner>
-            <p>Acquiring server data...</p>
-          </template>
-          <template v-if="onlyFav">
-            <template v-if="serverFavs.length === 0">
-              <p>No favourite servers added yet. Use the Server Browser to add some favourites to the app.</p>
+            <!-- Bot info -->
+            <template v-if="server.item.bot_count > 0">
+              <div class="d-flex flex-wrap mt-3">
+                <div>
+                  <b-icon shift-v="-1" icon="emoji-neutral"></b-icon>
+                  <span class="ml-2">{{ server.item.bot_count }} Bots on this server</span>
+                </div>
+              </div>
             </template>
-            <template v-else-if="serverFavs.length !== 0 && serverListData.length === 0">
-              <p>No favourite servers online</p>
+
+            <!-- Server info -->
+            <div class="d-flex flex-wrap mt-3 text-muted">
+              <div class="d-inline-flex mr-3 mb-2">
+                <div>
+                  <div class="float-sm-left"><b>Platform</b></div>
+                  <div style="clear: both;"><i>{{ server.item.platform === 'w' ? 'Windows' : 'Linux' }}</i></div>
+                </div>
+              </div>
+              <div class="d-inline-flex mr-3 mb-2">
+                <div>
+                  <div class="float-sm-left"><b>Game Port</b></div>
+                  <div style="clear: both;"><i>{{ server.item.port }}</i></div>
+                </div>
+              </div>
+              <div class="d-inline-flex mr-3 mb-2">
+                <div>
+                  <div class="float-sm-left"><b>Password</b></div>
+                  <div style="clear: both;">
+                    <b-icon :icon="server.item.password_protected ? 'key-fill' : 'x'"
+                            :variant="server.item.password_protected ? 'danger' : 'secondary'"></b-icon>
+                  </div>
+                </div>
+              </div>
+              <div class="d-inline-flex mr-3 mb-2">
+                <div>
+                  <div class="float-sm-left"><b>Max Players</b></div>
+                  <div style="clear: both;"><i>{{ server.item.max_players }}</i></div>
+                </div>
+              </div>
+              <div class="d-inline-flex mr-3 mb-2">
+                <div>
+                  <div class="float-sm-left"><b>Steam ID</b></div>
+                  <div style="clear: both;"><i>{{ server.item.steam_id }}</i></div>
+                </div>
+              </div>
+              <div class="d-inline-flex mr-3 mb-2">
+                <div>
+                  <div class="float-sm-left"><b>Stored Password</b></div>
+                  <div style="clear: both;">
+                    <b-icon variant="secondary"
+                            :icon="server.item.password !== '' ? 'check-square-fill': 'x-square-fill'"/>
+                    <template v-if="server.item.password">
+                      <b-link @click="showPwdToggle = !showPwdToggle" class="ml-2">
+                        <b-icon variant="warning" :icon="showPwdToggle ? 'eye-slash-fill' : 'eye-fill'"/>
+                      </b-link>
+                      <template v-if="showPwdToggle">
+                        <span class="ml-2">{{ server.item.password }}</span>
+                      </template>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
+              <b-button-group>
+                <template v-if="serverCustoms.indexOf(server.item.id) !== -1">
+                  <b-button class="mr-2" variant="danger" size="sm"
+                            @click="addCustomServer(false, server.item)">
+                    Remove Custom Server
+                  </b-button>
+                </template>
+                <b-button @click="refreshServer(server.item)" class="mr-2" variant="rf-secondary" size="sm">
+                  <b-icon shift-v="-1" icon="arrow-clockwise"></b-icon>
+                  <span class="ml-1 mr-1">Refresh Server Data</span>
+                </b-button>
+                <template v-if="server.item.password_protected">
+                  <b-button @click="joinPswdProtectedRfactor(server.item)"
+                            variant="rf-blue-light" size="sm">
+                    <b-icon variant="light" icon="play"></b-icon>
+                    <span class="ml-1 mr-1">Join Server</span>
+                  </b-button>
+                </template>
+                <template v-else>
+                  <LaunchRfactorBtn @make-toast="makeToast" btn-size="sm"
+                                    @launch="joinServerLaunched" :server="server.item" text="Join Server"/>
+                </template>
+              </b-button-group>
+            </div>
+          </b-card>
+        </template>
+
+        <!-- No Server Data -->
+        <template #empty>
+          <div class="text-center">
+            <template v-if="isBusy">
+              <b-spinner></b-spinner>
+              <p>Acquiring server data...</p>
             </template>
-            <template v-else>
-              <p>The master server is unavailable or could not access internet connection.</p>
+            <template v-if="onlyFav">
+              <template v-if="serverFavs.length === 0">
+                <p>No favourite servers added yet. Use the Server Browser to add some favourites to the app.</p>
+              </template>
+              <template v-else-if="serverFavs.length !== 0 && serverListData.length === 0">
+                <p>No favourite servers online</p>
+              </template>
+              <template v-else>
+                <p>The master server is unavailable or could not access internet connection.</p>
+              </template>
             </template>
-          </template>
-          <template v-if="!onlyFav">
-            <template v-if="serverListData.length === 0">
-              <h5>No server data</h5>
-              <p>The master server is unavailable or could not access internet connection.</p>
+            <template v-if="!onlyFav">
+              <template v-if="serverListData.length === 0">
+                <h5>No server data</h5>
+                <p>The master server is unavailable or could not access internet connection.</p>
+              </template>
+              <template v-else-if="serverListData.length > 0">
+                <h6>No filtering results!</h6>
+                <p>Try to reduce filtering options to see some Servers.</p>
+              </template>
             </template>
-            <template v-else-if="serverListData.length > 0">
-              <h6>No filtering results!</h6>
-              <p>Try to reduce filtering options to see some Servers.</p>
-            </template>
-          </template>
-        </div>
-      </template>
-    </b-table>
+          </div>
+        </template>
+      </b-table>
+    </b-card>
     <div class="bg-dark rounded-bottom low-round-bottom table-blocks mt-0"></div>
 
     <!-- Join password protected Server -->
@@ -293,14 +313,17 @@
     </b-modal>
 
     <!-- Add Custom Server Modal -->
-    <b-modal :id="addModalId" centered>
+    <b-modal :id="addModalId" centered hide-footer>
       <template #modal-title>
         <b-icon icon="play-fill" variant="primary"></b-icon>
         <span class="ml-1">Add Custom Server</span>
       </template>
 
       <div class="d-block">
-        <p>Store a custom server that is not publicly listed.</p>
+        <p>Store a custom server that is not publicly listed or not reported to the Steam Master Server in
+          your region.</p>
+        <p>Your custom server will be stored as a favourite.</p>
+        <p><i>Note that you can not store multiple entries with the same IP:Port</i></p>
       </div>
 
       <b-form @submit.prevent="addCustomServer(true)">
@@ -314,7 +337,7 @@
         <b-form-group label="Address" label-cols="2">
           <b-form-input placeholder="xxx.xxx.xxx.xxx [IP address]" type="text" required
                         v-model="customServerIp"></b-form-input>
-          <b-form-input placeholder="12345 [Port]" class="mt-3" type="text" v-model="customServerPort" required />
+          <b-form-input placeholder="12345 [Port]" class="mt-3" type="text" v-model="customServerPort" required/>
           <b-input-group-append class="mt-3">
             <b-button type="submit" variant="success" block>
               <!-- :disabled="!customServerDataValid()" -->
@@ -323,12 +346,6 @@
           </b-input-group-append>
         </b-form-group>
       </b-form>
-
-      <template #modal-footer="{ cancel }">
-        <div class="d-block text-right">
-          <b-button variant="secondary" @click="cancel()">Cancel</b-button>
-        </div>
-      </template>
     </b-modal>
   </div>
 </template>
@@ -599,7 +616,7 @@ export default {
       }
 
       if (update_data === undefined || update_data === null || update_data.result === false) {
-        this.makeToast('Error acquiring server info.' + update_data.msg,
+        this.makeToast('Error acquiring server info for ' + server.id + ' ' + update_data.msg,
             'danger', 'Server Browser')
         return
       }
