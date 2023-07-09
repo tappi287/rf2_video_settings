@@ -38,22 +38,11 @@
             request administrative privileges on start up:
             <b-button class="mt-2 mb-2" @click="resetAdmin" size="sm">Reset UAC</b-button>
           </b-card-text>
-          <b-card-text class="mt-3 mb-3">
-            <h5>rFactor 2 Location</h5>
-            If you have trouble locating the correct rFactor 2 installation path, enter it manually here and restart the app.
-            <b-form-group class="mt-2" :state="rfOverwriteLocationValid"
-                          :valid-feedback="'rF2 install detected! ' + rfactorPath"
-                          :invalid-feedback="'Could not detect valid rF2 install ' + rfactorPath">
-              <b-input-group>
-                <b-form-input v-model="rfOverwriteLocation" :state="rfOverwriteLocationValid"
-                              :placeholder="rfactorLocationPlaceholder">
-                </b-form-input>
-                <b-input-group-append>
-                  <b-button variant="warning" @click="rfOverwriteLocation=''">Reset</b-button>
-                </b-input-group-append>
-              </b-input-group>
-            </b-form-group>
-          </b-card-text>
+
+          <!-- Overwrite rF Location -->
+          <h5>rFactor 2 Location</h5>
+          <RfLocation class="mt-3 mb-3" />
+
           <template #footer>
             <span class="small">
               Please make sure that a rFactor 2 Steam installation is present on your machine and that you have at least
@@ -90,6 +79,7 @@
 import './assets/app.scss'
 import MainPage from "./components/MainPage.vue";
 import AppUpdater from "@/components/Updater";
+import RfLocation from "@/components/RfLocation.vue";
 import {createPopperLite as createPopper, flip, preventOverflow} from "@popperjs/core";
 import {getEelJsonObject} from "@/main";
 // --- </ Prepare receiving App Exceptions
@@ -127,9 +117,7 @@ export default {
       dragActive: false,
       error: '',
       rfactorVersion: '',
-      rfactorPath: '',
-      rfOverwriteLocation: null,
-      rfOverwriteLocationValid: null,
+      rfactorPath: ''
     }
   },
   methods: {
@@ -172,10 +160,6 @@ export default {
         console.log('App found rF version:', this.rfactorVersion)
       }
     },
-    getRfLocationValid: async function () {
-      let r = await getEelJsonObject(window.eel.rf_is_valid()())
-      if (r !== undefined) { this.rfOverwriteLocationValid = r }
-    },
     setException: function (event) {
       this.setError(event.detail)
     },
@@ -212,16 +196,8 @@ export default {
   },
   components: {
     AppUpdater,
-    MainPage
-  },
-  watch: {
-    rfOverwriteLocation: async function (newValue) {
-      let r = await getEelJsonObject(window.eel.overwrite_rf_location(newValue)())
-      if (r !== undefined) {
-        await this.getRfVersion()  // Update rF location
-        await this.getRfLocationValid()  // Update rf install valid state
-      }
-    },
+    MainPage,
+    RfLocation
   },
   mounted() {
     // Setup the dnd listeners.
@@ -242,12 +218,6 @@ export default {
     await this.getRfVersion()
 
     this.$eventHub.$on('play-audio', this.playAudio)
-  },
-  computed: {
-    rfactorLocationPlaceholder: function () {
-      if (this.rfactorPath !== '') { return 'Auto detected: ' + this.rfactorPath }
-      return 'Path eg. D:\\Steam\\steamapps\\common\\rFactor 2\\'
-    }
   },
   beforeDestroy() {
     window.removeEventListener('rfactor-live-event', this.$refs.main.updateRfactorLiveState)

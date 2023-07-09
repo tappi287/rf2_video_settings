@@ -84,9 +84,13 @@ def uninstall_plugin():
 
 @capture_app_exceptions
 def get_plugin_version():
-    plugin_path = Path(_get_rf_location(RFACTOR_PLUGIN_PATH)) / CHAT_PLUGIN_NAME
+    try:
+        plugin_path = Path(_get_rf_location(RFACTOR_PLUGIN_PATH)) / CHAT_PLUGIN_NAME
+    except Exception as e:
+        logging.error(f'Error location Plugin: {e}')
+        plugin_path = None
 
-    if plugin_path.exists() and plugin_path.is_file():
+    if plugin_path and plugin_path.exists() and plugin_path.is_file():
         version = AppSettings.chat_plugin_version.get(get_file_hash(plugin_path))
         logging.debug('Found ChatTransceiver Plugin version: %s', version)
         return json.dumps({'result': True, 'version': version})
