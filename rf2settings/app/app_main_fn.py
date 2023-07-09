@@ -27,16 +27,25 @@ def _get_rf_location(sub_path):
 
 @capture_app_exceptions
 def overwrite_rf_location(value):
-    result = False
+    def reset_location():
+        AppSettings.rf_overwrite_location = ''
+        RfactorLocation.overwrite_location(None)
+
     if Path(value).exists() and Path(value).is_dir() and Path(value) != Path('.'):
         AppSettings.rf_overwrite_location = Path(value).as_posix()
         RfactorLocation.overwrite_location(AppSettings.rf_overwrite_location)
-        logging.warning('Overwriting rf2 location: %s', Path(value).as_posix())
-        result = True
+        RfactorLocation.get_location()
+        if not RfactorLocation.is_valid:
+            logging.warning(f'Invalid overwrite location: {value}. Resetting rF2 location.')
+            reset_location()
+            result = False
+        else:
+            logging.warning('Overwriting rf2 location: %s', Path(value).as_posix())
+            result = True
     else:
+        reset_location()
         logging.warning('Overwriting rf2 location cleared!')
-        AppSettings.rf_overwrite_location = ''
-        RfactorLocation.overwrite_location(None)
+        result = True
 
     AppSettings.save()
     return result
@@ -112,7 +121,7 @@ def run_steamvr():
         subprocess.Popen(cmd)
     except Exception as e:
         return json.dumps({'result': False, 'msg': f'Error launching SteamVR: {e}'})
-    return json.dumps({'result': True, 'msg': f'Launched SteamVR'})
+    return json.dumps({'result': True, 'msg': 'Launched SteamVR'})
 
 
 @capture_app_exceptions

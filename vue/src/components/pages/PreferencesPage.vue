@@ -29,7 +29,7 @@
       </b-card-text>
     </b-card>
 
-    <b-card class="setting-card" bg-variant="dark" text-variant="white" footer-class="pt-0">
+    <b-card class="setting-card mb-2" bg-variant="dark" text-variant="white" footer-class="pt-0">
       <template #header>
         <h6 class="mb-0 text-center"><span class="title">Dashboard</span></h6>
       </template>
@@ -42,16 +42,23 @@
       </b-card-text>
 
     </b-card>
+
+    <b-card class="setting-card" bg-variant="dark" text-variant="white">
+      <template #header>
+        <h6 class="mb-0 text-center"><span class="title">rFactor 2 Location</span></h6>
+      </template>
+      <RfLocation />
+    </b-card>
   </div>
 </template>
 
 <script>
 import {getEelJsonObject} from "@/main";
+import RfLocation from "@/components/RfLocation.vue";
 
 export default {
   name: "PreferencesPage",
-  components: {},
-
+  components: {RfLocation},
   props: {visible: Boolean},
   data: function () {
     return {
