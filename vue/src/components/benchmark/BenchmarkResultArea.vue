@@ -125,7 +125,12 @@ export default {
             data: {},
             backgroundColor: 'rgba(255,153,0,0.4)',
             borderColor: 'rgba(250,124,86,0.8)'
-          }
+          },
+          { label: 'GPU Frame time',
+            data: {},
+            backgroundColor: 'rgba(62,166,138,0.4)',
+            borderColor: 'rgba(90,196,139,0.8)'
+          },
         ]
       },
     }
@@ -183,6 +188,7 @@ export default {
         r.data['fps98'] = fps98; r.data['fps99'] = fps99; r.data['fps002'] = fps002
         r.data['fpsmean'] = fpsmean; r.data['fpsmedian'] = fpsmedian
         r.data['msBetweenPresents'] = []
+        r.data['msGPUActive'] = []
         r.data['fps'] = []
         r.gfxPreset = undefined; r.sesPreset = undefined
       })
@@ -213,6 +219,7 @@ export default {
       this.chartData.xAxisSize = 50
       this.chartData.datasets[0].data = []  // Frame times
       this.chartData.datasets[1].data = []  // FPS
+      this.chartData.datasets[2].data = []  // GPU Frame times
 
       for (let i = 0; i < r.data['TimeInSeconds'].length; i++) {
         // X-Axis Time in s
@@ -223,6 +230,11 @@ export default {
         // Y-Axis Frame Times
         this.chartData.datasets[0].data.push(r.data['msBetweenPresents'][i])
         this.chartData.datasets[1].data.push(r.data['fps'][i])
+        if (r.data['msGPUActive'] !== undefined) {
+          this.chartData.datasets[2].data.push(r.data['msGPUActive'][i])
+        } else {
+          this.chartData.datasets[2].data.push(0)
+        }
 
         // Set Y-Axis size
         this.chartData.yAxisSize = Number(

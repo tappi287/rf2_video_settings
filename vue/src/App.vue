@@ -137,8 +137,7 @@ export default {
 
       let files = evt.dataTransfer.files
 
-      for (let i = 0; i < files.length; i++) {
-        let f = files[i]
+      for (const f of files) {
         if (f.type !== 'application/json') {
           this.MainPage.methods.makeToast(
               'The dropped file is of the wrong type.', 'danger', 'File Import')

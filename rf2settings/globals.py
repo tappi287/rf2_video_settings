@@ -93,7 +93,7 @@ def get_presets_dir() -> Path:
 
 def get_present_mon_bin() -> Path:
     bin_dir = Path(get_current_modules_dir()) / 'bin'
-    present_mon_exe = bin_dir / 'PresentMon-1.7.0-x64.exe'
+    present_mon_exe = bin_dir / 'PresentMon-1.9.2-x64.exe'
 
     for f in bin_dir.glob('PresentMon*.exe'):
         if f:
