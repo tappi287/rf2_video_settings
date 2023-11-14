@@ -39,7 +39,7 @@ def read_results(file: Path, details: bool = False):
 
 def read_present_mon_result(file: Path, details: bool = False):
     required_fields = {'msUntilDisplayed', 'QPCTime', 'msUntilRenderComplete', 'msBetweenDisplayChange',
-                       'Dropped', 'msInPresentAPI', 'TimeInSeconds', 'msBetweenPresents'}
+                       'Dropped', 'msInPresentAPI', 'TimeInSeconds', 'msBetweenPresents', 'msGPUActive'}
     non_detail_fields = {'msBetweenPresents', }
 
     data = dict()

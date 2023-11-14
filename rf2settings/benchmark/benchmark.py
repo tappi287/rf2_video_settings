@@ -300,7 +300,7 @@ class RfactorBenchmark:
         cmd = [AppSettings.present_mon_bin.as_posix(),
                '-process_name', 'rFactor2.exe', '-output_file', str(WindowsPath(self.result_file)),
                '-timed', str(int(self.benchmark_length)), '-no_top', '-qpc_time',
-               '-terminate_after_timed', '-stop_existing_session']  # '-no_track_display'
+               '-terminate_after_timed', '-stop_existing_session', '--track_gpu']  # '-no_track_display'
         cwd = self.rf.location
 
         if self.present_mon_process is None:
