@@ -7,7 +7,6 @@ from pathlib import Path
 from open_vr_mod.util.utils import get_file_hash
 from rf2settings.app.app_main_fn import _get_rf_location
 from rf2settings.app_settings import AppSettings
-from rf2settings.chat import youtube
 from rf2settings.globals import get_data_dir, CHAT_PLUGIN_NAME, RFACTOR_PLUGIN_PATH
 from rf2settings.rf2events import RfactorYouTubeEvent, RfactorYouTubeSetUsernameEvent
 from rf2settings.utils import capture_app_exceptions
@@ -46,7 +45,6 @@ def post_chat_message(message):
         return
 
     decoded_message = decode_message(message)
-    logging.debug('Posting chat message: %s', decoded_message)
 
     # open shared memory
     try:
@@ -58,6 +56,7 @@ def post_chat_message(message):
 
     # make sure message does not exceed message size
     mem_bytes = f'{destination}{decoded_message[:128]}'.encode('cp1252')
+    logging.info(f'Posting Chat Message: {destination}{decoded_message[:128]}')
 
     # write to shared memory
     shm.buf[:len(mem_bytes)] = mem_bytes
