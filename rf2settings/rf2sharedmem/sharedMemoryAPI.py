@@ -95,11 +95,11 @@ class SimInfoAPI(rF2data.SimInfo):
         for pid in psutil.pids():
             try:
                 p = psutil.Process(pid)
+                if p.name().lower().startswith('rfactor2.exe'):
+                    self.rf2_pid = pid
+                    break
             except psutil.NoSuchProcess:
                 continue
-            if p.name().lower().startswith('rfactor2.exe'):
-                self.rf2_pid = pid
-                break
 
     def __playersDriverNum(self):
         """ Find the player's driver number """
