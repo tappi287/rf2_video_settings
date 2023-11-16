@@ -10,6 +10,7 @@ import winreg
 
 
 VERSION = get_version()
+# TODO: write version to vue package.json
 EXTERNAL_APP_DIRS = []
 
 SPEC_FILE = "app.spec"
