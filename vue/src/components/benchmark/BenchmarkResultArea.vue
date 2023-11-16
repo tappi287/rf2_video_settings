@@ -32,7 +32,7 @@
       <b-card class="mt-2 setting-card" bg-variant="dark" text-variant="white" footer-class="d-none"
               v-if="currentResult.settings !== undefined">
         <div class="setting mr-3 mb-3 input-group-text info-field fixed-width-name"
-             v-for="(idx, s) in currentResult.settings" :key="idx">
+             v-for="(s, idx) in currentResult.settings" :key="idx">
           {{ s.name }}: {{ s.value }}
         </div>
       </b-card>
