@@ -1,7 +1,7 @@
 import os
 import logging
 import sys
-import json
+import tomllib
 from pathlib import Path
 from typing import Union
 
@@ -145,22 +145,13 @@ def get_fpsvr_dir() -> Path:
 
 
 def get_version() -> str:
-    f = Path('.') / 'vue' / 'package.json'
-    if f.is_file():
-        try:
-            with open(f.as_posix(), 'r') as f:
-                pkg = json.load(f)
-                return pkg.get('version')
-        except Exception as e:
-            print('Duh!', e)
-
-    f = Path('.') / 'version.txt'
+    p = Path(get_current_modules_dir()) / 'pyproject.toml'
     try:
-        with open(f.as_posix(), 'r') as f:
-            version = f.read()
-            return version
+        with open(p, 'rb') as f:
+            pyproj = tomllib.load(f)
+            return pyproj.get('tool', {}).get('poetry', {}).get('version', '0.0.0')
     except Exception as e:
-        print('Duh!', e)
+        logging.error(f'Error reading Version: {e}')
 
     return '0.0.0'
 
