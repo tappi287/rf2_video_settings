@@ -35,7 +35,7 @@ def delete_egg_info():
 def main():
     delete_egg_info()
 
-    proc = Popen(['python', 'setup.py', 'sdist'], cwd=Path('.'))
+    proc = Popen(['python', 'setup.py', 'sdist'], cwd=Path('..'))
     exitcode = proc.wait()
 
     if exitcode != 0:
@@ -48,7 +48,7 @@ def main():
     print('\nPackage updated and uploaded.\n\n')
 
     print('Creating bdist wheel')
-    proc = Popen(['python', 'setup.py', 'bdist_wheel'], cwd=Path('.'))
+    proc = Popen(['python', 'setup.py', 'bdist_wheel'], cwd=Path('..'))
     exitcode = proc.wait()
 
     if exitcode != 0:
