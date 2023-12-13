@@ -11,13 +11,15 @@ from rf2settings.app import expose_app_methods
 from rf2settings.app.app_main import CLOSE_EVENT, close_callback, restore_backup
 from rf2settings.app_settings import AppSettings
 from rf2settings.gamecontroller import controller_greenlet, controller_event_loop
-from rf2settings.globals import FROZEN
+from rf2settings.globals import FROZEN, get_current_modules_dir
 from rf2settings.headlights import headlights_greenlet
 from rf2settings.log import setup_logging
 from rf2settings.rf2greenlet import rfactor_greenlet, rfactor_event_loop
 from rf2settings.chat.ytgreenlet import youtube_eventloop, youtube_greenlet
 from rf2settings.runasadmin import run_as_admin
 from rf2settings.utils import AppExceptionHook
+
+os.chdir(get_current_modules_dir())
 
 # -- Make sure eel methods are exposed at start-up
 expose_app_methods()
@@ -102,6 +104,12 @@ def start_eel(npm_serve=True):
     if AppSettings.needs_admin and not run_as_admin():
         return
 
+    if FROZEN:
+        import pyi_splash
+        if pyi_splash.is_alive():
+            #                       App launching..
+            pyi_splash.update_text("Browser Start..")
+
     host = 'localhost'
     page = 'index.html'
     port = 8123
@@ -110,11 +118,11 @@ def start_eel(npm_serve=True):
         # Dev env with npm run serve
         page = {'port': 8080}
         url_port = page.get('port')
-        eel.init('vue/src')
+        eel.init(Path(get_current_modules_dir()).joinpath('vue/src').as_posix())
     else:
         # Frozen or npm run build
         url_port = port
-        eel.init('web')
+        eel.init(Path(get_current_modules_dir()).joinpath('web').as_posix())
 
     edge_cmd = f"{os.path.expandvars('%PROGRAMFILES(x86)%')}\\Microsoft\\Edge\\Application\\msedge.exe"
     start_url = f'http://{host}:{url_port}'
@@ -138,6 +146,11 @@ def start_eel(npm_serve=True):
             eel.start(page, mode=None, app_mode=False, host=host, port=port, block=False)
             # Open system default web browser
             webbrowser.open_new(start_url)
+
+    if FROZEN:
+        import pyi_splash
+        if pyi_splash.is_alive():
+            pyi_splash.close()
 
     _main_app_loop()
 
