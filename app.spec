@@ -25,7 +25,7 @@ icon_file = './vue/src/assets/app_icon.ico'
 a = Analysis(['scripts\\app.py'],
              pathex=[],
              binaries=[],
-             datas=[(eel_js, 'eel'), ('web', 'web'), ('rf2settings/default_presets', 'default_presets'),
+             datas=[(eel_js, 'eel'), ('web', 'web'), ('src/rf2settings/default_presets', 'default_presets'),
                     ('build/version.txt', '.'), ('license.txt', '.'), ('data', 'data'),
                     ('bin/PresentMon-1.9.2-x64.exe', 'bin'), ],
              hiddenimports=['bottle_websocket', 'ssl', '_ssl'],

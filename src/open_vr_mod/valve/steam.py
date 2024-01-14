@@ -17,7 +17,7 @@ STEAM_APPS_INSTALL_FOLDER = 'common'
 
 
 class SteamApps:
-    STEAM_LOCATION = Path('.')
+    STEAM_LOCATION = Path('')
 
     def __init__(self):
         self.steam_apps, self.known_apps = dict(), dict()

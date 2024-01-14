@@ -1,13 +1,15 @@
+import os
 from pathlib import Path
 from typing import Union
 
 from subprocess import Popen
-from rf2settings.globals import UPDATE_INSTALL_FILE, UPDATE_VERSION_FILE, get_version
+from rf2settings.globals import UPDATE_INSTALL_FILE, UPDATE_VERSION_FILE, get_version, get_current_modules_dir
 from distutils.dir_util import copy_tree
 
 import shutil
 import winreg
 
+os.chdir(get_current_modules_dir())
 
 VERSION = get_version()
 # TODO: write version to vue package.json
@@ -19,8 +21,8 @@ ISS_VER_LINE = '#define MyAppVersion'
 ISS_SETUP_EXE_FILE = UPDATE_INSTALL_FILE.format(version=VERSION)
 PORTABLE_ZIP_NAME = f'{UPDATE_INSTALL_FILE.format(version=VERSION)}_portable'
 
-BUILD_DIR = "build"
-DIST_DIR = "dist"
+BUILD_DIR = "../build"
+DIST_DIR = "../dist"
 DIST_EXE_DIR = "rF2-Settings-Widget"
 
 REMOTE_DIR = '/rf2settingswidget'

@@ -8,7 +8,7 @@ from rf2settings.preset.preset_base import PRESET_TYPES
 from rf2settings.preset.settings_model import BenchmarkSettings
 from rf2settings.benchmark.benchmark_utils import BenchmarkRun, BenchmarkQueue
 from rf2settings.benchmark.result import read_results, read_preset_result, read_result_settings
-from rf2settings.benchmark.fpsvr import FpsVR
+from src.rf2settings.benchmark.fpsvr import FpsVR
 from rf2settings.rf2events import StartBenchmarkEvent
 from rf2settings.utils import capture_app_exceptions
 
