@@ -31,7 +31,7 @@ def overwrite_rf_location(value):
         AppSettings.rf_overwrite_location = ''
         RfactorLocation.overwrite_location(None)
 
-    if Path(value).exists() and Path(value).is_dir() and Path(value) != Path('.'):
+    if Path(value).exists() and Path(value).is_dir() and Path(value) != Path(''):
         AppSettings.rf_overwrite_location = Path(value).as_posix()
         RfactorLocation.overwrite_location(AppSettings.rf_overwrite_location)
         RfactorLocation.get_location()

@@ -4,11 +4,11 @@ version = "1.5.3"
 description = ""
 authors = ["Stefan Tapper <tapper.stefan@gmail.com>"]
 readme = "README.md"
-packages = [{include = "rf_video_settings"}]
+packages = [{include = "rf2settings", from = "src"}]
 
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
+python = ">=3.11,<3.12"
 eel = "^0.16"
 bottle = {file = "./local_pkgs/bottle-0.13.dev0.tar.gz"}
 appdirs = "^1.4.4"

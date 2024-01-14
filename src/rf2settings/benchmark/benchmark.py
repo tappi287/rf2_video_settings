@@ -16,7 +16,7 @@ from rf2settings.preset.presets_dir import get_user_presets_dir
 from rf2settings.preset.settings_model import BenchmarkControllerJsonSettings, VideoSettings
 from rf2settings.process import RunProcess
 from rf2settings.benchmark.benchmark_utils import create_benchmark_commands, BenchmarkRun, BenchmarkQueue
-from rf2settings.benchmark.fpsvr import FpsVR
+from src.rf2settings.benchmark.fpsvr import FpsVR
 from rf2settings.rf2connect import RfactorConnect, RfactorState
 from rf2settings.rf2events import StartBenchmarkEvent, RecordBenchmarkEvent, RfactorQuitEvent
 from rf2settings.rf2events import RfactorStatusEvent, BenchmarkProgressEvent

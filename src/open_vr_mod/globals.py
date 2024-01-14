@@ -156,7 +156,7 @@ def get_log_file() -> Path:
 
 
 def get_version() -> str:
-    f = Path('.') / 'package.json'
+    f = Path('') / 'package.json'
     if f.is_file():
         try:
             with open(f.as_posix(), 'r') as f:
@@ -165,7 +165,7 @@ def get_version() -> str:
         except Exception as e:
             print('Duh!', e)
 
-    f = Path('.') / 'version.txt'
+    f = Path('') / 'version.txt'
     try:
         with open(f.as_posix(), 'r') as f:
             version = f.read()
