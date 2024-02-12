@@ -91,6 +91,8 @@
     <PresetHandler ref="ses" @make-toast="makeToast" @error="setError" id-ref="ses" ignore-deviations
                    :preset-type="3" @set-busy="setBusy" />
 
+    <DirectoryTree />
+
     <!-- Dashboard -->
     <keep-alive>
       <DashBoard ref="dash" :gfx-handler="$refs.gfx" :prefs="$refs.preferences" v-if="navActive === 0 && gfxReady"
@@ -280,6 +282,7 @@ import ChatPage from "@/components/pages/ChatPage";
 import ControllerDeviceList from "@/components/ControllerDeviceList";
 import RfactorOverlay from "@/components/RfactorOverlay";
 import PreferencesPage from "@/components/pages/PreferencesPage";
+import DirectoryTree from "@/components/files/DirectoryTree.vue";
 
 export default {
   name: 'MainPage',
@@ -463,6 +466,7 @@ export default {
     this.$eventHub.$off('navigate', this.navigate)
   },
   components: {
+    DirectoryTree,
     PreferencesPage,
     RfactorOverlay,
     ControllerDeviceList,
