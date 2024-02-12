@@ -1,5 +1,5 @@
 from . import app_content, app_controller, app_main, app_presets, app_rfconnect, app_multiplayer, \
-    app_dashboard, app_graphics, app_headlights, app_benchmark, app_chat
+    app_dashboard, app_graphics, app_headlights, app_benchmark, app_chat, app_fileop
 
 
 def expose_app_methods():
@@ -14,3 +14,4 @@ def expose_app_methods():
     app_headlights.expose_headlights_methods()
     app_benchmark.expose_benchmark_methods()
     app_chat.expose_chat_methods()
+    app_fileop.expose()
