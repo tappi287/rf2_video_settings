@@ -1,72 +1,111 @@
 import json
-
-from typing import Union, List, Iterator
-
+import logging
+import string
+import uuid
+from ctypes import windll
 from pathlib import Path
+from typing import Union, List
 
 import eel
-import string
-from ctypes import windll
 
 
 def expose():
-    """ empty method we import to have the exposed methods registered """
+    """ Method required for eel to "see" this method """
     pass
 
 
-class TreeNode:
-    def __init__(self, base_path: Path, read_children=False):
-        self.path = base_path.as_posix()
-        self.name = base_path.name
-        self.expanded = False
-        self.read_children = read_children
-
-        if read_children:
-            self.children: List[TreeNode] = self.get_children()
-        else:
-            self.children: List[TreeNode] = list()
-
-    def get_children(self):
-        return list(get_sub_directories(self.path, self.read_children))
-
-    def serialize_children(self) -> List[dict]:
-        return [t.serialize() for t in self.children]
-
-    def serialize(self) -> dict:
-        return {'path': self.path, 'name': self.name, 'children': self.serialize_children()}
-
-
-def get_drives():
-    drives = []
+def get_windows_drive_letters():
+    drives = list()
     bitmask = windll.kernel32.GetLogicalDrives()
     for letter in string.ascii_uppercase:
         if bitmask & 1:
-            drives.append(letter)
+            drives.append(str(letter))
         bitmask >>= 1
     return drives
 
 
-def get_root_directories(current_dir=None) -> Iterator[TreeNode]:
-    drives = get_drives()
+class FileSystemNode:
+    # Directories starting with this string will be excluded
+    EXCLUDES = ("$", ".", "System Volume Information")
 
-    for drive_letter in drives:
-        p = Path(f'{drive_letter}:\\')
-        yield TreeNode(p, read_children=True)
+    def __init__(self, path: Union[str, Path]):
+        self.path = Path(path)
+        self.id = str(uuid.uuid4())
 
+    def children(self) -> List['FileSystemNode']:
+        return [FileSystemNode(c) for c in self.path.iterdir() if not c.name.startswith(self.EXCLUDES)]
 
-def get_sub_directories(directory: Union[Path, str], read_children=False) -> Iterator[TreeNode]:
-    for sub_path in Path(directory).iterdir():
-        if sub_path.is_dir():
-            yield TreeNode(sub_path, read_children)
+    def children_to_dict(self, recursive=False) -> List[dict]:
+        """ Return the first children/subdirectories with or without recurring further into subdirectories """
+        return [c.to_dict(no_recurse=not recursive) for c in self.children()]
+
+    def to_dict(self, no_recurse=False):
+        """ Convert this node to an JSON serializable dict """
+        child_data = list() if no_recurse else sorted(self.children_to_dict(), key=lambda c: not c['is_dir'])
+
+        return {
+            'path': self.path.as_posix(),
+            'name': self.path.name or self.path.drive,
+            'id': self.id,
+            'children': child_data,
+            'is_dir': self.path.is_dir(),
+            'documents': [c for c in child_data if not c["is_dir"]]
+        }
+
+    def __repr__(self):
+        return json.dumps(self.to_dict(), indent=2)
 
 
 @eel.expose
-def list_dirs(current_dir: str):
-    if not current_dir:
-        get_method = get_root_directories
-    else:
-        get_method = get_sub_directories
+def list_directory(base_path: str):
+    # -- Check for valid path
+    if not base_path:
+        return json.dumps({'result': False, 'msg': 'No directory provided: {}'.format(base_path)})
 
-    tree_nodes = [t.serialize() for t in get_method(current_dir)]
+    try:
+        base_path = Path(base_path)
+        if not base_path.exists() or not base_path.is_dir():
+            return json.dumps({'result': False, 'msg': 'Not a directory: {}'.format(base_path)})
+    except Exception as e:
+        logging.error('Error reading provided base path: {}'.format(e))
+        return json.dumps({'result': False, 'msg': 'Error reading provided base path: {}'.format(e)})
 
-    return json.dumps({'result': True, 'nodes': tree_nodes})
+    try:
+        data = FileSystemNode(base_path).to_dict()
+    except Exception as e:
+        logging.error('Error reading path: {}'.format(e))
+        return json.dumps({'result': False, 'msg': 'Error reading path: {}'.format(e)})
+
+    # -- Return base path as directory node including 1st level child paths
+    return json.dumps(
+        {
+            'result': True,
+            'data': data
+        }
+    )
+
+
+@eel.expose
+def list_root_directories():
+    try:
+        drives = get_windows_drive_letters()
+    except Exception as e:
+        logging.error('Trying to list system drives failed: {}'.format(e))
+        return json.dumps({'result': False, 'msg': 'Trying to list system drives failed: {}'.format(e)})
+
+    try:
+        directories = list()
+        for drive_letter in drives:
+            p = Path(f'{drive_letter}:\\')
+            if p.is_dir():
+                directories.append(FileSystemNode(p).to_dict())
+    except Exception as e:
+        logging.error('Error accessing path: {}'.format(e))
+        return json.dumps({'result': False, 'msg': 'Error accessing path: {}'.format(e)})
+
+    return json.dumps(
+        {
+            'result': True,
+            'data': directories
+        }
+    )
