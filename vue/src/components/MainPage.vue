@@ -60,7 +60,9 @@
         <b-nav-item id="vr-nav" right @click="launchSteamVr" v-b-popover.auto.hover="'Launch SteamVR'">
           <div class="vr-nav-container">
             <div class="vr-nav-font"><b>VR</b></div>
-            <div class="vr-nav-icon"><b-icon icon="square-fill"></b-icon></div>
+            <div class="vr-nav-icon">
+              <b-icon icon="square-fill"></b-icon>
+            </div>
           </div>
         </b-nav-item>
         <b-nav-item id="preferences-nav" right :active="navActive === 12" @click="navActive=12">
@@ -77,21 +79,19 @@
 
     <!-- Graphics Preset Handler -->
     <PresetHandler ref="gfx" @make-toast="makeToast" @error="setError" id-ref="gfx"
-                   :preset-type="0" @presets-ready="setDashGfxHandler" @set-busy="setBusy" />
+                   :preset-type="0" @presets-ready="setDashGfxHandler" @set-busy="setBusy"/>
 
     <!-- Game Settings Handler -->
     <PresetHandler ref="gen" @make-toast="makeToast" @error="setError" id-ref="gen"
-                   :preset-type="1" @set-busy="setBusy" />
-    
+                   :preset-type="1" @set-busy="setBusy"/>
+
     <!-- Controls Settings Handler -->
     <PresetHandler ref="con" @make-toast="makeToast" @error="setError" id-ref="con"
-                   :preset-type="2" @set-busy="setBusy" />
-    
+                   :preset-type="2" @set-busy="setBusy"/>
+
     <!-- Session Settings Handler -->
     <PresetHandler ref="ses" @make-toast="makeToast" @error="setError" id-ref="ses" ignore-deviations
-                   :preset-type="3" @set-busy="setBusy" />
-
-    <DirectoryTree />
+                   :preset-type="3" @set-busy="setBusy"/>
 
     <!-- Dashboard -->
     <keep-alive>
@@ -102,13 +102,13 @@
     </keep-alive>
 
     <!-- Graphic Settings-->
-    <template  v-if="navActive === 1">
+    <template v-if="navActive === 1">
       <b-overlay :show="$refs.gfx.isBusy" variant="dark" rounded>
         <GraphicsPresetArea id-ref="gfx" fixed-width
                             @make-toast="makeToast"
                             @set-busy="setBusy"
                             :gfx-handler="$refs.gfx"
-                            :search="search" />
+                            :search="search"/>
       </b-overlay>
     </template>
 
@@ -119,17 +119,18 @@
                             @make-toast="makeToast"
                             @set-busy="setBusy"
                             :con-handler="$refs.con"
-                            :search="search" />
+                            :search="search"/>
       </b-overlay>
     </template>
     <template v-if="this.preferences">
       <keep-alive>
-        <ControllerDeviceList :visible="navActive === 2 || (navActive === 0 && this.$refs.preferences.dashboardModules.indexOf('cont') !== -1)"/>
+        <ControllerDeviceList
+            :visible="navActive === 2 || (navActive === 0 && this.$refs.preferences.dashboardModules.indexOf('cont') !== -1)"/>
       </keep-alive>
     </template>
 
     <!-- Generic Settings-->
-    <template  v-if="navActive === 3">
+    <template v-if="navActive === 3">
       <b-overlay :show="$refs.gen.isBusy" variant="dark" rounded>
         <PresetUi ref="genUi" id-ref="gen" display-name="Settings"
                   :presets="$refs.gen.presets"
@@ -146,7 +147,7 @@
                   @update-setting="$refs.gen.updateSetting"
                   @update-desc="$refs.gen.updateDesc"
                   @update-view-mode="$refs.gen.viewMode=$event"
-                  @make-toast="makeToast" />
+                  @make-toast="makeToast"/>
 
         <div>
           <div v-for="(genPreset, idx) in $refs.gen.presets" :key="genPreset.name">
@@ -171,9 +172,12 @@
       </b-overlay>
     </template>
 
+    <!-- File Explorer -->
+    <LocalFileExplorer show-options class="text-black"/>
+
     <!-- Headlights -->
     <rf2Headlights ref="headlights" v-if="navActive === 4"
-                @make-toast="makeToast" />
+                   @make-toast="makeToast"/>
 
     <!-- Replays -->
     <ReplayArea ref="replays" v-if="navActive === 5" @make-toast="makeToast" @set-busy="setBusy"
@@ -182,20 +186,20 @@
     <!-- Server Browser -->
     <keep-alive>
       <ServerBrowser ref="serverBrowser" v-if="navActive === 6" @launch="stopSlideShow"
-               @make-toast="makeToast" @set-busy="setBusy" :rfactor-version="rfactorVersion"
-               @fav-updated="refreshDashFavs = true"/>
+                     @make-toast="makeToast" @set-busy="setBusy" :rfactor-version="rfactorVersion"
+                     @fav-updated="refreshDashFavs = true"/>
     </keep-alive>
 
     <!-- ChatPage -->
     <keep-alive>
-      <ChatPage :visible="navActive === 11" :live="live" @make-toast="makeToast" @set-busy="setBusy" />
+      <ChatPage :visible="navActive === 11" :live="live" @make-toast="makeToast" @set-busy="setBusy"/>
     </keep-alive>
 
     <!-- Wiki -->
-    <AppWiki v-if="navActive === 7" @nav="navigate" />
+    <AppWiki v-if="navActive === 7" @nav="navigate"/>
 
     <!-- Log -->
-    <AppLog v-if="navActive === 8" @nav="navigate" />
+    <AppLog v-if="navActive === 8" @nav="navigate"/>
 
     <!-- Benchmark -->
     <template v-if="navActive === 9">
@@ -212,7 +216,7 @@
 
     <!-- App Preferences -->
     <keep-alive>
-      <PreferencesPage :visible="navActive === 12" ref="preferences" />
+      <PreferencesPage :visible="navActive === 12" ref="preferences"/>
     </keep-alive>
 
     <!-- rFactor Actions -->
@@ -224,7 +228,8 @@
                             @show-content="navActive = 10"/>
         </b-col>
         <b-col class="text-right p-0">
-          <b-button size="sm" variant="rf-secondary" class="ml-2" v-b-popover.auto.hover="'Open rF2 vehicle setups folder'"
+          <b-button size="sm" variant="rf-secondary" class="ml-2"
+                    v-b-popover.auto.hover="'Open rF2 vehicle setups folder'"
                     @click="openSetupFolder">
             <b-icon icon="folder"></b-icon>
           </b-button>
@@ -234,14 +239,14 @@
           </b-button>
           <b-button size="sm" class="ml-2" variant="rf-secondary" id="restore-btn"
                     v-b-popover.auto.hover="'Restore your original settings'">
-              <b-icon icon="arrow-counterclockwise"></b-icon>
+            <b-icon icon="arrow-counterclockwise"></b-icon>
           </b-button>
         </b-col>
       </b-row>
     </b-container>
 
     <RfactorOverlay v-if="showRfOverlay" :live="live" :rf2-status="rf2Status"
-                    :quit-busy="quitBusy" @quit-rfactor="quitRfactor" />
+                    :quit-busy="quitBusy" @quit-rfactor="quitRfactor"/>
 
     <!-- Restore Popover -->
     <b-popover target="restore-btn" triggers="click">
@@ -282,7 +287,7 @@ import ChatPage from "@/components/pages/ChatPage";
 import ControllerDeviceList from "@/components/ControllerDeviceList";
 import RfactorOverlay from "@/components/RfactorOverlay";
 import PreferencesPage from "@/components/pages/PreferencesPage";
-import DirectoryTree from "@/components/files/DirectoryTree.vue";
+import LocalFileExplorer from "@/components/files/LocalFileExplorer.vue";
 
 export default {
   name: 'MainPage',
@@ -303,7 +308,7 @@ export default {
       preferences: undefined,
     }
   },
-  props: { rfactorVersion: String },
+  props: {rfactorVersion: String},
   methods: {
     makeToast(message, category = 'secondary', title = 'Update', append = true, delay = 8000, noAutoHide = false) {
       this.$bvToast.toast(message, {
@@ -316,28 +321,40 @@ export default {
       })
       this.$eventHub.$emit('play-audio', 'audioSelect')
     },
-    navigate(target=0) {
+    navigate(target = 0) {
       // Hack to re-draw if requested
       if (target === -1) {
         const currentNav = this.navActive
         this.navActive = 0
-        this.$nextTick(() => { this.navigate(currentNav) })
+        this.$nextTick(() => {
+          this.navigate(currentNav)
+        })
         return
       }
       this.navActive = target
     },
     updateRfactorLiveState: function (event) {
       this.live = event.detail
-      if (this.live) { this.stopSlideShow(); this.wasLive = true }
-      if (!this.live && this.wasLive) { this.wasLive = false; this.returnedFromLive() }
+      if (this.live) {
+        this.stopSlideShow();
+        this.wasLive = true
+      }
+      if (!this.live && this.wasLive) {
+        this.wasLive = false;
+        this.returnedFromLive()
+      }
       this.setBusy(this.live)
     },
     updateRfactorStatus: function (event) {
       let status = ''
-      if (event.detail !== undefined) { status = event.detail }
+      if (event.detail !== undefined) {
+        status = event.detail
+      }
       this.rf2Status = status
     },
-    setBusy: function (busy) { this.isBusy = busy},
+    setBusy: function (busy) {
+      this.isBusy = busy
+    },
     quitRfactor: async function () {
       this.quitBusy = true
       const r = await getEelJsonObject(window.eel.quit_rfactor()())
@@ -352,10 +369,12 @@ export default {
     setDashGfxHandler: function () {
       this.gfxReady = true
       this.$nextTick(() => {
-        if (this.$refs.dash !== undefined) { this.$refs.dash.gfxPresetsReady = true }
+        if (this.$refs.dash !== undefined) {
+          this.$refs.dash.gfxPresetsReady = true
+        }
       })
     },
-    _refreshPresets: async function() {
+    _refreshPresets: async function () {
       this.setBusy(true)
 
       // Restore pre-replay Preset
@@ -363,11 +382,21 @@ export default {
       await sleep(200)
 
       // Refresh settings
-      if (this.$refs.gfx !== undefined) { await this.$refs.gfx.getPresets() }
-      if (this.$refs.con !== undefined) { await this.$refs.con.getPresets() }
-      if (this.$refs.gen !== undefined) { await this.$refs.gen.getPresets() }
-      if (this.$refs.ses !== undefined) { await this.$refs.ses.getPresets() }
-      if (this.$refs.Benchmark !== undefined) { await this.$refs.Benchmark.refresh() }
+      if (this.$refs.gfx !== undefined) {
+        await this.$refs.gfx.getPresets()
+      }
+      if (this.$refs.con !== undefined) {
+        await this.$refs.con.getPresets()
+      }
+      if (this.$refs.gen !== undefined) {
+        await this.$refs.gen.getPresets()
+      }
+      if (this.$refs.ses !== undefined) {
+        await this.$refs.ses.getPresets()
+      }
+      if (this.$refs.Benchmark !== undefined) {
+        await this.$refs.Benchmark.refresh()
+      }
 
       this.setBusy(false)
     },
@@ -413,12 +442,16 @@ export default {
       }
       console.log(importPreset.preset_type)
     },
-    setError: async function (error) { this.$emit('error', error) },
-    rfactorLaunched: async function() {
-      await this.stopSlideShow()
-      if (this.$refs.ses !== undefined) { await this.$refs.ses.update() }
+    setError: async function (error) {
+      this.$emit('error', error)
     },
-    launchSteamVr: async function() {
+    rfactorLaunched: async function () {
+      await this.stopSlideShow()
+      if (this.$refs.ses !== undefined) {
+        await this.$refs.ses.update()
+      }
+    },
+    launchSteamVr: async function () {
       let r = await getEelJsonObject(window.eel.run_steamvr()())
       if (r !== undefined && r.result) {
         this.makeToast(r.msg, 'success', 'SteamVR Launch')
@@ -426,11 +459,17 @@ export default {
         this.makeToast(r.msg, 'danger', 'SteamVR Launch')
       }
     },
-    stopSlideShow: async function() {
-      if (this.$refs.dash !== undefined) { await this.$refs.dash.$refs.slider.stop() }
+    stopSlideShow: async function () {
+      if (this.$refs.dash !== undefined) {
+        await this.$refs.dash.$refs.slider.stop()
+      }
     },
-    openSetupFolder: async function () { await window.eel.open_setup_folder()() },
-    runModMgr: async function () { await window.eel.run_mod_mgr()() },
+    openSetupFolder: async function () {
+      await window.eel.open_setup_folder()()
+    },
+    runModMgr: async function () {
+      await window.eel.run_mod_mgr()()
+    },
     restoreSettings: async function () {
       const r = await getEelJsonObject(window.eel.restore_backup()())
       if (r.result) {
@@ -440,7 +479,9 @@ export default {
         await this.$refs.gen.getPresets()
         await this.$refs.ses.getPresets()
       }
-      if (!r.result) { this.makeToast(r.msg, 'danger', 'Re-Store Original Settings') }
+      if (!r.result) {
+        this.makeToast(r.msg, 'danger', 'Re-Store Original Settings')
+      }
       this.$root.$emit('bv::hide::popover', 'restore-btn')
     },
   },
@@ -466,7 +507,7 @@ export default {
     this.$eventHub.$off('navigate', this.navigate)
   },
   components: {
-    DirectoryTree,
+    LocalFileExplorer,
     PreferencesPage,
     RfactorOverlay,
     ControllerDeviceList,
@@ -495,38 +536,90 @@ export default {
   width: 97%;
   margin: 0 auto 0 auto;
 }
-.nav { margin-top: .175rem; }
+
+.nav {
+  margin-top: .175rem;
+}
+
 .vr-nav-container {
-  position: relative; width: 1rem;
+  position: relative;
+  width: 1rem;
 }
+
 .vr-nav-font {
-  position: absolute;color: black; z-index: 2; font-size: 0.875rem; left: 0.115rem; top: 0.185rem;
+  position: absolute;
+  color: black;
+  z-index: 2;
+  font-size: 0.875rem;
+  left: 0.115rem;
+  top: 0.185rem;
 }
+
 .vr-nav-icon {
   position: absolute;
 }
-#vr-nav a { padding-right: 0.275rem; }
-#wiki-nav a { padding-right: 0; }
-#preferences-nav a { padding-right: 0; }
-.gear-icon { color: rgba(0.1, 0.1, 0.1, 0.75); }
+
+#vr-nav a {
+  padding-right: 0.275rem;
+}
+
+#wiki-nav a {
+  padding-right: 0;
+}
+
+#preferences-nav a {
+  padding-right: 0;
+}
+
+.gear-icon {
+  color: rgba(0.1, 0.1, 0.1, 0.75);
+}
+
 .nav-link.active {
   text-decoration: underline;
   text-decoration-skip-ink: auto;
 }
+
 .used {
   color: white;
   text-decoration: underline !important;
   text-decoration-skip-ink: auto !important;
 }
-.search-bar {
-  background: transparent; border: none;
-}
-.search-off { opacity: 0.3; }
 
-.r-icon { transition: opacity .8s; }
-.r-icon-brand { display: inline-block; width: 1.725rem; height: 2.5rem; }
-.r-icon.bottom { position: relative; vertical-align: baseline; }
-.r-icon.bottom.inv { opacity: 0; }
-.r-icon.top { position: absolute; z-index: 2; }
-.r-icon.top.inv { opacity: 0; }
+.search-bar {
+  background: transparent;
+  border: none;
+}
+
+.search-off {
+  opacity: 0.3;
+}
+
+.r-icon {
+  transition: opacity .8s;
+}
+
+.r-icon-brand {
+  display: inline-block;
+  width: 1.725rem;
+  height: 2.5rem;
+}
+
+.r-icon.bottom {
+  position: relative;
+  vertical-align: baseline;
+}
+
+.r-icon.bottom.inv {
+  opacity: 0;
+}
+
+.r-icon.top {
+  position: absolute;
+  z-index: 2;
+}
+
+.r-icon.top.inv {
+  opacity: 0;
+}
 </style>
