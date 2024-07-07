@@ -172,9 +172,6 @@
       </b-overlay>
     </template>
 
-    <!-- File Explorer -->
-    <LocalFileExplorer show-options class="text-black"/>
-
     <!-- Headlights -->
     <rf2Headlights ref="headlights" v-if="navActive === 4"
                    @make-toast="makeToast"/>
@@ -287,7 +284,6 @@ import ChatPage from "@/components/pages/ChatPage";
 import ControllerDeviceList from "@/components/ControllerDeviceList";
 import RfactorOverlay from "@/components/RfactorOverlay";
 import PreferencesPage from "@/components/pages/PreferencesPage";
-import LocalFileExplorer from "@/components/files/LocalFileExplorer.vue";
 
 export default {
   name: 'MainPage',
@@ -507,7 +503,6 @@ export default {
     this.$eventHub.$off('navigate', this.navigate)
   },
   components: {
-    LocalFileExplorer,
     PreferencesPage,
     RfactorOverlay,
     ControllerDeviceList,
