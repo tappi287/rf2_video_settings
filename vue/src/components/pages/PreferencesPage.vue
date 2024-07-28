@@ -68,7 +68,7 @@ export default {
           {text: 'Show Server Favourites', value: 'favs'},
           {text: 'Show Controller Devices', value: 'cont'}
       ],
-      appModules: ['audio'],
+      appModules: ['audio', 'edge_preferred'],
       appOptions: [
         {text: 'Enable Audio', value: 'audio'},
         {text: 'Prefer Edge Browser', value: 'edge_preferred'}
@@ -89,6 +89,8 @@ export default {
         const appPref = r.preferences
         if ('dashboardModules' in appPref) {
           this.dashboardModules = appPref['dashboardModules']
+        }
+        if ('appModules' in appPref) {
           this.appModules = appPref['appModules']
         }
       }
