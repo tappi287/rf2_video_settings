@@ -43,3 +43,6 @@
   background-color: transparent !important;
   background: radial-gradient(circle at 50% 250%, rgba(0,0,0, 0.85) 10%, rgba(0,0,0,0) 30%);
 }
+.vue-flux-container{
+  overflow: hidden;
+}

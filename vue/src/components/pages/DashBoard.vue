@@ -1,23 +1,25 @@
 <template>
   <div v-cloak id="dashboard" class="position-relative mb-3 text-left">
-    <vue-flux class="img-slider" id="img" ref="slider"
-        :captions="vfCaptions"
-        :images="vfImages"
-        :options="vfOptions"
-        :transitions="vfTransitions">
+    <div class="vue-flux-container">
+      <vue-flux class="img-slider" id="img" ref="slider"
+          :captions="vfCaptions"
+          :images="vfImages"
+          :options="vfOptions"
+          :transitions="vfTransitions">
 
-      <template v-slot:preloader>
-        <flux-preloader/>
-      </template>
+        <template v-slot:preloader>
+          <flux-preloader/>
+        </template>
 
-      <template v-slot:caption>
-        <flux-caption v-slot="captionProps" class="img-caption">
-          <b-link :href="captionProps.caption.url" target="_blank" class="text-white int-font title">
-            {{ captionProps.caption.text }}
-          </b-link>
-        </flux-caption>
-      </template>
-    </vue-flux>
+        <template v-slot:caption>
+          <flux-caption v-slot="captionProps" class="img-caption">
+            <b-link :href="captionProps.caption.url" target="_blank" class="text-white int-font title">
+              {{ captionProps.caption.text }}
+            </b-link>
+          </flux-caption>
+        </template>
+      </vue-flux>
+    </div>
     <div id="i-overlay">
       <div id="img-gradient" class="low-round"></div>
 
@@ -144,17 +146,6 @@ export default {
       const maxWidth = getMaxWidth(elements)
       elements.forEach(e => { e.style.width = String(maxWidth) + 'px' })
     },
-    updateImageClip () {
-      setTimeout( () => {
-        const element = document.getElementById('img')
-        if (element !== undefined && element !== null) {
-          element.style.width = ""
-        }
-      }, 0)
-    },
-    updateSliderSize() {
-      this.$refs.slider.resize()
-    },
     updateFavs: async function () {
       this.showServerFavs = this.prefs.dashboardModules.indexOf('favs') !== -1
       if (this.refreshFavs && this.showServerFavs) {
@@ -166,9 +157,7 @@ export default {
     },
   },
   activated() {
-    this.updateSliderSize()
     this.updateFavs()
-    this.updateImageClip()
   },
   async mounted() {
     // Access after rendering finished
@@ -184,7 +173,6 @@ export default {
     setTimeout( () => {
       this.getRemoteScreenShots()
     }, 500)
-    window.onresize = this.updateImageClip
   },
   components: {
     ServerBrowser,
