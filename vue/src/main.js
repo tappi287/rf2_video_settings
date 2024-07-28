@@ -11,14 +11,11 @@ import "@fontsource/inter/200.css"
 import "@fontsource/inter/300.css"
 import "source-sans/source-sans-3.css"
 
-import Axios from "axios"
-
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.config.productionTip = false
 // Vue.config.devtools = true
 
-export const settingsAreaId = 'settings-area'
 export const userScreenShotsUrl = 'https://raw.githubusercontent.com/tappi287/rf2_screenshots/master/data.json'
 
 const eventHub = new Vue()
@@ -67,18 +64,6 @@ export var isValid = (function () {
         return rg1.test(fname) && !rg2.test(fname) && !rg3.test(fname);
     }
 })();
-
-// Generic axios GET request
-export async function getRequest(url) {
-    try {
-        let requestUrl
-        requestUrl = url
-        const response = await Axios.get(requestUrl)
-        return {result: true, data: response.data}
-    } catch (error) {
-        return {result: false, data: error.response.data}
-    }
-}
 
 window.eel.expose(updateProgress, 'server_progress')
 

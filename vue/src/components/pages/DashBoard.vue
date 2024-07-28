@@ -60,7 +60,7 @@ import ServerBrowser from "@/components/pages/ServerBrowser"
 import PresetHandler from "@/components/presets/PresetHandler";
 import PreferencesPage from "@/components/pages/PreferencesPage";
 import { VueFlux, FluxCaption, FluxPreloader } from 'vue-flux';
-import {getEelJsonObject, chooseIndex, userScreenShotsUrl, getMaxWidth, getRequest } from "@/main"
+import {getEelJsonObject, chooseIndex, userScreenShotsUrl, getMaxWidth } from "@/main"
 import rfWPoster from "@/assets/rfW_Poster.webp"
 
 let userScreenShots = []
@@ -116,12 +116,12 @@ export default {
       }
 
       if (slideShowActivated) {
-        const request = await getRequest(userScreenShotsUrl)
-        if (request.result === false) {
-          console.error('Error fetching Screenshots: ' + request.data.result)
+        const request = await fetch(userScreenShotsUrl)
+        if (request.ok === false) {
+          console.error('Error fetching Screenshots: ' + request.status)
           return
         }
-        userScreenShots = request.data
+        userScreenShots = await request.json()
         await this.setupScreenShots()
       } else {
         this.$refs.slider.stop()

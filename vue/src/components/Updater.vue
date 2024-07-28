@@ -17,14 +17,13 @@
       </template>
     </template>
     <template v-else>
-      Updater failed: <pre>{{ error }}</pre>
+      Updater failed:
+      <pre>{{ error }}</pre>
     </template>
   </div>
 </template>
 
 <script>
-import {getRequest} from '@/main'
-
 const GIT_RELEASE_URL = 'https://api.github.com/repos/tappi287/rf2_video_settings/releases/latest'
 
 export default {
@@ -41,27 +40,40 @@ export default {
   methods: {
     checkUpdate: async function () {
       console.log('Checking for App updates...')
-      // Get version and download url
-      const request = await getRequest(GIT_RELEASE_URL)
-      if (request.result === false) { this.error = 'Error: ' + request.data.result }
 
-      // Get version and url from GitHub api data
-      let newVersion = ''
+      // Get version and download url
       try {
-        newVersion = request.data.tag_name
-        this.downloadUrl = request.data.assets[0].browser_download_url
+        const response = await fetch(GIT_RELEASE_URL)
+        const data = await response.json()
+
+        // Get version and url from GitHub api data
+        let newVersion = ''
+        try {
+          newVersion = data.tag_name
+          this.downloadUrl = data.assets[0].browser_download_url
+        } catch (error) {
+          console.log(error)
+          this.error = error
+          return
+        }
+
+        if (process.env.VUE_APP_VERSION >= newVersion) {
+          this.updatedVersion = '';
+          return
+        }
+
+        console.log('Found updated Version', newVersion)
+        this.updatedVersion = newVersion
       } catch (error) {
         console.log(error)
         this.error = error
-        return
       }
-
-      if (process.env.VUE_APP_VERSION >= newVersion) { this.updatedVersion = ''; return }
-      console.log('Found updated Version', newVersion)
-      this.updatedVersion = newVersion
     },
-    downloadUpdate: function () { window.open(this.downloadUrl) },
-    runUpdate: function () { },
+    downloadUpdate: function () {
+      window.open(this.downloadUrl)
+    },
+    runUpdate: function () {
+    },
     /*
     checkUpdate: async function () {
       const r = await getEelJsonObject(window.eel.check_for_updates()())
