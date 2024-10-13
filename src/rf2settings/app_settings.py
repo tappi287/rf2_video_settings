@@ -24,6 +24,7 @@ class AppSettings(JsonRepr):
     # 1128 webui change
     # apiendpoints: http://localhost:5397/swagger/index.html
     last_rf_version = str()
+    last_rf_location = str()
     user_presets_dir = str()
     deleted_defaults = list()  # Default Presets the user deleted
     server_favourites = list()
@@ -264,6 +265,10 @@ class AppSettings(JsonRepr):
     @classmethod
     def _first_load(cls):
         if not cls.first_load_complete:
+            # Remember and re-use last know rF location
+            if cls.last_rf_location and RfactorLocation.path is None:
+                RfactorLocation.set_location(Path(cls.last_rf_location))
+
             # -- Reset Content data if rFactor version changed
             version = RfactorPlayer(only_version=True).version.replace('\n', '')
             logging.debug('Compared last known rF version %s with current version %s', cls.last_rf_version, version)

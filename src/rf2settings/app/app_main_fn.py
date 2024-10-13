@@ -127,6 +127,8 @@ def run_steamvr():
 @capture_app_exceptions
 def get_rf_version():
     rf = RfactorPlayer(only_version=True)
+    AppSettings.last_rf_location = rf.location.as_posix()
+    AppSettings.save()
     return json.dumps({'version': rf.version, 'location': str(rf.location)})
 
 

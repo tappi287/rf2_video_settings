@@ -50,6 +50,40 @@ class RfactorLocation:
             cls.path = None
 
     @classmethod
+    def set_location(cls, path: Path, dev: bool = False):
+        if not path.exists():
+            return
+
+        player_json = path / RFACTOR_PLAYER
+        controller_json = path / RFACTOR_CONTROLLER
+        dx_config = path / RFACTOR_DXCONFIG
+        dx_vr_config = path / RFACTOR_DXVRCONFIG
+        version_txt = path / RFACTOR_VERSION_TXT
+
+        if dev:
+            player_json = path / 'ModDev' / RFACTOR_PLAYER
+            controller_json = path / 'ModDev' / RFACTOR_CONTROLLER
+            dx_config = path / 'ModDev' / RFACTOR_DXCONFIG
+            dx_vr_config = path / 'ModDev' / RFACTOR_DXVRCONFIG
+
+        logging.info(f'Setting rF location: '
+                     f'{path}'
+                     f'{player_json}\n'
+                     f'{controller_json}\n'
+                     f'{dx_config}\n'
+                     f'{dx_vr_config}\n'
+                     f'{version_txt}')
+
+        if player_json.exists() and (dx_config.exists() or dx_vr_config.exists()):
+            cls.is_valid = True
+            cls.path = path
+            cls.player_json = player_json
+            cls.controller_json = controller_json
+            cls.dx_config = dx_config
+            cls.dx_vr_config = dx_vr_config
+            cls.version_txt = version_txt
+
+    @classmethod
     def get_location(cls, dev: Optional[bool] = False):
         # -- Path maybe already set by overwrite location
         if cls.path is None or not cls.path.exists():
@@ -63,35 +97,8 @@ class RfactorLocation:
         else:
             path = cls.path
 
-        if path and path.exists():
-            player_json = path / RFACTOR_PLAYER
-            controller_json = path / RFACTOR_CONTROLLER
-            dx_config = path / RFACTOR_DXCONFIG
-            dx_vr_config = path / RFACTOR_DXVRCONFIG
-            version_txt = path / RFACTOR_VERSION_TXT
-
-            if dev:
-                player_json = path / 'ModDev' / RFACTOR_PLAYER
-                controller_json = path / 'ModDev' / RFACTOR_CONTROLLER
-                dx_config = path / 'ModDev' / RFACTOR_DXCONFIG
-                dx_vr_config = path / 'ModDev' / RFACTOR_DXVRCONFIG
-
-            logging.info(f'Setting rF location: '
-                         f'{path}'
-                         f'{player_json}\n'
-                         f'{controller_json}\n'
-                         f'{dx_config}\n'
-                         f'{dx_vr_config}\n'
-                         f'{version_txt}')
-
-            if player_json.exists() and (dx_config.exists() or dx_vr_config.exists()):
-                cls.is_valid = True
-                cls.path = path
-                cls.player_json = player_json
-                cls.controller_json = controller_json
-                cls.dx_config = dx_config
-                cls.dx_vr_config = dx_vr_config
-                cls.version_txt = version_txt
+        if path:
+            cls.set_location(path, dev)
 
         cls.dev = dev
 
