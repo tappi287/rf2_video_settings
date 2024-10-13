@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Union
 
 from subprocess import Popen
+from rf2settings import eel_mod
 from rf2settings.globals import UPDATE_INSTALL_FILE, UPDATE_VERSION_FILE, get_version, get_current_modules_dir
 from distutils.dir_util import copy_tree
 
@@ -21,8 +22,8 @@ ISS_VER_LINE = '#define MyAppVersion'
 ISS_SETUP_EXE_FILE = UPDATE_INSTALL_FILE.format(version=VERSION)
 PORTABLE_ZIP_NAME = f'{UPDATE_INSTALL_FILE.format(version=VERSION)}_portable'
 
-BUILD_DIR = "../build"
-DIST_DIR = "../dist"
+BUILD_DIR = "build"
+DIST_DIR = "dist"
 DIST_EXE_DIR = "rF2-Settings-Widget"
 
 REMOTE_DIR = '/rf2settingswidget'
@@ -156,6 +157,12 @@ def run_npm_build():
     p.wait()
 
 
+def copy_eel_cache_file():
+    web_dir = Path('web')
+    if web_dir.exists():
+        shutil.copy(eel_mod.eel_cache_js_file(), web_dir / 'js')
+
+
 def run_pyinstaller(spec_file: str):
     args = ['pyinstaller', '--noconfirm', spec_file]
     p = Popen(args=args)
@@ -202,6 +209,7 @@ def main(process: int = 0):
 
     if process in (0, 1, 2):
         run_npm_build()
+        copy_eel_cache_file()
 
         # Build with PyInstaller
         result = run_pyinstaller(SPEC_FILE)
@@ -229,7 +237,7 @@ def main(process: int = 0):
 
         args = [FindInnoSetup.compiler_path().as_posix(), ISS_FILE]
         print('\nRunning Inno Setup console-mode compiler...\n', args)
-        p = Popen(args, cwd=Path(__file__).parent)
+        p = Popen(args, cwd=get_current_modules_dir())
         p.wait()
 
         print('Inno Setup console-mode compiler result: ' + str(p.returncode))
