@@ -80,16 +80,16 @@ def prepare_app_start() -> bool:
 
 def _main_app_loop():
     # -- Game Controller Greenlet
-    cg = eel.spawn(controller_greenlet)
+    cg = gevent.spawn(controller_greenlet)
 
     # -- Headlights Greenlet
-    hg = eel.spawn(headlights_greenlet)
+    hg = gevent.spawn(headlights_greenlet)
 
     # -- rFactor Greenlet
-    rg = eel.spawn(rfactor_greenlet)
+    rg = gevent.spawn(rfactor_greenlet)
 
     # -- YouTUbe Greenlet
-    yg = eel.spawn(youtube_greenlet)
+    yg = gevent.spawn(youtube_greenlet)
 
     # -- Run until window/tab closed
     logging.debug('Entering Event Loop')
