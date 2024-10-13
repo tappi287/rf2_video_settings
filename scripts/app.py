@@ -21,11 +21,6 @@ from rf2settings.runasadmin import run_as_admin
 from rf2settings.utils import AppExceptionHook
 from rf2settings.globals import FROZEN, get_current_modules_dir, get_data_dir
 
-try:
-    import pyi_splash
-except ImportError:
-    pyi_splash = None
-
 os.chdir(get_current_modules_dir())
 
 # -- Make sure eel methods are exposed at start-up
@@ -35,11 +30,6 @@ expose_app_methods()
 setup_logging()
 
 START_TIME = 0.0
-
-
-def _update_splash(msg: str):
-    if pyi_splash and pyi_splash.is_alive():
-        pyi_splash.update_text(msg)
 
 
 def in_restore_mode() -> bool:
@@ -145,36 +135,28 @@ def start_eel(npm_serve=True):
     try:
         app_module_prefs = getattr(AppSettings, 'app_preferences', dict()).get('appModules', list())
         if Path(edge_cmd).exists() and 'edge_preferred' in app_module_prefs:
-            _update_splash("Starting Edge..")
             eel.start(page, mode='custom', host=host, port=port, block=False,
                       cmdline_args=[edge_cmd, '--profile-directory=Default', f'--app={start_url}'])
         else:
-            _update_splash("Starting Chrome")
             eel.start(page, host=host, port=port, block=False, close_callback=close_callback)
     except EnvironmentError:
         # If Chrome isn't found, fallback to Microsoft Chromium Edge
         if Path(edge_cmd).exists():
             logging.info('Falling back to Edge Browser')
-            _update_splash("Edge fallback..")
             eel.start(page, mode='custom', host=host, port=port, block=False,
                       cmdline_args=[edge_cmd, '--profile-directory=Default', f'--app={start_url}'])
         # Fallback to opening a regular browser window
         else:
             logging.info('Falling back to default Web Browser')
-            _update_splash("Browser fallback")
             eel.start(page, mode=None, app_mode=False, host=host, port=port, block=False)
             # Open system default web browser
             webbrowser.open_new(start_url)
-
-    if pyi_splash and pyi_splash.is_alive():
-        pyi_splash.close()
 
     logging.info(f"App started in {time.time() - START_TIME:.2f} seconds")
     _main_app_loop()
 
 
 if __name__ == '__main__':
-    _update_splash('Loading Settings')
     if not in_restore_mode():
         start_eel(prepare_app_start())
 

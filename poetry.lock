@@ -264,19 +264,23 @@ files = [
 
 [[package]]
 name = "eel"
-version = "1.0.0a1"
+version = "0.17.0"
 description = "For little HTML GUI applications, with easy Python/JS interop"
 optional = false
-python-versions = ">=2.6"
+python-versions = ">=3.7"
 files = [
-    {file = "Eel-1.0.0a1.tar.gz", hash = "sha256:66dd88c51c4e7744033b3bed39ae65e802806315ab44589427d61d7104d91410"},
+    {file = "eel-0.17.0.tar.gz", hash = "sha256:77f16e24a9f68fe9cc5e2f066c0c2d47ad6f50fffdd842d108d7ac094b94c523"},
 ]
 
 [package.dependencies]
 bottle = "*"
 bottle-websocket = "*"
 future = "*"
+pyparsing = "*"
 whichcraft = "*"
+
+[package.extras]
+jinja2 = ["jinja2 (>=2.10)"]
 
 [[package]]
 name = "future"
@@ -1171,4 +1175,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "d4d181ef259c8be07d1b679b9cb5c9ba0e70b6e7f692b0b0ea75f407a6bbca54"
+content-hash = "dac88368997bd06a1c56e254393e8bb133a683f035275a9e178ad5da63e1c16a"

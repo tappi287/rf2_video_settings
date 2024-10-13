@@ -38,6 +38,7 @@ a = Analysis(['scripts\\app.py'],
              noarchive=False)
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
+"""
 splash = Splash(
     'vue/src/assets/rfW_splash.png',
     binaries=a.binaries,
@@ -49,9 +50,9 @@ splash = Splash(
     minify_script=True,
     always_on_top=True,
 )
+"""
 exe = EXE(pyz,
           a.scripts,
-          splash,
           [],
           exclude_binaries=True,
           name=APP_NAME,
