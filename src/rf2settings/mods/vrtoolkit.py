@@ -319,8 +319,8 @@ class VrToolKit:
                 if line.startswith(self.techniques_name) and self.clarity2_technique in line:
                     clarity_found = True
                 for k, v in self.ini_settings.items():
-                    if line.startswith(k):
-                        value = line.replace(f'{k}=', '').replace('\n', '')
+                    line_key, value = line.split('=', 1)
+                    if line_key == k:
                         if isinstance(value, str) and value.split('.')[0].isnumeric():
                             # -- Read int
                             if value.isdigit():
