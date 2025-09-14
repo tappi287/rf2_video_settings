@@ -297,6 +297,17 @@ reshade_settings = {
                         {'value': True, 'name': 'Enabled'},
                     ),
                     },
+    "use_openxr": {
+        "name": "Use OpenXR",
+        "value": False,
+        "desc": "Weather to inject ReShade via it's OpenXR-API-Layer or it's DLL hook. "
+        "If you run the game in Desktop-Mode or via OpenVR leave disabled. If you installed "
+        "OpenComposite to run the game in OpenXR, you can try to use the ReShade OpenXR-API-Layer(untested with this version).",
+        "settings": (
+            {"value": False, "name": "Disabled"},
+            {"value": True, "name": "Enabled"},
+        ),
+    },
     'VRT_SHARPENING_MODE': {'name': 'Sharpening Mode', 'value': 1, 'desc': 'Configures the sharpening/clarity modes',
                             'settings': (
                                 {'value': 0, 'name': 'Disabled'},
@@ -470,6 +481,22 @@ reshade_lut = {
                             {'value': '"rF2_ToneDownDay.png"', 'name': 'Tone Down Day',
                              'desc': 'LUT trying to restore some highlights from super bright specular road '
                                      'reflections on PBR tracks at daylight. '},
+                            {
+                                "value": '"lmu_ToneUpDay.png"',
+                                "name": "LMU Tone Up Day",
+                                "desc": "LUT trying to accommodate for the relative low exposure in v0.4",
+                            },
+                            {
+                                "value": '"lmu_DayTone.png"',
+                                "name": "LMU Day",
+                                "desc": "Increase exposure for v0.4 and tone-map highlights",
+                            },
+                            {
+                                "value": '"Super_ToneDownDay.png"',
+                                "name": "Super Tone Down Day",
+                                "desc": "LUT trying to restore some highlights from super bright specular road "
+                                        "reflections at daylight. Desaturated Reds for Pimax Crystal Super Panel.",
+                            },
                             {'value': '"lut_ams.png"', 'name': 'Retrolux AMS',
                              'desc': 'LUT Preset from Retrolux Reshade Automobilista'},
                             {'value': '"lut_gtr2.png"', 'name': 'Retrolux GTR2', },
@@ -548,14 +575,14 @@ reshade_clarity = {
                                 {'value': 6, 'name': 'Addition'},
                             ),
                             },
-    'ClarityBlendIfDarkTwo': {'name': 'Blend If Dark', 'value': 50,
+    'ClarityBlendIfDarkTwo': {'name': 'Blend If Dark', 'value': 55,
                               'settings': (
                                   {'settingType': 'range', 'min': 0, 'max': 255, 'step': 1,
                                    'desc': 'Any pixels below this value will be excluded from the effect. Set to 50 to '
                                            'target mid-tones.'},
                               )
                               },
-    'ClarityBlendIfLightTwo': {'name': 'Blend If Light', 'value': 205,
+    'ClarityBlendIfLightTwo': {'name': 'Blend If Light', 'value': 220,
                                'settings': (
                                    {'settingType': 'range', 'min': 0, 'max': 255, 'step': 1,
                                     'desc': 'Any pixels above this value will be excluded from the effect. '
@@ -568,7 +595,7 @@ reshade_clarity = {
                           'desc': 'Adjusts the range of the BlendIfMask.'},
                      )
                      },
-    'ClarityStrengthTwo': {'name': 'Strength', 'value': 0.400,
+    'ClarityStrengthTwo': {'name': 'Strength', 'value': 0.570,
                            'settings': (
                                {'settingType': 'range', 'min': 0.00, 'max': 1.00, 'step': 0.005,
                                 'desc': 'Adjusts the strength of the effect'},
@@ -586,7 +613,7 @@ reshade_clarity = {
                                       'desc': 'Adjusts the strength of light halos.'},
                                  )
                                  },
-    'DitherStrength': {'name': 'Dither Strength', 'value': 1.0,
+    'DitherStrength': {'name': 'Dither Strength', 'value': 0.0,
                        'settings': (
                            {'settingType': 'range', 'min': 0.0, 'max': 10.0, 'step': 0.1,
                             'desc': 'Adds dithering to the ClarityMask to help reduce banding. '

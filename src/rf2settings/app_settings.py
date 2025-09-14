@@ -49,11 +49,12 @@ class AppSettings(JsonRepr):
         "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": "2022.10.20",
         "f62fc2524cff71458bca4acdd558539f": "2022.10.23"
     }
+    reshade_version = "6.5.1.2008"
 
     # -----------------------------------
     # -- Won't be saved to file:
     skip_keys = ['first_load_complete', 'session_selection', 'replay_playing',
-                 'present_mon_bin', 'present_mon_result_dir', 'chat_plugin_version',
+                 'present_mon_bin', 'present_mon_result_dir', 'chat_plugin_version', 'reshade_version',
                  'content_selected', 'content_keys', 'content_urls', 'content', 'content_saved',
                  'yt_livestream', 'yt_channel_id']
 

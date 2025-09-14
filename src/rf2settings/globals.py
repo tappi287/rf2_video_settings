@@ -53,6 +53,8 @@ KNOWN_APPS = {
 RF2_APPID = [k for k in KNOWN_APPS.keys()][0]
 FPSVR_APPID = [k for k in KNOWN_APPS.keys()][1]
 
+GAME_EXECUTABLE = KNOWN_APPS["365960"]["executable"]
+
 # Frozen or Debugger
 if getattr(sys, 'frozen', False):
     # -- Running in PyInstaller Bundle ---

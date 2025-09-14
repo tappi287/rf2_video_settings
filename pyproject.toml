@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rf2-settings-widget"
-version = "1.5.4"
+version = "1.5.5"
 description = ""
 authors = ["Stefan Tapper <tapper.stefan@gmail.com>"]
 readme = "README.md"
