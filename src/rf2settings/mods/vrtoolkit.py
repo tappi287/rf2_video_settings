@@ -399,8 +399,9 @@ class VrToolKit:
             # - Read settings from Preset Ini file lines
             clarity_found = False
             for line in preset_lines:
+                line = line.replace("\n", "")
                 if line.startswith(self.preprocessor_name):
-                    p_str = line.replace(f"{self.preprocessor_name}=", "").replace("\n", "")
+                    p_str = line.replace(f"{self.preprocessor_name}=", "")
                     for p_def in p_str.split(","):
                         key, value = p_def.split("=", 2)
                         if key in self.preprocessor:
