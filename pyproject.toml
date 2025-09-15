@@ -9,8 +9,8 @@ packages = [{include = "rf2settings", from = "src"}]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
-eel = "^0.17.0"
-bottle = "^0.13.2"
+eel = "==0.18.2"
+bottle = "==0.13.4"
 appdirs = "^1.4.4"
 # PyGame 2.5.2 (SDL 2.28.3, Python 3.11.0) will not detect Joysticks with only axis (eg. Pedals) likely related
 # to a bug in SDL https://github.com/pygame/pygame/issues/2932
