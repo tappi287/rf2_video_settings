@@ -155,15 +155,28 @@ export default {
       }
       this.$emit('favs-updated')
     },
+    _ensureFluxVisible() {
+      // Warten, bis der DOM sichtbar ist (nach Route/Transition)
+      this.$nextTick(() => {
+        requestAnimationFrame(() => {
+          const slider = this.$refs.slider;
+          if (slider && typeof slider.resize === 'function') {
+            slider.resize();
+          }
+        });
+      });
+    },
   },
   activated() {
-    this.updateFavs()
+    this.updateFavs();
+    this._ensureFluxVisible();
   },
   async mounted() {
     // Access after rendering finished
     setTimeout(() => {
       this.equalPresetButtonWidth()
     }, 0)
+    this._ensureFluxVisible();
   },
   async created() {
     this.setBusy(true)
