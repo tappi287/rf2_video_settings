@@ -6,6 +6,7 @@ from ..settingsdef import graphics, generic, controls, headlights
 from ..utils import JsonRepr
 
 _allowed_value_types = (bool, str, int, float)
+FLOAT_SETTING_NDIGITS = 3
 
 
 class OptionsTarget:
@@ -22,7 +23,7 @@ class OptionsTarget:
 
 class Option(JsonRepr):
     # No need to save these internal attributes
-    skip_keys = ['dupl']
+    skip_keys = ["dupl", "hidden", "create_in_json"]
     # Entries we don't want to export or save
     export_skip_keys = ['settings', 'hidden', 'ini_type', 'desc', 'name', 'exists_in_rf',
                         'difference', 'difference_value', 'dupl']
@@ -40,6 +41,7 @@ class Option(JsonRepr):
         self.exists_in_rf = False  # Mark options not found on disk so we can ignore them during comparison and saving
         self.difference = False
         self.difference_value = None
+        self.create_in_json = False
         self.dupl = None  # Mark options that need another value written eg. GPRIX Time + CURNT Time
 
         # Possible settings
@@ -55,9 +57,23 @@ class Option(JsonRepr):
         if self.value is None or other.value is None or self.hidden:
             return True
 
-        if other.value != self.value or other.key != self.key:
-            logging.debug('Option %s %s differs from current setting %s %s',
-                          other.key, other.value, self.key, self.value)
+        other_value, self_value = other.value, self.value
+
+        # -- Handle Float values
+        if isinstance(self.value, float) and isinstance(other.value, float):
+            self_value = round(self.value, FLOAT_SETTING_NDIGITS)
+            other_value = round(other.value, FLOAT_SETTING_NDIGITS)
+
+        if other_value != self_value or other.key != self.key:
+            logging.debug(
+                "Option %s %s differs from current setting %s %s. [Compared %s vs %s]",
+                other.key,
+                other.value,
+                self.key,
+                self.value,
+                other_value,
+                self_value,
+            )
 
             # -- Report difference to FrontEnd
             self.difference = True
@@ -96,13 +112,14 @@ class BaseOptions(JsonRepr):
         for key, detail_dict in options_dict.items():
             option = Option()
             option.key = key
-            option.name = detail_dict.get('name', 'Unknown')
-            option.settings = tuple(detail_dict.get('settings', list()))
-            option.value = detail_dict.get('value')
-            option.desc = detail_dict.get('desc')
-            option.hidden = detail_dict.get('hidden')
-            option.ini_type = detail_dict.get('_type')
-            option.dupl = detail_dict.get('_dupl')
+            option.name = detail_dict.get("name", "Unknown")
+            option.settings = tuple(detail_dict.get("settings", list()))
+            option.value = detail_dict.get("value")
+            option.desc = detail_dict.get("desc")
+            option.hidden = detail_dict.get("hidden")
+            option.create_in_json = detail_dict.get("create_in_json", False)
+            option.ini_type = detail_dict.get("_type")
+            option.dupl = detail_dict.get("_dupl")
             self.options.append(option)
 
     def to_js(self, export: bool = False) -> dict:
