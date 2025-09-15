@@ -125,6 +125,9 @@ export default {
         }
         userScreenShots = await request.json()
         await this.setupScreenShots()
+
+        // Filter invalid and missing images
+        await this._filterInvalidImages();
       } else {
         this.$refs.slider.stop()
       }
@@ -166,12 +169,115 @@ export default {
         });
       });
     },
+
+    // Vorab-Validierung mit Timeout (z.B. 6 Sekunden)
+    async _filterInvalidImages(timeoutMs = 6000) {
+      if (!Array.isArray(this.vfImages)) return;
+
+      const original = [...this.vfImages];
+      const urls = original.map(it => (typeof it === 'string' ? it : it && it.src)).filter(Boolean);
+
+      const okSet = new Set(await this._preloadImages(urls, timeoutMs));
+      // Rekonstruiere die Struktur (String oder Objekt), aber nur für valide URLs
+      const filtered = original.filter(it => {
+        const url = typeof it === 'string' ? it : it && it.src;
+        return okSet.has(url);
+      });
+
+      // Falls alles wegfällt, optional Fallback hinzufügen
+      if (!filtered.length && this._fallbackSlide) {
+        filtered.push(this._fallbackSlide);
+      }
+
+      this.vfImages = filtered;
+    },
+
+    _preloadImages(urls, timeoutMs) {
+      const checks = urls.map(url => this._checkImage(url, timeoutMs).then(() => url).catch(() => null));
+      return Promise.all(checks).then(list => list.filter(Boolean));
+    },
+
+    _checkImage(url, timeoutMs) {
+      return new Promise((resolve, reject) => {
+        if (this._preloadAbort) {
+          reject(new Error('aborted'));
+          return;
+        }
+        const img = new Image();
+        let done = false;
+        const finish = (ok) => {
+          if (done) return;
+          done = true;
+          clearTimeout(to);
+          img.onload = img.onerror = null;
+          ok ? resolve() : reject(new Error('load-error'));
+        };
+        const to = setTimeout(() => finish(false), timeoutMs);
+        img.onload = () => finish(true);
+        img.onerror = () => finish(false);
+        img.src = url;
+      });
+    },
+
+    // Laufzeit-Handler: Fehlende <img> erkennen, Bild aus Liste entfernen, weiterspringen
+    _attachImageErrorHandler() {
+      if (this._imgErrorAttached) return;
+      const root = this.$el && this.$el.querySelector('.vue-flux-container');
+      if (!root) return;
+
+      this._onImgError = (e) => {
+        const el = e.target;
+        if (!el || el.tagName !== 'IMG') return;
+
+        const badSrc = el.currentSrc || el.src;
+        const index = this.vfImages.findIndex(it => (typeof it === 'string' ? it : it && it.src) === badSrc);
+        if (index === -1) return;
+
+        // Entferne defektes Bild aus Datenquelle
+        this.vfImages.splice(index, 1);
+
+        // Wenn nichts mehr übrig ist, optional Fallback setzen
+        if (!this.vfImages.length && this._fallbackSlide) {
+          this.vfImages = [this._fallbackSlide];
+        }
+
+        // Slider sanft fortsetzen
+        this.$nextTick(() => {
+          const slider = this.$refs.slider;
+          if (!slider) return;
+
+          if (typeof slider.resize === 'function') slider.resize();
+          if (typeof slider.next === 'function') slider.next();
+          if (typeof slider.play === 'function') slider.play();
+        });
+      };
+
+      // useCapture=true, damit IMG-Fehler auch am Container ankommen
+      root.addEventListener('error', this._onImgError, true);
+      this._imgErrorAttached = true;
+    },
+
+    _detachImageErrorHandler() {
+      if (!this._imgErrorAttached) return;
+      const root = this.$el && this.$el.querySelector('.vue-flux-container');
+      if (root && this._onImgError) {
+        root.removeEventListener('error', this._onImgError, true);
+      }
+      this._imgErrorAttached = false;
+      this._onImgError = null;
+    },
   },
   activated() {
     this.updateFavs();
     this._ensureFluxVisible();
   },
   async mounted() {
+    // Sicherstellen, dass der Slider sichtbar ist
+    this._ensureFluxVisible();
+
+    // Fehler zur Laufzeit abfangen und Skipping aktivieren
+    this._attachImageErrorHandler();
+
     // Access after rendering finished
     setTimeout(() => {
       this.equalPresetButtonWidth()
@@ -182,7 +288,7 @@ export default {
     this.setBusy(true)
     await this.setupScreenShots()
     await this.getDriver()
-    await this.setBusy(false)
+    this.setBusy(false)
     setTimeout( () => {
       this.getRemoteScreenShots()
     }, 500)
