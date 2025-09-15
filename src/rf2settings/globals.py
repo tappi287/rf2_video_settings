@@ -116,7 +116,7 @@ def get_default_presets_dir() -> Path:
     if FROZEN:
         return Path(get_current_modules_dir()) / DEFAULT_PRESETS_DIR
     else:
-        return Path(get_current_modules_dir()) / 'rf2settings' / DEFAULT_PRESETS_DIR
+        return Path(get_current_modules_dir()) / 'src' / 'rf2settings' / DEFAULT_PRESETS_DIR
 
 
 def get_data_dir() -> Path:

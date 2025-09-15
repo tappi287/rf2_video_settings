@@ -99,7 +99,9 @@ export default {
       vfImages: [],
       vfTransitions: [ 'fade', 'slide', 'swipe', 'fade' ],
       vfCaptions: [],
-      posterImg: rfWPoster
+      posterImg: rfWPoster,
+      preloadAbort: false,
+      imgErrorAttached: false
     }
   },
   props: {gfxHandler: PresetHandler, prefs: PreferencesPage, refreshFavs: Boolean, rfactorVersion: String },
@@ -184,22 +186,17 @@ export default {
         return okSet.has(url);
       });
 
-      // Falls alles wegfällt, optional Fallback hinzufügen
-      if (!filtered.length && this._fallbackSlide) {
-        filtered.push(this._fallbackSlide);
-      }
-
       this.vfImages = filtered;
     },
 
-    _preloadImages(urls, timeoutMs) {
+    async _preloadImages(urls, timeoutMs) {
       const checks = urls.map(url => this._checkImage(url, timeoutMs).then(() => url).catch(() => null));
       return Promise.all(checks).then(list => list.filter(Boolean));
     },
 
     _checkImage(url, timeoutMs) {
       return new Promise((resolve, reject) => {
-        if (this._preloadAbort) {
+        if (this.preloadAbort) {
           reject(new Error('aborted'));
           return;
         }
@@ -221,11 +218,12 @@ export default {
 
     // Laufzeit-Handler: Fehlende <img> erkennen, Bild aus Liste entfernen, weiterspringen
     _attachImageErrorHandler() {
-      if (this._imgErrorAttached) return;
+      if (this.imgErrorAttached) return;
       const root = this.$el && this.$el.querySelector('.vue-flux-container');
       if (!root) return;
 
       this._onImgError = (e) => {
+        console.error(`Slider image error: ${e}`);
         const el = e.target;
         if (!el || el.tagName !== 'IMG') return;
 
@@ -235,11 +233,6 @@ export default {
 
         // Entferne defektes Bild aus Datenquelle
         this.vfImages.splice(index, 1);
-
-        // Wenn nichts mehr übrig ist, optional Fallback setzen
-        if (!this.vfImages.length && this._fallbackSlide) {
-          this.vfImages = [this._fallbackSlide];
-        }
 
         // Slider sanft fortsetzen
         this.$nextTick(() => {
@@ -254,16 +247,16 @@ export default {
 
       // useCapture=true, damit IMG-Fehler auch am Container ankommen
       root.addEventListener('error', this._onImgError, true);
-      this._imgErrorAttached = true;
+      this.imgErrorAttached = true;
     },
 
     _detachImageErrorHandler() {
-      if (!this._imgErrorAttached) return;
+      if (!this.imgErrorAttached) return;
       const root = this.$el && this.$el.querySelector('.vue-flux-container');
       if (root && this._onImgError) {
         root.removeEventListener('error', this._onImgError, true);
       }
-      this._imgErrorAttached = false;
+      this.imgErrorAttached = false;
       this._onImgError = null;
     },
   },
@@ -292,6 +285,9 @@ export default {
     setTimeout( () => {
       this.getRemoteScreenShots()
     }, 500)
+  },
+  beforeDestroy() {
+    this._detachImageErrorHandler()
   },
   components: {
     ServerBrowser,
