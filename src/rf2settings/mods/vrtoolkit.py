@@ -305,15 +305,15 @@ class VrToolKit:
     @staticmethod
     def _update_reshade_ini(base_dir: Path, vr_ini=False):
         """update the global reshade preset ini to update preset path"""
-        reshade_preset_dir_str = VrToolKit.RESHADE_PRESET_DIR.replace("/", "\\")
-        reshade_preset_path = f".\\{reshade_preset_dir_str}{VrToolKit.RESHADE_TARGET_PRESET_NAME}"
         reshade_ini = base_dir / VrToolKit.RESHADE_VR_INI_NAME if vr_ini else base_dir / VrToolKit.RESHADE_INI_NAME
-
         reshade_ini_lines, updated_ini_lines = list(), list()
 
         # -- Read current ReShade.ini
         with open(reshade_ini, "r") as f:
             reshade_ini_lines = f.readlines()
+
+        # -- Check if VrToolKit.RESHADE_INI_ADDON_SYNC_LINE is present
+        _sync_effect_runtime_line_present = len([l for l in reshade_ini_lines if l.startswith(VrToolKit.RESHADE_INI_ADDON_SYNC_LINE)]) > 0
 
         for line in reshade_ini_lines:
             # -- Update path entries
@@ -326,7 +326,7 @@ class VrToolKit:
             if line.startswith("NoReloadOnInitForNonVR"):
                 line = "NoReloadOnInitForNonVR=0\n"
             # -- Make sure VR and Desktop Runtimes are in sync
-            if line.startswith("[ADDON]"):
+            if line.startswith("[ADDON]") and not _sync_effect_runtime_line_present:
                 updated_ini_lines.append(line)
                 updated_ini_lines.append(VrToolKit.RESHADE_INI_ADDON_SYNC_LINE + "\n")
                 continue
