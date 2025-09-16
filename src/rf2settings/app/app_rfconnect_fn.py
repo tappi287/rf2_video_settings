@@ -16,6 +16,7 @@ from ..preset.settings_model import VideoSettings
 from ..rf2command import CommandQueue, Command
 from ..rf2connect import RfactorState
 from ..rf2events import RfactorQuitEvent
+from .. import rf2replays
 from ..rfactor import RfactorPlayer
 from ..utils import create_file_safe_name, capture_app_exceptions
 
@@ -50,34 +51,7 @@ def get_replays():
     if not rf.is_valid:
         return json.dumps({'result': False, 'msg': rf.error})
 
-    p = rf.location / 'UserData' / 'Replays'
-    replays = list()
-
-    for idx, r in enumerate(p.glob('*.Vcr')):
-        s = r.stat()
-
-        # Determine type by name
-        replay_type = 0
-        if re.match(r".*(HOT\sLAP)", r.stem):
-            replay_type = 4  # Hot Lap
-        elif re.match(r".*(Q\d)\s.*", r.stem):
-            replay_type = 1  # Qualy
-        elif re.match(r".*(P\d)\s.*", r.stem):
-            replay_type = 2  # Practice
-        elif re.match(r".*(R\d)\s.*", r.stem):
-            replay_type = 3  # Race
-        elif re.match(r".*(WU\s\d)", r.stem):
-            replay_type = 5  # WarmUp
-
-        replay = {'id': idx, 'name': r.stem, 'size': f'{s.st_size / 1048576:.2f}MB',
-                  'ctime': s.st_mtime, 'type': replay_type,
-                  'date': datetime.fromtimestamp(s.st_mtime).strftime('%Y-%m-%d %H:%M')}
-        replays.append(replay)
-
-    # Sort by change date
-    replays = sorted(replays, key=lambda e: e['ctime'], reverse=True)
-
-    return json.dumps({'result': True, 'replays': replays})
+    return json.dumps({'result': True, 'replays': rf2replays.get_replays(rf)})
 
 
 @capture_app_exceptions

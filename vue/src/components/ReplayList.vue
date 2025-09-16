@@ -96,12 +96,16 @@
               <b-button @click="playReplay(replay.item); $root.$emit('bv::hide::popover', 'replay-action-btn-' + replay.item.id + _uid)"
                         size="sm" variant="rf-blue-light"
                         v-if="watchEnabled"
-                        aria-label="Watch" class="mr-2">
+                        aria-label="Watch" class="mr-1">
                 Watch
+              </b-button>
+              <b-button @click="replay.toggleDetails(); $root.$emit('bv::hide::popover', 'replay-action-btn-' + replay.item.id + _uid)"
+                        size="sm" variant="rf-blue-light" aria-label="Show Results" class="mr-1">
+                Results
               </b-button>
               <b-button @click="renameReplay(replay.item); $root.$emit('bv::hide::popover', 'replay-action-btn-' + replay.item.id + _uid)"
                         size="sm" variant="rf-orange-light"
-                        aria-label="Rename" class="mr-2">
+                        aria-label="Rename" class="mr-1">
                 Rename
               </b-button>
               <b-button @click="$root.$emit('bv::hide::popover', 'replay-action-btn-' + replay.item.id + _uid)"
@@ -120,15 +124,33 @@
       <template v-slot:cell(type)="replay">
         <span :class="'text-' + replayTypeText(replay.item).var">{{ replayTypeText(replay.item).text }}</span>
       </template>
+
+      <!-- Results -->
+      <template #row-details="replay">
+        <!-- Results -->
+        <ResultDisplay
+            :result-file="replay.item.result_file"
+            @make-toast="makeToast"
+            @set-busy="setBusy"
+        >
+          <template #top>
+            <b-button @click="replay.toggleDetails();"
+                      size="sm" variant="rf-blue"
+                      aria-label="Close Results" class="mr-2">Close Result Viewer</b-button>
+          </template>
+        </ResultDisplay>
+      </template>
     </b-table>
   </div>
 </template>
 
 <script>
 import {getEelJsonObject} from "@/main";
+import ResultDisplay from "@/components/ResultDisplay.vue";
 
 export default {
   name: "ReplayList",
+  components: {ResultDisplay},
   data: function () {
     return {
       replays: [],
@@ -258,4 +280,7 @@ export default {
 
 <style scoped>
 .replay-link { cursor: alias; }
+.popover.b-popover {
+  max-width: 600px !important;
+}
 </style>
