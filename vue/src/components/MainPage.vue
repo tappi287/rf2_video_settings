@@ -42,6 +42,9 @@
         <b-nav-item :active="navActive === 6" @click="navActive=6" link-classes="pl-0">
           Server Browser
         </b-nav-item>
+        <b-nav-item :active="navActive === 13" @click="navActive=13" link-classes="pl-0">
+          FuelCalc
+        </b-nav-item>
         <b-nav-item :active="navActive === 11" @click="navActive=11" link-classes="pl-0">
           Chat
         </b-nav-item>
@@ -187,6 +190,9 @@
                      @fav-updated="refreshDashFavs = true"/>
     </keep-alive>
 
+    <!-- Fuel Calc -->
+    <FuelCalc v-if="navActive === 13" @make-toast="makeToast"></FuelCalc>
+
     <!-- ChatPage -->
     <keep-alive>
       <ChatPage :visible="navActive === 11" :live="live" @make-toast="makeToast" @set-busy="setBusy"/>
@@ -284,6 +290,7 @@ import ChatPage from "@/components/pages/ChatPage";
 import ControllerDeviceList from "@/components/ControllerDeviceList";
 import RfactorOverlay from "@/components/RfactorOverlay";
 import PreferencesPage from "@/components/pages/PreferencesPage";
+import FuelCalc from "@/components/pages/FuelCalc.vue";
 
 export default {
   name: 'MainPage',
@@ -503,6 +510,7 @@ export default {
     this.$eventHub.$off('navigate', this.navigate)
   },
   components: {
+    FuelCalc,
     PreferencesPage,
     RfactorOverlay,
     ControllerDeviceList,

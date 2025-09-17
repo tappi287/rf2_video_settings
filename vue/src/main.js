@@ -180,3 +180,13 @@ export function minutesToDaytime(num) {
     const minutes = ('0' + String(num % 60)).slice(-2)
     return String(hours + ":" + minutes)
 }
+
+export function paddedNum(num, padding, padString = "0") {
+  return String(num).padStart(padding, padString)
+}
+
+export function divMod(y, x) {
+    const quotient = Math.floor(y / x);
+    const remainder = y % x;
+    return [quotient, remainder]
+}

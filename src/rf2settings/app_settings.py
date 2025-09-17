@@ -18,6 +18,7 @@ class AppSettings(JsonRepr):
     selected_presets: Dict[str, str] = dict()
     replay_preset = str()
     app_preferences = {"appModules": ["audio", "edge_preferred"]}
+    fuel_calc_presets = list()
 
     rf_overwrite_location = ''
 

@@ -56,3 +56,13 @@ def get_user_presets_dir_web():
 @eel.expose
 def restore_pre_replay_preset():
     return app_presets_fn.restore_pre_replay_preset()
+
+
+@eel.expose
+def get_fuel_calc_presets():
+    return app_presets_fn.get_fuel_calc_presets()
+
+
+@eel.expose
+def save_fuel_calc_presets(track_presets):
+    return app_presets_fn.save_fuel_calc_presets(track_presets)

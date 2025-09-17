@@ -211,3 +211,14 @@ def restore_pre_replay_preset():
                     rf.write_settings(selected_preset)
         AppSettings.replay_playing = False
         AppSettings.save()
+
+
+@capture_app_exceptions
+def get_fuel_calc_presets():
+    return json.dumps({"result": True, "data": AppSettings.fuel_calc_presets})
+
+
+@capture_app_exceptions
+def save_fuel_calc_presets(track_presets):
+    AppSettings.fuel_calc_presets = track_presets
+    return json.dumps({"result": AppSettings.save()})
