@@ -1,14 +1,15 @@
 import os
 from pathlib import Path
 from typing import Union
-
-from subprocess import Popen
-from rf2settings import eel_mod
-from rf2settings.globals import UPDATE_INSTALL_FILE, UPDATE_VERSION_FILE, get_version, get_current_modules_dir, get_data_dir
 from distutils.dir_util import copy_tree
-
 import shutil
 import winreg
+from subprocess import Popen
+
+from rf2settings import eel_mod
+from rf2settings.globals import UPDATE_INSTALL_FILE, UPDATE_VERSION_FILE, get_version, get_current_modules_dir, get_data_dir
+from scripts.patch_sdl_pygame import patch_sdl_lib_pygame
+
 
 os.chdir(get_current_modules_dir())
 
@@ -218,6 +219,7 @@ def main(process: int = 0):
 
     if process in (0, 1, 2):
         run_npm_build()
+        patch_sdl_lib_pygame()
         copy_eel_cache_file()
 
         # Build with PyInstaller
