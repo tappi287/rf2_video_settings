@@ -265,6 +265,14 @@
               <template v-if="serverListData.length === 0">
                 <h5>No server data</h5>
                 <p>The master server is unavailable or could not access internet connection.</p>
+                <p>You can obtain a
+                   <b-link href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener">
+                    Steam Web API Key@https://steamcommunity.com/dev/apikey
+                    <b-icon icon="box-arrow-up-right"></b-icon>
+                   </b-link>
+                   and enter it here to use the Steam Web API instead of the legacy Steam Master server.
+                  <b-link @click="$bvModal.show(steamApiKeyModalId)">Enter it here.</b-link>
+                </p>
               </template>
               <template v-else-if="serverListData.length > 0">
                 <h6>No filtering results!</h6>
@@ -347,6 +355,35 @@
         </b-form-group>
       </b-form>
     </b-modal>
+
+    <!-- Steam WebAPI Key Modal -->
+    <b-modal :id="steamApiKeyModalId" centered hide-footer>
+      <template #modal-title>
+        <b-icon icon="key-fill" variant="warning"></b-icon>
+        <span class="ml-1">Steam WebAPI Key</span>
+      </template>
+
+      <div class="d-block">
+        <p> A Steam WebAPI key is required to fetch the server list directly from Steam.<br>
+            You can obtain your free API key at:<br>
+            <b-link href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener">
+              https://steamcommunity.com/dev/apikey
+              <b-icon icon="box-arrow-up-right"></b-icon>
+            </b-link>
+        </p>
+
+      </div>
+
+      <b-form @submit.prevent="saveSteamApiKey">
+        <b-form-group label="API Key" label-cols="3">
+          <b-form-input type="text" placeholder="Enter your Steam WebAPI key"
+                        v-model="steamApiKey" required></b-form-input>
+        </b-form-group>
+        <b-button type="submit" variant="success" block>
+          Save API Key
+        </b-button>
+      </b-form>
+    </b-modal>
   </div>
 </template>
 
@@ -397,6 +434,8 @@ export default {
       showPwdToggle: false,
       pwdModalId: 'password-modal' + this._uid,
       addModalId: 'add-modal' + this._uid,
+      steamApiKeyModalId: 'steam-api-key-modal' + this._uid,
+      steamApiKey: '',
       onlyFav: false,
       isActive: false
     }
@@ -430,6 +469,41 @@ export default {
     },
     toggleVer() {
       this.filterVer = !this.filterVer;
+    },
+    async loadAppPreferences() {
+      const r = await getEelJsonObject(window.eel.load_app_preferences()())
+      if (r && r.result && r.preferences) {
+        return r.preferences
+      }
+      return null
+    },
+    async saveSteamApiKey() {
+      if (!this.steamApiKey || this.steamApiKey.trim() === '') {
+        this.makeToast('Please enter a valid Steam WebAPI key', 'warning', 'Steam WebAPI')
+        return
+      }
+      const appPref = await this.loadAppPreferences()
+      if (appPref === null || appPref === undefined) {
+        return
+      }
+      appPref['steam_webapi_key'] = this.steamApiKey.trim()
+      const result = await getEelJsonObject(window.eel.save_app_preferences(appPref)())
+      
+      if (result && result.result) {
+        this.$bvModal.hide(this.steamApiKeyModalId)
+        this.makeToast('Steam WebAPI key saved successfully', 'success', 'Steam WebAPI')
+        this.refreshServerList()
+      } else {
+        this.makeToast('Failed to save Steam WebAPI key', 'danger', 'Steam WebAPI')
+      }
+    },
+    async loadSteamApiKey() {
+      const appPref = await this.loadAppPreferences()
+      if (appPref !== null) {
+        if ('steam_webapi_key' in appPref && appPref['steam_webapi_key']) {
+          this.steamApiKey = appPref['steam_webapi_key']
+        }
+      }
     },
     toggleServerDetails: function (row) {
       row.toggleDetails();
@@ -718,6 +792,10 @@ export default {
   ,
   created() {
     this.onlyFav = this.onlyFavourites
+    this.loadSteamApiKey()
+    if (!this.steamApiKey) {
+      this.$bvModal.show(this.steamApiKeyModalId)
+    }
   }
   ,
   destroyed() {

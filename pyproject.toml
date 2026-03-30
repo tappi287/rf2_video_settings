@@ -1,10 +1,10 @@
 [project]
 name = "rf2-settings-widget"
-version = "1.6.2"
+version = "1.7.0"
 description = ""
 authors = [{ name = "Stefan Tapper", email = "tapper.stefan@gmail.com" }, ]
 readme = "README.md"
-packages = [{include = "rf2settings", from = "src"}]
+packages = [{ include = "rf2settings", from = "src" }]
 requires-python = ">=3.11,<3.12"
 
 dependencies = [
@@ -19,16 +19,16 @@ dependencies = [
     "lxml==6.0.2",
     "google-api-python-client>=2.108.0",
     "google-auth-oauthlib>=0.7.0",
-    "ruamel-yaml>=0.17.21"
+    "ruamel-yaml>=0.17.21",
 ]
 
 [dependency-groups]
 dev = [
-  "ruff>=0.15.7",
-  "pyinstaller>=6.19.0, <7.0.0",
-  "pyinstaller-hooks-contrib>=2026.3",
-  "pywin32-ctypes>=0.2.0",
-  "pytest>=9.0.2",
+    "ruff>=0.15.7",
+    "pyinstaller>=6.19.0, <7.0.0",
+    "pyinstaller-hooks-contrib>=2026.3",
+    "pywin32-ctypes>=0.2.0",
+    "pytest>=9.0.2",
 ]
 
 [build-system]
@@ -40,11 +40,15 @@ packages = ["src/lmu"]
 
 [tool.hatch.build.targets.sdist]
 include = [
-   "/src",
-   "/tests",
-   "/pyproject.toml",
-   "/README.md",
-   "/LICENSE.txt", # Beispiel
+    "/data",
+    "/bin",
+    "/scripts",
+    "/src",
+    "/vue",
+    "/tests",
+    "/pyproject.toml",
+    "/ReadMe.md",
+    "/license.txt", # Beispiel
 ]
 
 [tool.pytest.ini_options]

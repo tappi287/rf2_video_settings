@@ -9,6 +9,8 @@ from a2s import Player
 from rf2settings.app_settings import AppSettings
 from rf2settings.globals import RF2_APPID
 from rf2settings.valve import master_server, NoResponseError
+from rf2settings.valve.steam_webapi import get_server_list
+
 
 _SERVER_REGIONS = ['eu', 'na-east', 'na-west', 'na', 'sa', 'as', 'oc', 'af', 'rest']
 
@@ -184,10 +186,41 @@ class ServerList:
 
     @staticmethod
     def get_server_addresses(region='rest') -> list:
-        with master_server.MasterServerQuerier() as msq:
-            try:
-                addresses = msq.find(region=region, appid=RF2_APPID)
-            except NoResponseError:
-                logging.error('Master Server request timed out.')
+        """Get server addresses from Steam WebAPI or fallback to Master Server."""
+        # Try Steam WebAPI first
+        try:
+            api_response = get_server_list(appid=RF2_APPID, limit=1000)
 
-            return [a for a in addresses]
+            if api_response and 'response' in api_response and 'servers' in api_response['response']:
+                servers = api_response['response']['servers']
+                addresses = []
+                for server in servers:
+                    addr = server.get('addr', '')
+                    if ':' in addr:
+                        ip, port = addr.rsplit(':', 1)
+                        addresses.append((ip, int(port)))
+
+                if addresses:
+                    logging.info(f'Got {len(addresses)} servers from Steam WebAPI')
+                    return addresses
+        except Exception as e:
+            logging.warning(f'Steam WebAPI request failed: {e}')
+
+        # Fallback to Master Server
+        logging.warning('Steam WebAPI failed, falling back to Master Server')
+        try:
+            with master_server.MasterServerQuerier() as msq:
+                addresses = msq.find(region=region, appid=RF2_APPID)
+                return [a for a in addresses]
+        except NoResponseError:
+            logging.error('Master Server request timed out.')
+        except OSError as e:
+            # Catch socket.gaierror and other network errors (errno 11001 = getaddrinfo failed)
+            if e.errno == 11001 or 'getaddrinfo' in str(e).lower():
+                logging.error(f'Master Server DNS resolution failed: {e}')
+            else:
+                logging.error(f'Master Server request failed: {e}')
+        except Exception as e:
+            logging.error(f'Master Server request failed with unexpected error: {e}')
+        
+        return []
