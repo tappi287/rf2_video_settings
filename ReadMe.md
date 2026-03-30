@@ -59,16 +59,16 @@ If you'd like to contribute to development, these steps may help you to get up a
  - change to front-end dir `cd vue` and install node modules `npm install`
 
 
- - make sure you have a Python 3.10.x interpreter on your system [python.org/downloads](https://www.python.org/downloads/)
- - install poetry `https://install.python-poetry.org`
- - create python virtual env `poetry install`
+ - make sure you have a Python 3.11.x interpreter on your system [python.org/downloads](https://www.python.org/downloads/)
+ - install [uv](https://docs.astral.sh/uv/getting-started/installation/)
+ - create python virtual env and install dependencies `uv sync`
 
 #### Usage
- - in the project root dir *rf2_video_settings* switch run the Python virtual env by `poetry run python app.py`
- - build an executable/installer with `poetry run python build.py`
+ - in the project root dir *rf2_video_settings* run the app with `uv run python app.py`
+ - build an executable/installer with `uv run python build.py`
 
   ##### Dev Requirements
- - Python 3.10.x
-   - pipenv >= 2022.3.23
+ - Python 3.11.x
+   - uv
  - npm >= 8.3.1
  - Chromium based web browser (Edge, Opera, Chrome) for running in browser app-mode
