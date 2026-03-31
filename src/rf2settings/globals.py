@@ -189,7 +189,7 @@ def get_version() -> str:
     try:
         with open(p, 'rb') as f:
             pyproj = tomllib.load(f)
-            return pyproj.get('tool', {}).get('poetry', {}).get('version', '0.0.0')
+            return pyproj.get("project", {}).get("version", "0.0.0")
     except Exception as e:
         logging.error(f'Error reading Version: {e}')
 
