@@ -11,6 +11,7 @@ from ..preset.preset import PresetType
 from ..preset.preset_base import load_preset
 from ..rf2command import CommandQueue, Command
 from ..rf2connect import RfactorState
+from ..mods import ext_applications
 from ..rfactor import RfactorPlayer, RfactorLocation
 from ..utils import capture_app_exceptions
 from ..valve.steam_utils import SteamApps
@@ -106,6 +107,13 @@ def run_rfactor(server_info: Optional[dict] = None, method: Optional[int] = 0):
 
     rf, result = RfactorPlayer(), False
     if rf.is_valid:
+        # -- Autostart external applications
+        for app_key in AppSettings.app_preferences.get("autostart"):
+            try:
+                ext_applications.start_application(app_key)
+            except Exception as e:
+                logging.error(f"Error calling autostart function: {app_key}: {e}")
+
         result = rf.run_rfactor(method, server_info)
         if not server_info:
             CommandQueue.append(Command(Command.wait_for_state, data=RfactorState.ready, timeout=10.0))

@@ -47,7 +47,45 @@ KNOWN_APPS = {
         "installdir": "fpsVR",
         "executable": "fpsVR.exe",
         "exe_sub_path": ""
-    }
+    },
+    "crew_chief": {
+        "name": "CrewChief v4",
+        "installdir": "",
+        "executable": "CrewChiefV4.exe",
+        "exe_sub_path": "",
+        "simmon_method": "find_by_registry_keys",
+        "simmon_method_args": [
+            [
+                "SOFTWARE\\WOW6432Node\\Britton IT Ltd\\InstalledProducts\\CrewChiefV4",
+                "SOFTWARE\\Britton IT Ltd\\InstalledProducts\\CrewChiefV4",
+            ],
+            "InstallLocation",
+        ],
+    },
+    "kneeboard": {
+        "name": "OpenKneeboard",
+        "installdir": "",
+        "executable": "OpenKneeboardApp.exe",
+        "exe_sub_path": "",
+        "simmon_method": "find_by_registry_keys_current_user",
+        "simmon_method_args": [["SOFTWARE\\Fred Emmott\\OpenKneeboard"], "InstallationBinPath"],
+    },
+    "sim_hub": {
+        "name": "SimHub",
+        "installdir": "",
+        "executable": "SimHubWPF.exe",
+        "exe_sub_path": "",
+        "simmon_method": "find_by_registry_keys_current_user",
+        "simmon_method_args": [["SOFTWARE\\SimHub"], "InstallDirectory"],
+    },
+    "pimax_play": {
+        "name": "Pimax Play",
+        "installdir": "",
+        "executable": "PimaxClient.exe",
+        "exe_sub_path": "PimaxClient/pimaxui",
+        "simmon_method": "find_by_registry_keys",
+        "simmon_method_args": [["SOFTWARE\\Pimax"], "InstallPath"],
+    },
 }
 
 RF2_APPID = [k for k in KNOWN_APPS.keys()][0]
