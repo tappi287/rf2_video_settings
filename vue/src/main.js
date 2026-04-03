@@ -9,6 +9,11 @@ import "@fontsource/ubuntu/300.css"
 import "@fontsource/inter/100.css"
 import "@fontsource/inter/200.css"
 import "@fontsource/inter/300.css"
+import "@fontsource/source-sans-3/300.css"
+import "@fontsource/source-sans-3/400.css"
+import "@fontsource/source-sans-3/500.css"
+import "@fontsource/source-sans-3/600.css"
+import "@fontsource/source-sans-3/700.css"
 
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
