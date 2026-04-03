@@ -1,54 +1,38 @@
 {
-  "name": "rF2-Settings-Widget",
-  "version": "1.7.0",
-  "private": true,
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
-  },
-  "dependencies": {
-    "@fontsource/inter": "^4.5.15",
-    "@fontsource/ubuntu": "^4.5.11",
-    "@popperjs/core": "^2.11.8",
-    "bootstrap-vue": "^2.23.1",
-    "chart.js": "^3.9.1",
-    "chartjs-plugin-zoom": "^1.2.0",
-    "core-js": "^3.21.0",
-    "source-sans": "^3.46.0",
-    "tmi.js": "^1.8.5",
-    "vue": "^2.7.16",
-    "vue-flux": "^6.0.4",
-    "webpack": "^5.68.0"
-  },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "^5.0.0-rc.2",
-    "@vue/cli-plugin-eslint": "^5.0.0-rc.2",
-    "@vue/cli-service": "^5.0.0-rc.2",
-    "babel-eslint": "^11.0.0-beta.2",
-    "eslint": "latest",
-    "eslint-plugin-vue": "latest",
-    "sass": "^1.49.9",
-    "sass-loader": "^12.4.0",
-    "vue-template-compiler": "latest"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
+    "name": "rF2-Settings-Widget",
+    "version": "1.7.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "serve-rf2": "vite",
+        "build-rf2": "vite build"
     },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
+    "dependencies": {
+        "@fontsource/inter": "^4.5.15",
+        "@fontsource/ubuntu": "^4.5.11",
+        "@popperjs/core": "^2.11.8",
+        "bootstrap-vue": "^2.23.1",
+        "chart.js": "^3.9.1",
+        "chartjs-plugin-zoom": "^1.2.0",
+        "core-js": "^3.21.0",
+        "iconv-lite": "^0.6.3",
+        "tmi.js": "^1.8.5",
+        "vue": "^2.7.16",
+        "vue-flux": "^6.0.4",
+        "webpack": "^5.68.0"
     },
-    "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+    "devDependencies": {
+        "@eslint-community/eslint-utils": "^4.4.0",
+        "@vitejs/plugin-vue2": "^2.3.1",
+        "eslint": "latest",
+        "eslint-plugin-vue": "^9.29.0",
+        "eslint-utils": "^3.0.0",
+        "sass": "^1.49.9",
+        "vite": "6.3.4"
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions",
+        "not dead"
+    ]
 }

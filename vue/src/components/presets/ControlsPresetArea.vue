@@ -49,8 +49,8 @@
 </template>
 
 <script>
-import PresetUi from "@/components/presets/PresetUi";
-import SettingsCard from "@/components/settings/SettingsCard";
+import PresetUi from "@/components/presets/PresetUi.vue";
+import SettingsCard from "@/components/settings/SettingsCard.vue";
 
 export default {
   name: "ControlsPresetArea",

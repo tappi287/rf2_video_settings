@@ -32,8 +32,8 @@
 </template>
 
 <script>
-import PresetUi from "@/components/presets/PresetUi";
-import SessionArea from "@/components/SessionArea";
+import PresetUi from "@/components/presets/PresetUi.vue";
+import SessionArea from "@/components/SessionArea.vue";
 
 export default {
   name: "SessionPresetArea",

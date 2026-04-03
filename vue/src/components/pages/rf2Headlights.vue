@@ -5,8 +5,8 @@
         <!-- Headlight Icon -->
         <div class="pl-0 pt-1 pr-1 position-relative bg-transparent rounded-left" @click="triggerLogoFlash">
           <b-img width=".3rem" :class="logoClass" v-if="isHeadlightAppEnabled"
-                 src="@/assets/rf2_headlights_glow.svg"></b-img>
-          <b-img width=".3rem" class="hdl-icon bottom" src="@/assets/rf2_headlights_off.svg"></b-img>
+                 :src="rf2_headlights_glow"></b-img>
+          <b-img width=".3rem" class="hdl-icon bottom" :src="rf2_headlights_off"></b-img>
         </div>
         <!-- Title -->
         <b-input-group-text class="bg-transparent no-border title text-white pl-1">
@@ -138,9 +138,11 @@
 </template>
 
 <script>
-import SettingItem from "@/components/settings/Setting";
+import SettingItem from "@/components/settings/Setting.vue";
 import {getControllerDeviceTypeName, getControllerValueName, getEelJsonObject, sleep} from "@/main";
-import ControllerAssignment from "@/components/settings/ControllerAssignment";
+import ControllerAssignment from "@/components/settings/ControllerAssignment.vue";
+import rf2_headlights_glow from "@/assets/rf2_headlights_glow.svg";
+import rf2_headlights_off from "@/assets/rf2_headlights_off.svg";
 
 export default {
 name: "rf2Headlights",
@@ -157,6 +159,8 @@ name: "rf2Headlights",
       flashCount: 4, flashOnTime: 80, flashOffTime: 400,
       showSettingsWiki: true,
       showAssignWiki: true,
+      rf2_headlights_glow,
+      rf2_headlights_off,
     }
   },
   methods: {

@@ -62,15 +62,15 @@
 
     <!-- Audio -->
     <div style="display: none">
-      <audio src="@/assets/UI_Confirm.mp4" id="audioConfirm"></audio>
-      <audio src="@/assets/UI_Ping.mp4" id="audioPing"></audio>
-      <audio src="@/assets/UI_Indicator.mp4" id="audioIndicator"></audio>
-      <audio src="@/assets/UI_Cute-Select.mp4" id="audioCuteSelect"></audio>
-      <audio src="@/assets/UI_Switch.mp4" id="audioSwitch"></audio>
-      <audio src="@/assets/UI_SwitchOn.mp4" id="audioSwitchOn"></audio>
-      <audio src="@/assets/UI_SwitchOff.mp4" id="audioSwitchOff"></audio>
-      <audio src="@/assets/UI_Select.mp4" id="audioSelect"></audio>
-      <audio src="@/assets/UI_Flash.mp4" id="audioFlash"></audio>
+      <audio :src="audioSources.UI_Confirm" id="audioConfirm"></audio>
+      <audio :src="audioSources.UI_Ping" id="audioPing"></audio>
+      <audio :src="audioSources.UI_Indicator" id="audioIndicator"></audio>
+      <audio :src="audioSources.UI_CuteSelect" id="audioCuteSelect"></audio>
+      <audio :src="audioSources.UI_Switch" id="audioSwitch"></audio>
+      <audio :src="audioSources.UI_SwitchOn" id="audioSwitchOn"></audio>
+      <audio :src="audioSources.UI_SwitchOff" id="audioSwitchOff"></audio>
+      <audio :src="audioSources.UI_Select" id="audioSelect"></audio>
+      <audio :src="audioSources.UI_Flash" id="audioFlash"></audio>
     </div>
   </div>
 </template>
@@ -78,10 +78,19 @@
 <script>
 import './assets/app.scss'
 import MainPage from "./components/MainPage.vue";
-import AppUpdater from "@/components/Updater";
+import AppUpdater from "@/components/Updater.vue";
 import RfLocation from "@/components/RfLocation.vue";
 import {createPopperLite as createPopper, flip, preventOverflow} from "@popperjs/core";
 import {getEelJsonObject} from "@/main";
+import UI_Confirm from "@/assets/UI_Confirm.mp4";
+import UI_Ping from "@/assets/UI_Ping.mp4";
+import UI_Indicator from "@/assets/UI_Indicator.mp4";
+import UI_CuteSelect from "@/assets/UI_Cute-Select.mp4";
+import UI_Switch from "@/assets/UI_Switch.mp4";
+import UI_SwitchOn from "@/assets/UI_SwitchOn.mp4";
+import UI_SwitchOff from "@/assets/UI_SwitchOff.mp4";
+import UI_Select from "@/assets/UI_Select.mp4";
+import UI_Flash from "@/assets/UI_Flash.mp4";
 // --- </ Prepare receiving App Exceptions
 window.eel.expose(appExceptionFunc, 'app_exception')
 async function appExceptionFunc (event) {
@@ -117,7 +126,18 @@ export default {
       dragActive: false,
       error: '',
       rfactorVersion: '',
-      rfactorPath: ''
+      rfactorPath: '',
+      audioSources: {
+        UI_Confirm,
+        UI_Ping,
+        UI_Indicator,
+        UI_CuteSelect,
+        UI_Switch,
+        UI_SwitchOn,
+        UI_SwitchOff,
+        UI_Select,
+        UI_Flash,
+      }
     }
   },
   methods: {

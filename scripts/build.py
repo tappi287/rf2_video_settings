@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 from typing import Union
@@ -14,7 +15,6 @@ from scripts.patch_sdl_pygame import patch_sdl_lib_pygame
 os.chdir(get_current_modules_dir())
 
 VERSION = get_version()
-# TODO: write version to vue package.json
 EXTERNAL_APP_DIRS = []
 
 SPEC_FILE = "app.spec"
@@ -23,6 +23,7 @@ ISS_VER_LINE = '#define MyAppVersion'
 ISS_SETUP_EXE_FILE = UPDATE_INSTALL_FILE.format(version=VERSION)
 PORTABLE_ZIP_NAME = f'{UPDATE_INSTALL_FILE.format(version=VERSION)}_portable'
 
+VUE_DIR = "vue/package.json"
 BUILD_DIR = "build"
 DIST_DIR = "dist"
 DIST_EXE_DIR = "rF2-Settings-Widget"
@@ -118,6 +119,12 @@ def update_version_info(out_dir: Path):
     with open(ISS_FILE, 'w') as f:
         f.writelines(iss_lines)
 
+    with open(Path(get_current_modules_dir()).joinpath(VUE_DIR), "r") as f:
+        package_json = json.load(f)
+        package_json["version"] = VERSION
+    with open(Path(get_current_modules_dir()).joinpath(VUE_DIR), "w") as f:
+        json.dump(package_json, f, indent=4)
+        print("Updated package.json version", VERSION)
     # Update exe manifest
     # update_manifest_version()
 
@@ -130,29 +137,10 @@ def remove_dist_info_dirs():
         shutil.rmtree(d)
 
 
-def upload_release() -> bool:
-    setup_exe = Path(DIST_DIR) / Path(ISS_SETUP_EXE_FILE)
-
-    if not setup_exe.exists():
-        print('Can not upload Windows Installer. File not found in: ' + setup_exe.as_posix())
-        return False
-
-    sftp = Remote(REMOTE_DIR)
-    if not sftp.connect():
-        print('Could not connect to remote host!')
-        return False
-
-    if sftp.put(setup_exe):
-        version_txt = Path(DIST_DIR) / UPDATE_VERSION_FILE
-        sftp.put(version_txt)
-        return True
-    return False
-
-
 def run_npm_build():
     # -- Run npm and build web package
     cd = Path('.') / 'vue'
-    cmd = ['npm', 'run', 'build']
+    cmd = ['npm', 'run', 'build-rf2']
 
     p = Popen(args=cmd, shell=True, cwd=cd.as_posix())
     p.wait()
@@ -161,7 +149,7 @@ def run_npm_build():
 def copy_eel_cache_file():
     web_dir = Path('web')
     if web_dir.exists():
-        shutil.copy(eel_mod.eel_cache_js_file(), web_dir / 'js')
+        shutil.copy(eel_mod.eel_cache_js_file(), web_dir / "assets")
 
 
 def copy_eel_js_patched(target_dir: Path):
@@ -269,13 +257,6 @@ def main(process: int = 0):
                 shutil.rmtree(dist_dir)
 
         print('\nBuild completed!')
-
-    if process in (2, 3):
-        if not upload_release():
-            print('Error while updating remote directory!')
-            return
-
-        print('Update remote location finished!')
 
 
 def ask_process() -> int:

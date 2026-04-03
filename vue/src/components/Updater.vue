@@ -57,7 +57,7 @@ export default {
           return
         }
 
-        if (process.env.VUE_APP_VERSION >= newVersion) {
+        if (import.meta.env.VITE_APP_VERSION >= newVersion) {
           this.updatedVersion = '';
           return
         }

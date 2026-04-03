@@ -137,12 +137,12 @@
 <script>
 
 import {getEelJsonObject} from "@/main";
-import SettingItem from "@/components/settings/Setting";
-import GraphicsPresetArea from "@/components/presets/GraphicsPresetArea";
-import SessionPresetArea from "@/components/presets/SessionPresetArea";
-import ReplayList from "@/components/ReplayList";
-import BenchmarkResultArea from "@/components/benchmark/BenchmarkResultArea";
-import DevPresets from "@/components/benchmark/DevPresets";
+import SettingItem from "@/components/settings/Setting.vue";
+import GraphicsPresetArea from "@/components/presets/GraphicsPresetArea.vue";
+import SessionPresetArea from "@/components/presets/SessionPresetArea.vue";
+import ReplayList from "@/components/ReplayList.vue";
+import BenchmarkResultArea from "@/components/benchmark/BenchmarkResultArea.vue";
+import DevPresets from "@/components/benchmark/DevPresets.vue";
 // --- </ Prepare receiving Benchmark Progress Events
 window.eel.expose(rfactorBenchmarkProgress, 'benchmark_progress')
 async function rfactorBenchmarkProgress (event) {

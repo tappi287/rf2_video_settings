@@ -3,9 +3,9 @@
     <b-navbar class="text-left pl-0 pr-0" type="dark">
       <b-navbar-brand href="#" @click="navActive=0" class="r-icon-brand position-relative"
                       v-b-popover.bottomleft.hover="'DashBoard'">
-        <b-img width="32px" key="1" src="@/assets/rfW_logo_white.svg"
+        <b-img width="32px" key="1" :src="rfW_logo_white"
                :class="navActive === 0 ? 'r-icon top' : 'r-icon top inv'"></b-img>
-        <b-img width="32px" key="2" src="@/assets/rfW_logo.svg"
+        <b-img width="32px" key="2" :src="rfW_logo"
                :class="navActive !== 0 ? 'r-icon bottom' : 'r-icon bottom inv'"></b-img>
       </b-navbar-brand>
       <b-nav>
@@ -271,26 +271,28 @@
 </template>
 
 <script>
-import DashBoard from "@/components/pages/DashBoard";
-import PresetUi from "@/components/presets/PresetUi";
-import ServerBrowser from "@/components/pages/ServerBrowser";
-import PresetHandler from "@/components/presets/PresetHandler";
-import SettingsCard from "@/components/settings/SettingsCard";
-import AppWiki from "@/components/Wiki";
-import LaunchRfactorBtn from "@/components/LaunchRfactorBtn";
-import rf2Headlights from "@/components/pages/rf2Headlights";
-import ReplayArea from "@/components/pages/ReplayArea";
-import AppLog from "@/components/Log";
+import DashBoard from "@/components/pages/DashBoard.vue";
+import PresetUi from "@/components/presets/PresetUi.vue";
+import ServerBrowser from "@/components/pages/ServerBrowser.vue";
+import PresetHandler from "@/components/presets/PresetHandler.vue";
+import SettingsCard from "@/components/settings/SettingsCard.vue";
+import AppWiki from "@/components/Wiki.vue";
+import LaunchRfactorBtn from "@/components/LaunchRfactorBtn.vue";
+import rf2Headlights from "@/components/pages/rf2Headlights.vue";
+import ReplayArea from "@/components/pages/ReplayArea.vue";
+import AppLog from "@/components/Log.vue";
 import {getEelJsonObject, sleep} from "@/main";
-import BenchMark from "@/components/benchmark/Benchmark";
-import GraphicsPresetArea from "@/components/presets/GraphicsPresetArea";
-import ControlsPresetArea from "@/components/presets/ControlsPresetArea";
-import SessionPresetArea from "@/components/presets/SessionPresetArea";
-import ChatPage from "@/components/pages/ChatPage";
-import ControllerDeviceList from "@/components/ControllerDeviceList";
-import RfactorOverlay from "@/components/RfactorOverlay";
-import PreferencesPage from "@/components/pages/PreferencesPage";
+import BenchMark from "@/components/benchmark/Benchmark.vue";
+import GraphicsPresetArea from "@/components/presets/GraphicsPresetArea.vue";
+import ControlsPresetArea from "@/components/presets/ControlsPresetArea.vue";
+import SessionPresetArea from "@/components/presets/SessionPresetArea.vue";
+import ChatPage from "@/components/pages/ChatPage.vue";
+import ControllerDeviceList from "@/components/ControllerDeviceList.vue";
+import RfactorOverlay from "@/components/RfactorOverlay.vue";
+import PreferencesPage from "@/components/pages/PreferencesPage.vue";
 import FuelCalc from "@/components/pages/FuelCalc.vue";
+import rfW_logo_white from "@/assets/rfW_logo_white.svg";
+import rfW_logo from "@/assets/rfW_logo.svg";
 
 export default {
   name: 'MainPage',
@@ -309,6 +311,8 @@ export default {
       refreshDashFavs: false,
       contentModal: false,
       preferences: undefined,
+      rfW_logo_white,
+      rfW_logo,
     }
   },
   props: {rfactorVersion: String},

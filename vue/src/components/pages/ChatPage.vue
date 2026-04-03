@@ -54,7 +54,7 @@
 
 <script>
 import {getEelJsonObject} from "@/main";
-import ChatProvider from "@/components/ChatProvider";
+import ChatProvider from "@/components/ChatProvider.vue";
 
 export default {
   name: "ChatPage.vue",

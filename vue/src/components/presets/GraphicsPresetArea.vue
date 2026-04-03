@@ -30,8 +30,8 @@
 </template>
 
 <script>
-import PresetUi from "@/components/presets/PresetUi";
-import GraphicsArea from "@/components/pages/GraphicsArea";
+import PresetUi from "@/components/presets/PresetUi.vue";
+import GraphicsArea from "@/components/pages/GraphicsArea.vue";
 
 export default {
   name: "GraphicsPresetArea",

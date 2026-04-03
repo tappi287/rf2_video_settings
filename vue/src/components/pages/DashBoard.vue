@@ -58,9 +58,9 @@
 </template>
 
 <script>
-import ServerBrowser from "@/components/pages/ServerBrowser"
-import PresetHandler from "@/components/presets/PresetHandler";
-import PreferencesPage from "@/components/pages/PreferencesPage";
+import ServerBrowser from "@/components/pages/ServerBrowser.vue"
+import PresetHandler from "@/components/presets/PresetHandler.vue";
+import PreferencesPage from "@/components/pages/PreferencesPage.vue";
 import { VueFlux, FluxCaption, FluxPreloader } from 'vue-flux';
 import {getEelJsonObject, chooseIndex, userScreenShotsUrl, getMaxWidth } from "@/main"
 import rfWPoster from "@/assets/rfW_Poster.webp"

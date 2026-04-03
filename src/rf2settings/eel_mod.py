@@ -1,4 +1,5 @@
 import json
+import logging
 from pathlib import Path
 from typing import List
 
@@ -32,6 +33,7 @@ def write_rf2_settings_eel_func_names():
     import eel
     with open(eel_names_file(), "w") as f:
         json.dump(eel._js_functions, f)
+        logging.info(f"Written eel fn names to {eel_names_file()}")
 
 
 def write_rf2_settings_eel_cache_js():
@@ -41,6 +43,7 @@ def write_rf2_settings_eel_cache_js():
             file_content += EEL_TEMPLATE_LINE.format(name=name)
         file_content += EEL_JS_CLOSE_LINE
         f.write(file_content)
+        logging.info(f"Written eel cache to {eel_cache_js_file()}")
 
 
 def prepare_eel_cache_js():

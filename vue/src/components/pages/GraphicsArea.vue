@@ -315,7 +315,7 @@
 </template>
 
 <script>
-import SettingsCard from "@/components/settings/SettingsCard";
+import SettingsCard from "@/components/settings/SettingsCard.vue";
 import {getEelJsonObject} from "@/main";
 
 export default {

@@ -372,7 +372,7 @@ export default {
   name: "AppWiki",
   data: function () {
     return {
-      ver: process.env.VUE_APP_VERSION,
+      ver: process.env.VITE_APP_VERSION,
     }
   },
   methods: {

@@ -10,7 +10,7 @@ except ImportError:
 from PyInstaller.utils.hooks import get_package_paths
 
 block_cipher = None
-excluded_modules = ['cryptography']
+excluded_modules = []
 
 # ----- define app name
 APP_NAME = 'rF2-Settings-Widget'

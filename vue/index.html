@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <script type=text/javascript src="<%= VUE_APP_EEL_SRC %>"></script>
-    <script type="text/javascript">
+    <link rel="icon" href="./favicon.ico">
+    <script type="text/javascript" src="%VITE_APP_EEL_SRC%"></script>
+    <script type="module">
         // Detect Env production or development
-        if (!<%= VUE_APP_FROZEN %>) { eel._host="http://localhost:8123" }
+        const FROZEN = parseInt(import.meta.env.VITE_APP_FROZEN || '0')
+        if (!FROZEN) { eel._host="http://localhost:8123" }
 
         // Expose CloseApp
         eel.expose(closeApp)
@@ -19,13 +20,13 @@
         // Avoid accidental dragging and triggering a preset import
         window.ondragstart = function() { return false; }
     </script>
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <title>rF2 Settings Widget</title>
   </head>
   <body>
     <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      <strong>We're sorry but rF2 Settings Widget doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <div id="app"></div>
-    <!-- built files will be auto injected -->
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>
