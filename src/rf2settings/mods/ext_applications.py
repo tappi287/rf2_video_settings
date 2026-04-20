@@ -5,6 +5,8 @@ from typing import Optional
 
 import psutil
 
+from rf2settings.valve.steam_utils import SteamApps
+
 ARGS_MAPPING = {"kneeboard": None, "crew_chief": ["-game", "RF2", "-skip_updates"], "sim_hub": None}
 
 
@@ -33,11 +35,10 @@ def _start_application(app_bin_path: WindowsPath = None, args: Optional[list] = 
 
 
 def _get_steam_apps_known_app(app_key: str) -> dict:
-    from lmu.lmu_location import STEAM_APPS
-
-    if not STEAM_APPS.known_apps:
-        STEAM_APPS.read_steam_library()
-    return STEAM_APPS.known_apps.get(app_key)
+    s = SteamApps()
+    if not s.known_apps:
+        s.read_steam_library()
+    return s.known_apps.get(app_key)
 
 
 def get_app_executable_path(app_key: str) -> Optional[WindowsPath]:

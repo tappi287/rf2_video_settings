@@ -1,6 +1,6 @@
 {
     "name": "rF2-Settings-Widget",
-    "version": "1.7.0",
+    "version": "1.7.1",
     "private": true,
     "type": "module",
     "scripts": {
@@ -19,8 +19,7 @@
         "iconv-lite": "^0.6.3",
         "tmi.js": "^1.8.5",
         "vue": "^2.7.16",
-        "vue-flux": "^6.0.4",
-        "webpack": "^5.68.0"
+        "vue-flux": "^6.0.4"
     },
     "devDependencies": {
         "@eslint-community/eslint-utils": "^4.4.0",
