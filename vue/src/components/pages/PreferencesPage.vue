@@ -37,7 +37,19 @@
         Which applications to automatically launch along with the game. This detects already running applications.
       </b-card-text>
 
-      <b-checkbox-group :options="appAutostartOptions" v-model="appAutostart" @change="save" />
+      <b-form-checkbox-group v-model="appAutostart">
+        <template v-for="option in appAutostartOptions">
+          <b-form-checkbox
+              :key="option.value"
+              :value="option.value"
+              :disabled="option.disabled"
+              v-b-popover.hover.auto="option.location !== null ? 'Found at: ' + option.location : ''"
+              @change="save"
+          >
+            {{ option.text }}
+          </b-form-checkbox>
+        </template>
+      </b-form-checkbox-group>
     </b-card>
 
     <b-card class="setting-card mb-2" bg-variant="dark" text-variant="white" footer-class="pt-0">
@@ -99,9 +111,9 @@ export default {
       steamWebApiKey: '',
       appAutostart: [],
       appAutostartOptions: [
-          {text: 'OpenKneeboard', value: 'kneeboard'},
-          {text: 'CrewChiefV4', value: 'crew_chief'},
-          {text: 'SimHub', value: 'sim_hub'},
+        {text: 'OpenKneeboard', value: 'kneeboard', disabled: false, location: null},
+        {text: 'CrewChiefV4', value: 'crew_chief', disabled: false, location: null},
+        {text: 'SimHub', value: 'sim_hub', disabled: false, location: null}
       ],
       appModules: ['audio', 'edge_preferred'],
       appOptions: [
@@ -122,6 +134,22 @@ export default {
       await getEelJsonObject(window.eel.save_app_preferences(appPref)())
     },
     async load () {
+      const apps = this.appAutostartOptions.map(option => option.value);
+      const appResults = await getEelJsonObject(window.eel.get_autostart_apps(apps)())
+
+      if (appResults.result) {
+        for (const [appName, location] of Object.entries(appResults.data)) {
+          const opt = this.appAutostartOptions.find(o => o.value === appName)
+          if (opt) {
+            opt.location = location
+            opt.disabled = location === null
+            if (opt.disabled) {
+              opt.text = `${opt.text} (not found)`
+            }
+          }
+        }
+      }
+
       const r = await getEelJsonObject(window.eel.load_app_preferences()())
       if (r.result) {
         const appPref = r.preferences

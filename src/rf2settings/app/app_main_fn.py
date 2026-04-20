@@ -3,7 +3,7 @@ import logging
 import subprocess
 from pathlib import WindowsPath, Path
 from subprocess import Popen
-from typing import Optional
+from typing import Optional, List
 
 from ..app_settings import AppSettings
 from ..globals import DEFAULT_PRESET_NAME, RFACTOR_SETUPS, RFACTOR_MODMGR, get_log_file, get_log_dir, get_data_dir
@@ -119,6 +119,16 @@ def run_rfactor(server_info: Optional[dict] = None, method: Optional[int] = 0):
             CommandQueue.append(Command(Command.wait_for_state, data=RfactorState.ready, timeout=10.0))
 
     return json.dumps({'result': result, 'msg': rf.error})
+
+
+@capture_app_exceptions
+def get_autostart_apps(apps: List[str]):
+    result = dict()
+    for app_name in apps:
+        location = ext_applications.get_app_executable_path(app_name)
+        result[app_name] = location.as_posix() if location else None
+
+    return json.dumps({"result": True, "data": result})
 
 
 @capture_app_exceptions

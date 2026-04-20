@@ -1,6 +1,6 @@
 [project]
 name = "rf2-settings-widget"
-version = "1.7.1"
+version = "1.7.2"
 description = ""
 authors = [{ name = "Stefan Tapper", email = "tapper.stefan@gmail.com" }, ]
 readme = "README.md"

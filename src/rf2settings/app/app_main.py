@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Optional, List
 
 import eel
 import gevent.event
@@ -73,6 +73,11 @@ def get_last_launch_method():
 @eel.expose
 def run_rfactor(server_info: Optional[dict] = None, method: Optional[int] = 0):
     return app_main_fn.run_rfactor(server_info, method)
+
+
+@eel.expose
+def get_autostart_apps(apps: List[str]):
+    return app_main_fn.get_autostart_apps(apps)
 
 
 @eel.expose
