@@ -297,6 +297,15 @@ reshade_settings = {
                         {'value': True, 'name': 'Enabled'},
                     ),
                     },
+    'use_opencomposite': {'name': 'Use OpenComposite', 'value': False,
+                          'desc': 'Installs the OpenComposite runtime (OpenVR-to-OpenXR) into the rFactor 2 '
+                                  'installation by replacing the original Valve openvr_api.dll, which is '
+                                  'backed up and restored when this option is disabled.',
+                          'settings': (
+                              {'value': False, 'name': 'Disabled'},
+                              {'value': True, 'name': 'Enabled'},
+                          ),
+                          },
     "use_openxr": {
         "name": "Use OpenXR",
         "value": False,

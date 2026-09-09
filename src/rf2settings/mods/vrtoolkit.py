@@ -1,3 +1,4 @@
+import json
 import logging
 import shutil
 from pathlib import Path
@@ -128,8 +129,8 @@ class VrToolKit:
             self.ini_settings[key] = setting.get("value")
             self.ini_default_settings[key] = setting.get("value")
 
-    def _update_options(self, update_from_disk=False, clarity_found=True) -> Tuple[bool, bool, bool]:
-        use_reshade, use_openxr, use_clarity = False, False, False
+    def _update_options(self, update_from_disk=False, clarity_found=True) -> Tuple[bool, bool, bool, bool]:
+        use_reshade, use_openxr, use_clarity, use_opencomposite = False, False, False, False
 
         # -- Iterate Preset options
         for preset_options in self.options:
@@ -148,6 +149,8 @@ class VrToolKit:
                         use_openxr = option.value
                     elif option.key == "use_clarity":
                         use_clarity = option.value
+                    elif option.key == "use_opencomposite":
+                        use_opencomposite = option.value
                     elif option.key in self.preprocessor:
                         self.preprocessor[option.key] = option.value
                     elif option.key in self.ini_settings:
@@ -162,6 +165,10 @@ class VrToolKit:
                         option.value = openxr.is_openxr_layer_installed() == 1
                         option.exists_in_rf = True
                         use_openxr = True
+                    if option.key == "use_opencomposite":
+                        option.value = self._is_opencomposite_active()
+                        option.exists_in_rf = True
+                        use_opencomposite = option.value
                     if option.key == "use_clarity":
                         option.value = clarity_found
                         option.exists_in_rf = True
@@ -173,7 +180,7 @@ class VrToolKit:
                         option.value = self.ini_settings[option.key]
                         option.exists_in_rf = True
 
-        return use_reshade, use_clarity, use_openxr
+        return use_reshade, use_clarity, use_openxr, use_opencomposite
 
     def _work_thru_reshade_release_zip(self, use_reshade: bool, use_openxr: bool, bin_dir: Path) -> list:
         reshade_zip = get_data_dir() / self.RESHADE_ZIP
@@ -337,12 +344,57 @@ class VrToolKit:
         with open(reshade_ini, "w") as f:
             f.writelines(updated_ini_lines)
 
+    def _is_opencomposite_active(self) -> bool:
+        """ Check if the OpenComposite runtime dll is active in the rF2 Bin64 directory """
+        if not self.location.is_dir():
+            return False
+        dll = self.location / openxr.OPENVR_API_DLL
+        return dll.is_file() and not openxr.is_openvr_present(self.location)
+
+    def _update_opencomposite(self, use_opencomposite: bool) -> bool:
+        """ Install or uninstall the OpenComposite runtime in the rF2 installation """
+        # -- Local import to avoid circular dependency (app_opencomposite_fn imports rfactor)
+        from rf2settings.app import app_opencomposite_fn
+
+        if use_opencomposite:
+            result = app_opencomposite_fn.enable_opencomposite()
+        else:
+            result = app_opencomposite_fn.restore_original_openvr()
+
+        if not result:
+            msg = "Could not update OpenComposite: no result returned"
+            logging.error(msg)
+            self.error += msg
+            return False
+
+        r = json.loads(result)
+        if not r.get('result'):
+            msg = f"Could not update OpenComposite: {r.get('msg')}"
+            logging.error(msg)
+            self.error += msg
+            return False
+
+        logging.info("Updated OpenComposite: %s", r.get('msg'))
+        return True
+
+    def _sync_opencomposite_option_from_disk(self):
+        """ Sync the use_opencomposite option with the current OpenVR runtime state on disk """
+        active = self._is_opencomposite_active()
+        for preset_options in self.options:
+            for option in preset_options.options:
+                if option.key == "use_opencomposite":
+                    option.value = active
+                    option.exists_in_rf = True
+
     def write(self):
-        use_reshade, use_clarity, use_openxr = self._update_options()
+        use_reshade, use_clarity, use_openxr, use_opencomposite = self._update_options()
 
         bin_dir = self.location
         reshade_preset = bin_dir / self.RESHADE_PRESET_DIR / self.RESHADE_TARGET_PRESET_NAME
         reshade_removed = False
+
+        # -- Install/Uninstall OpenComposite runtime (independent of the ReShade installation)
+        self._update_opencomposite(use_opencomposite)
 
         # -- Extract ReShade files
         logging.info("Applying ReShade settings: %s", use_reshade)
@@ -389,6 +441,8 @@ class VrToolKit:
     def _read_preset_ini(self, reshade_preset: Path) -> bool:
         """Lookup current VRToolkit Settings on disk"""
         if not reshade_preset.exists():
+            # -- OpenComposite is independent of the ReShade installation, so still sync its state
+            self._sync_opencomposite_option_from_disk()
             return False
 
         try:
@@ -430,7 +484,7 @@ class VrToolKit:
                             self.ini_settings[k] = value
 
             # -- Update RfactorPlayer VRToolkit Settings
-            use_reshade, use_openxr, use_clarity = self._update_options(
+            use_reshade, use_openxr, use_clarity, use_opencomposite = self._update_options(
                 update_from_disk=True, clarity_found=clarity_found
             )
         except Exception as e:

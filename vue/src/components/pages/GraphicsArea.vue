@@ -398,7 +398,7 @@ export default {
       return result
     },
     reshadeSettingDisabled(setting) {
-      if (setting.key === 'use_reshade') { return false }
+      if (setting.key === 'use_reshade' || setting.key === 'use_opencomposite') { return false }
       return !this.reshadeEnabled
     },
     claritySettingDisabled(setting) {

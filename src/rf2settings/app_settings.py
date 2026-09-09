@@ -50,7 +50,7 @@ class AppSettings(JsonRepr):
         "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": "2022.10.20",
         "f62fc2524cff71458bca4acdd558539f": "2022.10.23"
     }
-    reshade_version = "6.5.1.2008"
+    reshade_version = "6.8.0.2155"
 
     # -----------------------------------
     # -- Won't be saved to file:
