@@ -19,7 +19,7 @@ from rf2settings.settingsdef import graphics
 
 
 class VrToolKit:
-    RESHADE_ZIP = "VRToolkitReshadeUniversal_1.0.6_plus_Clarity.zip"
+    RESHADE_ZIP = "VRToolkitReshadeUniversal_1.0.7_plus_Clarity.zip"
     RESHADE_PRESET_BASE_DIR = "reshade-shaders"
     RESHADE_PRESET_DIR = f"{RESHADE_PRESET_BASE_DIR}/Presets/"
     RESHADE_TARGET_PRESET_NAME = "rf2_widget_preset.ini"
